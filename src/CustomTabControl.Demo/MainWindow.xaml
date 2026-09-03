@@ -1,0 +1,87 @@
+<Window x:Class="CustomTabControl.Demo.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:CustomTabControl.Controls;assembly=CustomTabControl.Controls"
+        Title="CustomTabControl · Laboratório" Width="1080" Height="760" MinWidth="600" MinHeight="560"
+        WindowStartupLocation="CenterScreen" Background="{DynamicResource Demo.Background}" Foreground="{DynamicResource Tabs.Text}" FontFamily="Segoe UI">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/CustomTabControl.Controls;component/Themes/Generic.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+            <SolidColorBrush x:Key="Demo.Background" Color="#27292E" />
+            <Style TargetType="Button">
+                <Setter Property="Padding" Value="14,8" />
+                <Setter Property="Margin" Value="0,0,8,0" />
+                <Setter Property="Background" Value="{DynamicResource Tabs.Surface}" />
+                <Setter Property="Foreground" Value="{DynamicResource Tabs.Text}" />
+                <Setter Property="BorderBrush" Value="{DynamicResource Tabs.Edge}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="ButtonBorder" CornerRadius="6" BorderThickness="1" BorderBrush="{TemplateBinding BorderBrush}" Background="{TemplateBinding Background}" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" RecognizesAccessKey="True" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource Tabs.Hover}" /></Trigger>
+                                <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource Tabs.Focus}" /></Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+    <Grid Margin="28">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" /><RowDefinition Height="Auto" /><RowDefinition Height="*" />
+            <RowDefinition Height="Auto" /><RowDefinition Height="150" />
+        </Grid.RowDefinitions>
+        <StackPanel Margin="0,0,0,22">
+            <TextBlock Text="CONTROLES / WPF" FontSize="11" Foreground="{DynamicResource Tabs.Muted}" />
+            <TextBlock Text="Um lugar para cada contexto." FontSize="28" FontWeight="SemiBold" Margin="0,6,0,6" />
+            <TextBlock Text="Abas integradas ao painel, conteúdo livre e aparência configurável." Foreground="{DynamicResource Tabs.Muted}" TextWrapping="Wrap" />
+        </StackPanel>
+        <WrapPanel Grid.Row="1" Margin="0,0,0,20">
+            <Button Content="+ Nova aba" Command="{Binding AddTabCommand}" />
+            <Button Content="Remover selecionada" Command="{Binding RemoveTabCommand}" />
+            <Button Content="Alternar tema" Click="ToggleTheme" />
+        </WrapPanel>
+        <controls:CustomTabControl x:Name="DynamicTabs" Grid.Row="2" HeaderIndent="0" ItemsSource="{Binding Tabs}" SelectedItem="{Binding SelectedTab, Mode=TwoWay}">
+            <controls:CustomTabControl.ItemContainerStyle>
+                <Style TargetType="TabItem" BasedOn="{StaticResource Tabs.ItemStyle}">
+                    <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
+                    <Setter Property="AutomationProperties.Name" Value="{Binding Header}" />
+                </Style>
+            </controls:CustomTabControl.ItemContainerStyle>
+            <controls:CustomTabControl.ItemTemplate>
+                <DataTemplate>
+                    <StackPanel Orientation="Horizontal"><TextBlock Text="{Binding Icon}" Margin="0,0,8,0" /><TextBlock Text="{Binding Header}" /></StackPanel>
+                </DataTemplate>
+            </controls:CustomTabControl.ItemTemplate>
+            <controls:CustomTabControl.ContentTemplate>
+                <DataTemplate>
+                    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                        <StackPanel>
+                            <TextBlock Text="{Binding Title}" FontSize="23" FontWeight="SemiBold" TextWrapping="Wrap" />
+                            <TextBlock Text="{Binding Description}" Margin="0,10,0,20" Foreground="{DynamicResource Tabs.Muted}" TextWrapping="Wrap" />
+                            <TextBlock Text="Anotações" Margin="0,0,0,8" />
+                            <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="80" Padding="12"
+                                     Background="{DynamicResource Demo.Background}" Foreground="{DynamicResource Tabs.Text}" BorderBrush="{DynamicResource Tabs.Edge}"
+                                     AutomationProperties.Name="Anotações do documento" VerticalScrollBarVisibility="Auto" />
+                        </StackPanel>
+                    </ScrollViewer>
+                </DataTemplate>
+            </controls:CustomTabControl.ContentTemplate>
+        </controls:CustomTabControl>
+        <TextBlock Grid.Row="3" Text="ITENS EM XAML · use Tab para focar e as setas para navegar" Margin="0,22,0,12" FontSize="11" Foreground="{DynamicResource Tabs.Muted}" />
+        <controls:CustomTabControl Grid.Row="4" Padding="18" HeaderIndent="0" TabSpacing="0" CornerRadius="8" SelectedIndex="0">
+            <controls:CustomTabItem Header="Simples"><TextBlock Text="Primeira aba rente à borda esquerda: HeaderIndent=&quot;0&quot;." TextWrapping="Wrap" /></controls:CustomTabItem>
+            <TabItem Header="TabItem padrão"><TextBlock Text="Também aceita o TabItem nativo do WPF." /></TabItem>
+            <controls:CustomTabItem Header="Desabilitada" IsEnabled="False" />
+        </controls:CustomTabControl>
+    </Grid>
+</Window>
+
+
+

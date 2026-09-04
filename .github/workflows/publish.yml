@@ -1,0 +1,69 @@
+name: Publish NuGet release
+on:
+  release:
+    types: [published]
+permissions:
+  contents: read
+concurrency:
+  group: nuget-publication
+  cancel-in-progress: false
+jobs:
+  publish:
+    runs-on: windows-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+      id-token: write
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '10.0.x'
+      - name: Validate release version
+        id: version
+        env:
+          RELEASE_TAG: ${{ github.event.release.tag_name }}
+          IS_PRERELEASE: ${{ github.event.release.prerelease }}
+        run: |
+          $version = ./eng/Get-ReleaseVersion.ps1 -Tag $env:RELEASE_TAG
+          if (($version.Contains('-')) -ne ($env:IS_PRERELEASE -eq 'true')) {
+            throw 'The release prerelease checkbox must match the tag version.'
+          }
+          "value=$version" >> $env:GITHUB_OUTPUT
+      - name: Build, test and pack release
+        env:
+          PACKAGE_VERSION: ${{ steps.version.outputs.value }}
+        run: ./eng/Validate.ps1 -PackageVersion $env:PACKAGE_VERSION
+      - name: Upload test logs
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-tests-${{ github.run_number }}
+          path: artifacts/test-results/
+          retention-days: 14
+      - name: Upload release package
+        uses: actions/upload-artifact@v7
+        with:
+          name: DLH.Controls.Wpf-${{ steps.version.outputs.value }}
+          path: artifacts/packages/*.nupkg
+          if-no-files-found: error
+          retention-days: 14
+      - name: NuGet trusted login
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: LeonardoHessel
+      - name: Publish package
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+          PACKAGE_VERSION: ${{ steps.version.outputs.value }}
+        run: |
+          $package = "artifacts/packages/DLH.Controls.Wpf.$env:PACKAGE_VERSION.nupkg"
+          if (!(Test-Path -LiteralPath $package)) { throw 'Expected release package not found.' }
+          dotnet nuget push $package --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json
+          if ($LASTEXITCODE -ne 0) { throw 'NuGet publication failed.' }

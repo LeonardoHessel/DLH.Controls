@@ -1,3 +1,4 @@
+param([string]$PackageVersion)
 $ErrorActionPreference = 'Stop'
 $repo = Split-Path $PSScriptRoot -Parent
 Push-Location $repo
@@ -7,14 +8,19 @@ try {
         & dotnet @Arguments 2>&1 | Tee-Object -FilePath "artifacts/test-results/$Log.log"
         if ($LASTEXITCODE -ne 0) { throw "dotnet failed: $Log (exit $LASTEXITCODE)" }
     }
+    $versionArgs = @()
+    if ($PackageVersion) {
+        $checkedVersion = & "$PSScriptRoot/Get-ReleaseVersion.ps1" -Tag ("v" + $PackageVersion)
+        $versionArgs = @("-p:Version=$checkedVersion", "-p:PackageVersion=$checkedVersion")
+    }
     Invoke-DotNet 'restore' @('restore','DLH.Controls.sln')
-    Invoke-DotNet 'build' @('build','DLH.Controls.sln','-c','Release','--no-restore')
+    Invoke-DotNet 'build' (@('build','DLH.Controls.sln','-c','Release','--no-restore') + $versionArgs)
     $project = 'tests/DLH.Controls.Wpf.Tests'
     $preview = Join-Path $repo 'artifacts/test-results/preview.png'
     Invoke-DotNet 'integration' @('run','--project',$project,'-c','Release','--no-build','--',$preview)
     Invoke-DotNet 'settings' @('run','--project',$project,'-c','Release','--no-build','--','--settings-only')
     Invoke-DotNet 'configuration' @('run','--project',$project,'-c','Release','--no-build','--','--configuration-only')
-    Invoke-DotNet 'pack' @('pack','src/DLH.Controls.Wpf','-c','Release','--no-build','--no-restore','-o','artifacts/packages')
+    Invoke-DotNet 'pack' (@('pack','src/DLH.Controls.Wpf','-c','Release','--no-build','--no-restore','-o','artifacts/packages') + $versionArgs)
     $packages = @(Get-ChildItem artifacts/packages -Filter '*.nupkg')
     if ($packages.Count -eq 0) { throw 'No package generated.' }
     foreach ($package in $packages) {

@@ -1,3 +1,6 @@
+using System.IO;
+using System.Text.Json;
+using CustomTabControl.Controls;
 using System.Windows;
 using System.Windows.Media;
 
@@ -21,8 +24,33 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         DataContext = new DemoViewModel();
+        foreach (var tabs in new[] { SideTabs, SimpleTabs })
+        {
+            tabs.ShowCloseButtons = true;
+            tabs.CornerRadius = DynamicTabs.CornerRadius;
+            tabs.TabReordered += OnTabReordered;
+            tabs.TabClosing += ConfirmTabClosing;
+        }
+        Loaded += (_, _) => { if (File.Exists(LayoutPath)) ReadOrganization(false); };
         ApplyTheme();
     }
+
+    private void ToggleAllAnimation(object sender, RoutedEventArgs e)
+    {
+        if (SimpleTabs is null) return;
+        foreach (var tabs in new[] { DynamicTabs, SideTabs, SimpleTabs }) tabs.IsAnimationEnabled = ((System.Windows.Controls.CheckBox)sender).IsChecked == true;
+    }
+    private void ToggleAllClosing(object sender, RoutedEventArgs e)
+    {
+        if (SimpleTabs is null) return;
+        foreach (var tabs in new[] { DynamicTabs, SideTabs, SimpleTabs }) tabs.CanCloseTabs = ((System.Windows.Controls.CheckBox)sender).IsChecked == true;
+    }
+    private void ToggleAllPreview(object sender, RoutedEventArgs e)
+    {
+        if (SimpleTabs is null) return;
+        foreach (var tabs in new[] { DynamicTabs, SideTabs, SimpleTabs }) tabs.IsDragPreviewEnabled = ((System.Windows.Controls.CheckBox)sender).IsChecked == true;
+    }
+    private void OpenTabSettings(object sender, RoutedEventArgs e) => new TabSettingsWindow([DynamicTabs, SideTabs, SimpleTabs]) { Owner = this }.ShowDialog();
 
     private void ToggleTheme(object sender, RoutedEventArgs e)
     {
@@ -36,4 +64,55 @@ public partial class MainWindow : Window
             Resources[ColorKeys[i]] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ThemeColors[themeIndex][i]));
         ThemeName.Text = ThemeNames[themeIndex];
     }
-}
+    private static string LayoutPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CustomTabControl.Demo", "layout.json");
+
+    private void ConfirmTabClosing(object? sender, TabClosingEventArgs e)
+    {
+        if (e.Item is TabDocument { Notes.Length: > 0 } document)
+            e.Cancel = MessageBox.Show(this, $"A aba '{document.Header}' tem anotações. Fechar e descartar essas anotações?", "Fechar aba",
+                MessageBoxButton.OKCancel, MessageBoxImage.Question) != MessageBoxResult.OK;
+    }
+    private void CloseSelectedTab(object sender, RoutedEventArgs e)
+    {
+        if (DynamicTabs.SelectedItem is { } item) DynamicTabs.RequestCloseTab(item);
+    }
+    private void OnTabReordered(object? sender, TabReorderedEventArgs e) =>
+        InteractionStatus.Text = $"Aba movida da posição {e.OldIndex + 1} para {e.NewIndex + 1}.";
+
+    private void SaveOrganization(object sender, RoutedEventArgs e)
+    {
+        try
+        {
+            Directory.CreateDirectory(Path.GetDirectoryName(LayoutPath)!);
+            var temporary = LayoutPath + ".tmp";
+            using (var stream = File.Create(temporary)) JsonSerializer.Serialize(stream, new Dictionary<string, TabControlState> { ["Documentos"] = DynamicTabs.CaptureState(), ["Lateral"] = SideTabs.CaptureState(), ["Simples"] = SimpleTabs.CaptureState() });
+            File.Move(temporary, LayoutPath, true);
+            InteractionStatus.Text = "Ordem e seleção salvas. As anotações não fazem parte deste arquivo.";
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException)
+        { MessageBox.Show(this, error.Message, "Não foi possível salvar"); }
+    }
+    private void RestoreOrganization(object sender, RoutedEventArgs e) => ReadOrganization(true);
+    private void ReadOrganization(bool notifyIfMissing)
+    {
+        if (!File.Exists(LayoutPath))
+        {
+            if (notifyIfMissing) InteractionStatus.Text = "Nenhuma organização foi salva ainda.";
+            return;
+        }
+        try
+        {
+            using var stream = File.OpenRead(LayoutPath);
+            using var json = JsonDocument.Parse(stream);
+            if (json.RootElement.TryGetProperty("Documentos", out _))
+            {
+                var states = json.RootElement.Deserialize<Dictionary<string, TabControlState>>()!;
+                foreach (var pair in new[] { ("Documentos", DynamicTabs), ("Lateral", SideTabs), ("Simples", SimpleTabs) })
+                    if (states.TryGetValue(pair.Item1, out var state)) pair.Item2.RestoreState(state);
+            }
+            else DynamicTabs.RestoreState(json.RootElement.Deserialize<TabControlState>()!);
+            InteractionStatus.Text = "Ordem e seleção restauradas para as abas existentes.";
+        }
+        catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException or JsonException)
+        { InteractionStatus.Text = "Não foi possível restaurar a organização: " + error.Message; }
+    }}

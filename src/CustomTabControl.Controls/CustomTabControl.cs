@@ -31,6 +31,9 @@ public partial class CustomTabControl : TabControl
 
     public CustomTabControl()
     {
+        CommandBindings.Add(new CommandBinding(CloseTab,
+            (_, e) => { if (ResolveCloseItem(e.Parameter) is { } item) RequestCloseTab(item); e.Handled = true; },
+            (_, e) => { e.CanExecute = CanRequestClose(ResolveCloseItem(e.Parameter)); e.Handled = true; }));
         LayoutUpdated += (_, _) => UpdateSurface();
         Unloaded += (_, _) => CancelTabDrag();
     }
@@ -208,16 +211,3 @@ public class CustomTabItem : TabItem
     static CustomTabItem() => DefaultStyleKeyProperty.OverrideMetadata(
         typeof(CustomTabItem), new FrameworkPropertyMetadata(typeof(CustomTabItem)));
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

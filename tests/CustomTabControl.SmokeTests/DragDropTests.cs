@@ -45,6 +45,12 @@ internal static class DragDropTests
         public string Notes { get; set; } = "Texto preservado";
         public override string ToString() => Title;
     }
+    private sealed class TestCommand(Action<object?> execute, Predicate<object?>? canExecute = null) : ICommand
+    {
+        public bool CanExecute(object? parameter) => canExecute?.Invoke(parameter) ?? true;
+        public void Execute(object? parameter) => execute(parameter);
+        public event EventHandler? CanExecuteChanged { add { } remove { } }
+    }
     private sealed class Model : INotifyPropertyChanged
     {
         public ObservableCollection<Document> Items { get; } = new();
@@ -303,6 +309,138 @@ internal static class DragDropTests
             f.Start(); f.Update(f.Position(3, true)); f.Cancel();
             Assert(ReferenceEquals(root.RenderTransform, original) && root.Opacity == 0.7, "Existing header appearance was lost");
         });
+        Test("events/reorder origin, indices and no-op", () =>
+        {
+            using var f = new Fixture(); var events = new List<CustomTabControl.Controls.TabReorderedEventArgs>();
+            f.Tabs.TabReordered += (_, e) => events.Add(e);
+            var original = f.Model.Items[0];
+            f.Tabs.MoveTab(0, 1); f.Layout(); f.Tabs.MoveTab(1, 1);
+            Assert(events.Count == 1 && ReferenceEquals(events[0].Item, original) && events[0].OldIndex == 0 && events[0].NewIndex == 1 && events[0].Reason == CustomTabControl.Controls.TabReorderReason.Programmatic,
+                "Programmatic event payload is wrong");
+            f.Start(1); f.Drop(f.Position(3, true));
+            Assert(events.Count == 2 && events[1].Reason == CustomTabControl.Controls.TabReorderReason.Drag, "Drag did not emit one event");
+        });
+        Test("options/custom threshold and validation", () =>
+        {
+            using var f = new Fixture(); f.Tabs.MinimumDragDistance = 12;
+            var dpi = VisualTreeHelper.GetDpi(f.Tabs); Set(f.Tabs, "dragOrigin", new Point());
+            Assert(!(bool)Call(f.Tabs, "HasPassedDragThreshold", new Point(12 / dpi.DpiScaleX, 100))! &&
+                (bool)Call(f.Tabs, "HasPassedDragThreshold", new Point(13 / dpi.DpiScaleX, 100))!, "Custom threshold ignored");
+            var rejected = 0;
+            try { f.Tabs.DragPreviewOpacity = 2; } catch (ArgumentException) { rejected++; }
+            try { f.Tabs.MinimumDragDistance = -1; } catch (ArgumentException) { rejected++; }
+            try { f.Tabs.DragAnimationDuration = TimeSpan.FromMilliseconds(-1); } catch (ArgumentException) { rejected++; }
+            Assert(rejected == 3, "Invalid configuration accepted");
+        });
+        Test("options/disabled preview still reorders", () =>
+        {
+            using var f = new Fixture(); var original = f.Model.Items[0]; f.Tabs.IsDragPreviewEnabled = false; f.Start();
+            f.Update(f.Position(3, true)); Assert(!f.Layer.Children.OfType<Border>().Any() && f.Target == 3, "Preview switch broke target calculation");
+            f.Drop(f.Position(3, true)); f.Clean(); Assert(ReferenceEquals(f.Model.Items[3], original), "No-preview drag failed");
+        });
+        Test("options/instant animation and configurable opacity", () =>
+        {
+            using var f = new Fixture(); f.Tabs.IsAnimationEnabled = false; f.Tabs.DragPreviewOpacity = 0.6; f.Start();
+            f.Update(f.Position(3, true));
+            Assert(f.Layer.Children.OfType<Border>().Single().Opacity == 0.6 && f.HeaderRoot(1).RenderTransform.Value.OffsetX < 0, "Instant preview configuration failed");
+            Call(f.Tabs, "CancelTabDrag"); f.Clean();
+        });
+        Test("options/duration and changing settings during drag", () =>
+        {
+            using var f = new Fixture(); f.Tabs.DragAnimationDuration = TimeSpan.FromMilliseconds(40); f.Start(); f.Update(f.Position(3, true));
+            Pump(90); Assert(f.HeaderRoot(1).RenderTransform.Value.OffsetX < 0, "Short animation failed");
+            f.Tabs.DragPreviewOpacity = 0.4; f.Clean();
+            f.Tabs.DragAnimationDuration = TimeSpan.Zero; f.Start(); f.Update(f.Position(3, true)); Call(f.Tabs, "CancelTabDrag"); f.Clean();
+        });
+        Test("close/button visibility and routed command", () =>
+        {
+            using var f = new Fixture(); f.Tabs.ShowCloseButtons = true; f.Layout();
+            var close = (Button)f.Item(0).Template.FindName("CloseButton", f.Item(0));
+            Assert(close.Visibility == Visibility.Visible, "Close button was not displayed");
+            var item = f.Model.Items[0]; var closed = 0; f.Tabs.TabClosed += (_, e) => { if (ReferenceEquals(e.Item, item)) closed++; };
+            CustomTabControl.Controls.CustomTabControl.CloseTab.Execute(f.Item(0), f.Item(0)); f.Layout();
+            Assert(!f.Model.Items.Contains(item) && closed == 1, "Close command did not remove exactly once");
+        });
+        Test("close/cancellable event protects data", () =>
+        {
+            using var f = new Fixture(); var original = f.Model.Items[0]; var closed = 0;
+            f.Tabs.TabClosing += (_, e) => e.Cancel = true; f.Tabs.TabClosed += (_, _) => closed++;
+            Assert(!f.Tabs.RequestCloseTab(original) && f.Model.Items.Contains(original) && closed == 0, "Canceled close changed data");
+        });
+        Test("close/MVVM command owns removal", () =>
+        {
+            using var f = new Fixture(); var count = 0; var original = f.Model.Items[0];
+            f.Tabs.CloseTabCommand = new TestCommand(item => { count++; f.Model.Items.Remove((Document)item!); });
+            Assert(f.Tabs.RequestCloseTab(original) && count == 1 && f.Model.Items.Count == 3, "Command removal duplicated or failed");
+            f.Tabs.CloseTabCommand = new TestCommand(_ => throw new Exception("Should not execute"), _ => false);
+            Assert(!f.Tabs.RequestCloseTab(f.Model.Items[0]), "CanExecute veto ignored");
+        });
+        Test("close/protected tab and selected fallback", () =>
+        {
+            using var f = new Fixture(); f.Tabs.ShowCloseButtons = true;
+            Tabs.SetCanCloseTab(f.Item(0), false); f.Layout();
+            Assert(!f.Tabs.RequestCloseTab(f.Model.Items[0]) && ((Button)f.Item(0).Template.FindName("CloseButton", f.Item(0))).Visibility == Visibility.Collapsed, "Protected tab closed or shows close button");
+            Tabs.SetCanCloseTab(f.Item(0), true); f.Item(1).IsEnabled = false;
+            var next = f.Model.Items[2]; Assert(f.Tabs.RequestCloseTab(f.Model.Items[0]) && ReferenceEquals(f.Model.Selected, next), "Close did not skip disabled neighbor");
+        });
+        Test("close/nonselected, last item and disabled reordering", () =>
+        {
+            using var f = new Fixture(); f.Tabs.CanReorderTabs = false; var selected = f.Model.Selected;
+            Assert(f.Tabs.RequestCloseTab(f.Model.Items[2]) && ReferenceEquals(f.Model.Selected, selected), "Closing another tab lost selection");
+            while (f.Model.Items.Count > 0) Assert(f.Tabs.RequestCloseTab(f.Model.Items[0]), "Could not close final tabs");
+            Assert(f.Tabs.SelectedIndex == -1 && f.Model.Selected is null, "Final tab did not clear selection");
+        });
+        Test("state/JSON roundtrip and one restore event", () =>
+        {
+            using var f = new Fixture(); f.Tabs.ItemKeyPath = "Title";
+            f.Tabs.MoveTab(0, 3); f.Layout(); f.Model.Selected = f.Model.Items[2]; f.Layout();
+            var order = f.Model.Items.ToArray(); var selected = f.Model.Selected;
+            using var stream = new MemoryStream(); f.Tabs.SaveState(stream);
+            f.Tabs.MoveTab(3, 0); f.Model.Selected = f.Model.Items[0]; f.Layout();
+            var reorderEvents = 0; var restoredEvents = 0;
+            f.Tabs.TabReordered += (_, _) => reorderEvents++; f.Tabs.StateRestored += (_, _) => restoredEvents++;
+            f.Tabs.CanReorderTabs = false; stream.Position = 0; f.Tabs.LoadState(stream); f.Layout();
+            Assert(f.Model.Items.SequenceEqual(order) && ReferenceEquals(f.Model.Selected, selected) && restoredEvents == 1 && reorderEvents == 0, "State restore changed identity, selection or events");
+        });
+        Test("state/unknown keys and new tabs", () =>
+        {
+            using var f = new Fixture(); f.Tabs.ItemKeyPath = "Title"; var old = f.Model.Items.ToArray();
+            f.Tabs.RestoreState(new CustomTabControl.Controls.TabControlState { Order = ["missing", old[2].Title, old[0].Title], SelectedKey = "missing" });
+            Assert(f.Model.Items.SequenceEqual(new[] { old[2], old[0], old[1], old[3] }) && ReferenceEquals(f.Model.Selected, old[0]), "Missing or new keys handled incorrectly");
+        });
+        Test("state/invalid state is rejected before mutation", () =>
+        {
+            using var f = new Fixture(); f.Tabs.ItemKeyPath = "Title"; var old = f.Model.Items.ToArray(); var rejected = 0;
+            try { f.Tabs.RestoreState(new CustomTabControl.Controls.TabControlState { Version = 2 }); } catch (ArgumentException) { rejected++; }
+            try { f.Tabs.RestoreState(new CustomTabControl.Controls.TabControlState { Order = ["A", "A"] }); } catch (ArgumentException) { rejected++; }
+            try { f.Tabs.CaptureState(_ => "duplicate"); } catch (InvalidOperationException) { rejected++; }
+            using var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes("broken-json"));
+            try { f.Tabs.LoadState(stream); } catch (JsonException) { rejected++; }
+            Assert(rejected == 4 && f.Model.Items.SequenceEqual(old), "Invalid state partially mutated collection");
+        });
+        Test("state/explicit keys and no selection", () =>
+        {
+            var tabs = new Tabs(); var a = new TabItem { Header = "A" }; var b = new TabItem { Header = "B" };
+            Tabs.SetTabKey(a, "a"); Tabs.SetTabKey(b, "b"); tabs.Items.Add(a); tabs.Items.Add(b);
+            tabs.RestoreState(new CustomTabControl.Controls.TabControlState { Order = ["b", "a"], SelectedKey = null });
+            var state = tabs.CaptureState(); Assert(state.Order.SequenceEqual(new[] { "b", "a" }) && state.SelectedKey is null, "Explicit keys failed");
+        });
+        foreach (var side in new[] { Dock.Top, Dock.Bottom, Dock.Left, Dock.Right })
+        {
+            Test($"{side}/keyboard reorder", () =>
+            {
+                using var f = new Fixture(side); var first = f.Model.Items[0]; CustomTabControl.Controls.TabReorderedEventArgs? notification = null;
+                f.Tabs.TabReordered += (_, e) => notification = e;
+                var forward = f.Vertical ? Key.Down : Key.Right; var backward = f.Vertical ? Key.Up : Key.Left;
+                Assert((bool)Call(f.Tabs, "TryReorderFromKeyboard", forward, ModifierKeys.Control | ModifierKeys.Shift, f.Item(0))!, "Keyboard forward ignored"); f.Layout();
+                Assert(ReferenceEquals(f.Model.Items[1], first) && notification?.Reason == CustomTabControl.Controls.TabReorderReason.Keyboard, "Keyboard event or order incorrect");
+                Call(f.Tabs, "TryReorderFromKeyboard", backward, ModifierKeys.Control | ModifierKeys.Shift, f.Item(1)); f.Layout();
+                Assert(ReferenceEquals(f.Model.Items[0], first), "Keyboard backward failed");
+                Assert(!(bool)Call(f.Tabs, "TryReorderFromKeyboard", forward, ModifierKeys.None, f.Item(0))!, "Unmodified arrows were intercepted");
+                var editor = new TextBox(); f.Item(0).Content = editor; f.Layout();
+                Assert(!(bool)Call(f.Tabs, "TryReorderFromKeyboard", forward, ModifierKeys.Control | ModifierKeys.Shift, editor)!, "Editor shortcut intercepted");
+            });
+        }
         var failed = results.Count(r => !r.Passed);
         Console.WriteLine($"DRAG-DROP: {results.Count - failed}/{results.Count} passed; {failed} failed.");
         if (reportPath is not null)
@@ -311,5 +449,3 @@ internal static class DragDropTests
         return failed == 0;
     }
 }
-
-

@@ -46,11 +46,16 @@
         </StackPanel>
         <WrapPanel Grid.ColumnSpan="2" Grid.Row="1" Margin="0,0,0,20">
             <Button Content="+ Nova aba" Command="{Binding AddTabCommand}" />
-            <Button Content="Remover selecionada" Command="{Binding RemoveTabCommand}" />
-            <Button Content="Alternar tema" Click="ToggleTheme" />
+            <Button Content="Remover selecionada" Click="CloseSelectedTab" IsEnabled="{Binding CanCloseTabs, ElementName=DynamicTabs}" />
+            <Button Content="Configurações das abas" Click="OpenTabSettings" /><Button Content="Alternar tema" Click="ToggleTheme" />
+            <Button Content="Salvar organização" Click="SaveOrganization" />
+            <Button Content="Restaurar organização" Click="RestoreOrganization" />
+            <CheckBox Content="Animar" VerticalAlignment="Center" Margin="6,0,12,0" Foreground="{DynamicResource Tabs.Text}" IsChecked="{Binding IsAnimationEnabled, ElementName=DynamicTabs, Mode=OneWay}" Click="ToggleAllAnimation" />
+            <CheckBox Content="Permitir exclusão de abas" VerticalAlignment="Center" Margin="0,0,12,0" Foreground="{DynamicResource Tabs.Text}" IsChecked="{Binding CanCloseTabs, ElementName=DynamicTabs, Mode=OneWay}" Click="ToggleAllClosing" />
+            <CheckBox Content="Prévia" VerticalAlignment="Center" Margin="0,0,12,0" Foreground="{DynamicResource Tabs.Text}" IsChecked="{Binding IsDragPreviewEnabled, ElementName=DynamicTabs, Mode=OneWay}" Click="ToggleAllPreview" />
             <TextBlock x:Name="ThemeName" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="{DynamicResource Tabs.Muted}" />
         </WrapPanel>
-        <controls:CustomTabControl x:Name="DynamicTabs" Grid.Row="2" Margin="0,0,24,0" HeaderIndent="0" ItemsSource="{Binding Tabs}" SelectedItem="{Binding SelectedTab, Mode=TwoWay}">
+        <controls:CustomTabControl x:Name="DynamicTabs" ShowCloseButtons="True" ItemKeyPath="Id" CloseTabCommand="{Binding CloseTabCommand}" TabClosing="ConfirmTabClosing" TabReordered="OnTabReordered" Grid.Row="2" Margin="0,0,24,0" HeaderIndent="0" ItemsSource="{Binding Tabs}" SelectedItem="{Binding SelectedTab, Mode=TwoWay}">
             <controls:CustomTabControl.ItemContainerStyle>
                 <Style TargetType="TabItem" BasedOn="{StaticResource Tabs.ItemStyle}">
                     <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
@@ -97,7 +102,7 @@
                 <controls:CustomTabControl.ItemContainerStyle>
                     <Style TargetType="TabItem" BasedOn="{StaticResource Tabs.ItemStyle}"><Setter Property="Padding" Value="7" /></Style>
                 </controls:CustomTabControl.ItemContainerStyle>
-                <controls:CustomTabItem ToolTip="Licença" AutomationProperties.Name="Licença">
+                <controls:CustomTabItem controls:CustomTabControl.TabKey="Licença" ToolTip="Licença" AutomationProperties.Name="Licença">
                     <controls:CustomTabItem.Header><Path Width="28" Height="28" Stretch="Uniform" Stroke="{DynamicResource Demo.Accent}" StrokeThickness="1.8" StrokeLineJoin="Round" Data="M4,2 H16 L21,7 V22 H4 Z M16,2 V7 H21 M8,12 H17 M8,16 H17" /></controls:CustomTabItem.Header>
                     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
                         <TextBlock Text="Licença" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
@@ -107,7 +112,7 @@
                         <TextBlock Text="Fantasia" /><TextBox Style="{StaticResource SideField}" Text="aplicaÃ§Ã£o de demonstraÃ§Ã£o" />
                     </StackPanel></ScrollViewer>
                 </controls:CustomTabItem>
-                <controls:CustomTabItem ToolTip="Banco de dados" AutomationProperties.Name="Banco de dados">
+                <controls:CustomTabItem controls:CustomTabControl.TabKey="Banco de dados" ToolTip="Banco de dados" AutomationProperties.Name="Banco de dados">
                     <controls:CustomTabItem.Header><Path Width="28" Height="28" Stretch="Uniform" Stroke="{DynamicResource Demo.Accent}" StrokeThickness="1.8" StrokeLineJoin="Round" Data="M3,5 C3,1 21,1 21,5 V19 C21,23 3,23 3,19 Z M3,5 C3,9 21,9 21,5 M3,12 C3,16 21,16 21,12" /></controls:CustomTabItem.Header>
                     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
                         <TextBlock Text="Banco de dados" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
@@ -117,14 +122,14 @@
                         <TextBlock Text="Dados ilustrativos; nenhuma conexão é realizada." TextWrapping="Wrap" Foreground="{DynamicResource Tabs.Muted}" />
                     </StackPanel></ScrollViewer>
                 </controls:CustomTabItem>
-                <controls:CustomTabItem ToolTip="Procedimentos" AutomationProperties.Name="Procedimentos">
+                <controls:CustomTabItem controls:CustomTabControl.TabKey="Procedimentos" ToolTip="Procedimentos" AutomationProperties.Name="Procedimentos">
                     <controls:CustomTabItem.Header><Path Width="28" Height="28" Stretch="Uniform" Stroke="{DynamicResource Demo.Accent}" StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Data="M4,3 H20 V21 H4 Z M8,8 L10,10 L14,6 M8,15 H17 M8,18 H15" /></controls:CustomTabItem.Header>
                     <StackPanel><TextBlock Text="Procedimentos" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
                         <TextBox Style="{StaticResource SideField}" AcceptsReturn="True" MinHeight="140" Text="Consultar terminal&#10;Validar produto&#10;Criar comanda&#10;Adicionar item" />
                         <TextBlock Text="Arraste os ícones para reorganizar as páginas." TextWrapping="Wrap" Foreground="{DynamicResource Tabs.Muted}" />
                     </StackPanel>
                 </controls:CustomTabItem>
-                <controls:CustomTabItem ToolTip="Informações" AutomationProperties.Name="Informações">
+                <controls:CustomTabItem controls:CustomTabControl.TabKey="Informações" ToolTip="Informações" AutomationProperties.Name="Informações">
                     <controls:CustomTabItem.Header><Path Width="28" Height="28" Stretch="Uniform" Stroke="{DynamicResource Demo.Accent}" StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M12,2 A10,10 0 1 1 11.99,2 M12,10 V18 M12,6 V7" /></controls:CustomTabItem.Header>
                     <StackPanel><TextBlock Text="Informações" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
                         <TextBlock Text="Painel de demonstraÃ§Ã£o" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,12" />
@@ -134,18 +139,11 @@
                 </controls:CustomTabItem>
             </controls:CustomTabControl>
         </Grid>
-        <TextBlock Grid.ColumnSpan="2" Grid.Row="3" Text="ITENS EM XAML · use Tab para focar e as setas para navegar" Margin="0,22,0,12" FontSize="11" Foreground="{DynamicResource Tabs.Muted}" />
-        <controls:CustomTabControl Grid.ColumnSpan="2" Grid.Row="4" Padding="18" HeaderIndent="0" TabSpacing="0" CornerRadius="8" SelectedIndex="0">
-            <controls:CustomTabItem Header="Simples"><TextBlock Text="Primeira aba rente à borda esquerda: HeaderIndent=&quot;0&quot;." TextWrapping="Wrap" /></controls:CustomTabItem>
-            <TabItem Header="TabItem padrão"><TextBlock Text="Também aceita o TabItem nativo do WPF." /></TabItem>
-            <controls:CustomTabItem Header="Desabilitada" IsEnabled="False" />
+        <TextBlock x:Name="InteractionStatus" Grid.ColumnSpan="2" Grid.Row="3" Text="Foque uma aba e use Ctrl+Shift+setas para reorganizar." Margin="0,22,0,12" FontSize="11" Foreground="{DynamicResource Tabs.Muted}" />
+        <controls:CustomTabControl x:Name="SimpleTabs" Grid.ColumnSpan="2" Grid.Row="4" Padding="18" HeaderIndent="0" TabSpacing="0" CornerRadius="8" SelectedIndex="0">
+            <controls:CustomTabItem controls:CustomTabControl.TabKey="Simples" Header="Simples"><TextBlock Text="Primeira aba rente à borda esquerda: HeaderIndent=&quot;0&quot;." TextWrapping="Wrap" /></controls:CustomTabItem>
+            <TabItem controls:CustomTabControl.TabKey="Padrao" Header="TabItem padrão"><TextBlock Text="Também aceita o TabItem nativo do WPF." /></TabItem>
+            <controls:CustomTabItem controls:CustomTabControl.TabKey="Desabilitada" Header="Desabilitada" IsEnabled="False" />
         </controls:CustomTabControl>
     </Grid>
 </Window>
-
-
-
-
-
-
-

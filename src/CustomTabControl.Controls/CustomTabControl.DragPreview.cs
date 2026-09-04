@@ -23,7 +23,7 @@ public partial class CustomTabControl
     private void BeginDragPreview()
     {
         ResetDragPreview();
-        if (dragCandidate is null || GetTemplateChild("PART_DragPreviewLayer") is not Canvas layer) return;
+        if (!IsDragPreviewEnabled || dragCandidate is null || GetTemplateChild("PART_DragPreviewLayer") is not Canvas layer) return;
         previewLayer = layer;
         for (var i = 0; i < Items.Count; i++)
         {
@@ -47,14 +47,14 @@ public partial class CustomTabControl
         {
             Width = width, Height = height, CornerRadius = CornerRadius, Background = Background,
             BorderBrush = BorderBrush, BorderThickness = new Thickness(1), IsHitTestVisible = false,
-            Opacity = 0.94, Child = new Image { Source = snapshot, Stretch = Stretch.Fill },
+            Opacity = DragPreviewOpacity, Child = new Image { Source = snapshot, Stretch = Stretch.Fill },
             Effect = new DropShadowEffect { BlurRadius = 10, ShadowDepth = 3, Opacity = 0.3 }
         };
         layer.Children.Add(dragPreview);
         var bounds = dragCandidate.TransformToVisual(this).TransformBounds(new Rect(dragCandidate.RenderSize));
         grabOffset = new Point(Math.Clamp(dragOrigin.X - bounds.Left, 0, width), Math.Clamp(dragOrigin.Y - bounds.Top, 0, height));
 
-        source.Root.BeginAnimation(OpacityProperty, new DoubleAnimation(0, TimeSpan.FromMilliseconds(100)));
+        source.Root.BeginAnimation(OpacityProperty, new DoubleAnimation(0, IsAnimationEnabled ? DragAnimationDuration : TimeSpan.Zero));
         hoveredItem = null;
         UpdateSurface();
     }
@@ -84,7 +84,13 @@ public partial class CustomTabControl
             var shift = target >= 0 && index != sourceIndex
                 ? sourceIndex < target && index > sourceIndex && index <= target ? -width
                 : target < sourceIndex && index >= target && index < sourceIndex ? width : 0 : 0;
-            motion.Offset.BeginAnimation(PreviewAxis, new DoubleAnimation(shift, TimeSpan.FromMilliseconds(180))
+            if (!IsAnimationEnabled || DragAnimationDuration == TimeSpan.Zero)
+            {
+                motion.Offset.BeginAnimation(PreviewAxis, null);
+                motion.Offset.SetValue(PreviewAxis, shift);
+                continue;
+            }
+            motion.Offset.BeginAnimation(PreviewAxis, new DoubleAnimation(shift, DragAnimationDuration)
             { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut } });
         }
     }
@@ -93,11 +99,11 @@ public partial class CustomTabControl
     {
         if (dragPreview is not null) previewLayer?.Children.Remove(dragPreview);
         dragPreview = null;
-        if (committingDrop) { ResetDragPreview(); return; }
+        if (committingDrop || !IsAnimationEnabled || DragAnimationDuration == TimeSpan.Zero) { ResetDragPreview(); return; }
         foreach (var (tab, motion) in headerMotions.ToArray())
         {
             motion.Root.BeginAnimation(OpacityProperty, null);
-            var animation = new DoubleAnimation(0, TimeSpan.FromMilliseconds(180))
+            var animation = new DoubleAnimation(0, DragAnimationDuration)
             { EasingFunction = new CubicEase { EasingMode = EasingMode.EaseOut } };
             animation.Completed += (_, _) =>
             {
@@ -131,8 +137,3 @@ public partial class CustomTabControl
         previewTarget = -2;
     }
 }
-
-
-
-
-

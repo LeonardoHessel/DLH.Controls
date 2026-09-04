@@ -12,7 +12,7 @@ dotnet run --project tests/CustomTabControl.SmokeTests -c Release -- --drag-only
 dotnet run --project tests/CustomTabControl.SmokeTests -c Release
 ```
 
-O primeiro comando executa somente os 43 cenários de drag and drop. O segundo salva um relatório JSON com resultado e duração por cenário. O terceiro executa também a suíte visual. O processo retorna código 1 se qualquer cenário falhar.
+O primeiro comando executa somente os 61 cenários de drag and drop. O segundo salva um relatório JSON com resultado e duração por cenário. O terceiro executa também a suíte visual. O processo retorna código 1 se qualquer cenário falhar.
 
 ## Cobertura automatizada
 
@@ -49,3 +49,9 @@ Antes de uma versão de distribuição, conferir na demonstração:
 Há dois cenários adicionais para cada posição: redimensionar três vezes durante o arraste sem perder o alinhamento da prévia; e trocar a posição da faixa durante a animação. Trocar a posição cancela o arraste, preserva a coleção e permite iniciar uma nova operação imediatamente.
 
 Esses testes revelaram e corrigiram duas falhas: a coordenada transversal da prévia ficava presa ao layout antigo, e a alteração de TabStripPlacement não encerrava a sessão de arraste. A prévia agora usa o viewport atual, e a mudança de posição cancela a sessão e invalida o layout imediatamente.
+
+## Recursos adicionais
+
+A suíte também cobre evento de reordenação (origem e índices), ausência de evento em no-op, propriedades da prévia/animação, configuração inválida, botão e comando de fechar, cancelamento, proteção de abas, seleção após fechamento, roundtrip JSON, chaves inválidas/ausentes/novas e reordenação por teclado nos quatro lados. Total atual: 61 cenários.
+
+O modo `--drag-only` foi preservado por compatibilidade e agora inclui esses testes comportamentais relacionados às abas.

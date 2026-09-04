@@ -31,9 +31,9 @@ public partial class CustomTabControl
     private DispatcherTimer? dragTimer;
     private Window? dragWindow;
 
-    private IList? ReorderableList()
+    private IList? ReorderableList() => CanReorderTabs ? EditableList() : null;
+    private IList? EditableList()
     {
-        if (!CanReorderTabs) return null;
         if (ItemsSource is null) return Items;
         if (ItemsSource is not IList list || list.IsReadOnly || list.IsFixedSize) return null;
         var view = CollectionViewSource.GetDefaultView(ItemsSource);
@@ -44,7 +44,9 @@ public partial class CustomTabControl
     }
 
     /// <summary>Moves an item to a final zero-based index, preserving selection. Returns false for unsupported sources.</summary>
-    public bool MoveTab(int oldIndex, int newIndex)
+    public bool MoveTab(int oldIndex, int newIndex) => MoveTabCore(oldIndex, newIndex, TabReorderReason.Programmatic);
+
+    private bool MoveTabCore(int oldIndex, int newIndex, TabReorderReason reason)
     {
         var list = ReorderableList();
         if (list is null || oldIndex < 0 || newIndex < 0 || oldIndex >= list.Count || newIndex >= list.Count) return false;
@@ -53,6 +55,16 @@ public partial class CustomTabControl
         var selected = SelectedItem;
         var item = list[oldIndex];
         // ObservableCollection.Move emits a single Move notification, preserving MVVM identity.
+        MoveListItem(list, oldIndex, newIndex);
+        SetCurrentValue(SelectedItemProperty, selected);
+        RevealSelectedTab();
+        TabReordered?.Invoke(this, new TabReorderedEventArgs(item!, oldIndex, newIndex, reason));
+        return true;
+    }
+
+    private void MoveListItem(IList list, int oldIndex, int newIndex)
+    {
+        var item = list[oldIndex];
         var type = list.GetType();
         while (type is not null && (!type.IsGenericType || type.GetGenericTypeDefinition() != typeof(ObservableCollection<>))) type = type.BaseType;
         if (type is not null) type.GetMethod("Move")!.Invoke(list, new object[] { oldIndex, newIndex });
@@ -62,9 +74,6 @@ public partial class CustomTabControl
             list.Insert(newIndex, item);
             if (ItemsSource is not null && list is not System.Collections.Specialized.INotifyCollectionChanged) Items.Refresh();
         }
-        SetCurrentValue(SelectedItemProperty, selected);
-        RevealSelectedTab();
-        return true;
     }
 
     private Rect HeaderViewport()
@@ -118,7 +127,7 @@ public partial class CustomTabControl
         var dpi = VisualTreeHelper.GetDpi(this);
         var x = delta.X * dpi.DpiScaleX;
         var y = delta.Y * dpi.DpiScaleY;
-        return Math.Abs(IsVerticalTabStrip ? y : x) > 5;
+        return Math.Abs(IsVerticalTabStrip ? y : x) > MinimumDragDistance;
     }
 
     protected override void OnQueryCursor(QueryCursorEventArgs e)
@@ -229,12 +238,13 @@ public partial class CustomTabControl
             CancelTabDrag();
             committingDrop = false;
         }
-        if (target >= 0) MoveTab(oldIndex, target);
+        if (target >= 0) MoveTabCore(oldIndex, target, TabReorderReason.Drag);
     }
 
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
         if (e.Key == Key.Escape && dragging) { CancelTabDrag(); e.Handled = true; return; }
+        if (TryReorderFromKeyboard(e.Key, Keyboard.Modifiers, e.OriginalSource as DependencyObject)) { e.Handled = true; return; }
         base.OnPreviewKeyDown(e);
     }
 
@@ -262,16 +272,3 @@ public partial class CustomTabControl
         if (hadPointerFeedback) Mouse.UpdateCursor();
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-

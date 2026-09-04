@@ -1,138 +1,53 @@
-# CustomTabControl
+# CustomTabControl · WPF / .NET 10
 
-Controle de abas reutilizável para WPF / .NET 10. O visual conecta a aba selecionada ao painel, com cantos arredondados e sombra discreta.
+Controle reutilizável de abas com contorno unificado, cantos uniformes, sombra configurável, temas e reordenação animada. A solução separa a biblioteca, a demonstração e os testes.
 
 ## Executar
 
-Abra `CustomTabControl.sln` no Visual Studio e defina `CustomTabControl.Demo` como projeto de inicialização, ou execute:
+Abra `CustomTabControl.sln` e defina `CustomTabControl.Demo` como projeto de inicialização, ou execute:
 
 ```powershell
 dotnet run --project src/CustomTabControl.Demo
 ```
 
-## Estrutura
+A demonstração possui exemplos horizontais e laterais (esquerda/direita), ícones fornecidos no ZIP, três temas e botões para salvar/restaurar a organização. Os dados são ilustrativos; nenhuma conexão externa é realizada.
 
-- `src/CustomTabControl.Controls`: controles, conversor de espaçamento e templates em `Themes/Generic.xaml`.
-- `src/CustomTabControl.Demo`: exemplos em XAML e MVVM, documentos dinâmicos e alternância de tema.
-- `tests/CustomTabControl.SmokeTests`: verificações executáveis de carregamento e comportamento, sem pacotes externos.
+## Uso básico
 
-## Usar em outro projeto WPF
-
-Adicione uma referência ao projeto Controls e declare:
+Adicione uma referência à biblioteca e declare:
 
 ```xml
 xmlns:controls="clr-namespace:CustomTabControl.Controls;assembly=CustomTabControl.Controls"
 ```
 
 ```xml
-<controls:CustomTabControl CornerRadius="12" TabSpacing="4" Padding="24">
-    <controls:CustomTabItem Header="Primeira">
+<controls:CustomTabControl
+    TabStripPlacement="Top"
+    HeaderIndent="0"
+    CornerRadius="12"
+    TabSpacing="0">
+    <controls:CustomTabItem Header="Primeira" controls:CustomTabControl.TabKey="first">
         <TextBlock Text="Conteúdo livre" />
     </controls:CustomTabItem>
-    <controls:CustomTabItem Header="Segunda" />
+    <controls:CustomTabItem Header="Segunda" controls:CustomTabControl.TabKey="second" />
 </controls:CustomTabControl>
 ```
 
-O dicionário padrão é carregado automaticamente pelo WPF. `TabItem` nativo também é aceito. Com `ItemsSource`, são gerados contêineres `CustomTabItem`.
+O estilo é carregado automaticamente de `Themes/Generic.xaml`. Itens `TabItem` nativos são aceitos; com `ItemsSource`, o controle gera `CustomTabItem`. Use `ItemTemplate` para os cabeçalhos, `ContentTemplate` para as páginas e `SelectedItem` com binding de duas vias.
 
-## MVVM
+Dados editáveis devem permanecer no modelo. O controle não mantém um cache de árvores visuais para cada item de dados.
 
-Use `ItemsSource`, `SelectedItem` com binding de duas vias, `ItemTemplate` para os cabeçalhos e `ContentTemplate` para o conteúdo. `HeaderTemplate` também funciona em itens explícitos. Veja a demonstração para um exemplo completo com `ObservableCollection` e comandos.
+## Contorno e aparência
 
-O conteúdo visual segue o ciclo de vida padrão do TabControl: não há cache de uma árvore visual por aba. Armazene os dados editáveis no modelo, como no exemplo de anotações, para preservá-los ao alternar abas.
+`CornerRadius="12"` define um único raio para o corpo, a aba ativa e as ligações côncavas. Valores não uniformes, negativos ou não finitos são rejeitados. Se não houver espaço, o contorno reduz suas curvas para um mesmo raio efetivo. `0` remove as curvas. Quando a aba fica rente à borda, a lateral segue reta.
 
-## Aparência
+`HeaderIndent` define o recuo inicial; `0` alinha a primeira aba à borda e o padrão `NaN` calcula o espaço pelo raio. `TabSpacing` é zero por padrão e acompanha o eixo da faixa.
 
-Propriedades: `CornerRadius` controla o painel; `TabSpacing` define o espaço entre cabeçalhos, em unidades independentes de dispositivo. Valores negativos ou não finitos são rejeitados. `Padding`, `Background`, `Foreground`, `BorderBrush`, `BorderThickness` e fontes usam as propriedades WPF existentes.
+O fundo, a borda e a sombra são desenhados em um único contorno. `BorderThickness` usa seu maior componente como espessura do traço; prefira valores uniformes. `Padding`, fontes, `Background` e `BorderBrush` seguem as propriedades WPF.
 
-Recursos substituíveis no escopo do controle, janela ou aplicativo:
+Os recursos `Tabs.Surface`, `Tabs.Hover`, `Tabs.Text`, `Tabs.Muted`, `Tabs.Edge`, `Tabs.Focus` e `Tabs.HeaderPadding` podem ser substituídos. O hover usa uma silhueta contínua atrás da superfície ativa. Para derivar um estilo de `Tabs.ItemStyle`, mescle explicitamente `/CustomTabControl.Controls;component/Themes/Generic.xaml`.
 
-| Chave | Uso |
-| --- | --- |
-| `Tabs.Surface` | Fundo do painel e aba ativa |
-| `Tabs.Hover` | Silhueta contínua da aba sob o mouse, atrás da superfície selecionada |
-
-| `Tabs.Text` | Texto ativo |
-| `Tabs.Muted` | Texto inativo |
-| `Tabs.Edge` | Borda |
-| `Tabs.Focus` | Indicador de foco |
-| `Tabs.HeaderPadding` | Espaçamento interno do cabeçalho (`Thickness`) |
-
-Os pincéis usam `DynamicResource`, permitindo trocar o tema durante a execução. Para derivar um estilo com `BasedOn="{StaticResource Tabs.ItemStyle}"`, mescle explicitamente `/CustomTabControl.Controls;component/Themes/Generic.xaml` nos recursos, como faz a demonstração.
-
-## Comportamento e limites
-
-- O template orienta a faixa conforme `TabStripPlacement`. O modelo lateral demonstra Left e Right.
-- Cabeçalhos em uma linha com barra de rolagem horizontal automática quando necessário.
-- A mudança de seleção traz o cabeçalho selecionado para a área visível.
-- Estados normal, mouse sobre, selecionado, foco pelo teclado e desabilitado.
-- Navegação herdada do TabControl: Tab, setas e Ctrl+Tab. A validação interativa com teclado e leitor de tela ainda deve ser feita no ambiente de uso.
-- A remoção da demonstração é um comando externo; não há botão de fechar dentro das abas ou janelas destacáveis.
-- Escala e medidas seguem as unidades independentes de dispositivo do WPF; a revisão em monitores com diferentes DPIs ainda deve ser feita no ambiente de uso.
-
-## Validar
-
-```powershell
-dotnet build CustomTabControl.sln -c Release
-dotnet run --project tests/CustomTabControl.SmokeTests -c Release
-```
-
-Os testes verificam criação de contêineres, templates, itens desabilitados, adição/remoção, seleção vinculada, rolagem, dados preservados no modelo, troca de tema, layout compacto e coleção vazia. Um caminho PNG opcional após `--` salva uma prévia renderizada do tema escuro.
-
-## Superfície unificada
-
-A superfície é desenhada por um único `Path` (`PART_Surface`). Um único contorno fechado percorre o corpo e a parte visível da aba selecionada, incluindo arcos côncavos na ligação entre eles. O valor uniforme de `CornerRadius` define os cantos e as curvas de ligação. Se faltar espaço, todas as curvas do contorno usam o mesmo raio efetivo reduzido. Preenchimento, contorno e sombra são aplicados somente à geometria resultante; a aba selecionada tem fundo transparente e o corpo funciona apenas como contêiner de layout. A forma acompanha seleção, redimensionamento e rolagem.
-
-A borda percorre o contorno externo inteiro. Como esse contorno é contínuo, a espessura do traço usa o maior componente de `BorderThickness`; prefira valores uniformes, como `1` ou `2`. A barra horizontal aparece acima dos cabeçalhos para manter o contato da aba ativa com o corpo.
-
-Os testes geométricos verificam que existe um único contorno fechado e nenhuma borda interna na junção, inclusive após trocar a seleção. Também verificam os arcos de ligação com diferentes valores de CornerRadius, incluindo zero.
-
-
-## Primeira aba sem recuo
-
-Defina `HeaderIndent="0"` no controle para alinhar a primeira aba à borda esquerda do corpo. Valores positivos definem a distância em unidades WPF. O padrão `NaN` calcula o espaço automaticamente a partir do raio.
-
-Com a aba ativa rente à esquerda, a lateral segue contínua, sem curva côncava esquerda; o canto superior arredondado pertence à aba. A curva direita permanece. Recuos pequenos reduzem uniformemente o raio efetivo do contorno para caber no espaço disponível. A demonstração inferior usa recuo zero.
-
-
-O espaçamento entre abas agora é zero por padrão (TabSpacing). O destaque do mouse usa o mesmo construtor de contorno com curvas da superfície ativa e é desenhado atrás dela. Os cabeçalhos não desenham mais um retângulo de fundo próprio. A demonstração mantém HeaderIndent em zero.
-
-
-## Reorganizar abas
-
-Arraste um cabeçalho com o botão esquerdo e solte na posição indicada pela linha de destaque. O movimento só começa após deslocar o ponteiro mais de 5 pixels físicos a partir do clique, considerando apenas o eixo da faixa de abas. Nas extremidades da faixa, a rolagem horizontal continua enquanto o ponteiro permanece ali. Esc, perda de captura ou soltar além dos limites do eixo de reordenação cancela sem alterar a ordem. Durante o arraste, o movimento perpendicular é ignorado: nas abas superiores, mover o mouse para cima ou para baixo mantém o destino correspondente à posição horizontal.
-
-`CanReorderTabs` é `true` por padrão; configure `false` para desativar. Também é possível chamar `MoveTab(indiceAtual, indiceFinal)`, que retorna se a operação foi aceita. A reordenação fica restrita ao mesmo controle e não parte de abas desabilitadas. A seleção e os objetos de conteúdo são preservados; clicar em outra aba antes de arrastar mantém o comportamento normal de seleção.
-
-Com MVVM, use `ObservableCollection<T>`: a operação chama `Move`, atualizando a origem com uma única notificação. Itens explícitos e listas mutáveis também são aceitos. Fontes somente leitura, arrays e visões ordenadas, filtradas ou agrupadas não permitem reordenação. Não há transferência entre controles ou janelas.
-
-Os testes cobrem movimentos nos dois sentidos, atualização da origem, seleção, dados editados, itens explícitos, listas comuns, fontes incompatíveis, indicador de destino, cancelamento e rolagem nas extremidades. A interação física de arrastar com o mouse deve ser conferida na demonstração.
-
-### Cursor ao pressionar a aba
-
-`TabDragCursor` define o cursor mostrado somente durante o arraste, após deslocar o ponteiro mais de 5 pixels físicos com o botão pressionado. Cliques e movimentos até 5 pixels mantêm o cursor normal. O padrão é `ScrollWE` (rolagem horizontal nativa). Ao soltar ou cancelar, o cursor normal volta sem alterar a propriedade `Cursor` do controle.
-
-```xml
-<controls:CustomTabControl TabDragCursor="ScrollWE" />
-```
-
-Também aceita outros cursores WPF, como `Arrow`, `Cross` ou `SizeAll`, e instâncias de `Cursor` fornecidas via código ou binding. Apenas passar o mouse não ativa esse cursor.
-
-
-
-
-## Sombra configurável
-
-Todas as propriedades aceitam XAML, estilos e bindings e atualizam o efeito em tempo de execução. O efeito continua restrito à superfície unificada, sem afetar os textos e campos.
-
-| Propriedade | Padrão | Significado |
-| --- | --- | --- |
-| `IsShadowEnabled` | `True` | Liga/desliga a sombra |
-| `ShadowColor` | `#494949` | Cor |
-| `ShadowOpacity` | `0.5` | Opacidade entre 0 e 1 |
-| `ShadowBlurRadius` | `10` | Raio de desfoque, não negativo |
-| `ShadowDepth` | `0` | Distância, não negativa |
-| `ShadowDirection` | `315` | Direção em graus; não altera o resultado quando a distância é zero |
+## Sombra
 
 ```xml
 <controls:CustomTabControl
@@ -144,37 +59,97 @@ Todas as propriedades aceitam XAML, estilos e bindings e atualizam o efeito em t
     ShadowDirection="315" />
 ```
 
-`IsShadowEnabled="False"` remove o efeito, preservando a configuração para quando for reativado. Spread permanece zero; não há expansão adicional do contorno.
+Esses são os padrões. Opacidade varia de 0 a 1; desfoque e distância são não negativos. Desativar remove o efeito sem perder a configuração. Distância zero deixa a sombra centralizada. Spread permanece zero.
 
-O botão Alternar tema percorre Escuro → Claro → Cinza e laranja → Escuro. O terceiro tema usa cinzas neutros e detalhes laranja inspirados na referência. A troca mantém a aba selecionada e os dados dos documentos.
-
-
-
-## Prévia animada de reordenação
-
-Após ultrapassar 5 pixels, uma cópia visual do cabeçalho acompanha o ponteiro e os demais cabeçalhos deslizam em 180 ms para abrir espaço. O cabeçalho original fica oculto durante a prévia, evitando texto duplicado. O painel de conteúdo permanece parado. A prévia é limitada à faixa de cabeçalhos e move-se somente no eixo das abas. Top/Bottom fixam a coordenada vertical; Left/Right fixam a horizontal. O template e o cálculo de destino agora acompanham a orientação da faixa.
-
-O cálculo do destino usa posições de layout, não as posições animadas, para evitar oscilações. Nenhum item da coleção é movido até soltar. Cancelar remove a prévia e anima os cabeçalhos de volta; concluir aplica a ordem e remove os deslocamentos temporários.
-
-
-
-## Modelo lateral com ícones
-
-A demonstração inclui um terceiro controle com quatro páginas: Licença, Banco de dados, Procedimentos e Informações. Os PNGs em Assets foram fornecidos no arquivo de referÃªncia e estão incorporados como recursos da aplicação. O seletor Esquerda/Direita alterna a posição da faixa. Os dados exibidos são exemplos locais.
-
-Nesse modelo, a prévia e os deslocamentos animados usam o eixo vertical, o cursor é ScrollNS, o indicador é horizontal e a rolagem nas extremidades é vertical. A posição horizontal do ponteiro é ignorada ao calcular o destino. O tema Cinza e laranja aproxima o visual da referência.
-
-## Arredondamento uniforme
-
-Use `CornerRadius="12"` para configurar um único raio para o corpo, as abas, as ligações côncavas, o destaque do mouse e a prévia de arraste. `0` deixa o contorno reto. Valores negativos, não finitos ou quatro raios diferentes são rejeitados para preservar a uniformidade.
+## Reordenação e animação
 
 ```xml
-<controls:CustomTabControl CornerRadius="16" />
+<controls:CustomTabControl
+    CanReorderTabs="True"
+    MinimumDragDistance="5"
+    IsDragPreviewEnabled="True"
+    IsAnimationEnabled="True"
+    DragAnimationDuration="0:0:0.180"
+    DragPreviewOpacity="0.94"
+    TabDragCursor="ScrollWE" />
 ```
 
-Nas dimensões normais, o raio aplicado é o informado. Se não houver espaço, o contorno reduz todas as suas curvas para um mesmo raio efetivo. Quando a aba está rente à borda, a ligação desse lado é reta, mantendo a lateral contínua.
+O limiar é medido em pixels físicos, somente no eixo da faixa, e precisa ser ultrapassado. O cursor aparece apenas durante o arraste. Para abas laterais, a demonstração usa `ScrollNS`.
 
-## Suíte consolidada de drag and drop
+A prévia acompanha o eixo das abas, os vizinhos abrem espaço e a coleção só muda ao soltar. O movimento perpendicular é ignorado. Nas extremidades, há rolagem automática. Esc, perda de captura, desativação da janela ou soltura além dos limites do eixo cancelam a operação. Mudar a posição da faixa durante o arraste também cancela; redimensionar atualiza o alinhamento da prévia.
 
-Os testes de arraste estão separados dos testes visuais. Execute `dotnet run --project tests/CustomTabControl.SmokeTests -c Release -- --drag-only` para rodar os 43 cenários independentes. Acrescente `--report resultado.json` para gerar o relatório. O comando sem argumentos executa a validação completa. Consulte `tests/CustomTabControl.SmokeTests/README.md` para cobertura e limites da simulação.
+`IsDragPreviewEnabled="False"` mantém o destino e a reordenação sem prévia flutuante. `IsAnimationEnabled="False"` ou duração zero faz os deslocamentos instantaneamente. Alterar opções durante um arraste cancela a sessão de forma limpa. A duração aceita de zero a dez segundos.
 
+Use `MoveTab(indiceAtual, indiceFinal)` para reordenar por código. Retorna `false` quando a operação não é suportada. `ObservableCollection<T>` recebe uma única notificação `Move`. Listas mutáveis e itens explícitos são aceitos. Arrays, fontes somente leitura e visões filtradas, ordenadas ou agrupadas não são reorganizados. Não há transferência entre controles ou janelas.
+
+### Evento de reordenação
+
+```csharp
+tabs.TabReordered += (_, e) =>
+{
+    // e.Item, e.OldIndex, e.NewIndex e e.Reason
+    // Reason: Programmatic, Drag ou Keyboard.
+};
+```
+
+O evento ocorre após uma mudança efetiva, uma vez por operação; cancelamentos e movimentos para o mesmo índice não o disparam. A restauração em lote emite somente `StateRestored` ao final.
+
+## Teclado
+
+Com o cabeçalho focado, use **Ctrl+Shift+Esquerda/Direita** para reorganizar abas horizontais ou **Ctrl+Shift+Cima/Baixo** nas laterais. O foco acompanha o item movido. As teclas não são interceptadas em editores ou controles interativos dentro da página/cabeçalho. O comportamento padrão de Tab, setas e Ctrl+Tab permanece disponível.
+
+## Fechar abas
+
+`ShowCloseButtons` é `false` por padrão. Ative para mostrar os botões de fechamento:
+
+```xml
+<controls:CustomTabControl ShowCloseButtons="True"
+                          CloseTabCommand="{Binding CloseDocumentCommand}"
+                          TabClosing="OnTabClosing" />
+```
+
+`CloseTabCommand` recebe o item da coleção como parâmetro. Seu `CanExecute` pode impedir o fechamento. Quando fornecido, o comando é responsável por remover o item de forma síncrona. Sem comando, o controle remove da lista mutável. O método `RequestCloseTab(item)` utiliza exatamente o mesmo fluxo e retorna se o item foi removido.
+
+`TabClosing` ocorre antes de executar o comando ou remover o item; defina `e.Cancel = true` para impedir o fechamento. A demonstração usa esse evento para pedir confirmação quando há anotações. A biblioteca não exibe diálogos. `TabClosed` só ocorre depois de confirmar que o item saiu da coleção. Comandos assíncronos devem coordenar sua própria confirmação/remoção; não fazem parte desse contrato síncrono.
+
+Para proteger uma aba, use `controls:CustomTabControl.CanCloseTab="False"` no contêiner ou configure essa propriedade no `ItemContainerStyle`. O botão é ocultado e `RequestCloseTab` também respeita a proteção. Fechar a selecionada escolhe a próxima aba habilitada, ou a anterior quando necessário; fechar outra preserva a seleção. Fechar a última limpa a seleção.
+
+## Persistir ordem e seleção
+
+O estado contém somente chaves, ordem, seleção e versão do formato, sem serializar páginas ou seus dados. Cada item precisa de uma chave de texto única e estável:
+
+- `ItemKeyPath="Id"` (padrão) para modelos; aceita caminho como `Document.Id`.
+- `controls:CustomTabControl.TabKey="first"` para itens explícitos.
+- Um `Func<object, string>` opcional nos métodos para extrair a chave.
+
+```csharp
+using (var output = File.Create(path)) tabs.SaveState(output);
+using (var input = File.OpenRead(path)) tabs.LoadState(input);
+
+// Alternativa sem arquivo:
+TabControlState state = tabs.CaptureState();
+tabs.RestoreState(state);
+```
+
+O chamador é responsável por abrir/fechar os streams e escolher onde armazená-los. Também pode serializar `TabControlState` por conta própria. `RestoreState` ignora chaves de itens ausentes e coloca itens novos no final, preservando sua ordem relativa. Chaves duplicadas/vazias e versões desconhecidas são rejeitadas antes de reorganizar. A restauração requer fonte mutável sem filtro, agrupamento ou ordenação, mas funciona com arraste desabilitado.
+
+A demonstração salva explicitamente em `%LOCALAPPDATA%\CustomTabControl.Demo\layout.json`, restaura pelo botão e tenta restaurar ao abrir. Apenas as abas existentes são reorganizadas: documentos fechados/ausentes não são recriados e anotações não são gravadas nesse arquivo.
+
+## Validação
+
+```powershell
+dotnet build CustomTabControl.sln -c Release
+dotnet run --project tests/CustomTabControl.SmokeTests -c Release
+dotnet run --project tests/CustomTabControl.SmokeTests -c Release -- --drag-only --report resultado.json
+```
+
+A suíte comportamental cobre 61 cenários independentes, incluindo os recursos de fechamento, eventos, persistência, parâmetros e teclado. A execução sem `--drag-only` inclui também a suíte visual. Os testes usam WPF real com coordenadas/estado de entrada simulados; não substituem a revisão com mouse físico, leitor de tela e monitores em diferentes escalas.
+
+### Configurações no visualizador
+O botão **Configurações das abas** abre os ajustes de raio uniforme, espaços, borda, cores, fonte, posição, sombra, cursor, limiar de arraste, prévia, animação e fechamento. Por padrão, aplicar altera os três modelos; o seletor permite escolher somente um. A posição de cada modelo é preservada até selecionar outra posição explicitamente. Os valores são validados antes de aplicar. Os valores iniciais do formulário vêm do modelo Documentos.
+
+Os botões Animar e Prévia alteram os três modelos. Salvar/restaurar organização inclui Documentos, Lateral e Simples, com leitura compatível com o arquivo anterior. Apenas ordem/seleção são persistidas; configurações visuais permanecem na sessão. Chaves e comandos MVVM continuam definidos conforme a fonte de cada modelo.
+
+Verificação do painel: `dotnet run --project tests/CustomTabControl.SmokeTests -c Release -- --settings-only`.
+
+O checkbox **Permitir exclusão de abas** controla CanCloseTabs nos três modelos. Desmarcar bloqueia RequestCloseTab e o comando de fechamento, oculta os botões de fechar e desabilita Remover selecionada. ShowCloseButtons continua sendo apenas uma preferência visual independente.

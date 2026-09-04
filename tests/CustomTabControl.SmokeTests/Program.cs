@@ -20,6 +20,85 @@ internal static class Program
             app.Shutdown();
             return;
         }
+        if (args.Contains("--settings-only"))
+        {
+            var demo = new MainWindow();
+            var settingsRoot = (FrameworkElement)demo.Content;
+            settingsRoot.Measure(new Size(1320, 820)); settingsRoot.Arrange(new Rect(0, 0, 1320, 820)); settingsRoot.UpdateLayout();
+            var settingsFrame = new DispatcherFrame();
+            Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => settingsFrame.Continue = false));
+            Dispatcher.PushFrame(settingsFrame); settingsRoot.UpdateLayout();
+            var models = new[] { "DynamicTabs", "SideTabs", "SimpleTabs" }.Select(name => (CustomTabControl.Controls.CustomTabControl)demo.FindName(name)).ToArray();
+            foreach (var model in models)
+            {
+                if (!model.ShowCloseButtons || model.CaptureState().Order.Count != model.Items.Count) throw new Exception("Configuração/chaves ausentes");
+            }
+            IEnumerable<DependencyObject> SettingsDescendants(DependencyObject parent)
+            {
+                for (var i = 0; i < VisualTreeHelper.GetChildrenCount(parent); i++)
+                {
+                    var child = VisualTreeHelper.GetChild(parent, i);
+                    yield return child;
+                    foreach (var descendant in SettingsDescendants(child)) yield return descendant;
+                }
+            }
+            var closingToggle = SettingsDescendants(settingsRoot).OfType<CheckBox>().Single(box => Equals(box.Content, "Permitir exclusão de abas"));
+            var removeButton = SettingsDescendants(settingsRoot).OfType<Button>().Single(button => Equals(button.Content, "Remover selecionada"));
+            foreach (var enabled in new[] { false, true, false, true })
+            {
+                closingToggle.SetCurrentValue(System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty, enabled);
+                closingToggle.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                var toggleFrame = new DispatcherFrame();
+                Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => toggleFrame.Continue = false));
+                Dispatcher.PushFrame(toggleFrame); settingsRoot.UpdateLayout();
+                if (models.Any(model => model.CanCloseTabs != enabled) || removeButton.IsEnabled != enabled) throw new Exception("Checkbox não propagou o estado");
+                foreach (var model in models)
+                {
+                    var container = (TabItem)model.ItemContainerGenerator.ContainerFromIndex(0);
+                    var closeButton = (Button)container.Template.FindName("CloseButton", container);
+                    if ((closeButton.Visibility == Visibility.Visible) != enabled) throw new Exception("Visibilidade do botão de fechar incorreta");
+                }
+            }
+            Console.WriteLine("PASS: checkbox updates all models, close buttons and toolbar through repeated toggles");
+            foreach (var model in models)
+            {
+                using var stateStream = new MemoryStream();
+                model.SaveState(stateStream);
+                var previous = model.Items.Cast<object>().ToArray();
+                model.MoveTab(0, 1);
+                stateStream.Position = 0; model.LoadState(stateStream);
+                if (!model.Items.Cast<object>().SequenceEqual(previous)) throw new Exception("Organização não restaurada: " + model.Name);
+            }
+            Console.WriteLine("PASS: organization roundtrip for all three models");
+            foreach (var model in models)
+            {
+                if (model.Name == "DynamicTabs") { model.ItemsSource = ((DemoViewModel)demo.DataContext).Tabs; model.CloseTabCommand = ((DemoViewModel)demo.DataContext).CloseTabCommand; }
+                var item = model.Items[0];
+                var count = model.Items.Count;
+                model.CanCloseTabs = false;
+                if (model.RequestCloseTab(item) || model.Items.Count != count || CustomTabControl.Controls.CustomTabControl.CloseTab.CanExecute(item, model)) throw new Exception("Exclusão não bloqueada");
+                model.CanCloseTabs = true;
+                if (!model.RequestCloseTab(item) || model.Items.Count != count - 1) throw new Exception("Exclusão não reabilitada: " + model.Name);
+            }
+            Console.WriteLine("PASS: closing checkbox gate blocks API and command for all models and can be re-enabled");
+            var settings = new TabSettingsWindow(models);
+            var settingsFlags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
+            var fields = (List<(DependencyProperty Property, FrameworkElement Editor)>)typeof(TabSettingsWindow).GetField("editors", settingsFlags)!.GetValue(settings)!;
+            var radius = (TextBox)fields.Single(field => field.Property.Name == "CornerRadius").Editor;
+            var opacity = (TextBox)fields.Single(field => field.Property.Name == "ShadowOpacity").Editor;
+            radius.Text = "20"; opacity.Text = "2";
+            void ApplySettings() => typeof(TabSettingsWindow).GetMethod("Apply", settingsFlags)!.Invoke(settings, null);
+            ApplySettings();
+            if (models.Any(model => model.CornerRadius.TopLeft == 20)) throw new Exception("Aplicação parcial de valores inválidos");
+            opacity.Text = "0"; ApplySettings();
+            if (models.Any(model => model.CornerRadius.TopLeft != 20 || model.ShadowOpacity != 0)) throw new Exception("Não aplicou a todos");
+            if (models[1].TabStripPlacement != Dock.Left) throw new Exception("Posição lateral perdida");
+            ((ComboBox)typeof(TabSettingsWindow).GetField("scope", settingsFlags)!.GetValue(settings)!).SelectedIndex = 2;
+            radius.Text = "8"; ApplySettings();
+            if (models[1].CornerRadius.TopLeft != 8 || models[0].CornerRadius.TopLeft != 20 || models[2].CornerRadius.TopLeft != 20) throw new Exception("Escopo individual incorreto");
+            Console.WriteLine("PASS: settings defaults, keys for all models, validation before apply, all-model propagation, preserved placement and individual scope");
+            settings.Close(); demo.Close(); app.Shutdown(); return;
+        }
         var window = new MainWindow();
         var vm = (DemoViewModel)window.DataContext;
         var tabs = (CustomTabControl.Controls.CustomTabControl)window.FindName("DynamicTabs");
@@ -225,5 +304,3 @@ internal static class Program
         app.Shutdown();
     }
 }
-
-

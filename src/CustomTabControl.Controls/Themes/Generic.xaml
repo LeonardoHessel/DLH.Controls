@@ -39,12 +39,37 @@
                             <MultiBinding Converter="{x:Static local:TabSpacingConverter.Instance}"><Binding Path="TabSpacing" RelativeSource="{RelativeSource AncestorType={x:Type local:CustomTabControl}}" /><Binding Path="TabStripPlacement" RelativeSource="{RelativeSource AncestorType={x:Type local:CustomTabControl}}" /></MultiBinding>
                         </Grid.Margin>
                         <Border x:Name="Surface" Background="Transparent" Padding="{TemplateBinding Padding}">
-                            <ContentPresenter ContentSource="Header" RecognizesAccessKey="True"
-                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                              VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            <DockPanel LastChildFill="True">
+                                <Button x:Name="CloseButton" DockPanel.Dock="Right" Margin="10,0,0,0" Width="20" Height="20"
+                                        Command="{x:Static local:CustomTabControl.CloseTab}" CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        ToolTip="Fechar aba" AutomationProperties.Name="Fechar aba" Visibility="Collapsed"
+                                        Foreground="{TemplateBinding Foreground}" Background="Transparent" BorderThickness="0">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="CloseSurface" CornerRadius="3" Background="{TemplateBinding Background}">
+                                                <Path Data="M 6,6 L 14,14 M 14,6 L 6,14" Stroke="{TemplateBinding Foreground}" StrokeThickness="1.5" />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="CloseSurface" Property="Background" Value="{DynamicResource Tabs.Hover}" /></Trigger>
+                                                <Trigger Property="IsEnabled" Value="False"><Setter TargetName="CloseSurface" Property="Opacity" Value="0.35" /></Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                                <ContentPresenter ContentSource="Header" RecognizesAccessKey="True"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </DockPanel>
                         </Border>
                     </Grid>
-                    <ControlTemplate.Triggers>
+                    <ControlTemplate.Triggers>                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding CanCloseTabs, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}" Value="True" />
+                                <Condition Binding="{Binding ShowCloseButtons, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}" Value="True" />
+                                <Condition Binding="{Binding Path=(local:CustomTabControl.CanCloseTab), RelativeSource={RelativeSource Self}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
                         <Trigger Property="IsMouseOver" Value="True">
 
                             <Setter Property="Foreground" Value="{DynamicResource Tabs.Text}" />
@@ -138,15 +163,3 @@
         </Setter>
     </Style>
 </ResourceDictionary>
-
-
-
-
-
-
-
-
-
-
-
-

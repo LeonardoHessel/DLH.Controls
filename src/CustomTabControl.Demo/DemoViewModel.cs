@@ -17,12 +17,14 @@ public sealed class DemoViewModel : INotifyPropertyChanged
     }
     public ICommand AddTabCommand { get; }
     public ICommand RemoveTabCommand { get; }
+    public ICommand CloseTabCommand { get; }
     public DemoViewModel()
     {
         Tabs.Add(new("Visão geral", "◈", "Uma superfície contínua", "As abas compartilham a cor do painel. Experimente o teclado, redimensione a janela e alterne o tema."));
         Tabs.Add(new("Editor", "✎", "Um espaço para experimentar", "O texto abaixo é armazenado no modelo e permanece disponível ao trocar de aba."));
         Tabs.Add(new("Indisponível", "○", "Aba desabilitada", "", false));
         SelectedTab = Tabs[0];
+        CloseTabCommand = new ParameterCommand(item => { if (item is TabDocument document) Tabs.Remove(document); }, item => item is TabDocument document && document.IsEnabled && Tabs.Contains(document));
         AddTabCommand = new RelayCommand(() =>
         {
             var item = new TabDocument($"Documento {nextId++}", "◇", "Novo documento", "Adicione mais abas para experimentar a rolagem horizontal.");
@@ -43,6 +45,7 @@ public sealed class DemoViewModel : INotifyPropertyChanged
 
 public sealed class TabDocument(string header, string icon, string title, string description, bool isEnabled = true) : INotifyPropertyChanged
 {
+    public string Id { get; } = header;
     public string Header { get; } = header;
     public string Icon { get; } = icon;
     public string Title { get; } = title;
@@ -62,4 +65,11 @@ public sealed class RelayCommand(Action execute) : ICommand
     public bool CanExecute(object? parameter) => true;
     public void Execute(object? parameter) => execute();
     public event EventHandler? CanExecuteChanged { add { } remove { } }
+}
+
+public sealed class ParameterCommand(Action<object?> execute, Predicate<object?> canExecute) : ICommand
+{
+    public bool CanExecute(object? parameter) => canExecute(parameter);
+    public void Execute(object? parameter) => execute(parameter);
+    public event EventHandler? CanExecuteChanged { add => CommandManager.RequerySuggested += value; remove => CommandManager.RequerySuggested -= value; }
 }

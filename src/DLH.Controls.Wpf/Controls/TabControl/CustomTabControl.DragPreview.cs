@@ -9,7 +9,7 @@ namespace DLH.Controls.Wpf;
 
 public partial class CustomTabControl
 {
-    private sealed record HeaderMotion(FrameworkElement Root, Transform Original, TranslateTransform Offset);
+    private sealed record HeaderMotion(FrameworkElement Root, Transform Original, TranslateTransform Offset, Size InitialSize);
     private readonly Dictionary<TabItem, HeaderMotion> headerMotions = new();
     private Border? dragPreview;
     private Canvas? previewLayer;
@@ -32,7 +32,7 @@ public partial class CustomTabControl
             var offset = new TranslateTransform();
             var original = root.RenderTransform;
             root.SetCurrentValue(RenderTransformProperty, new TransformGroup { Children = { original, offset } });
-            headerMotions[tab] = new HeaderMotion(root, original, offset);
+            headerMotions[tab] = new HeaderMotion(root, original, offset, root.RenderSize);
         }
         if (!headerMotions.TryGetValue(dragCandidate, out var source)) return;
         var width = source.Root.ActualWidth;

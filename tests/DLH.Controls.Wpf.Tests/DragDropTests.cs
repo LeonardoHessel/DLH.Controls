@@ -14,7 +14,7 @@ using System.Windows.Shapes;
 using System.Windows.Threading;
 using Tabs = DLH.Controls.Wpf.CustomTabControl;
 
-internal static class DragDropTests
+internal static partial class DragDropTests
 {
     private sealed record Result(string Name, bool Passed, double Milliseconds, string? Error);
     private static readonly BindingFlags Private = BindingFlags.Instance | BindingFlags.NonPublic;
@@ -39,9 +39,11 @@ internal static class DragDropTests
         Dispatcher.PushFrame(frame);
     }
 
-    private sealed class Document(string title)
+    private sealed class Document(string title) : INotifyPropertyChanged
     {
-        public string Title { get; } = title;
+        private string title = title;
+        public string Title { get => title; set { title = value; PropertyChanged?.Invoke(this, new(nameof(Title))); } }
+        public event PropertyChangedEventHandler? PropertyChanged;
         public string Notes { get; set; } = "Texto preservado";
         public override string ToString() => Title;
     }
@@ -139,6 +141,7 @@ internal static class DragDropTests
             try { action(); results.Add(new(name, true, timer.Elapsed.TotalMilliseconds, null)); Console.WriteLine("PASS: " + name); }
             catch (Exception e) { results.Add(new(name, false, timer.Elapsed.TotalMilliseconds, e.ToString())); Console.WriteLine("FAIL: " + name + " — " + e.Message); }
         }
+        RunDynamicHeaderTests(Test);
         foreach (var side in new[] { Dock.Top, Dock.Bottom, Dock.Left, Dock.Right })
         {
             Test($"{side}/drop both directions + MVVM", () =>

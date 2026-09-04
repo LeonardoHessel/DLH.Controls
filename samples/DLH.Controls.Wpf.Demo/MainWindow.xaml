@@ -48,6 +48,9 @@
             <Button Content="+ Nova aba" Command="{Binding AddTabCommand}" />
             <Button Content="Remover selecionada" Click="CloseSelectedTab" IsEnabled="{Binding CanCloseTabs, ElementName=DynamicTabs}" />
             <Button Content="Configurações das abas" Click="OpenTabSettings" /><Button Content="Alternar tema" Click="ToggleTheme" />
+            <Button Content="PT / EN" Click="ToggleLanguage" />
+            <Button Content="Título curto / longo" Click="ToggleHeaderLength" />
+            <Button Content="Fonte do cabeçalho" Click="ToggleHeaderFont" />
             <Button Content="Salvar configurações" Click="SaveConfiguration" /><Button Content="Restaurar configurações" Click="RestoreConfiguration" /><Button Content="Salvar organização" Click="SaveOrganization" />
             <Button Content="Restaurar organização" Click="RestoreOrganization" />
             <CheckBox Content="Animar" VerticalAlignment="Center" Margin="6,0,12,0" Foreground="{DynamicResource Tabs.Text}" IsChecked="{Binding IsAnimationEnabled, ElementName=DynamicTabs, Mode=OneWay}" Click="ToggleAllAnimation" />
@@ -64,7 +67,7 @@
             </controls:CustomTabControl.ItemContainerStyle>
             <controls:CustomTabControl.ItemTemplate>
                 <DataTemplate>
-                    <StackPanel Orientation="Horizontal"><TextBlock Text="{Binding Icon}" Margin="0,0,8,0" Foreground="{DynamicResource Demo.Accent}" /><TextBlock Text="{Binding Header}" /></StackPanel>
+                    <StackPanel Orientation="Horizontal"><TextBlock Text="{Binding Icon}" FontSize="{Binding DataContext.HeaderFontSize, RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,8,0" Foreground="{DynamicResource Demo.Accent}" /><TextBlock Text="{Binding Header}" FontSize="{Binding DataContext.HeaderFontSize, RelativeSource={RelativeSource AncestorType=Window}}" /></StackPanel>
                 </DataTemplate>
             </controls:CustomTabControl.ItemTemplate>
             <controls:CustomTabControl.ContentTemplate>

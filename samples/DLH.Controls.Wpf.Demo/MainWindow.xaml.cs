@@ -51,6 +51,13 @@ public partial class MainWindow : Window
         foreach (var tabs in new[] { DynamicTabs, SideTabs, SimpleTabs }) tabs.IsDragPreviewEnabled = ((System.Windows.Controls.CheckBox)sender).IsChecked == true;
     }
     private void OpenTabSettings(object sender, RoutedEventArgs e) => new TabSettingsWindow([DynamicTabs, SideTabs, SimpleTabs]) { Owner = this }.ShowDialog();
+    private void ToggleLanguage(object sender, RoutedEventArgs e) => ((DemoViewModel)DataContext).ToggleLanguage();
+    private void ToggleHeaderLength(object sender, RoutedEventArgs e) => ((DemoViewModel)DataContext).ToggleHeaderLength();
+    private void ToggleHeaderFont(object sender, RoutedEventArgs e)
+    {
+        var model = (DemoViewModel)DataContext;
+        model.HeaderFontSize = model.HeaderFontSize >= 20 ? 14 : model.HeaderFontSize + 3;
+    }
 
     private void ToggleTheme(object sender, RoutedEventArgs e)
     {

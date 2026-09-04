@@ -9,6 +9,9 @@ public sealed class DemoViewModel : INotifyPropertyChanged
 {
     private int nextId = 4;
     private TabDocument? selectedTab;
+    private bool english;
+    private bool longHeaders;
+    private double headerFontSize = 14;
     public ObservableCollection<TabDocument> Tabs { get; } = new();
     public TabDocument? SelectedTab
     {
@@ -18,6 +21,7 @@ public sealed class DemoViewModel : INotifyPropertyChanged
     public ICommand AddTabCommand { get; }
     public ICommand RemoveTabCommand { get; }
     public ICommand CloseTabCommand { get; }
+    public double HeaderFontSize { get => headerFontSize; set { headerFontSize = value; OnPropertyChanged(); } }
     public DemoViewModel()
     {
         Tabs.Add(new("Visão geral", "◈", "Uma superfície contínua", "As abas compartilham a cor do painel. Experimente o teclado, redimensione a janela e alterne o tema."));
@@ -39,6 +43,30 @@ public sealed class DemoViewModel : INotifyPropertyChanged
             SelectedTab = Tabs.Skip(Math.Max(0, index)).Concat(Tabs.Take(Math.Max(0, index)).Reverse()).FirstOrDefault(tab => tab.IsEnabled);
         });
     }
+    public void ToggleLanguage()
+    {
+        english = !english;
+        ApplyHeaderVariants();
+    }
+    public void ToggleHeaderLength()
+    {
+        longHeaders = !longHeaders;
+        ApplyHeaderVariants();
+    }
+    private void ApplyHeaderVariants()
+    {
+        foreach (var document in Tabs)
+        {
+            var baseName = document.Id switch
+            {
+                "Visão geral" => english ? "Overview" : "Visão geral",
+                "Editor" => english ? "Editor" : "Editor",
+                "Indisponível" => english ? "Unavailable" : "Indisponível",
+                _ => english ? document.Id.Replace("Documento", "Document") : document.Id
+            };
+            document.Header = longHeaders ? (english ? $"{baseName} — runtime header example" : $"{baseName} — exemplo de título em execução") : baseName;
+        }
+    }
     public event PropertyChangedEventHandler? PropertyChanged;
     private void OnPropertyChanged([CallerMemberName] string? name = null) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
 }
@@ -46,7 +74,8 @@ public sealed class DemoViewModel : INotifyPropertyChanged
 public sealed class TabDocument(string header, string icon, string title, string description, bool isEnabled = true) : INotifyPropertyChanged
 {
     public string Id { get; } = header;
-    public string Header { get; } = header;
+    private string currentHeader = header;
+    public string Header { get => currentHeader; set { if (currentHeader == value) return; currentHeader = value; PropertyChanged?.Invoke(this, new(nameof(Header))); } }
     public string Icon { get; } = icon;
     public string Title { get; } = title;
     public string Description { get; } = description;

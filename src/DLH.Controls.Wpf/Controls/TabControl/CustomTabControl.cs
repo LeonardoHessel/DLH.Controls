@@ -108,6 +108,13 @@ public partial class CustomTabControl : TabControl
     private void UpdateSurface()
     {
         if (surface is null || body is null || headers is null || body.ActualWidth <= 0 || body.ActualHeight <= 0) return;
+        if (dragging && headerMotions.Values.Any(motion => motion.Root.RenderSize != motion.InitialSize))
+        {
+            // A title, icon or font change invalidates the bitmap and insertion bounds captured for this drag.
+            // End the session instead of allowing a drop based on stale geometry.
+            CancelTabDrag();
+            return;
+        }
         ConfigurePlacement();
         // Reserve room for both the panel corner and the concave tab transition.
         var inset = double.IsNaN(HeaderIndent) ? 2 * CornerRadius.TopLeft : HeaderIndent;

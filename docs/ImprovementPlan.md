@@ -1,7 +1,7 @@
 # Plano de melhorias — DLH.Controls.Wpf
 
 Data: 4 de setembro de 2026
-Status: proposta para planejamento; não representa funcionalidades implementadas ou compromissos da versão 1.0.0.
+Status: em execução. A melhoria A e o exemplo V1 foram concluídos em 4 de setembro de 2026; as demais etapas continuam planejadas.
 
 ## 1. Objetivo e escopo
 
@@ -28,6 +28,10 @@ O desenho da superfície é atualizado a partir de LayoutUpdated e usa lastShape
 O conteúdo baseado em modelos não tem um cache dedicado de árvores visuais por aba. Dados editáveis devem permanecer no modelo da aplicação.
 
 ## 3. Melhoria A — Cabeçalhos e títulos dinâmicos
+
+**Resultado:** concluída. O contorno acompanha alterações notificadas pelo modelo e mudanças de fonte nas quatro orientações. A identidade, a seleção, os dados e a ordem são preservados. Se qualquer cabeçalho mudar de medida durante o arraste, a sessão é cancelada e a prévia é limpa, pois sua imagem e seus limites foram capturados no início do gesto. A aba selecionada continua sendo revelada pela faixa após sua expansão.
+
+Foram acrescentados 12 cenários automatizados (geometria/identidade, alteração durante arraste e overflow nas quatro orientações), elevando a suíte de drag and drop de 86 para 98 cenários. A validação automatizada usa layout WPF simulado; fonte, DPI e interação visual em ambiente real ainda devem ser conferidos manualmente.
 
 ### Objetivo
 
@@ -208,6 +212,8 @@ Também definir o significado de Loaded/Unloaded e a atividade de páginas ocult
 ## 8. Evolução do visualizador
 
 ### V1 — Idiomas e cabeçalhos variáveis
+
+**Resultado:** concluído. O visualizador agora alterna PT/EN, títulos curtos/longos e três tamanhos de fonte sem recriar os documentos. `Id` permanece estável enquanto `Header` notifica sua alteração.
 
 Adicionar seleção de idioma de demonstração, botão para alternar títulos curtos/longos e ajustes de fonte. Atualizar propriedades dos modelos existentes. Mostrar a identidade da aba selecionada para tornar verificável que a seleção não foi recriada.
 

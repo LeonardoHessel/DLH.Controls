@@ -18,7 +18,7 @@ Corrigido: README ainda afirmava que o pacote não estava publicado; guia citava
 
 | Validação | Estado |
 |---|---|
-| Compilação, 104 cenários e suítes de configuração | Automatizados; executar na revisão final |
+| Compilação, 107 cenários e suítes de configuração | Automatizados; executar na revisão final |
 | Consumo do pacote publicado em aplicação independente | Validado em preview.2 |
 | Mouse físico: arraste, soltar fora, captura e Alt+Tab | Pendente manual |
 | Monitores com DPI 125%, 150%, 200% e troca entre monitores | Pendente manual; LayoutTransform não substitui DPI |

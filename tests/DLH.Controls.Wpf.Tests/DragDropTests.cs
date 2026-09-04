@@ -144,6 +144,7 @@ internal static partial class DragDropTests
         }
         RunDynamicHeaderTests(Test);
         RunDynamicCollectionTests(Test);
+        RunAccessibilityTests(Test);
         foreach (var side in new[] { Dock.Top, Dock.Bottom, Dock.Left, Dock.Right })
         {
             Test($"{side}/drop both directions + MVVM", () =>
@@ -487,7 +488,7 @@ internal static partial class DragDropTests
                 using var f = new Fixture(side); f.Tabs.ShowCloseButtons = true; f.Layout();
                 var first = f.Item(0);
                 var close = (Button)first.Template.FindName("CloseButton", first);
-                Assert(System.Windows.Automation.AutomationProperties.GetName(close) == "Fechar aba" && close.Focusable && first.Focusable && first.FocusVisualStyle != null, "Accessible label or keyboard focus missing");
+                Assert(System.Windows.Automation.AutomationProperties.GetName(close).StartsWith("Fechar ") && close.Focusable && first.Focusable && first.FocusVisualStyle != null, "Accessible label or keyboard focus missing");
                 var old = f.Model.Items.ToArray();
                 Call(f.Tabs, "TryReorderFromKeyboard", f.Vertical ? Key.Up : Key.Left, ModifierKeys.Control | ModifierKeys.Shift, first);
                 Assert(f.Model.Items.SequenceEqual(old), "Keyboard moved past first position");

@@ -42,7 +42,7 @@
                             <DockPanel LastChildFill="True">
                                 <Button x:Name="CloseButton" DockPanel.Dock="Right" Margin="10,0,0,0" Width="20" Height="20"
                                         Command="{x:Static local:CustomTabControl.CloseTab}" CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                                        ToolTip="Fechar aba" AutomationProperties.Name="Fechar aba" Visibility="Collapsed"
+                                        ToolTip="Fechar aba" AutomationProperties.Name="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type TabItem}}, StringFormat=Fechar {0}}" Visibility="Collapsed"
                                         Foreground="{TemplateBinding Foreground}" Background="Transparent" BorderThickness="0">
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">

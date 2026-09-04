@@ -115,6 +115,10 @@ Mudanças de seleção herdadas de WPF podem diferir das políticas específicas
 
 ## 5. Melhoria C — Acessibilidade e navegação por teclado
 
+**Resultado automatizado:** concluído. Os peers herdados do WPF já expõem os papéis Tab e TabItem e o padrão de seleção, portanto não foram substituídos. A ação de fechar agora inclui o cabeçalho no nome acessível. Os testes confirmam nomes de ícones fornecidos pelo consumidor e que o fechamento bloqueado fica oculto e não executável. A navegação e a reordenação por teclado continuam cobertas nas quatro orientações.
+
+**Resultado manual:** pendente. O roteiro está em `docs/AccessibilityChecklist.md`; leitor de tela, alto contraste e escalas reais precisam ser registrados antes de qualquer declaração de conformidade integral.
+
 ### Objetivo
 
 Permitir reconhecer, selecionar, reorganizar e fechar abas sem depender de mouse ou de interpretação visual dos ícones.

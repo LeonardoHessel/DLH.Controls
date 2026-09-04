@@ -28,14 +28,14 @@ jobs:
         run: ./eng/Validate.ps1
       - name: Upload test logs and preview
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-results-${{ github.run_number }}
           path: artifacts/test-results/
           if-no-files-found: warn
           retention-days: 14
       - name: Upload NuGet package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: DLH.Controls.Wpf-${{ github.run_number }}
           path: artifacts/packages/*.nupkg

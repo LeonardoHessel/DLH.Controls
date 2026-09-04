@@ -12,7 +12,14 @@ internal static class Program
     [STAThread]
     private static void Main(string[] args)
     {
-        var app = new Application();
+        var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+        if (args.Contains("--drag-only"))
+        {
+            var reportIndex = Array.IndexOf(args, "--report");
+            Environment.ExitCode = DragDropTests.Run(reportIndex >= 0 ? args[reportIndex + 1] : null) ? 0 : 1;
+            app.Shutdown();
+            return;
+        }
         var window = new MainWindow();
         var vm = (DemoViewModel)window.DataContext;
         var tabs = (CustomTabControl.Controls.CustomTabControl)window.FindName("DynamicTabs");
@@ -20,8 +27,8 @@ internal static class Program
         void Layout()
         {
             var root = (FrameworkElement)window.Content;
-            root.Measure(new Size(1080, 760));
-            root.Arrange(new Rect(0, 0, 1080, 760));
+            root.Measure(new Size(1320, 820));
+            root.Arrange(new Rect(0, 0, 1320, 820));
             root.UpdateLayout();
             var frame = new DispatcherFrame();
             Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => frame.Continue = false));
@@ -126,9 +133,9 @@ internal static class Program
         Check(!hoverPath.Data.IsEmpty() && hoverPath.Data.GetFlattenedPathGeometry().Figures.Count == 1, "Hover uses one continuous curved silhouette");
         if (args.Length > 0)
         {
-            var bitmap = new RenderTargetBitmap(1080, 760, 96, 96, PixelFormats.Pbgra32);
+            var bitmap = new RenderTargetBitmap(1320, 820, 96, 96, PixelFormats.Pbgra32);
             var backdrop = new DrawingVisual();
-            using (var drawing = backdrop.RenderOpen()) drawing.DrawRectangle(window.Background, null, new Rect(0, 0, 1080, 760));
+            using (var drawing = backdrop.RenderOpen()) drawing.DrawRectangle(window.Background, null, new Rect(0, 0, 1320, 820));
             bitmap.Render(backdrop);
             bitmap.Render((Visual)window.Content);
             var encoder = new PngBitmapEncoder();
@@ -149,11 +156,68 @@ internal static class Program
         themeButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
         Layout();
         Check(((SolidColorBrush)tabs.Background).Color == (Color)ColorConverter.ConvertFromString("#FFFFFF"), "Live theme replacement");
+        var themeSelection = tabs.SelectedItem;
+        themeButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Layout();
+        Check(((SolidColorBrush)tabs.Background).Color == (Color)ColorConverter.ConvertFromString("#5D5D5D") &&
+            ((SolidColorBrush)window.Resources["Demo.Accent"]).Color == (Color)ColorConverter.ConvertFromString("#FF8A00"), "Third theme uses reference gray and orange palette");
+        themeButton.RaiseEvent(new RoutedEventArgs(Button.ClickEvent));
+        Layout();
+        Check(((SolidColorBrush)tabs.Background).Color == (Color)ColorConverter.ConvertFromString("#35373C") && tabs.SelectedItem == themeSelection,
+            "Three-theme cycle returns to dark and preserves selected tab");
         var rootElement = (FrameworkElement)window.Content;
         rootElement.Measure(new Size(600, 560));
         rootElement.Arrange(new Rect(0, 0, 600, 560));
         rootElement.UpdateLayout();
         Check(tabs.ActualWidth <= 600 && tabs.ActualHeight > 0, "Compact layout");
+        var sideTabs = (CustomTabControl.Controls.CustomTabControl)window.FindName("SideTabs");
+        foreach (var side in new[] { Dock.Left, Dock.Right })
+        {
+            sideTabs.TabStripPlacement = side;
+            Layout(); Layout();
+            var sideBody = (FrameworkElement)sideTabs.Template.FindName("PART_Body", sideTabs);
+            var sideSurface = (System.Windows.Shapes.Path)sideTabs.Template.FindName("PART_Surface", sideTabs);
+            var sideItem = (TabItem)sideTabs.ItemContainerGenerator.ContainerFromIndex(0);
+            var sideHeader = (FrameworkElement)sideItem.Template.FindName("Surface", sideItem);
+            var headerBounds = sideHeader.TransformToVisual(sideTabs).TransformBounds(new Rect(sideHeader.RenderSize));
+            var bodyBounds = sideBody.TransformToVisual(sideTabs).TransformBounds(new Rect(sideBody.RenderSize));
+            var joint = new Point(side == Dock.Left ? bodyBounds.Left : bodyBounds.Right, headerBounds.Top + headerBounds.Height / 2);
+            Check(((Image)sideItem.Header).Source is BitmapSource { PixelWidth: > 0 } &&
+                sideSurface.Data.FillContains(joint) && !sideSurface.Data.StrokeContains(new Pen(Brushes.Black, 1), joint),
+                $"{side} icons load and connect to one continuous surface");
+        }
+        sideTabs.TabStripPlacement = Dock.Left;
+        Layout(); Layout();
+        if (!DragDropTests.Run()) Environment.ExitCode = 1;
+        var rejectedNonUniformRadius = false;
+        try { tabs.CornerRadius = new CornerRadius(4, 8, 12, 16); } catch (ArgumentException) { rejectedNonUniformRadius = true; }
+        Check(rejectedNonUniformRadius, "Corner radius remains uniform across the component");
+        var rejectedNegativeRadius = false;
+        try { tabs.CornerRadius = new CornerRadius(-1); } catch (ArgumentException) { rejectedNegativeRadius = true; }
+        Check(rejectedNegativeRadius, "Negative corner radius is rejected");
+        var shadowSurface = (System.Windows.Shapes.Path)tabs.Template.FindName("PART_Surface", tabs);
+        var shadowEffect = (System.Windows.Media.Effects.DropShadowEffect)shadowSurface.Effect;
+        Check(shadowEffect.Color == Color.FromRgb(73, 73, 73) && shadowEffect.Opacity == 0.5 && shadowEffect.BlurRadius == 10 && shadowEffect.ShadowDepth == 0,
+            "Shadow defaults use reference settings with fifty percent opacity");
+        tabs.ShadowColor = Colors.Black;
+        tabs.ShadowOpacity = 0.4;
+        tabs.ShadowBlurRadius = 18;
+        tabs.ShadowDepth = 4;
+        tabs.ShadowDirection = 270;
+        Layout();
+        shadowEffect = (System.Windows.Media.Effects.DropShadowEffect)shadowSurface.Effect;
+        Check(shadowEffect.Color == Colors.Black && shadowEffect.Opacity == 0.4 && shadowEffect.BlurRadius == 18 && shadowEffect.ShadowDepth == 4 && shadowEffect.Direction == 270,
+            "Shadow properties update the rendered effect");
+        tabs.IsShadowEnabled = false;
+        Layout();
+        Check(shadowSurface.Effect is null, "Disabling shadow removes the effect");
+        tabs.ShadowOpacity = 0.6;
+        tabs.IsShadowEnabled = true;
+        Layout();
+        Check(shadowSurface.Effect is System.Windows.Media.Effects.DropShadowEffect { Opacity: 0.6 }, "Re-enabling shadow preserves current configuration");
+        var rejectedOpacity = false;
+        try { tabs.ShadowOpacity = 1.5; } catch (ArgumentException) { rejectedOpacity = true; }
+        Check(rejectedOpacity, "Invalid shadow opacity is rejected");
         vm.Tabs.Clear();
         Layout();
         Check(tabs.SelectedIndex == -1, "Empty collection");
@@ -161,10 +225,5 @@ internal static class Program
         app.Shutdown();
     }
 }
-
-
-
-
-
 
 

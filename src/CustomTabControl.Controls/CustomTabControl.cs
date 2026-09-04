@@ -7,7 +7,7 @@ using System.Windows.Threading;
 
 namespace CustomTabControl.Controls;
 
-public class CustomTabControl : TabControl
+public partial class CustomTabControl : TabControl
 {
     private Path? surface;
     private Path? hoverSurface;
@@ -16,13 +16,29 @@ public class CustomTabControl : TabControl
     private ScrollViewer? headers;
     private (Rect Body, Rect Tab, Rect Hover, CornerRadius Radius, double Stroke)? lastShape;
 
-    static CustomTabControl() => DefaultStyleKeyProperty.OverrideMetadata(
-        typeof(CustomTabControl), new FrameworkPropertyMetadata(typeof(CustomTabControl)));
+    static CustomTabControl()
+    {
+        DefaultStyleKeyProperty.OverrideMetadata(typeof(CustomTabControl), new FrameworkPropertyMetadata(typeof(CustomTabControl)));
+        TabStripPlacementProperty.OverrideMetadata(typeof(CustomTabControl),
+            new FrameworkPropertyMetadata(Dock.Top, FrameworkPropertyMetadataOptions.AffectsMeasure, (owner, _) =>
+            {
+                var control = (CustomTabControl)owner;
+                control.CancelTabDrag();
+                control.ResetDragPreview();
+                control.ConfigurePlacement();
+            }));
+    }
 
-    public CustomTabControl() => LayoutUpdated += (_, _) => UpdateSurface();
+    public CustomTabControl()
+    {
+        LayoutUpdated += (_, _) => UpdateSurface();
+        Unloaded += (_, _) => CancelTabDrag();
+    }
 
     public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
-        nameof(CornerRadius), typeof(CornerRadius), typeof(CustomTabControl), new FrameworkPropertyMetadata(new CornerRadius(12), FrameworkPropertyMetadataOptions.AffectsArrange));
+        nameof(CornerRadius), typeof(CornerRadius), typeof(CustomTabControl), new FrameworkPropertyMetadata(new CornerRadius(12), FrameworkPropertyMetadataOptions.AffectsArrange),
+        value => value is CornerRadius radius && double.IsFinite(radius.TopLeft) && radius.TopLeft >= 0 &&
+            radius.TopLeft == radius.TopRight && radius.TopLeft == radius.BottomRight && radius.TopLeft == radius.BottomLeft);
     public CornerRadius CornerRadius { get => (CornerRadius)GetValue(CornerRadiusProperty); set => SetValue(CornerRadiusProperty, value); }
 
     public static readonly DependencyProperty TabSpacingProperty = DependencyProperty.Register(
@@ -48,12 +64,14 @@ public class CustomTabControl : TabControl
 
     public override void OnApplyTemplate()
     {
+        CancelTabDrag();
         base.OnApplyTemplate();
         surface = GetTemplateChild("PART_Surface") as Path;
         hoverSurface = GetTemplateChild("PART_HoverSurface") as Path;
         body = GetTemplateChild("PART_Body") as FrameworkElement;
         headers = GetTemplateChild("PART_HeaderScrollViewer") as ScrollViewer;
         lastShape = null;
+        ConfigurePlacement();
         RevealSelectedTab();
     }
 
@@ -70,7 +88,7 @@ public class CustomTabControl : TabControl
         var item = e.OriginalSource is DependencyObject source
             ? ItemsControl.ContainerFromElement(this, source) as TabItem : null;
         // Content inside a selected tab is not a header hover target.
-        if (item?.IsSelected == true) item = null;
+        if (item?.IsSelected == true || dragging) item = null;
         if (hoveredItem == item) return;
         hoveredItem = item;
         UpdateSurface();
@@ -79,6 +97,7 @@ public class CustomTabControl : TabControl
     protected override void OnMouseLeave(MouseEventArgs e)
     {
         base.OnMouseLeave(e);
+        if (!dragging) CancelTabDrag();
         hoveredItem = null;
         UpdateSurface();
     }
@@ -86,8 +105,10 @@ public class CustomTabControl : TabControl
     private void UpdateSurface()
     {
         if (surface is null || body is null || headers is null || body.ActualWidth <= 0 || body.ActualHeight <= 0) return;
+        ConfigurePlacement();
         // Reserve room for both the panel corner and the concave tab transition.
-        var headerMargin = new Thickness(double.IsNaN(HeaderIndent) ? 2 * CornerRadius.TopLeft : HeaderIndent, 0, 2 * CornerRadius.TopRight, 0);
+        var inset = double.IsNaN(HeaderIndent) ? 2 * CornerRadius.TopLeft : HeaderIndent;
+        var headerMargin = IsVerticalTabStrip ? new Thickness(0, inset, 0, 2 * CornerRadius.TopRight) : new Thickness(inset, 0, 2 * CornerRadius.TopRight, 0);
         if (headers.Margin != headerMargin)
         {
             headers.Margin = headerMargin;
@@ -100,25 +121,27 @@ public class CustomTabControl : TabControl
                 item.Template?.FindName("Surface", item) is not FrameworkElement header || header.ActualWidth <= 0)
                 return Rect.Empty;
             var bounds = header.TransformToVisual(surface).TransformBounds(new Rect(header.RenderSize));
+            // The surface stays attached to its layout position while header content previews move.
+            if (headerMotions.TryGetValue(item, out var motion)) bounds.Offset(-motion.Offset.X, -motion.Offset.Y);
             if (headers.Template.FindName("PART_ScrollContentPresenter", headers) is FrameworkElement viewport)
                 bounds.Intersect(viewport.TransformToVisual(surface).TransformBounds(new Rect(viewport.RenderSize)));
-            if (!bounds.IsEmpty && bounds.Width > 0) bounds.Height = Math.Max(0, bodyRect.Top - bounds.Top);
+
             return bounds;
         }
-        var tabRect = HeaderBounds(ItemContainerGenerator.ContainerFromIndex(SelectedIndex) as TabItem);
+        var tabRect = dragging && dragPreview is not null ? Rect.Empty : HeaderBounds(ItemContainerGenerator.ContainerFromIndex(SelectedIndex) as TabItem);
         var hoverRect = HeaderBounds(hoveredItem is { IsSelected: false, IsEnabled: true } ? hoveredItem : null);
         var thickness = BorderThickness;
         var stroke = Math.Max(Math.Max(thickness.Left, thickness.Right), Math.Max(thickness.Top, thickness.Bottom));
         var state = (bodyRect, tabRect, hoverRect, CornerRadius, stroke);
         if (lastShape == state) return;
         lastShape = state;
-        Geometry outline = RoundedRect(bodyRect, CornerRadius, tabRect);
+        Geometry outline = OrientedOutline(bodyRect, tabRect);
         outline.Freeze();
         if (hoverSurface is not null)
         {
             // Paint the same continuous silhouette behind the active surface.
             // Its body is covered by the active panel; no rectangular hover corner can cover the selected tab.
-            hoverSurface.Data = hoverRect.IsEmpty ? Geometry.Empty : RoundedRect(bodyRect, CornerRadius, hoverRect);
+            hoverSurface.Data = hoverRect.IsEmpty ? Geometry.Empty : OrientedOutline(bodyRect, hoverRect);
         }
         surface.Data = outline;
         surface.StrokeThickness = stroke;
@@ -126,28 +149,31 @@ public class CustomTabControl : TabControl
 
     private static Geometry RoundedRect(Rect rect, CornerRadius radius, Rect tab)
     {
-        var limit = Math.Min(rect.Width, rect.Height) / 2;
-        var tl = Math.Clamp(radius.TopLeft, 0, limit);
-        var tr = Math.Clamp(radius.TopRight, 0, limit);
-        var br = Math.Clamp(radius.BottomRight, 0, limit);
-        var bl = Math.Clamp(radius.BottomLeft, 0, limit);
-        // A flush tab replaces the panel's upper-left corner. For a small inset,
-        // share available space between the outer corner and the concave join.
-        if (!tab.IsEmpty && tab.Width > 0 && tab.Height > 0)
+        // One effective radius for all visible curves; shrink uniformly if space is tight.
+        var effectiveRadius = Math.Min(radius.TopLeft, Math.Min(rect.Width, rect.Height) / 2);
+        var hasTab = !tab.IsEmpty && tab.Width > 0 && tab.Height > 0;
+        var leftSpace = hasTab ? Math.Max(0, tab.Left - rect.Left) : 0;
+        var rightSpace = hasTab ? Math.Max(0, rect.Right - tab.Right) : 0;
+        if (hasTab)
         {
-            tl = Math.Min(tl, Math.Max(0, tab.Left - rect.Left) / 2);
-            tr = Math.Min(tr, Math.Max(0, rect.Right - tab.Right) / 2);
+            effectiveRadius = Math.Min(effectiveRadius, Math.Min(tab.Width, tab.Height) / 2);
+            if (leftSpace > 0.01) effectiveRadius = Math.Min(effectiveRadius, leftSpace / 2);
+            if (rightSpace > 0.01) effectiveRadius = Math.Min(effectiveRadius, rightSpace / 2);
         }
+        var tl = hasTab && leftSpace <= 0.01 ? 0 : effectiveRadius;
+        var tr = hasTab && rightSpace <= 0.01 ? 0 : effectiveRadius;
+        var br = effectiveRadius;
+        var bl = effectiveRadius;
         var geometry = new StreamGeometry();
         using (var context = geometry.Open())
         {
             context.BeginFigure(new Point(rect.Left + tl, rect.Top), true, true);
             if (!tab.IsEmpty && tab.Width > 0 && tab.Height > 0)
             {
-                var topLeft = Math.Min(radius.TopLeft, Math.Min(tab.Width, tab.Height) / 2);
-                var topRight = Math.Min(radius.TopRight, Math.Min(tab.Width, tab.Height) / 2);
-                var joinLeft = Math.Min(radius.TopLeft, Math.Min(tab.Height - topLeft, Math.Max(0, tab.Left - rect.Left - tl)));
-                var joinRight = Math.Min(radius.TopRight, Math.Min(tab.Height - topRight, Math.Max(0, rect.Right - tr - tab.Right)));
+                var topLeft = effectiveRadius;
+                var topRight = effectiveRadius;
+                var joinLeft = leftSpace <= 0.01 ? 0 : effectiveRadius;
+                var joinRight = rightSpace <= 0.01 ? 0 : effectiveRadius;
                 context.LineTo(new Point(tab.Left - joinLeft, rect.Top), true, false);
                 Corner(context, new Point(tab.Left, rect.Top - joinLeft), joinLeft, SweepDirection.Counterclockwise);
                 context.LineTo(new Point(tab.Left, tab.Top + topLeft), true, false);
@@ -182,6 +208,14 @@ public class CustomTabItem : TabItem
     static CustomTabItem() => DefaultStyleKeyProperty.OverrideMetadata(
         typeof(CustomTabItem), new FrameworkPropertyMetadata(typeof(CustomTabItem)));
 }
+
+
+
+
+
+
+
+
 
 
 

@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <PackageId>DLH.Controls.Wpf</PackageId>
+    <Version>0.1.0-preview.1</Version>
+    <Authors>DLH</Authors>
+    <Description>DLH Controls: componentes WPF customizáveis. Inclui TabControl com superfície contínua, reordenação e configurações.</Description>
+    <PackageTags>WPF;Controls;TabControl;Windows</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IsPackable>true</IsPackable>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+
+  <ItemGroup><None Include="..\..\README.md" Pack="true" PackagePath="\" /></ItemGroup>
+</Project>

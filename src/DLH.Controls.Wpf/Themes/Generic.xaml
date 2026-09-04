@@ -1,0 +1,165 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:local="clr-namespace:DLH.Controls.Wpf">
+    <SolidColorBrush x:Key="Tabs.Surface" Color="#35373C" />
+    <SolidColorBrush x:Key="Tabs.Idle" Color="Transparent" />
+    <SolidColorBrush x:Key="Tabs.Hover" Color="#454850" />
+    <SolidColorBrush x:Key="Tabs.Text" Color="#F2F3F5" />
+    <SolidColorBrush x:Key="Tabs.Muted" Color="#BCC0CA" />
+    <SolidColorBrush x:Key="Tabs.Edge" Color="#4C5058" />
+    <SolidColorBrush x:Key="Tabs.Focus" Color="#9CC9FF" />
+    <Thickness x:Key="Tabs.HeaderPadding">22,13,22,13</Thickness>
+
+    <Style x:Key="Tabs.ItemStyle" TargetType="{x:Type TabItem}">
+        <Setter Property="Foreground" Value="{DynamicResource Tabs.Muted}" />
+        <Setter Property="Background" Value="{DynamicResource Tabs.Idle}" />
+        <Setter Property="Padding" Value="{DynamicResource Tabs.HeaderPadding}" />
+        <Setter Property="FontWeight" Value="SemiBold" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+                <Setter Property="FocusVisualStyle">
+            <Setter.Value>
+                <Style TargetType="Control">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="Control">
+                                <Border Margin="5" BorderThickness="1" CornerRadius="5"
+                                        BorderBrush="{DynamicResource Tabs.Focus}" IsHitTestVisible="False" />
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type TabItem}">
+                    <Grid x:Name="Root" SnapsToDevicePixels="True">
+                        <Grid.Margin>
+                            <MultiBinding Converter="{x:Static local:TabSpacingConverter.Instance}"><Binding Path="TabSpacing" RelativeSource="{RelativeSource AncestorType={x:Type local:CustomTabControl}}" /><Binding Path="TabStripPlacement" RelativeSource="{RelativeSource AncestorType={x:Type local:CustomTabControl}}" /></MultiBinding>
+                        </Grid.Margin>
+                        <Border x:Name="Surface" Background="Transparent" Padding="{TemplateBinding Padding}">
+                            <DockPanel LastChildFill="True">
+                                <Button x:Name="CloseButton" DockPanel.Dock="Right" Margin="10,0,0,0" Width="20" Height="20"
+                                        Command="{x:Static local:CustomTabControl.CloseTab}" CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        ToolTip="Fechar aba" AutomationProperties.Name="Fechar aba" Visibility="Collapsed"
+                                        Foreground="{TemplateBinding Foreground}" Background="Transparent" BorderThickness="0">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="CloseSurface" CornerRadius="3" Background="{TemplateBinding Background}">
+                                                <Path Data="M 6,6 L 14,14 M 14,6 L 6,14" Stroke="{TemplateBinding Foreground}" StrokeThickness="1.5" />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="CloseSurface" Property="Background" Value="{DynamicResource Tabs.Hover}" /></Trigger>
+                                                <Trigger Property="IsEnabled" Value="False"><Setter TargetName="CloseSurface" Property="Opacity" Value="0.35" /></Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                </Button>
+                                <ContentPresenter ContentSource="Header" RecognizesAccessKey="True"
+                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                            </DockPanel>
+                        </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>                        <MultiDataTrigger>
+                            <MultiDataTrigger.Conditions>
+                                <Condition Binding="{Binding CanCloseTabs, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}" Value="True" />
+                                <Condition Binding="{Binding ShowCloseButtons, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}" Value="True" />
+                                <Condition Binding="{Binding Path=(local:CustomTabControl.CanCloseTab), RelativeSource={RelativeSource Self}}" Value="True" />
+                            </MultiDataTrigger.Conditions>
+                            <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
+                        </MultiDataTrigger>
+                        <Trigger Property="IsMouseOver" Value="True">
+
+                            <Setter Property="Foreground" Value="{DynamicResource Tabs.Text}" />
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter TargetName="Surface" Property="Background" Value="Transparent" />
+                            <Setter Property="Foreground" Value="{DynamicResource Tabs.Text}" />
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter TargetName="Root" Property="Opacity" Value="0.4" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    <Style TargetType="{x:Type local:CustomTabItem}" BasedOn="{StaticResource Tabs.ItemStyle}" />
+    <Style TargetType="{x:Type local:CustomTabControl}">
+        <Setter Property="Background" Value="{DynamicResource Tabs.Surface}" />
+        <Setter Property="Foreground" Value="{DynamicResource Tabs.Text}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Tabs.Edge}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="Padding" Value="24" />
+        <Setter Property="FontFamily" Value="Segoe UI" />
+        <Setter Property="FontSize" Value="14" />
+        <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+        <Setter Property="VerticalContentAlignment" Value="Stretch" />
+        <Setter Property="ItemContainerStyle" Value="{StaticResource Tabs.ItemStyle}" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:CustomTabControl}">
+                    <Grid x:Name="PART_Layout" KeyboardNavigation.TabNavigation="Local" SnapsToDevicePixels="True"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="0" /></Grid.ColumnDefinitions>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <!-- O contorno contínuo com junções curvas desenha fundo, borda e sombra uma única vez. -->
+                        <Canvas Grid.RowSpan="2" Grid.ColumnSpan="2" IsHitTestVisible="False">
+                            <Path x:Name="PART_HoverSurface" Fill="{DynamicResource Tabs.Hover}" />
+                            <Path x:Name="PART_Surface" Fill="{TemplateBinding Background}" Stroke="{TemplateBinding BorderBrush}">
+                                                                <Path.Style>
+                                    <Style TargetType="Path">
+                                        <Setter Property="Effect">
+                                            <Setter.Value>
+                                                <DropShadowEffect
+                                                    Color="{Binding ShadowColor, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}"
+                                                    BlurRadius="{Binding ShadowBlurRadius, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}"
+                                                    ShadowDepth="{Binding ShadowDepth, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}"
+                                                    Direction="{Binding ShadowDirection, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}"
+                                                    Opacity="{Binding ShadowOpacity, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}" />
+                                            </Setter.Value>
+                                        </Setter>
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsShadowEnabled, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}" Value="False">
+                                                <Setter Property="Effect" Value="{x:Null}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
+                        </Canvas>
+                        <ScrollViewer x:Name="PART_HeaderScrollViewer" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Disabled"
+                                      CanContentScroll="False" Focusable="False" Margin="12,0,12,0">
+                            <ScrollViewer.Template>
+                                <ControlTemplate TargetType="ScrollViewer">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions><ColumnDefinition Width="Auto" /><ColumnDefinition Width="*" /></Grid.ColumnDefinitions><Grid.RowDefinitions><RowDefinition Height="Auto" /><RowDefinition Height="*" /></Grid.RowDefinitions>
+                                        <!-- A rolagem fica acima das abas, preservando o contato com o corpo. -->
+                                        <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Column="1" Orientation="Horizontal"
+                                                   Maximum="{TemplateBinding ScrollableWidth}" ViewportSize="{TemplateBinding ViewportWidth}"
+                                                   Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}"
+                                                   Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}" />
+                                        <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Row="1" Orientation="Vertical" Maximum="{TemplateBinding ScrollableHeight}" ViewportSize="{TemplateBinding ViewportHeight}" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}" />
+                                        <ScrollContentPresenter x:Name="PART_ScrollContentPresenter" Grid.Row="1" Grid.Column="1" CanContentScroll="False" />
+                                    </Grid>
+                                </ControlTemplate>
+                            </ScrollViewer.Template>
+                            <StackPanel x:Name="PART_HeaderPanel" IsItemsHost="True" Orientation="Horizontal" KeyboardNavigation.TabIndex="1" KeyboardNavigation.DirectionalNavigation="Contained" KeyboardNavigation.TabNavigation="Once" />
+                        </ScrollViewer>
+                        <Canvas x:Name="PART_DragPreviewLayer" Grid.RowSpan="2" Grid.ColumnSpan="2" Panel.ZIndex="10" IsHitTestVisible="False"><Line x:Name="PART_DropIndicator" Stroke="{DynamicResource Tabs.Focus}" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Visibility="Collapsed" /></Canvas>
+                        <Border x:Name="PART_Body" Grid.Row="1" BorderThickness="{TemplateBinding BorderThickness}">
+                            <Grid Margin="{TemplateBinding Padding}" KeyboardNavigation.TabNavigation="Local">
+                                <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent"
+                                    HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"
+                                    SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </Grid>
+                        </Border>
+                    </Grid>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+</ResourceDictionary>

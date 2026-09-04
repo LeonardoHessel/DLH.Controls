@@ -1,0 +1,68 @@
+DLH Controls — Licença de Uso com Atribuição Visível
+Versão 1.0
+
+Copyright © 2026 Leonardo D. de L. Hessel.
+
+1. Permissões
+
+É concedida, gratuitamente, permissão para utilizar, executar, copiar, modificar e distribuir o software DLH Controls e sua documentação, integral ou parcialmente, inclusive em produtos comerciais, proprietários ou de código aberto, observadas as condições desta licença.
+
+Não é exigida a divulgação do código-fonte dos aplicativos que utilizem a biblioteca nem das modificações realizadas nela.
+
+2. Preservação dos avisos
+
+Toda distribuição da biblioteca, de suas versões modificadas ou de partes substanciais dela deverá incluir este texto de licença e o aviso de direitos autorais acima.
+
+Esses avisos poderão acompanhar o produto em um arquivo de licenças de terceiros ou em documentação equivalente.
+
+3. Crédito visível
+
+Produtos que incorporem ou executem a biblioteca, inclusive versões modificadas, deverão disponibilizar aos seus usuários o seguinte crédito:
+
+“Este produto utiliza DLH Controls, desenvolvido por Leonardo D. de L. Hessel.”
+
+O crédito deverá:
+
+- Estar em uma seção Sobre, Créditos, Licenças de terceiros ou equivalente, acessível pela interface do produto.
+- Ser legível e permanecer disponível enquanto o produto utilizar a biblioteca.
+- Não depender do acesso ao código-fonte ou às ferramentas de desenvolvimento.
+
+Não é obrigatório apresentar o crédito na tela inicial, em todas as telas ou em materiais publicitários.
+
+Em produtos sem interface gráfica, o crédito deverá constar na documentação destinada aos usuários ou em uma opção acessível de ajuda, créditos ou informações de licença.
+
+O crédito poderá ser traduzido, desde que preserve o nome “DLH Controls”, o nome completo do autor e o significado da atribuição.
+
+4. Versões modificadas e redistribuição
+
+As modificações não poderão ser apresentadas como trabalho original do autor da biblioteca. Quem distribuir uma versão modificada deverá identificá-la como tal em sua documentação.
+
+A redistribuição em outro pacote ou biblioteca deverá preservar esta licença e informar aos destinatários a obrigação de crédito visível nos produtos que utilizem o software.
+
+As partes desenvolvidas por terceiros poderão adotar outros termos, desde que não eliminem as condições aplicáveis ao DLH Controls.
+
+5. Ausência de endosso
+
+O crédito exigido por esta licença não significa que Leonardo D. de L. Hessel apoie, certifique ou seja responsável pelo produto que utiliza a biblioteca.
+
+Esta licença não autoriza o uso do nome do autor, de marcas ou de logotipos para sugerir patrocínio, parceria ou aprovação. A identificação necessária para cumprir a atribuição é permitida.
+
+6. Ausência de garantias
+
+O software é disponibilizado no estado em que se encontra, sem garantia de funcionamento ininterrupto, ausência de erros, adequação a determinada finalidade ou suporte técnico.
+
+Na máxima extensão permitida pela legislação aplicável, o autor não será responsável por prejuízos decorrentes do uso ou da impossibilidade de uso do software.
+
+Esta cláusula não exclui responsabilidades que não possam ser afastadas pela legislação aplicável.
+
+7. Descumprimento e regularização
+
+As permissões concedidas dependem do cumprimento destas condições.
+
+Caso o usuário seja notificado de um descumprimento, terá 30 dias contados do recebimento da notificação para regularizá-lo. Se não houver regularização nesse prazo, as permissões concedidas por esta licença serão encerradas para o usuário infrator.
+
+Esse encerramento não afeta destinatários que permaneçam cumprindo a licença.
+
+8. Condições alternativas
+
+O autor poderá conceder, por escrito, condições alternativas, inclusive dispensa do crédito visível. Essa autorização se aplicará somente aos destinatários e às situações expressamente contempladas.

@@ -33,4 +33,14 @@ dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release -- --configuration-
 dotnet pack src/DLH.Controls.Wpf -c Release -o artifacts/packages
 ```
 
-A demonstração preserva os arquivos de preferências anteriores em `%LOCALAPPDATA%\CustomTabControl.Demo`. Somente a biblioteca é empacotada. Nenhum pacote foi publicado; licença, identidade do autor e versão de lançamento devem ser confirmadas antes da publicação.
+A demonstração preserva os arquivos de preferências anteriores em `%LOCALAPPDATA%\CustomTabControl.Demo`. Somente a biblioteca é empacotada. Nenhum pacote foi publicado. Autor: Leonardo D. de L. Hessel. Versão inicial: 0.1.0-preview.1.
+
+## Licença
+
+Distribuído sob a **DLH Controls — Licença de Uso com Atribuição Visível, versão 1.0**. Consulte [LICENSE.txt](LICENSE.txt) para as condições completas.
+
+Uso comercial, modificação e redistribuição são permitidos, observadas as condições da licença, incluindo o crédito acessível aos usuários:
+
+> Este produto utiliza DLH Controls, desenvolvido por Leonardo D. de L. Hessel.
+
+O crédito pode aparecer em Sobre, Créditos ou Licenças de terceiros; produtos sem interface gráfica devem disponibilizá-lo na documentação ou ajuda. Esta é uma licença personalizada, não identificada como MIT.

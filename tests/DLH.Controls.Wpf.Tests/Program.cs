@@ -13,6 +13,12 @@ internal static class Program
     private static void Main(string[] args)
     {
         var app = new Application { ShutdownMode = ShutdownMode.OnExplicitShutdown };
+        if (args.Contains("--performance-only"))
+        {
+            var reportIndex = Array.IndexOf(args, "--report");
+            PerformanceTests.Run(reportIndex >= 0 ? args[reportIndex + 1] : null);
+            app.Shutdown(); return;
+        }
         if (args.Contains("--configuration-only")) { ConfigurationTests.Run(); app.Shutdown(); return; }
         if (args.Contains("--drag-only"))
         {

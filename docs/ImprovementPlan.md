@@ -149,6 +149,8 @@ Um nome acessível presente não comprova uma experiência completa de acessibil
 
 ## 6. Melhoria D — Custo de atualização do contorno
 
+**Resultado:** medido e concluído sem alteração do algoritmo. Em três repetições, 1.000 atualizações ociosas com 2, 10 e 50 abas não substituíram a geometria nenhuma vez. Redimensionamento, fonte e rolagem com overflow reconstruíram quando as medidas mudaram. Uma hipótese de alocação foi experimentada, não produziu ganho e foi descartada. A decisão fundamentada é manter `LayoutUpdated` com `lastShape`; detalhes e comando reproduzível estão em `docs/PerformanceBaseline.md`.
+
 ### Objetivo
 
 Medir o custo de LayoutUpdated e verificar se há ganho relevante em reduzir trabalho sem perder a sincronização entre aba e corpo.

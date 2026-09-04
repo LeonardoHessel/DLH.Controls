@@ -142,11 +142,18 @@
                 </controls:CustomTabItem>
             </controls:CustomTabControl>
         </Grid>
-        <TextBlock x:Name="InteractionStatus" Grid.ColumnSpan="2" Grid.Row="3" Text="Foque uma aba e use Ctrl+Shift+setas para reorganizar." Margin="0,22,0,12" FontSize="11" Foreground="{DynamicResource Tabs.Muted}" />
-        <controls:CustomTabControl x:Name="SimpleTabs" Grid.ColumnSpan="2" Grid.Row="4" Padding="18" HeaderIndent="0" TabSpacing="0" CornerRadius="8" SelectedIndex="0">
-            <controls:CustomTabItem controls:CustomTabControl.TabKey="Simples" Header="Simples"><TextBlock Text="Primeira aba rente à borda esquerda: HeaderIndent=&quot;0&quot;." TextWrapping="Wrap" /></controls:CustomTabItem>
-            <TabItem controls:CustomTabControl.TabKey="Padrao" Header="TabItem padrão"><TextBlock Text="Também aceita o TabItem nativo do WPF." /></TabItem>
-            <controls:CustomTabItem controls:CustomTabControl.TabKey="Desabilitada" Header="Desabilitada" IsEnabled="False" />
+        <TextBlock x:Name="InteractionStatus" Grid.ColumnSpan="2" Grid.Row="3" Text="Os controles superior e inferior compartilham documentos e ordem, mas mantêm seleções independentes." Margin="0,22,0,12" FontSize="11" Foreground="{DynamicResource Tabs.Muted}" />
+        <controls:CustomTabControl x:Name="SimpleTabs" Grid.ColumnSpan="2" Grid.Row="4" Padding="18" HeaderIndent="0" TabSpacing="0" CornerRadius="8"
+                                   ItemsSource="{Binding Tabs}" SelectedItem="{Binding ComparisonSelectedTab, Mode=TwoWay}" ItemKeyPath="Id" CloseTabCommand="{Binding CloseTabCommand}">
+            <controls:CustomTabControl.ItemContainerStyle>
+                <Style TargetType="TabItem" BasedOn="{StaticResource Tabs.ItemStyle}"><Setter Property="IsEnabled" Value="{Binding IsEnabled}" /><Setter Property="AutomationProperties.Name" Value="{Binding Header}" /></Style>
+            </controls:CustomTabControl.ItemContainerStyle>
+            <controls:CustomTabControl.ItemTemplate>
+                <DataTemplate><TextBlock Text="{Binding Header}" /></DataTemplate>
+            </controls:CustomTabControl.ItemTemplate>
+            <controls:CustomTabControl.ContentTemplate>
+                <DataTemplate><TextBlock Text="{Binding Header, StringFormat=Seleção independente: {0}}" TextWrapping="Wrap" /></DataTemplate>
+            </controls:CustomTabControl.ContentTemplate>
         </controls:CustomTabControl>
     </Grid>
 </Window>

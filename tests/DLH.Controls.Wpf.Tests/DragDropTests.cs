@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using System.Runtime.ExceptionServices;
 using System.Text.Json;
 using System.Windows;
 using System.Windows.Controls;
@@ -21,7 +22,7 @@ internal static partial class DragDropTests
     private static object? Call(Tabs tabs, string name, params object?[] arguments)
     {
         try { return typeof(Tabs).GetMethod(name, Private)!.Invoke(tabs, arguments); }
-        catch (TargetInvocationException e) { throw e.InnerException ?? e; }
+        catch (TargetInvocationException e) { ExceptionDispatchInfo.Capture(e.InnerException ?? e).Throw(); throw; }
     }
     private static T Field<T>(Tabs tabs, string name) => (T)typeof(Tabs).GetField(name, Private)!.GetValue(tabs)!;
     private static void Set(Tabs tabs, string name, object? value) => typeof(Tabs).GetField(name, Private)!.SetValue(tabs, value);
@@ -142,6 +143,7 @@ internal static partial class DragDropTests
             catch (Exception e) { results.Add(new(name, false, timer.Elapsed.TotalMilliseconds, e.ToString())); Console.WriteLine("FAIL: " + name + " — " + e.Message); }
         }
         RunDynamicHeaderTests(Test);
+        RunDynamicCollectionTests(Test);
         foreach (var side in new[] { Dock.Top, Dock.Bottom, Dock.Left, Dock.Right })
         {
             Test($"{side}/drop both directions + MVVM", () =>

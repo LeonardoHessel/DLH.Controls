@@ -143,7 +143,7 @@ dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release
 dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release -- --drag-only --report resultado.json
 ```
 
-A suíte comportamental cobre 98 cenários independentes, incluindo os recursos de fechamento, eventos, persistência, parâmetros e teclado. A execução sem `--drag-only` inclui também a suíte visual. Os testes usam WPF real com coordenadas/estado de entrada simulados; não substituem a revisão com mouse físico, leitor de tela e monitores em diferentes escalas.
+A suíte comportamental cobre 104 cenários independentes, incluindo os recursos de fechamento, eventos, persistência, parâmetros e teclado. A execução sem `--drag-only` inclui também a suíte visual. Os testes usam WPF real com coordenadas/estado de entrada simulados; não substituem a revisão com mouse físico, leitor de tela e monitores em diferentes escalas.
 
 ### Configurações no visualizador
 O botão **Configurações das abas** abre os ajustes de raio uniforme, espaços, borda, cores, fonte, posição, sombra, cursor, limiar de arraste, prévia, animação e fechamento. Por padrão, aplicar altera os três modelos; o seletor permite escolher somente um. A posição de cada modelo é preservada até selecionar outra posição explicitamente. Os valores são validados antes de aplicar. Os valores iniciais do formulário vêm do modelo Documentos.

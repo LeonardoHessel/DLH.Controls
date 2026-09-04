@@ -1,7 +1,7 @@
 # Plano de melhorias — DLH.Controls.Wpf
 
 Data: 4 de setembro de 2026
-Status: em execução. A melhoria A e o exemplo V1 foram concluídos em 4 de setembro de 2026; as demais etapas continuam planejadas.
+Status: em execução. As melhorias A e B e os exemplos V1 e V3 foram concluídos em 4 de setembro de 2026; as demais etapas continuam planejadas.
 
 ## 1. Objetivo e escopo
 
@@ -70,6 +70,10 @@ Automatizar identidade, geometria, ordem e limpeza do arraste. Usar tolerâncias
 Validar manualmente texto longo, fontes e DPI real. O principal risco é criar ciclos extras de layout ou deslocamentos visuais ao tentar corrigir o alinhamento.
 
 ## 4. Melhoria B — Coleções dinâmicas e seleções independentes
+
+**Resultado:** concluída. Mudanças Add, Move, Remove, Replace e Reset são acompanhadas; alterações estruturais durante arraste cancelam a sessão e limpam a prévia. A seleção é preservada por identidade quando o objeto continua na coleção. Ao remover o objeto selecionado externamente, prevalece a escolha válida feita pelo WPF ou a seleção vazia; `TabClosing` e `TabClosed` não são disparados. Trocar a fonte não associa automaticamente uma nova instância que tenha a mesma chave persistente.
+
+Foram adicionados seis cenários, totalizando 104 testes. Eles também confirmam dois controles com contêineres visuais distintos, coleção e ordem compartilhadas, seleções independentes e rejeição já existente de fontes somente leitura, filtradas ou ordenadas.
 
 ### Objetivo
 
@@ -226,6 +230,8 @@ Adicionar formulário, lista longa e conteúdo expansível. Permitir observar po
 Aceitação: o exemplo explica e reproduz o comportamento atual antes de servir de vitrine para qualquer cache futuro. Usar dados sintéticos e não depender de rede ou banco.
 
 ### V3 — Coleção compartilhada
+
+**Resultado:** concluído. O controle inferior usa a mesma coleção do controle superior, com uma propriedade de seleção própria. Reordenar ou fechar atualiza os dois; selecionar em um deles não seleciona o outro.
 
 Exibir dois TabControls sobre a mesma coleção de modelos, com seleções separadas. Permitir escolher orientações diferentes.
 

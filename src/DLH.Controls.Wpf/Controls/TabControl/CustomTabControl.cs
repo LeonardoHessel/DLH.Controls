@@ -4,6 +4,7 @@ using System.Windows.Media;
 using System.Windows.Input;
 using System.Windows.Shapes;
 using System.Windows.Threading;
+using System.Collections.Specialized;
 
 namespace DLH.Controls.Wpf;
 
@@ -15,6 +16,7 @@ public partial class CustomTabControl : TabControl
     private FrameworkElement? body;
     private ScrollViewer? headers;
     private (Rect Body, Rect Tab, Rect Hover, CornerRadius Radius, double Stroke)? lastShape;
+    private object? selectionAnchor;
 
     static CustomTabControl()
     {
@@ -59,10 +61,29 @@ public partial class CustomTabControl : TabControl
     protected override bool IsItemItsOwnContainerOverride(object item) => item is TabItem;
     protected override DependencyObject GetContainerForItemOverride() => new CustomTabItem();
 
+    protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
+    {
+        base.OnItemsChanged(e);
+        // WPF may transiently clear selection while its view processes Move/Remove. Preserve the selected
+        // object when it still exists; a removed or replaced object remains unselected.
+        if (selectionAnchor is not null && Items.Contains(selectionAnchor))
+            SetCurrentValue(SelectedItemProperty, selectionAnchor);
+        if (dragging || dragCandidate is not null) CancelTabDrag();
+        lastShape = null;
+    }
+
     protected override void OnSelectionChanged(SelectionChangedEventArgs e)
     {
         base.OnSelectionChanged(e);
-        if (e.Source == this) RevealSelectedTab();
+        if (e.Source == this)
+        {
+            if (SelectedItem is not null) selectionAnchor = SelectedItem;
+            else Dispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() =>
+            {
+                if (SelectedItem is null) selectionAnchor = null;
+            }));
+            RevealSelectedTab();
+        }
     }
 
     public override void OnApplyTemplate()
@@ -80,10 +101,18 @@ public partial class CustomTabControl : TabControl
 
     private void RevealSelectedTab() => Dispatcher.BeginInvoke(DispatcherPriority.Loaded, new Action(() =>
     {
-        if (ItemContainerGenerator.ContainerFromIndex(SelectedIndex) is TabItem tab)
+        if (ContainerFromIndex(SelectedIndex) is { } tab)
             tab.BringIntoView();
         UpdateSurface();
     }));
+
+    private TabItem? ContainerFromIndex(int index)
+    {
+        if (index < 0 || index >= Items.Count) return null;
+        try { return ItemContainerGenerator.ContainerFromIndex(index) as TabItem; }
+        // WPF can briefly expose the new Items count while its realized block still represents the old source.
+        catch (IndexOutOfRangeException) { return null; }
+    }
 
     protected override void OnMouseMove(MouseEventArgs e)
     {
@@ -138,7 +167,7 @@ public partial class CustomTabControl : TabControl
 
             return bounds;
         }
-        var tabRect = dragging && dragPreview is not null ? Rect.Empty : HeaderBounds(ItemContainerGenerator.ContainerFromIndex(SelectedIndex) as TabItem);
+        var tabRect = dragging && dragPreview is not null ? Rect.Empty : HeaderBounds(ContainerFromIndex(SelectedIndex));
         var hoverRect = HeaderBounds(hoveredItem is { IsSelected: false, IsEnabled: true } ? hoveredItem : null);
         var thickness = BorderThickness;
         var stroke = Math.Max(Math.Max(thickness.Left, thickness.Right), Math.Max(thickness.Top, thickness.Bottom));

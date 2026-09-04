@@ -9,6 +9,7 @@ public sealed class DemoViewModel : INotifyPropertyChanged
 {
     private int nextId = 4;
     private TabDocument? selectedTab;
+    private TabDocument? comparisonSelectedTab;
     private bool english;
     private bool longHeaders;
     private double headerFontSize = 14;
@@ -17,6 +18,11 @@ public sealed class DemoViewModel : INotifyPropertyChanged
     {
         get => selectedTab;
         set { selectedTab = value; OnPropertyChanged(); }
+    }
+    public TabDocument? ComparisonSelectedTab
+    {
+        get => comparisonSelectedTab;
+        set { comparisonSelectedTab = value; OnPropertyChanged(); }
     }
     public ICommand AddTabCommand { get; }
     public ICommand RemoveTabCommand { get; }
@@ -28,6 +34,7 @@ public sealed class DemoViewModel : INotifyPropertyChanged
         Tabs.Add(new("Editor", "✎", "Um espaço para experimentar", "O texto abaixo é armazenado no modelo e permanece disponível ao trocar de aba."));
         Tabs.Add(new("Indisponível", "○", "Aba desabilitada", "", false));
         SelectedTab = Tabs[0];
+        ComparisonSelectedTab = Tabs[1];
         CloseTabCommand = new ParameterCommand(item => { if (item is TabDocument document) Tabs.Remove(document); }, item => item is TabDocument document && document.IsEnabled && Tabs.Contains(document));
         AddTabCommand = new RelayCommand(() =>
         {

@@ -13,7 +13,8 @@ public sealed class DemoViewModel : INotifyPropertyChanged
     private bool english;
     private bool longHeaders;
     private double headerFontSize = 14;
-    public ObservableCollection<TabDocument> Tabs { get; } = new();
+    private ObservableCollection<TabDocument> tabs = new();
+    public ObservableCollection<TabDocument> Tabs { get => tabs; private set { tabs = value; OnPropertyChanged(); } }
     public TabDocument? SelectedTab
     {
         get => selectedTab;
@@ -54,6 +55,37 @@ public sealed class DemoViewModel : INotifyPropertyChanged
     {
         english = !english;
         ApplyHeaderVariants();
+    }
+    public string MutateCollection(int operation)
+    {
+        switch (operation % 5)
+        {
+            case 0:
+                Tabs.Add(new TabDocument($"Documento {nextId++}", "◇", "Adicionado externamente", "A coleção notificou os dois controles."));
+                return "Documento inserido";
+            case 1 when Tabs.Count > 1:
+                Tabs.RemoveAt(Tabs.Count - 1);
+                return "Último documento removido";
+            case 2 when Tabs.Count > 1:
+                Tabs.Move(Tabs.Count - 1, 0);
+                return "Último documento movido para o início";
+            case 3:
+                Tabs.Clear(); SelectedTab = null; ComparisonSelectedTab = null;
+                return "Coleção limpa";
+            default:
+                ResetDocuments();
+                return "Coleção substituída";
+        }
+    }
+    public void ResetDocuments()
+    {
+        Tabs = new ObservableCollection<TabDocument>
+        {
+            new("Visão geral", "◈", "Uma superfície contínua", "As abas compartilham a cor do painel."),
+            new("Editor", "✎", "Um espaço para experimentar", "O texto é armazenado no modelo."),
+            new("Indisponível", "○", "Aba desabilitada", "", false)
+        };
+        SelectedTab = Tabs[0]; ComparisonSelectedTab = Tabs[1];
     }
     public void ToggleHeaderLength()
     {

@@ -3,12 +3,15 @@ using System.Text.Json;
 using DLH.Controls.Wpf;
 using System.Windows;
 using System.Windows.Media;
+using System.Windows.Threading;
 
 namespace DLH.Controls.Wpf.Demo;
 
 public partial class MainWindow : Window
 {
     private int themeIndex;
+    private int mutationIndex;
+    private readonly DispatcherTimer mutationTimer = new() { Interval = TimeSpan.FromSeconds(2) };
     private static readonly string[] ThemeNames = ["Escuro", "Claro", "Cinza e laranja"];
     // Background, surface, hover, text, muted text, border, focus, accent, input.
     private static readonly string[][] ThemeColors =
@@ -32,6 +35,8 @@ public partial class MainWindow : Window
             tabs.TabClosing += ConfirmTabClosing;
         }
         Loaded += (_, _) => { if (File.Exists(LayoutPath)) ReadOrganization(false); ReadConfiguration(); };
+        mutationTimer.Tick += MutateCollection;
+        Closed += (_, _) => mutationTimer.Stop();
         ApplyTheme();
     }
 
@@ -57,6 +62,21 @@ public partial class MainWindow : Window
     {
         var model = (DemoViewModel)DataContext;
         model.HeaderFontSize = model.HeaderFontSize >= 20 ? 14 : model.HeaderFontSize + 3;
+    }
+    private void ScheduleCollectionMutation(object sender, RoutedEventArgs e)
+    {
+        mutationTimer.Stop(); mutationTimer.Start();
+        InteractionStatus.Text = "Mutação agendada: comece a arrastar uma aba antes de 2 segundos.";
+    }
+    private void MutateCollection(object? sender, EventArgs e)
+    {
+        mutationTimer.Stop();
+        InteractionStatus.Text = ((DemoViewModel)DataContext).MutateCollection(mutationIndex++) + ". A sessão de arraste foi encerrada com segurança.";
+    }
+    private void ResetCollection(object sender, RoutedEventArgs e)
+    {
+        mutationTimer.Stop(); ((DemoViewModel)DataContext).ResetDocuments();
+        InteractionStatus.Text = "Coleção reconstruída e seleções independentes restauradas.";
     }
 
     private void ToggleTheme(object sender, RoutedEventArgs e)

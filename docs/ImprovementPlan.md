@@ -1,7 +1,7 @@
 # Plano de melhorias — DLH.Controls.Wpf
 
 Data: 4 de setembro de 2026
-Status: em execução. As melhorias A e B e os exemplos V1 e V3 foram concluídos em 4 de setembro de 2026; as demais etapas continuam planejadas.
+Status: em execução. As melhorias A e B e os exemplos V1, V3 e V4 foram concluídos em 4 de setembro de 2026; as demais etapas continuam planejadas.
 
 ## 1. Objetivo e escopo
 
@@ -238,6 +238,8 @@ Exibir dois TabControls sobre a mesma coleção de modelos, com seleções separ
 Aceitação: selecionar uma aba em um controle não muda a seleção do outro; mover ou remover um documento atualiza a coleção nos dois. A UI deve comunicar essa diferença ao usuário.
 
 ### V4 — Mutações durante interação
+
+**Resultado:** concluído. O visualizador agenda, somente por ação explícita, uma mutação após dois segundos. As execuções alternam inserção, remoção, movimentação, limpeza e substituição da coleção; uma ação separada reconstrói os dados. O timer é reiniciado a cada solicitação, interrompido após executar e cancelado quando a janela fecha.
 
 Adicionar ações controladas para inserir, remover, limpar e substituir a coleção. Um cenário temporizado, iniciado explicitamente pelo usuário, permite testar a mutação enquanto arrasta.
 

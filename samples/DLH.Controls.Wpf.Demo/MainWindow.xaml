@@ -51,6 +51,8 @@
             <Button Content="PT / EN" Click="ToggleLanguage" />
             <Button Content="Título curto / longo" Click="ToggleHeaderLength" />
             <Button Content="Fonte do cabeçalho" Click="ToggleHeaderFont" />
+            <Button Content="Mutar coleção em 2s" Click="ScheduleCollectionMutation" />
+            <Button Content="Reconstruir coleção" Click="ResetCollection" />
             <Button Content="Salvar configurações" Click="SaveConfiguration" /><Button Content="Restaurar configurações" Click="RestoreConfiguration" /><Button Content="Salvar organização" Click="SaveOrganization" />
             <Button Content="Restaurar organização" Click="RestoreOrganization" />
             <CheckBox Content="Animar" VerticalAlignment="Center" Margin="6,0,12,0" Foreground="{DynamicResource Tabs.Text}" IsChecked="{Binding IsAnimationEnabled, ElementName=DynamicTabs, Mode=OneWay}" Click="ToggleAllAnimation" />

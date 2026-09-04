@@ -50,3 +50,4 @@ O crédito pode aparecer em Sobre, Créditos ou Licenças de terceiros; produtos
 - [Referência da API](docs/ApiReference.md)
 - [Integração com dados, MVVM e temas](docs/Integration.md)
 - [Preparação para 1.0.0](docs/ReleaseReadiness.md)
+- [Plano de melhorias do componente e visualizador](docs/ImprovementPlan.md)

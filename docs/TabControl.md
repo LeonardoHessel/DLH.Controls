@@ -78,7 +78,7 @@ O limiar é medido em pixels físicos, somente no eixo da faixa, e precisa ser u
 
 A prévia acompanha o eixo das abas, os vizinhos abrem espaço e a coleção só muda ao soltar. O movimento perpendicular é ignorado. Nas extremidades, há rolagem automática. Esc, perda de captura, desativação da janela ou soltura além dos limites do eixo cancelam a operação. Mudar a posição da faixa durante o arraste também cancela; redimensionar atualiza o alinhamento da prévia.
 
-`IsDragPreviewEnabled="False"` mantém o destino e a reordenação sem prévia flutuante. `IsAnimationEnabled="False"` ou duração zero faz os deslocamentos instantaneamente. Alterar opções durante um arraste cancela a sessão de forma limpa. A duração aceita de zero a dez segundos.
+`IsDragPreviewEnabled="False"` mantém o destino e a reordenação sem prévia flutuante. `IsAnimationEnabled="False"` ou duração zero faz os deslocamentos instantaneamente. Alterar as opções de prévia/animação/limiar durante um arraste cancela a sessão de forma limpa. A duração aceita de zero a dez segundos.
 
 Use `MoveTab(indiceAtual, indiceFinal)` para reordenar por código. Retorna `false` quando a operação não é suportada. `ObservableCollection<T>` recebe uma única notificação `Move`. Listas mutáveis e itens explícitos são aceitos. Arrays, fontes somente leitura e visões filtradas, ordenadas ou agrupadas não são reorganizados. Não há transferência entre controles ou janelas.
 
@@ -133,7 +133,7 @@ tabs.RestoreState(state);
 
 O chamador é responsável por abrir/fechar os streams e escolher onde armazená-los. Também pode serializar `TabControlState` por conta própria. `RestoreState` ignora chaves de itens ausentes e coloca itens novos no final, preservando sua ordem relativa. Chaves duplicadas/vazias e versões desconhecidas são rejeitadas antes de reorganizar. A restauração requer fonte mutável sem filtro, agrupamento ou ordenação, mas funciona com arraste desabilitado.
 
-A demonstração salva explicitamente em `%LOCALAPPDATA%\DLH.Controls.Wpf.Demo\layout.json`, restaura pelo botão e tenta restaurar ao abrir. Apenas as abas existentes são reorganizadas: documentos fechados/ausentes não são recriados e anotações não são gravadas nesse arquivo.
+A demonstração salva explicitamente em `%LOCALAPPDATA%\CustomTabControl.Demo\layout.json`, restaura pelo botão e tenta restaurar ao abrir. Apenas as abas existentes são reorganizadas: documentos fechados/ausentes não são recriados e anotações não são gravadas nesse arquivo.
 
 ## Validação
 
@@ -143,12 +143,12 @@ dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release
 dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release -- --drag-only --report resultado.json
 ```
 
-A suíte comportamental cobre 61 cenários independentes, incluindo os recursos de fechamento, eventos, persistência, parâmetros e teclado. A execução sem `--drag-only` inclui também a suíte visual. Os testes usam WPF real com coordenadas/estado de entrada simulados; não substituem a revisão com mouse físico, leitor de tela e monitores em diferentes escalas.
+A suíte comportamental cobre 86 cenários independentes, incluindo os recursos de fechamento, eventos, persistência, parâmetros e teclado. A execução sem `--drag-only` inclui também a suíte visual. Os testes usam WPF real com coordenadas/estado de entrada simulados; não substituem a revisão com mouse físico, leitor de tela e monitores em diferentes escalas.
 
 ### Configurações no visualizador
 O botão **Configurações das abas** abre os ajustes de raio uniforme, espaços, borda, cores, fonte, posição, sombra, cursor, limiar de arraste, prévia, animação e fechamento. Por padrão, aplicar altera os três modelos; o seletor permite escolher somente um. A posição de cada modelo é preservada até selecionar outra posição explicitamente. Os valores são validados antes de aplicar. Os valores iniciais do formulário vêm do modelo Documentos.
 
-Os botões Animar e Prévia alteram os três modelos. Salvar/restaurar organização inclui Documentos, Lateral e Simples, com leitura compatível com o arquivo anterior. Apenas ordem/seleção são persistidas; configurações visuais permanecem na sessão. Chaves e comandos MVVM continuam definidos conforme a fonte de cada modelo.
+Os botões Animar e Prévia alteram os três modelos. Salvar/restaurar organização inclui Documentos, Lateral e Simples, com leitura compatível com o arquivo anterior. Salvar organização persiste ordem/seleção. Salvar configurações grava aparência e comportamento em arquivo separado; alterações não salvas permanecem na sessão. Chaves e comandos MVVM continuam definidos conforme a fonte de cada modelo.
 
 Verificação do painel: `dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release -- --settings-only`.
 
@@ -171,6 +171,6 @@ O objeto versionado usa valores textuais com cultura invariável. Inclui as prop
 
 A restauração preserva bindings com SetCurrentValue. Alterações futuras na fonte do binding podem prevalecer. ResetConfiguration usa os valores padrão registrados na biblioteca (inclusive abas superiores e botões de fechar ocultos), sem remover os documentos. Valores como brushes/cursor precisam ser representáveis pelo conversor WPF; recursos personalizados sem representação textual não são portáveis por esta API. Cores são capturadas como valores, não como chaves DynamicResource.
 
-No visualizador, **Salvar configurações** grava `%LOCALAPPDATA%\DLH.Controls.Wpf.Demo\configuration.json`, com um registro por modelo e o tema da aplicação. A leitura é automática ao abrir ou pelo botão **Restaurar configurações**. O arquivo de organização anterior continua separado. No painel, **Restaurar padrões** respeita o modelo escolhido; para persistir o resultado, use Salvar configurações. Alternar tema reaplica suas cores aos três modelos. Alterações não salvas permanecem somente na sessão.
+No visualizador, **Salvar configurações** grava `%LOCALAPPDATA%\CustomTabControl.Demo\configuration.json`, com um registro por modelo e o tema da aplicação. A leitura é automática ao abrir ou pelo botão **Restaurar configurações**. O arquivo de organização anterior continua separado. No painel, **Restaurar padrões** respeita o modelo escolhido; para persistir o resultado, use Salvar configurações. Alternar tema reaplica suas cores aos três modelos. Alterações não salvas permanecem somente na sessão.
 
 Teste da API e integração de arquivo: `dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release -- --configuration-only`.

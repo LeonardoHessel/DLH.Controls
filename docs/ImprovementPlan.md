@@ -1,7 +1,7 @@
 # Plano de melhorias — DLH.Controls.Wpf
 
 Data: 4 de setembro de 2026
-Status: em execução. As melhorias A e B e os exemplos V1, V3 e V4 foram concluídos em 4 de setembro de 2026; as demais etapas continuam planejadas.
+Status: plano técnico executado em 4 de setembro de 2026. Melhorias A, B, D e E e exemplos V1 a V4 concluídos; a parte automatizada de C foi concluída e seu roteiro manual permanece pendente.
 
 ## 1. Objetivo e escopo
 
@@ -184,6 +184,8 @@ Trocar um mecanismo abrangente por eventos específicos pode deixar lacunas em a
 
 ## 7. Melhoria E — Preservação opcional do conteúdo visual
 
+**Resultado da investigação:** concluído; cache visual adiado. O teste reproduz que texto ligado ao modelo reaparece ao retornar à aba. O `ScrollViewer` pertence ao apresentador de conteúdo selecionado e sua posição é compartilhada pelas páginas, em vez de representar estado independente por documento. O exemplo V2 mostra a alternativa leve: texto e expansão ficam no modelo. Não foi adicionada API de cache porque não há requisito de produto que justifique reter árvores, timers e inscrições em memória. A decisão pode ser revista com um caso real e um orçamento de memória.
+
 ### Objetivo
 
 Investigar a necessidade de manter árvores visuais de páginas para preservar estados como posição de rolagem e expansão de elementos ao trocar abas.
@@ -230,6 +232,8 @@ Adicionar seleção de idioma de demonstração, botão para alternar títulos c
 Aceitação: trocar idioma em quatro posições, com rolagem e durante interação, sem perda dos dados de exemplo. Strings da demonstração não impõem um mecanismo de localização à biblioteca.
 
 ### V2 — Páginas com estado visual
+
+**Resultado:** concluído. Cada documento expõe anotações, expansão e uma lista sintética. O visualizador explica que `IsExpanded` e o texto persistem por estarem vinculados ao modelo; a rolagem pertence ao apresentador visual compartilhado e não é um estado independente por aba.
 
 Adicionar formulário, lista longa e conteúdo expansível. Permitir observar posição de rolagem e valores antes/depois de trocar abas. Distinguir visualmente estado guardado no modelo de estado exclusivamente visual.
 

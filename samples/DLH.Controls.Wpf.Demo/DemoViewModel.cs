@@ -120,6 +120,13 @@ public sealed class TabDocument(string header, string icon, string title, string
     public string Description { get; } = description;
     public bool IsEnabled { get; } = isEnabled;
     private string notes = "";
+    private bool isDetailsExpanded;
+    public IReadOnlyList<string> ExampleLines { get; } = Enumerable.Range(1, 24).Select(number => $"Linha sintética {number:00}").ToArray();
+    public bool IsDetailsExpanded
+    {
+        get => isDetailsExpanded;
+        set { if (isDetailsExpanded == value) return; isDetailsExpanded = value; PropertyChanged?.Invoke(this, new(nameof(IsDetailsExpanded))); }
+    }
     public string Notes
     {
         get => notes;

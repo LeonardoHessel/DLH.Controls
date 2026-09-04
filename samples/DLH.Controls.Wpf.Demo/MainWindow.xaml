@@ -82,6 +82,13 @@
                             <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}" AcceptsReturn="True" TextWrapping="Wrap" MinHeight="80" Padding="12"
                                      Background="{DynamicResource Demo.Input}" Foreground="{DynamicResource Tabs.Text}" BorderBrush="{DynamicResource Tabs.Edge}"
                                      AutomationProperties.Name="Anotações do documento" VerticalScrollBarVisibility="Auto" />
+                            <Expander Header="Estado vinculado ao documento" IsExpanded="{Binding IsDetailsExpanded, Mode=TwoWay}" Margin="0,14,0,0">
+                                <StackPanel>
+                                    <TextBlock Text="Este Expander preserva seu estado porque IsExpanded pertence ao modelo." TextWrapping="Wrap" Foreground="{DynamicResource Tabs.Muted}" Margin="0,0,0,8" />
+                                    <TextBlock Text="A rolagem é do apresentador visual compartilhado; não representa uma posição própria de cada documento." TextWrapping="Wrap" Foreground="{DynamicResource Tabs.Muted}" Margin="0,0,0,8" />
+                                    <ItemsControl ItemsSource="{Binding ExampleLines}" />
+                                </StackPanel>
+                            </Expander>
                         </StackPanel>
                     </ScrollViewer>
                 </DataTemplate>

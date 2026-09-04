@@ -12,7 +12,7 @@ dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release -- --drag-only --re
 dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release
 ```
 
-O primeiro comando executa somente os 107 cenários de drag and drop. O segundo salva um relatório JSON com resultado e duração por cenário. O terceiro executa também a suíte visual. O processo retorna código 1 se qualquer cenário falhar.
+O primeiro comando executa somente os 108 cenários de drag and drop. O segundo salva um relatório JSON com resultado e duração por cenário. O terceiro executa também a suíte visual. O processo retorna código 1 se qualquer cenário falhar.
 
 ## Cobertura automatizada
 
@@ -52,7 +52,7 @@ Esses testes revelaram e corrigiram duas falhas: a coordenada transversal da pr�
 
 ## Recursos adicionais
 
-A suíte também cobre evento de reordenação (origem e índices), ausência de evento em no-op, propriedades da prévia/animação, configuração inválida, botão e comando de fechar, cancelamento, proteção de abas, seleção após fechamento, roundtrip JSON, chaves inválidas/ausentes/novas e reordenação por teclado nos quatro lados. Total atual: 107 cenários.
+A suíte também cobre evento de reordenação (origem e índices), ausência de evento em no-op, propriedades da prévia/animação, configuração inválida, botão e comando de fechar, cancelamento, proteção de abas, seleção após fechamento, roundtrip JSON, chaves inválidas/ausentes/novas e reordenação por teclado nos quatro lados. Total atual: 108 cenários.
 
 O modo `--drag-only` foi preservado por compatibilidade e agora inclui esses testes comportamentais relacionados às abas.
 

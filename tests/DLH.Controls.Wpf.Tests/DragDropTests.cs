@@ -145,6 +145,7 @@ internal static partial class DragDropTests
         RunDynamicHeaderTests(Test);
         RunDynamicCollectionTests(Test);
         RunAccessibilityTests(Test);
+        RunContentStateTests(Test);
         foreach (var side in new[] { Dock.Top, Dock.Bottom, Dock.Left, Dock.Right })
         {
             Test($"{side}/drop both directions + MVVM", () =>

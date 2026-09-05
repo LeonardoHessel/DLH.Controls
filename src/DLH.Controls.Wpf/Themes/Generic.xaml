@@ -8,6 +8,7 @@
     <SolidColorBrush x:Key="Tabs.Muted" Color="#BCC0CA" />
     <SolidColorBrush x:Key="Tabs.Edge" Color="#4C5058" />
     <SolidColorBrush x:Key="Tabs.Focus" Color="#9CC9FF" />
+    <local:TabCloseAutomationNameConverter x:Key="Tabs.CloseAutomationNameConverter" />
     <Thickness x:Key="Tabs.HeaderPadding">22,13,22,13</Thickness>
 
     <Style x:Key="Tabs.ItemStyle" TargetType="{x:Type TabItem}">
@@ -42,8 +43,14 @@
                             <DockPanel LastChildFill="True">
                                 <Button x:Name="CloseButton" DockPanel.Dock="Right" Margin="10,0,0,0" Width="20" Height="20"
                                         Command="{x:Static local:CustomTabControl.CloseTab}" CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                                        ToolTip="Fechar aba" AutomationProperties.Name="{Binding Header, RelativeSource={RelativeSource AncestorType={x:Type TabItem}}, StringFormat=Fechar {0}}" Visibility="Collapsed"
+                                        ToolTip="Fechar aba" Visibility="Collapsed"
                                         Foreground="{TemplateBinding Foreground}" Background="Transparent" BorderThickness="0">
+                                    <AutomationProperties.Name>
+                                        <MultiBinding Converter="{StaticResource Tabs.CloseAutomationNameConverter}">
+                                            <Binding Path="(AutomationProperties.Name)" RelativeSource="{RelativeSource AncestorType={x:Type TabItem}}" />
+                                            <Binding Path="Header" RelativeSource="{RelativeSource AncestorType={x:Type TabItem}}" />
+                                        </MultiBinding>
+                                    </AutomationProperties.Name>
                                     <Button.Template>
                                         <ControlTemplate TargetType="Button">
                                             <Border x:Name="CloseSurface" CornerRadius="3" Background="{TemplateBinding Background}">

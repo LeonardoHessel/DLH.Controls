@@ -13,6 +13,8 @@ A ação de adicionar não será um item da coleção. Portanto, não poderá se
 
 ## 2. Etapa A — ação opcional para adicionar abas
 
+**Resultado:** concluída. A ação é um botão independente dos itens, funciona nas quatro posições e permanece oculta por padrão. A integração aceita `AddTabCommand` com parâmetro ou, na ausência de comando, `AddTabRequested`. O estado habilitado acompanha `CanExecute`; conteúdo e template são substituíveis. A cobertura automatizada confirma posicionamento, execução única, precedência do comando, isolamento da coleção e metadados de acessibilidade.
+
 ### API proposta
 
 | Membro | Tipo | Padrão | Finalidade |

@@ -145,6 +145,7 @@ internal static partial class DragDropTests
         RunDynamicHeaderTests(Test);
         RunDynamicCollectionTests(Test);
         RunAccessibilityTests(Test);
+        RunAddTabTests(Test);
         RunContentStateTests(Test);
         foreach (var side in new[] { Dock.Top, Dock.Bottom, Dock.Left, Dock.Right })
         {

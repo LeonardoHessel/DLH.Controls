@@ -154,7 +154,47 @@
                                     </Grid>
                                 </ControlTemplate>
                             </ScrollViewer.Template>
-                            <StackPanel x:Name="PART_HeaderPanel" IsItemsHost="True" Orientation="Horizontal" KeyboardNavigation.TabIndex="1" KeyboardNavigation.DirectionalNavigation="Contained" KeyboardNavigation.TabNavigation="Once" />
+                            <StackPanel x:Name="PART_HeaderFlow" Orientation="Horizontal">
+                                <StackPanel x:Name="PART_HeaderPanel" IsItemsHost="True" Orientation="Horizontal" KeyboardNavigation.TabIndex="1" KeyboardNavigation.DirectionalNavigation="Contained" KeyboardNavigation.TabNavigation="Once" />
+                                <Button x:Name="PART_AddTabButton"
+                                        MinWidth="38" MinHeight="38" Padding="10,6" Margin="2,0,0,0"
+                                        Content="{TemplateBinding AddTabContent}"
+                                        ContentTemplate="{TemplateBinding AddTabContentTemplate}"
+                                        Command="{x:Static local:CustomTabControl.AddTab}"
+                                        CommandParameter="{TemplateBinding AddTabCommandParameter}"
+                                        AutomationProperties.Name="Adicionar aba" ToolTip="Adicionar aba"
+                                        Foreground="{TemplateBinding Foreground}" Background="Transparent"
+                                        BorderBrush="Transparent" BorderThickness="1"
+                                        FocusVisualStyle="{x:Null}">
+                                    <Button.Template>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border x:Name="AddSurface" Padding="{TemplateBinding Padding}"
+                                                    Background="{TemplateBinding Background}"
+                                                    BorderBrush="{TemplateBinding BorderBrush}"
+                                                    BorderThickness="{TemplateBinding BorderThickness}"
+                                                    CornerRadius="4">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="AddSurface" Property="Background" Value="{DynamicResource Tabs.Hover}" /></Trigger>
+                                                <Trigger Property="IsKeyboardFocused" Value="True"><Setter TargetName="AddSurface" Property="BorderBrush" Value="{DynamicResource Tabs.Focus}" /></Trigger>
+                                                <Trigger Property="IsPressed" Value="True"><Setter TargetName="AddSurface" Property="Opacity" Value="0.72" /></Trigger>
+                                                <Trigger Property="IsEnabled" Value="False"><Setter TargetName="AddSurface" Property="Opacity" Value="0.35" /></Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Button.Template>
+                                    <Button.Style>
+                                        <Style TargetType="Button">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding CanAddTabs, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}" Value="True">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Button.Style>
+                                </Button>
+                            </StackPanel>
                         </ScrollViewer>
                         <Canvas x:Name="PART_DragPreviewLayer" Grid.RowSpan="2" Grid.ColumnSpan="2" Panel.ZIndex="10" IsHitTestVisible="False"><Line x:Name="PART_DropIndicator" Stroke="{DynamicResource Tabs.Focus}" StrokeThickness="3" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Visibility="Collapsed" /></Canvas>
                         <Border x:Name="PART_Body" Grid.Row="1" BorderThickness="{TemplateBinding BorderThickness}">

@@ -19,6 +19,10 @@ appliedPlacement = TabStripPlacement;
 var vertical = IsVerticalTabStrip;
         var trailing = TabStripPlacement is Dock.Bottom or Dock.Right;
         panel.Orientation = vertical ? Orientation.Vertical : Orientation.Horizontal;
+        if (GetTemplateChild("PART_HeaderFlow") is StackPanel flow)
+            flow.Orientation = panel.Orientation;
+        if (GetTemplateChild("PART_AddTabButton") is Button addButton)
+            addButton.Margin = vertical ? new Thickness(0, 2, 0, 0) : new Thickness(2, 0, 0, 0);
         headers.HorizontalScrollBarVisibility = vertical ? ScrollBarVisibility.Disabled : ScrollBarVisibility.Auto;
         headers.VerticalScrollBarVisibility = vertical ? ScrollBarVisibility.Auto : ScrollBarVisibility.Disabled;
         grid.RowDefinitions[0].Height = vertical ? new GridLength(1, GridUnitType.Star) : trailing ? new GridLength(1, GridUnitType.Star) : GridLength.Auto;

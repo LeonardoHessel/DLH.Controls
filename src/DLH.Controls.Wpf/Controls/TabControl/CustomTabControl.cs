@@ -33,6 +33,9 @@ public partial class CustomTabControl : TabControl
 
     public CustomTabControl()
     {
+        CommandBindings.Add(new CommandBinding(AddTab,
+            (_, e) => { RequestAddTab(e.Parameter); e.Handled = true; },
+            (_, e) => { e.CanExecute = CanRequestAddTab(e.Parameter); e.Handled = true; }));
         CommandBindings.Add(new CommandBinding(CloseTab,
             (_, e) => { if (ResolveCloseItem(e.Parameter) is { } item) RequestCloseTab(item); e.Handled = true; },
             (_, e) => { e.CanExecute = CanRequestClose(ResolveCloseItem(e.Parameter)); e.Handled = true; }));

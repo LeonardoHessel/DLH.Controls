@@ -15,6 +15,8 @@ Exemplo de controle ligado à coleção Documents do DataContext:
     ItemsSource="{Binding Documents}" ItemKeyPath="Id"
     SelectedItem="{Binding SelectedDocument, Mode=TwoWay}"
     CanCloseTabs="True" ShowCloseButtons="True"
+    CanAddTabs="True" AddTabCommand="{Binding AddDocumentCommand}"
+    CanRenameTabs="True" TabHeaderPath="Title"
     CloseTabCommand="{Binding CloseDocumentCommand}">
     <dlh:CustomTabControl.ItemTemplate>
         <DataTemplate><TextBlock Text="{Binding Title}" /></DataTemplate>
@@ -41,6 +43,50 @@ Tabs.TabClosing += (_, e) =>
 ```
 
 Document e HasUnsavedChanges representam o modelo da aplicação. Para confirmação assíncrona, vete o primeiro fechamento e coordene a confirmação/remoção na aplicação, evitando chamadas recursivas ao mesmo veto.
+
+## Título e ícone no cabeçalho
+
+`ItemTemplate` define a aparência de cada cabeçalho. O ícone pode ser texto, imagem ou geometria vetorial; o título continua no modelo:
+
+```xml
+<dlh:CustomTabControl.ItemTemplate>
+    <DataTemplate>
+        <StackPanel Orientation="Horizontal">
+            <Path Width="16" Height="16" Margin="0,0,8,0"
+                  Stretch="Uniform" Fill="DarkOrange"
+                  Data="{Binding IconGeometry}" />
+            <TextBlock Text="{Binding Title}" />
+        </StackPanel>
+    </DataTemplate>
+</dlh:CustomTabControl.ItemTemplate>
+```
+
+O modelo deve notificar alterações de `Title` para que o cabeçalho e o contorno sejam recalculados. Durante a edição, o editor textual substitui temporariamente a apresentação composta; o ícone e o template reaparecem intactos ao confirmar ou cancelar.
+
+## Criar e renomear abas
+
+As duas funcionalidades são independentes e desativadas por padrão. `CanAddTabs="True"` mostra `+` depois do último cabeçalho. O botão não é item, não recebe índice e não participa da seleção ou do drag and drop. A aplicação cria o documento no comando:
+
+```csharp
+AddDocumentCommand = new RelayCommand(() =>
+{
+    var document = new Document { Id = Guid.NewGuid().ToString(), Title = "Nova aba" };
+    Documents.Add(document);
+    SelectedDocument = document;
+});
+```
+
+Use `AddTabContent` para trocar o sinal ou `AddTabContentTemplate` para fornecer um ícone visual. Sem comando, trate `AddTabRequested`. Se o comando não puder executar, o botão permanece visível e desabilitado.
+
+Para edição direta, indique a propriedade textual gravável:
+
+```xml
+<dlh:CustomTabControl CanRenameTabs="True"
+                      TabHeaderPath="Title"
+                      RenameActivation="F2AndDoubleClick" />
+```
+
+`F2` e duplo clique abrem o editor; `Enter` confirma e `Esc` cancela. Perder o foco tenta confirmar. Use `TabRenameRequested` para vetar texto ou `RenameTabCommand` quando o ViewModel precisar validar/persistir a alteração. O comando recebe `TabRenameRequest`. Com comando definido, o controle não grava a propriedade automaticamente.
 
 ## Tema e faixa lateral
 

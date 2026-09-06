@@ -1,6 +1,13 @@
 # Histórico de versões
 
-## 0.1.0-preview.3 — preparada
+## Não publicado
+
+- Ação opcional `+` para solicitar novas abas por comando ou evento, sem criar um item artificial na coleção.
+- Edição opcional do título por `F2`, duplo clique e API, com confirmação, cancelamento, comandos e eventos de validação.
+- Configuração e visualizador atualizados para criação e renomeação nas quatro posições.
+- Suíte comportamental ampliada de 108 para 123 cenários.
+
+## 0.1.0-preview.3 — 5 de setembro de 2026
 
 - Suporte robusto a cabeçalhos alterados em execução, incluindo texto, idioma, fonte, overflow e cancelamento seguro de uma prévia desatualizada.
 - Tratamento de coleções dinâmicas, troca de `ItemsSource`, mutações durante arraste e seleção independente entre controles que compartilham documentos.

@@ -1,6 +1,6 @@
 # CustomTabControl · WPF / .NET 10
 
-Controle reutilizável de abas com contorno unificado, cantos uniformes, sombra configurável, temas e reordenação animada. A solução separa a biblioteca, a demonstração e os testes.
+Controle reutilizável de abas com contorno unificado, cantos uniformes, sombra configurável, temas, reordenação animada, criação opcional e edição direta de títulos. A solução separa a biblioteca, a demonstração e os testes.
 
 ## Executar
 
@@ -36,6 +36,31 @@ xmlns:controls="clr-namespace:DLH.Controls.Wpf;assembly=DLH.Controls.Wpf"
 O estilo é carregado automaticamente de `Themes/Generic.xaml`. Itens `TabItem` nativos são aceitos; com `ItemsSource`, o controle gera `CustomTabItem`. Use `ItemTemplate` para os cabeçalhos, `ContentTemplate` para as páginas e `SelectedItem` com binding de duas vias.
 
 Dados editáveis devem permanecer no modelo. O controle não mantém um cache de árvores visuais para cada item de dados.
+
+## Adicionar abas
+
+```xml
+<controls:CustomTabControl
+    ItemsSource="{Binding Documents}"
+    CanAddTabs="True"
+    AddTabCommand="{Binding AddDocumentCommand}" />
+```
+
+O padrão de `CanAddTabs` é `false`. Quando ativada, a ação `+` aparece depois da última aba no eixo da faixa. Ela é um botão independente: não entra em Items, SelectedIndex, persistência de estado ou drag and drop. A aplicação continua responsável por criar o documento e adicioná-lo à coleção. `AddTabCommandParameter`, `AddTabContent` e `AddTabContentTemplate` permitem contexto e aparência próprios. Sem comando, assine `AddTabRequested`.
+
+## Editar títulos
+
+```xml
+<controls:CustomTabControl
+    ItemsSource="{Binding Documents}"
+    CanRenameTabs="True"
+    TabHeaderPath="Title"
+    RenameActivation="F2AndDoubleClick" />
+```
+
+O padrão de `CanRenameTabs` é `false`. Use `F2` na aba selecionada ou duplo clique em um cabeçalho; `Enter` confirma, `Esc` cancela e a perda de foco tenta confirmar. `TabHeaderPath` aceita caminhos como `Document.Title` e deve apontar para string gravável. Um `TabItem` explícito pode editar seu `Header` textual sem definir caminho.
+
+`TabRenaming` pode impedir a abertura, `TabRenameRequested` pode rejeitar o novo texto e `TabRenamed` informa a aceitação. Para concentrar a atualização no ViewModel, defina `RenameTabCommand`; ele recebe `TabRenameRequest` com item, texto anterior e texto novo. O editor bloqueia o início do arraste em sua área e é cancelado com segurança quando a coleção ou o template muda.
 
 ## Contorno e aparência
 
@@ -96,7 +121,7 @@ O evento ocorre após uma mudança efetiva, uma vez por operação; cancelamento
 
 ## Teclado
 
-Com o cabeçalho focado, use **Ctrl+Shift+Esquerda/Direita** para reorganizar abas horizontais ou **Ctrl+Shift+Cima/Baixo** nas laterais. O foco acompanha o item movido. As teclas não são interceptadas em editores ou controles interativos dentro da página/cabeçalho. O comportamento padrão de Tab, setas e Ctrl+Tab permanece disponível.
+Com o cabeçalho focado, use **Ctrl+Shift+Esquerda/Direita** para reorganizar abas horizontais ou **Ctrl+Shift+Cima/Baixo** nas laterais. `F2` inicia a renomeação quando habilitada. O foco acompanha o item movido. As teclas de reorganização não são interceptadas em editores ou controles interativos dentro da página/cabeçalho. O comportamento padrão de Tab, setas e Ctrl+Tab permanece disponível.
 
 ## Fechar abas
 
@@ -143,16 +168,18 @@ dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release
 dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release -- --drag-only --report resultado.json
 ```
 
-A suíte comportamental cobre 108 cenários independentes, incluindo os recursos de fechamento, eventos, persistência, parâmetros e teclado. A execução sem `--drag-only` inclui também a suíte visual. Os testes usam WPF real com coordenadas/estado de entrada simulados; não substituem a revisão com mouse físico, leitor de tela e monitores em diferentes escalas.
+A suíte comportamental cobre 123 cenários independentes, incluindo criação, renomeação, fechamento, eventos, persistência, parâmetros e teclado. A execução sem `--drag-only` inclui também a suíte visual. Os testes usam WPF real com coordenadas/estado de entrada simulados; não substituem a revisão com mouse físico, leitor de tela e monitores em diferentes escalas.
 
 ### Configurações no visualizador
-O botão **Configurações das abas** abre os ajustes de raio uniforme, espaços, borda, cores, fonte, posição, sombra, cursor, limiar de arraste, prévia, animação e fechamento. Por padrão, aplicar altera os três modelos; o seletor permite escolher somente um. A posição de cada modelo é preservada até selecionar outra posição explicitamente. Os valores são validados antes de aplicar. Os valores iniciais do formulário vêm do modelo Documentos.
+O botão **Configurações das abas** abre os ajustes de raio uniforme, espaços, borda, cores, fonte, posição, sombra, cursor, limiar de arraste, prévia, animação, fechamento, criação e renomeação. Por padrão, aplicar altera os três modelos; o seletor permite escolher somente um. A posição de cada modelo é preservada até selecionar outra posição explicitamente. Os valores são validados antes de aplicar. Os valores iniciais do formulário vêm do modelo Documentos.
 
 Os botões Animar e Prévia alteram os três modelos. Salvar/restaurar organização inclui Documentos, Lateral e Simples, com leitura compatível com o arquivo anterior. Salvar organização persiste ordem/seleção. Salvar configurações grava aparência e comportamento em arquivo separado; alterações não salvas permanecem na sessão. Chaves e comandos MVVM continuam definidos conforme a fonte de cada modelo.
 
 Verificação do painel: `dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release -- --settings-only`.
 
 O checkbox **Permitir exclusão de abas** controla CanCloseTabs nos três modelos. Desmarcar bloqueia RequestCloseTab e o comando de fechamento, oculta os botões de fechar e desabilita Remover selecionada. ShowCloseButtons continua sendo apenas uma preferência visual independente.
+
+Os checkboxes **Permitir adição de abas** e **Permitir renomear abas** controlam as novas opções nos três modelos. Documentos e Simples criam um item na coleção compartilhada; o modelo lateral cria um `CustomTabItem` explícito. No primeiro e terceiro modelos, edite `Header`; nas páginas laterais adicionadas, edite diretamente o Header textual.
 
 ## Configurações reutilizáveis em qualquer aplicação
 

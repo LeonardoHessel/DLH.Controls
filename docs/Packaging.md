@@ -1,6 +1,6 @@
 # Preparação NuGet
 
-ID: `DLH.Controls.Wpf`. Versão preparada: `0.1.0-preview.3`.
+ID: `DLH.Controls.Wpf`. Versão publicada mais recente: `0.1.0-preview.3`. Alterações posteriores permanecem em desenvolvimento até a definição de uma nova versão.
 A solução tem um único projeto empacotável; novos componentes entram no mesmo projeto em `Controls/NomeDoComponente`.
 
 O pacote inclui DLL, recursos WPF compilados , README e LICENSE.txt. Não inclui demonstração, ícones de exemplo ou testes.

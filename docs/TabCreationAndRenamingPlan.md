@@ -126,6 +126,8 @@ Incluir as opções visuais e comportamentais simples em `CaptureConfiguration`,
 
 ## 5. Etapa D — visualizador e documentação
 
+**Resultado:** concluída. O visualizador demonstra criação e renomeação nos modelos compartilhados e no modelo lateral explícito. README, guia principal, integração, referência de API e histórico descrevem padrões, exemplos XAML, comandos, eventos, teclado, limites de persistência e cabeçalhos com título e ícone.
+
 Atualizar o visualizador com controles separados para ativar criação e renomeação. O exemplo principal deverá:
 
 - adicionar uma aba com identificador estável e título inicial `Nova aba`;
@@ -137,6 +139,8 @@ Atualizar o visualizador com controles separados para ativar criação e renomea
 Documentar em `README.md`, `docs/TabControl.md`, `docs/Integration.md` e `docs/ApiReference.md` os exemplos com `ItemsSource`, títulos e ícones, comandos, eventos e comportamento de teclado.
 
 ## 6. Etapa E — testes
+
+**Resultado:** concluída para automação. A suíte comportamental passou em 123 de 123 cenários; as suítes visual, do visualizador e de configuração também passaram. A validação completa gerou `DLH.Controls.Wpf.0.1.0-preview.4.nupkg` localmente. Permanecem assistidas as verificações com leitor de tela real, alto contraste, mouse físico e escalas reais de DPI.
 
 ### Automatizados
 

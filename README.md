@@ -1,6 +1,6 @@
 # DLH Controls
 
-Biblioteca de componentes WPF distribuídos em um único pacote: **DLH.Controls.Wpf**.
+Biblioteca de componentes WPF distribuídos em um único pacote: **DLH.Controls.Wpf**. O `CustomTabControl` oferece superfície contínua, quatro posições, reordenação, fechamento controlado, ação opcional para criar abas e edição direta de títulos.
 
 ## Estrutura
 
@@ -17,7 +17,10 @@ xmlns:dlh="clr-namespace:DLH.Controls.Wpf;assembly=DLH.Controls.Wpf"
 ```
 
 ```xml
-<dlh:CustomTabControl>
+<dlh:CustomTabControl CanAddTabs="True"
+                      AddTabCommand="{Binding AddDocumentCommand}"
+                      CanRenameTabs="True"
+                      TabHeaderPath="Title">
     <dlh:CustomTabItem Header="Início">Conteúdo</dlh:CustomTabItem>
 </dlh:CustomTabControl>
 ```
@@ -33,7 +36,7 @@ dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release -- --configuration-
 dotnet pack src/DLH.Controls.Wpf -c Release -o artifacts/packages
 ```
 
-A demonstração preserva os arquivos de preferências anteriores em `%LOCALAPPDATA%\CustomTabControl.Demo`. Somente a biblioteca é empacotada. Pacote publicado no NuGet.org: https://www.nuget.org/packages/DLH.Controls.Wpf. Autor: Leonardo D. de L. Hessel. Próxima prévia preparada: 0.1.0-preview.3.
+A demonstração preserva os arquivos de preferências anteriores em `%LOCALAPPDATA%\CustomTabControl.Demo`. Somente a biblioteca é empacotada. Pacote publicado no NuGet.org: https://www.nuget.org/packages/DLH.Controls.Wpf. Autor: Leonardo D. de L. Hessel. A versão publicada mais recente é 0.1.0-preview.3; as mudanças posteriores permanecem não publicadas até uma nova release.
 
 ## Licença
 
@@ -51,4 +54,5 @@ O crédito pode aparecer em Sobre, Créditos ou Licenças de terceiros; produtos
 - [Integração com dados, MVVM e temas](docs/Integration.md)
 - [Preparação para 1.0.0](docs/ReleaseReadiness.md)
 - [Plano de melhorias do componente e visualizador](docs/ImprovementPlan.md)
+- [Plano de criação e renomeação de abas](docs/TabCreationAndRenamingPlan.md)
 - [Histórico de versões](CHANGELOG.md)

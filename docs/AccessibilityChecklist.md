@@ -25,9 +25,13 @@ Validação realizada no visualizador compilado em Release, em uma janela real d
 - A mutação agendada inseriu o mesmo documento nos dois controles e atualizou o status.
 - Ao desabilitar fechamento, os botões desapareceram da árvore de automação e o comando da barra ficou indisponível.
 - Tema escuro e tema claro foram inspecionados visualmente.
+- O tema cinza e laranja foi inspecionado visualmente; contorno, sombra, foco e contraste funcional permaneceram legíveis.
+- Tab e Shift+Tab permitiram sair e retornar ao conteúdo, passando pelos elementos seguintes sem aprisionar o foco na faixa.
+- O arraste físico horizontal moveu “Visão geral” da posição 1 para 2 e refletiu a mesma ordem no segundo controle ligado à coleção.
+- O arraste físico vertical moveu “Licença” da posição 1 para 3; a prévia permaneceu no eixo vertical e o contorno foi recomposto após a animação.
 
 Foi encontrada e corrigida uma falha: o botão anunciava o tipo do modelo (`DLH.Controls.Wpf.Demo.TabDocument`). O template agora prioriza `AutomationProperties.Name` da aba e usa o cabeçalho como fallback, produzindo nomes como “Fechar Visão geral” e “Fechar Banco de dados”.
 
-Permanecem pendentes: leitor de tela real, alto contraste, escalas reais de 100%, 150% e 200%, navegação completa por Tab/Shift+Tab, reordenação física por mouse e inspeção manual do terceiro tema. A automação do terceiro tema foi interrompida quando o ambiente detectou entrada do usuário, portanto não foi marcada como executada.
+Permanecem pendentes: leitor de tela real, modo de alto contraste, escalas reais de 100%, 150% e 200%, verificação auditiva dos anúncios de reordenação e cancelamento físico de um gesto em andamento com `Esc`. O cancelamento, as quatro orientações e as escalas simuladas continuam cobertos pela suíte automatizada, mas não são apresentados como equivalentes ao ambiente real.
 
 O pacote não afirma conformidade integral com um padrão de acessibilidade apenas com base nos testes automatizados e nesta inspeção parcial.

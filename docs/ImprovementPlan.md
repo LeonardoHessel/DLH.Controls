@@ -117,7 +117,7 @@ Mudanças de seleção herdadas de WPF podem diferir das políticas específicas
 
 **Resultado automatizado:** concluído. Os peers herdados do WPF já expõem os papéis Tab e TabItem e o padrão de seleção, portanto não foram substituídos. A ação de fechar agora inclui o cabeçalho no nome acessível. Os testes confirmam nomes de ícones fornecidos pelo consumidor e que o fechamento bloqueado fica oculto e não executável. A navegação e a reordenação por teclado continuam cobertas nas quatro orientações.
 
-**Resultado manual:** parcialmente executado em 5 de setembro de 2026. Foram verificados árvore de automação, nomes, `Ctrl+Tab`, seleções independentes, mutação, fechamento desabilitado, temas escuro/claro e cabeçalhos variáveis. A inspeção encontrou e levou à correção do nome contextual do fechamento. Leitor de tela, alto contraste, escalas reais, percurso completo Tab/Shift+Tab, arraste físico e terceiro tema permanecem registrados em `docs/AccessibilityChecklist.md`.
+**Resultado manual:** parcialmente executado em 5 de setembro de 2026. Foram verificados árvore de automação, nomes, `Ctrl+Tab`, percurso Tab/Shift+Tab, seleções independentes, mutação, fechamento desabilitado, os três temas, cabeçalhos variáveis e arraste físico horizontal e vertical. A inspeção encontrou e levou à correção do nome contextual do fechamento. Leitor de tela, alto contraste, escalas reais, anúncios auditivos e cancelamento físico com `Esc` permanecem registrados em `docs/AccessibilityChecklist.md`.
 
 ### Objetivo
 

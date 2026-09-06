@@ -57,10 +57,14 @@
             <Button Content="Restaurar organização" Click="RestoreOrganization" />
             <CheckBox Content="Animar" VerticalAlignment="Center" Margin="6,0,12,0" Foreground="{DynamicResource Tabs.Text}" IsChecked="{Binding IsAnimationEnabled, ElementName=DynamicTabs, Mode=OneWay}" Click="ToggleAllAnimation" />
             <CheckBox Content="Permitir exclusão de abas" VerticalAlignment="Center" Margin="0,0,12,0" Foreground="{DynamicResource Tabs.Text}" IsChecked="{Binding CanCloseTabs, ElementName=DynamicTabs, Mode=OneWay}" Click="ToggleAllClosing" />
+            <CheckBox Content="Permitir adição de abas" VerticalAlignment="Center" Margin="0,0,12,0" Foreground="{DynamicResource Tabs.Text}" IsChecked="{Binding CanAddTabs, ElementName=DynamicTabs, Mode=OneWay}" Click="ToggleAllAdding" />
+            <CheckBox Content="Permitir renomear abas" VerticalAlignment="Center" Margin="0,0,12,0" Foreground="{DynamicResource Tabs.Text}" IsChecked="{Binding CanRenameTabs, ElementName=DynamicTabs, Mode=OneWay}" Click="ToggleAllRenaming" />
             <CheckBox Content="Prévia" VerticalAlignment="Center" Margin="0,0,12,0" Foreground="{DynamicResource Tabs.Text}" IsChecked="{Binding IsDragPreviewEnabled, ElementName=DynamicTabs, Mode=OneWay}" Click="ToggleAllPreview" />
             <TextBlock x:Name="ThemeName" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="{DynamicResource Tabs.Muted}" />
         </WrapPanel>
-        <controls:CustomTabControl x:Name="DynamicTabs" ShowCloseButtons="True" ItemKeyPath="Id" CloseTabCommand="{Binding CloseTabCommand}" TabClosing="ConfirmTabClosing" TabReordered="OnTabReordered" Grid.Row="2" Margin="0,0,24,0" HeaderIndent="0" ItemsSource="{Binding Tabs}" SelectedItem="{Binding SelectedTab, Mode=TwoWay}">
+        <controls:CustomTabControl x:Name="DynamicTabs" ShowCloseButtons="True" ItemKeyPath="Id" CloseTabCommand="{Binding CloseTabCommand}"
+                                   CanAddTabs="True" AddTabCommand="{Binding AddTabCommand}" CanRenameTabs="True" TabHeaderPath="Header"
+                                   TabClosing="ConfirmTabClosing" TabReordered="OnTabReordered" Grid.Row="2" Margin="0,0,24,0" HeaderIndent="0" ItemsSource="{Binding Tabs}" SelectedItem="{Binding SelectedTab, Mode=TwoWay}">
             <controls:CustomTabControl.ItemContainerStyle>
                 <Style TargetType="TabItem" BasedOn="{StaticResource Tabs.ItemStyle}">
                     <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
@@ -110,7 +114,8 @@
                 </ComboBox>
                 <StackPanel><TextBlock Text="Painel de demonstraÃ§Ã£o" FontSize="20" FontWeight="SemiBold" /><TextBlock Text="MODELO LATERAL" FontSize="10" Foreground="{DynamicResource Tabs.Muted}" Margin="0,4,0,0" /></StackPanel>
             </DockPanel>
-            <controls:CustomTabControl x:Name="SideTabs" Grid.Row="1" TabStripPlacement="Left" HeaderIndent="0" CornerRadius="10" Padding="18" TabDragCursor="ScrollNS" SelectedIndex="0">
+            <controls:CustomTabControl x:Name="SideTabs" Grid.Row="1" TabStripPlacement="Left" HeaderIndent="0" CornerRadius="10" Padding="18" TabDragCursor="ScrollNS" SelectedIndex="0"
+                                       CanAddTabs="True" CanRenameTabs="True" AddTabRequested="AddSideTab">
                 <controls:CustomTabControl.ItemContainerStyle>
                     <Style TargetType="TabItem" BasedOn="{StaticResource Tabs.ItemStyle}"><Setter Property="Padding" Value="7" /></Style>
                 </controls:CustomTabControl.ItemContainerStyle>
@@ -153,7 +158,8 @@
         </Grid>
         <TextBlock x:Name="InteractionStatus" Grid.ColumnSpan="2" Grid.Row="3" Text="Os controles superior e inferior compartilham documentos e ordem, mas mantêm seleções independentes." Margin="0,22,0,12" FontSize="11" Foreground="{DynamicResource Tabs.Muted}" />
         <controls:CustomTabControl x:Name="SimpleTabs" Grid.ColumnSpan="2" Grid.Row="4" Padding="18" HeaderIndent="0" TabSpacing="0" CornerRadius="8"
-                                   ItemsSource="{Binding Tabs}" SelectedItem="{Binding ComparisonSelectedTab, Mode=TwoWay}" ItemKeyPath="Id" CloseTabCommand="{Binding CloseTabCommand}">
+                                   ItemsSource="{Binding Tabs}" SelectedItem="{Binding ComparisonSelectedTab, Mode=TwoWay}" ItemKeyPath="Id" CloseTabCommand="{Binding CloseTabCommand}"
+                                   CanAddTabs="True" AddTabCommand="{Binding AddTabCommand}" CanRenameTabs="True" TabHeaderPath="Header">
             <controls:CustomTabControl.ItemContainerStyle>
                 <Style TargetType="TabItem" BasedOn="{StaticResource Tabs.ItemStyle}"><Setter Property="IsEnabled" Value="{Binding IsEnabled}" /><Setter Property="AutomationProperties.Name" Value="{Binding Header}" /></Style>
             </controls:CustomTabControl.ItemContainerStyle>

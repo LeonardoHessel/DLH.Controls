@@ -11,6 +11,7 @@ public partial class MainWindow : Window
 {
     private int themeIndex;
     private int mutationIndex;
+    private int sideTabIndex = 1;
     private readonly DispatcherTimer mutationTimer = new() { Interval = TimeSpan.FromSeconds(2) };
     private static readonly string[] ThemeNames = ["Escuro", "Claro", "Cinza e laranja"];
     // Background, surface, hover, text, muted text, border, focus, accent, input.
@@ -49,6 +50,16 @@ public partial class MainWindow : Window
     {
         if (SimpleTabs is null) return;
         foreach (var tabs in new[] { DynamicTabs, SideTabs, SimpleTabs }) tabs.CanCloseTabs = ((System.Windows.Controls.CheckBox)sender).IsChecked == true;
+    }
+    private void ToggleAllAdding(object sender, RoutedEventArgs e)
+    {
+        if (SimpleTabs is null) return;
+        foreach (var tabs in new[] { DynamicTabs, SideTabs, SimpleTabs }) tabs.CanAddTabs = ((System.Windows.Controls.CheckBox)sender).IsChecked == true;
+    }
+    private void ToggleAllRenaming(object sender, RoutedEventArgs e)
+    {
+        if (SimpleTabs is null) return;
+        foreach (var tabs in new[] { DynamicTabs, SideTabs, SimpleTabs }) tabs.CanRenameTabs = ((System.Windows.Controls.CheckBox)sender).IsChecked == true;
     }
     private void ToggleAllPreview(object sender, RoutedEventArgs e)
     {
@@ -103,6 +114,25 @@ public partial class MainWindow : Window
     private void CloseSelectedTab(object sender, RoutedEventArgs e)
     {
         if (DynamicTabs.SelectedItem is { } item) DynamicTabs.RequestCloseTab(item);
+    }
+    private void AddSideTab(object? sender, AddTabRequestedEventArgs e)
+    {
+        var number = sideTabIndex++;
+        var item = new CustomTabItem
+        {
+            Header = $"Página {number}",
+            ToolTip = $"Página {number}",
+            Content = new System.Windows.Controls.TextBlock
+            {
+                Text = "Página lateral criada pela ação +. Use F2 ou duplo clique para alterar seu título.",
+                TextWrapping = TextWrapping.Wrap,
+                FontSize = 16
+            }
+        };
+        CustomTabControl.SetTabKey(item, $"Página lateral {number}");
+        SideTabs.Items.Add(item);
+        SideTabs.SelectedItem = item;
+        InteractionStatus.Text = $"Página lateral {number} adicionada.";
     }
     private void OnTabReordered(object? sender, TabReorderedEventArgs e) =>
         InteractionStatus.Text = $"Aba movida da posição {e.OldIndex + 1} para {e.NewIndex + 1}.";

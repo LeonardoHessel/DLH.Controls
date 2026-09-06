@@ -67,6 +67,31 @@ internal static class Program
                 }
             }
             Console.WriteLine("PASS: checkbox updates all models, close buttons and toolbar through repeated toggles");
+            foreach (var (caption, property) in new[]
+            {
+                ("Permitir adição de abas", DLH.Controls.Wpf.CustomTabControl.CanAddTabsProperty),
+                ("Permitir renomear abas", DLH.Controls.Wpf.CustomTabControl.CanRenameTabsProperty)
+            })
+            {
+                var toggle = SettingsDescendants(settingsRoot).OfType<CheckBox>().Single(box => Equals(box.Content, caption));
+                foreach (var enabled in new[] { false, true })
+                {
+                    toggle.SetCurrentValue(System.Windows.Controls.Primitives.ToggleButton.IsCheckedProperty, enabled);
+                    toggle.RaiseEvent(new RoutedEventArgs(System.Windows.Controls.Primitives.ButtonBase.ClickEvent));
+                    if (models.Any(model => !Equals(model.GetValue(property), enabled))) throw new Exception($"{caption} não foi aplicado a todos os modelos");
+                }
+            }
+            var sharedCount = models[0].Items.Count; var sideCount = models[1].Items.Count;
+            if (!models[0].RequestAddTab(models[0].AddTabCommandParameter) || models[0].Items.Count != sharedCount + 1 || models[2].Items.Count != sharedCount + 1)
+                throw new Exception("Ação integrada não adicionou documento compartilhado");
+            if (!models[1].RequestAddTab() || models[1].Items.Count != sideCount + 1 || models[1].SelectedItem is not CustomTabItem)
+                throw new Exception("Ação integrada não adicionou página lateral");
+            var addedDocument = models[0].SelectedItem!;
+            if (!models[0].BeginRenameTab(addedDocument)) throw new Exception("Edição integrada não iniciou");
+            var addedContainer = (TabItem)models[0].ItemContainerGenerator.ContainerFromItem(addedDocument);
+            ((TextBox)addedContainer.Template.FindName("HeaderEditor", addedContainer)).Text = "Renomeada no visualizador";
+            if (!models[0].CommitTabRename() || ((TabDocument)addedDocument).Header != "Renomeada no visualizador") throw new Exception("Edição integrada não atualizou o modelo");
+            Console.WriteLine("PASS: add and rename toggles and integrated actions work in all demo models");
             foreach (var model in models)
             {
                 using var stateStream = new MemoryStream();

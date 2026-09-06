@@ -42,6 +42,7 @@ public sealed class DemoViewModel : INotifyPropertyChanged
             var item = new TabDocument($"Documento {nextId++}", "◇", "Novo documento", "Adicione mais abas para experimentar a rolagem horizontal.");
             Tabs.Add(item);
             SelectedTab = item;
+            ComparisonSelectedTab = item;
         });
         RemoveTabCommand = new RelayCommand(() =>
         {

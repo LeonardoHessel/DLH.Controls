@@ -22,7 +22,8 @@ public partial class CustomTabControl
         IsShadowEnabledProperty, ShadowColorProperty, ShadowOpacityProperty, ShadowBlurRadiusProperty,
         ShadowDepthProperty, ShadowDirectionProperty, CanReorderTabsProperty, TabDragCursorProperty,
         IsDragPreviewEnabledProperty, IsAnimationEnabledProperty, DragAnimationDurationProperty,
-        DragPreviewOpacityProperty, MinimumDragDistanceProperty, CanCloseTabsProperty, ShowCloseButtonsProperty
+        DragPreviewOpacityProperty, MinimumDragDistanceProperty, CanCloseTabsProperty, ShowCloseButtonsProperty,
+        CanAddTabsProperty, CanRenameTabsProperty, TabHeaderPathProperty, RenameActivationProperty
     ];
 
     public TabControlConfiguration CaptureConfiguration()

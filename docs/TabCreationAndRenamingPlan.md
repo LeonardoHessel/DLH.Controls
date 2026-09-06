@@ -116,6 +116,8 @@ Para templates totalmente personalizados, a biblioteca deve fornecer uma parte n
 
 ## 4. Etapa C — configuração, estado e compatibilidade
 
+**Resultado:** concluída. `CanAddTabs`, `CanRenameTabs`, `TabHeaderPath` e `RenameActivation` participam da captura, restauração e redefinição das configurações. Comandos, parâmetros, conteúdo visual e eventos permanecem fora do JSON. O visualizador disponibiliza as funcionalidades nos três modelos, incluindo criação de documentos compartilhados e páginas laterais explícitas.
+
 Incluir as opções visuais e comportamentais simples em `CaptureConfiguration`, `RestoreConfiguration` e `ResetConfiguration`. Comandos, parâmetros, templates e assinantes de eventos não são serializados.
 
 `CanAddTabs=false` e `CanRenameTabs=false` devem integrar os padrões restauráveis. `TabHeaderPath` pode ser persistido por ser texto declarativo; revisar riscos de renomeação de propriedades antes de incluí-lo no formato atual.

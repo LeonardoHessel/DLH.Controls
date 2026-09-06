@@ -12,14 +12,14 @@ internal static class ConfigurationTests
     public static void Run()
     {
         void Check(bool valid, string message) { if (!valid) throw new Exception(message); Console.WriteLine("PASS: " + message); }
-        var source = new Tabs { CornerRadius = new CornerRadius(19), HeaderIndent = double.NaN, TabStripPlacement = Dock.Right, ShadowOpacity = .37, CanCloseTabs = false, DragAnimationDuration = TimeSpan.FromMilliseconds(250), Background = Brushes.Orange };
+        var source = new Tabs { CornerRadius = new CornerRadius(19), HeaderIndent = double.NaN, TabStripPlacement = Dock.Right, ShadowOpacity = .37, CanCloseTabs = false, DragAnimationDuration = TimeSpan.FromMilliseconds(250), Background = Brushes.Orange, CanAddTabs = true, CanRenameTabs = true, TabHeaderPath = "Header", RenameActivation = TabRenameActivation.F2 };
         var configuration = source.CaptureConfiguration();
         var json = JsonSerializer.Serialize(configuration);
         var restored = new Tabs();
         var previousCulture = CultureInfo.CurrentCulture;
         try { CultureInfo.CurrentCulture = CultureInfo.GetCultureInfo("en-US"); restored.RestoreConfiguration(JsonSerializer.Deserialize<TabControlConfiguration>(json)!); }
         finally { CultureInfo.CurrentCulture = previousCulture; }
-        Check(restored.CornerRadius.TopLeft == 19 && double.IsNaN(restored.HeaderIndent) && restored.TabStripPlacement == Dock.Right && restored.ShadowOpacity == .37 && !restored.CanCloseTabs && restored.DragAnimationDuration.TotalMilliseconds == 250 && restored.Background.ToString() == Brushes.Orange.ToString(), "configuration JSON roundtrip is culture independent");
+        Check(restored.CornerRadius.TopLeft == 19 && double.IsNaN(restored.HeaderIndent) && restored.TabStripPlacement == Dock.Right && restored.ShadowOpacity == .37 && !restored.CanCloseTabs && restored.DragAnimationDuration.TotalMilliseconds == 250 && restored.Background.ToString() == Brushes.Orange.ToString() && restored.CanAddTabs && restored.CanRenameTabs && restored.TabHeaderPath == "Header" && restored.RenameActivation == TabRenameActivation.F2, "configuration JSON roundtrip is culture independent");
         var before = JsonSerializer.Serialize(restored.CaptureConfiguration());
         foreach (var invalid in new[] {
             new TabControlConfiguration { Version = 999 },
@@ -36,7 +36,7 @@ internal static class ConfigurationTests
         restored.RestoreConfiguration(configuration);
         Check(BindingOperations.IsDataBound(restored, Tabs.ShadowOpacityProperty) && restored.Items.Count == 1 && restored.SelectedItem == item, "restoration preserves bindings and documents");
         restored.ResetConfiguration();
-        Check(restored.CornerRadius.TopLeft == 12 && restored.ShadowOpacity == .5 && restored.CanCloseTabs && restored.TabStripPlacement == Dock.Top && restored.Items.Count == 1 && BindingOperations.IsDataBound(restored, Tabs.ShadowOpacityProperty), "reset restores library defaults without removing bindings/documents");
+        Check(restored.CornerRadius.TopLeft == 12 && restored.ShadowOpacity == .5 && restored.CanCloseTabs && !restored.CanAddTabs && !restored.CanRenameTabs && restored.TabHeaderPath is null && restored.RenameActivation == TabRenameActivation.F2AndDoubleClick && restored.TabStripPlacement == Dock.Top && restored.Items.Count == 1 && BindingOperations.IsDataBound(restored, Tabs.ShadowOpacityProperty), "reset restores library defaults without removing bindings/documents");
         var demo = new DLH.Controls.Wpf.Demo.MainWindow();
         var root = (FrameworkElement)demo.Content; root.Measure(new Size(1320,820)); root.Arrange(new Rect(0,0,1320,820)); root.UpdateLayout();
         var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;

@@ -53,6 +53,10 @@ public sealed class TabSettingsWindow : Window
         editors.Add((Tabs.TabDragCursorProperty, cursor)); Add("Cursor durante o arraste", cursor);
         Field("Permitir exclusão de abas", Tabs.CanCloseTabsProperty);
         Field("Mostrar botão de fechar", Tabs.ShowCloseButtonsProperty);
+        Field("Permitir adição de abas", Tabs.CanAddTabsProperty);
+        Field("Permitir renomear abas", Tabs.CanRenameTabsProperty);
+        Field("Propriedade do título editável", Tabs.TabHeaderPathProperty);
+        Field("Ativação da renomeação", Tabs.RenameActivationProperty);
         var apply = new Button { Content = "Aplicar configurações", Padding = new Thickness(12, 8, 12, 8), Margin = new Thickness(0, 16, 0, 0) };
         apply.Click += (_, _) => Apply(); panel.Children.Add(apply);
         var reset = new Button { Content = "Restaurar padrões", Margin = new Thickness(0, 10, 0, 0), Padding = new Thickness(12, 8, 12, 8) };
@@ -98,14 +102,15 @@ public sealed class TabSettingsWindow : Window
     }
     private void Apply()
     {
-        var values = new List<(DependencyProperty Property, object Value)>();
+        var values = new List<(DependencyProperty Property, object? Value)>();
         foreach (var (property, editor) in editors)
         {
             try
             {
-                object value = editor is CheckBox check ? check.IsChecked == true
+                object? value = editor is CheckBox check ? check.IsChecked == true
+                    : property.PropertyType == typeof(string) && editor is TextBox nullableText && string.IsNullOrWhiteSpace(nullableText.Text) ? null
                     : TypeDescriptor.GetConverter(property.PropertyType).ConvertFromString(null, CultureInfo.CurrentCulture,
-                        editor is TextBox text ? text.Text : ((ComboBox)editor).SelectedItem?.ToString() ?? "Arrow")!;
+                        editor is TextBox text ? text.Text : ((ComboBox)editor).SelectedItem?.ToString() ?? "Arrow");
                 if (!property.IsValidValue(value)) throw new ArgumentException("Valor fora do intervalo permitido.");
                 values.Add((property, value));
             }

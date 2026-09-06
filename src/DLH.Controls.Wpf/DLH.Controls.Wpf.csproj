@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>DLH.Controls.Wpf</PackageId>
-    <Version>0.1.0-preview.1</Version>
+    <Version>0.1.0-preview.3</Version>
     <Authors>Leonardo D. de L. Hessel</Authors>
     <Description>DLH Controls: componentes WPF customizáveis. Inclui TabControl com superfície contínua, reordenação e configurações.</Description>
     <PackageTags>WPF;Controls;TabControl;Windows</PackageTags>

@@ -33,7 +33,7 @@ dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release -- --configuration-
 dotnet pack src/DLH.Controls.Wpf -c Release -o artifacts/packages
 ```
 
-A demonstração preserva os arquivos de preferências anteriores em `%LOCALAPPDATA%\CustomTabControl.Demo`. Somente a biblioteca é empacotada. Pacote publicado no NuGet.org: https://www.nuget.org/packages/DLH.Controls.Wpf. Autor: Leonardo D. de L. Hessel. Prévia validada: 0.1.0-preview.2.
+A demonstração preserva os arquivos de preferências anteriores em `%LOCALAPPDATA%\CustomTabControl.Demo`. Somente a biblioteca é empacotada. Pacote publicado no NuGet.org: https://www.nuget.org/packages/DLH.Controls.Wpf. Autor: Leonardo D. de L. Hessel. Próxima prévia preparada: 0.1.0-preview.3.
 
 ## Licença
 
@@ -51,3 +51,4 @@ O crédito pode aparecer em Sobre, Créditos ou Licenças de terceiros; produtos
 - [Integração com dados, MVVM e temas](docs/Integration.md)
 - [Preparação para 1.0.0](docs/ReleaseReadiness.md)
 - [Plano de melhorias do componente e visualizador](docs/ImprovementPlan.md)
+- [Histórico de versões](CHANGELOG.md)

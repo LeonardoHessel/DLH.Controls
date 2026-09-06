@@ -63,9 +63,16 @@
                                         </ControlTemplate>
                                     </Button.Template>
                                 </Button>
-                                <ContentPresenter ContentSource="Header" RecognizesAccessKey="True"
-                                                  HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
-                                                  VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                <Grid>
+                                    <ContentPresenter x:Name="HeaderPresenter" ContentSource="Header" RecognizesAccessKey="True"
+                                                      HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                      VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                    <TextBox x:Name="HeaderEditor" Visibility="Collapsed" MinWidth="48"
+                                             VerticalContentAlignment="Center" Padding="4,1"
+                                             AutomationProperties.Name="Editar nome da aba"
+                                             Foreground="{DynamicResource Tabs.Text}" Background="{DynamicResource Tabs.Surface}"
+                                             BorderBrush="{DynamicResource Tabs.Focus}" BorderThickness="1" />
+                                </Grid>
                             </DockPanel>
                         </Border>
                     </Grid>

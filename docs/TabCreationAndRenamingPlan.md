@@ -55,6 +55,8 @@ O botão usa recursos de tema e respeita `CornerRadius`, `TabStripPlacement`, fo
 
 ## 3. Etapa B — edição opcional do título
 
+**Resultado:** concluída. A edição permanece desativada por padrão e pode ser iniciada por `F2`, duplo clique ou chamada programática. `Enter` confirma, `Esc` cancela e a perda de foco tenta confirmar. A integração aceita propriedade indicada por `TabHeaderPath`, `TabItem.Header` textual ou `RenameTabCommand`; eventos permitem veto e notificação. Mudanças estruturais cancelam o editor e o drag and drop ignora sua área interativa.
+
 ### API proposta
 
 | Membro | Tipo | Padrão | Finalidade |

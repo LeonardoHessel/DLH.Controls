@@ -86,6 +86,7 @@ public partial class CustomTabControl
     {
         base.OnPreviewMouseLeftButtonDown(e);
         CancelTabDrag();
+        if (TryBeginRenameFromDoubleClick(e)) { e.Handled = true; return; }
         if (ReorderableList() is null || !HeaderViewport().Contains(e.GetPosition(this))) return;
         // Buttons, text fields and other interactive header content keep their normal input behavior.
         var source = e.OriginalSource as DependencyObject;
@@ -243,6 +244,7 @@ public partial class CustomTabControl
 
     protected override void OnPreviewKeyDown(KeyEventArgs e)
     {
+        if (TryBeginRenameFromKeyboard(e)) { e.Handled = true; return; }
         if (e.Key == Key.Escape && dragging) { CancelTabDrag(); e.Handled = true; return; }
         if (TryReorderFromKeyboard(e.Key, Keyboard.Modifiers, e.OriginalSource as DependencyObject)) { e.Handled = true; return; }
         base.OnPreviewKeyDown(e);

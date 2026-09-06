@@ -40,7 +40,7 @@ public partial class CustomTabControl : TabControl
             (_, e) => { if (ResolveCloseItem(e.Parameter) is { } item) RequestCloseTab(item); e.Handled = true; },
             (_, e) => { e.CanExecute = CanRequestClose(ResolveCloseItem(e.Parameter)); e.Handled = true; }));
         LayoutUpdated += (_, _) => UpdateSurface();
-        Unloaded += (_, _) => CancelTabDrag();
+        Unloaded += (_, _) => { CancelTabDrag(); CancelTabRename(); };
     }
 
     public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
@@ -66,6 +66,7 @@ public partial class CustomTabControl : TabControl
 
     protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
     {
+        CancelTabRename();
         base.OnItemsChanged(e);
         // WPF may transiently clear selection while its view processes Move/Remove. Preserve the selected
         // object when it still exists; a removed or replaced object remains unselected.
@@ -92,6 +93,7 @@ public partial class CustomTabControl : TabControl
     public override void OnApplyTemplate()
     {
         CancelTabDrag();
+        CancelTabRename();
         base.OnApplyTemplate();
         surface = GetTemplateChild("PART_Surface") as Path;
         hoverSurface = GetTemplateChild("PART_HoverSurface") as Path;

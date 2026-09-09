@@ -8,7 +8,15 @@
     <SolidColorBrush x:Key="Tabs.Muted" Color="#BCC0CA" />
     <SolidColorBrush x:Key="Tabs.Edge" Color="#4C5058" />
     <SolidColorBrush x:Key="Tabs.Focus" Color="#9CC9FF" />
+    <SolidColorBrush x:Key="DataGridView.Surface" Color="#35373C" />
+    <SolidColorBrush x:Key="DataGridView.Header" Color="#2F3136" />
+    <SolidColorBrush x:Key="DataGridView.Hover" Color="#454850" />
+    <SolidColorBrush x:Key="DataGridView.Selection" Color="#334F8AC9" />
+    <SolidColorBrush x:Key="DataGridView.Text" Color="#F2F3F5" />
+    <SolidColorBrush x:Key="DataGridView.Edge" Color="#4C5058" />
+    <SolidColorBrush x:Key="DataGridView.Focus" Color="#9CC9FF" />
     <local:TabCloseAutomationNameConverter x:Key="Tabs.CloseAutomationNameConverter" />
+    <local:DataGridViewColumnSelectionConverter x:Key="DataGridView.ColumnSelectionConverter" />
     <Thickness x:Key="Tabs.HeaderPadding">22,13,22,13</Thickness>
 
     <Style x:Key="Tabs.ItemStyle" TargetType="{x:Type TabItem}">
@@ -213,6 +221,96 @@
                         </Border>
                     </Grid>
                 </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type local:DataGridView}">
+        <Setter Property="Background" Value="{DynamicResource DataGridView.Surface}" />
+        <Setter Property="Foreground" Value="{DynamicResource DataGridView.Text}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource DataGridView.Edge}" />
+        <Setter Property="BorderThickness" Value="1" />
+        <Setter Property="HorizontalGridLinesBrush" Value="{DynamicResource DataGridView.Edge}" />
+        <Setter Property="VerticalGridLinesBrush" Value="Transparent" />
+        <Setter Property="GridLinesVisibility" Value="Horizontal" />
+        <Setter Property="RowBackground" Value="Transparent" />
+        <Setter Property="AlternatingRowBackground" Value="Transparent" />
+        <Setter Property="RowHeaderWidth" Value="0" />
+        <Setter Property="SelectionMode" Value="Single" />
+        <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="ColumnHeaderStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Background" Value="{DynamicResource DataGridView.Header}" />
+                    <Setter Property="Foreground" Value="{DynamicResource DataGridView.Text}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource DataGridView.Edge}" />
+                    <Setter Property="BorderThickness" Value="0,0,0,1" />
+                    <Setter Property="Padding" Value="10,8" />
+                    <Setter Property="FontWeight" Value="SemiBold" />
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Style.Triggers>
+                        <DataTrigger Value="True">
+                            <DataTrigger.Binding>
+                                <MultiBinding Converter="{StaticResource DataGridView.ColumnSelectionConverter}">
+                                    <Binding Path="Column" RelativeSource="{RelativeSource Self}" />
+                                    <Binding Path="SelectedColumn" RelativeSource="{RelativeSource AncestorType={x:Type local:DataGridView}}" />
+                                    <Binding Path="SelectionBehavior" RelativeSource="{RelativeSource AncestorType={x:Type local:DataGridView}}" />
+                                </MultiBinding>
+                            </DataTrigger.Binding>
+                            <Setter Property="Background" Value="{DynamicResource DataGridView.Selection}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="RowStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridRow">
+                    <Setter Property="Foreground" Value="{DynamicResource DataGridView.Text}" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource DataGridView.Hover}" /></Trigger>
+                        <Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="{DynamicResource DataGridView.Selection}" /></Trigger>
+                    </Style.Triggers>
+                </Style>
+            </Setter.Value>
+        </Setter>
+        <Setter Property="CellStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Foreground" Value="{DynamicResource DataGridView.Text}" />
+                    <Setter Property="Background" Value="Transparent" />
+                    <Setter Property="BorderThickness" Value="0" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="DataGridCell">
+                                <Border x:Name="CellSurface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                        Padding="{Binding CellPadding, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}">
+                                    <ContentPresenter VerticalAlignment="Center" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsSelected" Value="True"><Setter TargetName="CellSurface" Property="Background" Value="{DynamicResource DataGridView.Selection}" /></Trigger>
+                                    <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="CellSurface" Property="BorderBrush" Value="{DynamicResource DataGridView.Focus}" /><Setter TargetName="CellSurface" Property="BorderThickness" Value="1" /></Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                    <Style.Triggers>
+                        <DataTrigger Value="True">
+                            <DataTrigger.Binding>
+                                <MultiBinding Converter="{StaticResource DataGridView.ColumnSelectionConverter}">
+                                    <Binding Path="Column" RelativeSource="{RelativeSource Self}" />
+                                    <Binding Path="SelectedColumn" RelativeSource="{RelativeSource AncestorType={x:Type local:DataGridView}}" />
+                                    <Binding Path="SelectionBehavior" RelativeSource="{RelativeSource AncestorType={x:Type local:DataGridView}}" />
+                                </MultiBinding>
+                            </DataTrigger.Binding>
+                            <Setter Property="Background" Value="{DynamicResource DataGridView.Selection}" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
             </Setter.Value>
         </Setter>
     </Style>

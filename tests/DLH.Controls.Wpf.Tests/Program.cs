@@ -20,6 +20,7 @@ internal static class Program
             app.Shutdown(); return;
         }
         if (args.Contains("--configuration-only")) { ConfigurationTests.Run(); app.Shutdown(); return; }
+        if (args.Contains("--datagrid-only")) { DataGridViewTests.Run(); app.Shutdown(); return; }
         if (args.Contains("--drag-only"))
         {
             var reportIndex = Array.IndexOf(args, "--report");

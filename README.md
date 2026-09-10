@@ -625,6 +625,30 @@ A demonstração preserva preferências em `%LOCALAPPDATA%\CustomTabControl.Demo
 - [Preparação para a versão 1.0.0](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/ReleaseReadiness.md)
 - [Histórico de versões](https://github.com/LeonardoHessel/DLH.Controls/blob/main/CHANGELOG.md)
 
+# Apoie o projeto
+
+Se o **DLH Controls** estiver ajudando sua aplicação, você pode apoiar a manutenção da biblioteca, a correção de problemas e o desenvolvimento de novos componentes.
+
+## Brasil — Pix
+
+Escaneie o QR Code com o aplicativo do seu banco. O valor pode ser escolhido no momento da contribuição.
+
+<p align="center">
+  <img src="https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/pix-qrcode.png"
+       width="280"
+       alt="QR Code para apoiar o DLH Controls por Pix">
+</p>
+
+**Chave Pix aleatória:** `65e95283-e2bd-46c3-b045-8773e8157df8`
+
+## Outros países — GitHub Sponsors
+
+Contribuições internacionais, únicas ou mensais, podem ser feitas pelo GitHub Sponsors:
+
+[![Apoie pelo GitHub Sponsors](https://img.shields.io/badge/Apoie-GitHub%20Sponsors-EA4AAA?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/LeonardoHessel)
+
+[Abrir o perfil de patrocínio de LeonardoHessel](https://github.com/sponsors/LeonardoHessel)
+
 # Licença e atribuição
 
 Distribuído sob a **DLH Controls — Licença de Uso com Atribuição Visível, versão 1.0**. Consulte a [licença completa](https://github.com/LeonardoHessel/DLH.Controls/blob/main/LICENSE.txt).
@@ -638,7 +662,7 @@ O crédito pode aparecer em **Sobre**, **Créditos** ou **Licenças de terceiros
 # Pacote e autoria
 
 - Pacote: [DLH.Controls.Wpf no NuGet.org](https://www.nuget.org/packages/DLH.Controls.Wpf)
-- Versão publicada mais recente: `0.1.0-preview.4`
+- Versão publicada mais recente: `0.2.0-preview.1`
 - Autor: **Leonardo D. de L. Hessel**
 - Plataforma: Windows
 - Framework: .NET 10 / WPF

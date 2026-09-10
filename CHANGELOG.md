@@ -12,6 +12,7 @@
 - Suítes WPF integradas ao `dotnet test`, com categorias, relatório TRX e isolamento por processo.
 - Validação do pacote em uma aplicação WPF temporária que instala somente o arquivo NuGet gerado.
 - Comparação visual automatizada com imagem de referência, tolerância a antialiasing e artefato de diferenças.
+- Primeiros testes STA independentes do `DataGridView`, executáveis individualmente pelo Visual Studio e `dotnet test`.
 
 ## 0.2.0-preview.4 — 10 de setembro de 2026
 

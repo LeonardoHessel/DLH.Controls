@@ -21,7 +21,50 @@
     <local:TabCloseAutomationNameConverter x:Key="Tabs.CloseAutomationNameConverter" />
     <local:DataGridViewColumnSelectionConverter x:Key="DataGridView.ColumnSelectionConverter" />
     <local:HalfValueToCornerRadiusConverter x:Key="DataGridView.HalfCornerRadiusConverter" />
+    <local:ScrollBarCornerRadiusConverter x:Key="ScrollBar.CornerRadiusConverter" />
     <Thickness x:Key="Tabs.HeaderPadding">22,13,22,13</Thickness>
+
+    <ControlTemplate x:Key="ScrollBar.VerticalTemplate" TargetType="{x:Type local:ScrollBar}">
+        <Grid Width="{TemplateBinding Thickness}">
+            <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+            <RepeatButton x:Name="DecreaseButton" Command="ScrollBar.LineUpCommand" Content="▲" FontSize="8" Focusable="False" />
+            <Border x:Name="TrackSurface" Grid.Row="1" Background="{TemplateBinding TrackBrush}" Padding="{TemplateBinding TrackPadding}">
+                <Border.CornerRadius><MultiBinding Converter="{StaticResource ScrollBar.CornerRadiusConverter}"><Binding Path="CornerRadius" RelativeSource="{RelativeSource TemplatedParent}"/><Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}"/></MultiBinding></Border.CornerRadius>
+                <Border.Effect><DropShadowEffect Color="{Binding ShadowColor, RelativeSource={RelativeSource TemplatedParent}}" Opacity="{Binding ShadowOpacity, RelativeSource={RelativeSource TemplatedParent}}" BlurRadius="{Binding ShadowBlurRadius, RelativeSource={RelativeSource TemplatedParent}}" ShadowDepth="{Binding ShadowDepth, RelativeSource={RelativeSource TemplatedParent}}"/></Border.Effect>
+                <Track x:Name="PART_Track" IsDirectionReversed="True" Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}" Value="{TemplateBinding Value}" ViewportSize="{TemplateBinding ViewportSize}">
+                    <Track.DecreaseRepeatButton><RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="False" /></Track.DecreaseRepeatButton>
+                    <Track.Thumb><Thumb><Thumb.Template><ControlTemplate TargetType="Thumb"><Border x:Name="ThumbSurface" Background="{Binding ThumbBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ScrollBar}}}" Opacity="{Binding ThumbOpacity, RelativeSource={RelativeSource AncestorType={x:Type local:ScrollBar}}}"><Border.CornerRadius><MultiBinding Converter="{StaticResource ScrollBar.CornerRadiusConverter}"><Binding Path="CornerRadius" RelativeSource="{RelativeSource AncestorType={x:Type local:ScrollBar}}"/><Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}"/></MultiBinding></Border.CornerRadius></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="ThumbSurface" Property="Background" Value="{Binding ThumbHoverBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ScrollBar}}}"/><Setter TargetName="ThumbSurface" Property="Opacity" Value="1"/></Trigger><Trigger Property="IsDragging" Value="True"><Setter TargetName="ThumbSurface" Property="Background" Value="{Binding ThumbPressedBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ScrollBar}}}"/><Setter TargetName="ThumbSurface" Property="Opacity" Value="1"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+                    <Track.IncreaseRepeatButton><RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="False" /></Track.IncreaseRepeatButton>
+                </Track>
+            </Border>
+            <RepeatButton x:Name="IncreaseButton" Grid.Row="2" Command="ScrollBar.LineDownCommand" Content="▼" FontSize="8" Focusable="False" />
+        </Grid>
+        <ControlTemplate.Triggers><Trigger Property="ShowButtons" Value="False"><Setter TargetName="DecreaseButton" Property="Visibility" Value="Collapsed"/><Setter TargetName="IncreaseButton" Property="Visibility" Value="Collapsed"/></Trigger><Trigger Property="IsShadowEnabled" Value="False"><Setter TargetName="TrackSurface" Property="Effect" Value="{x:Null}"/></Trigger></ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <ControlTemplate x:Key="ScrollBar.HorizontalTemplate" TargetType="{x:Type local:ScrollBar}">
+        <Grid Height="{TemplateBinding Thickness}">
+            <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+            <RepeatButton x:Name="DecreaseButton" Command="ScrollBar.LineLeftCommand" Content="◀" FontSize="8" Focusable="False" />
+            <Border x:Name="TrackSurface" Grid.Column="1" Background="{TemplateBinding TrackBrush}" Padding="{TemplateBinding TrackPadding}">
+                <Border.CornerRadius><MultiBinding Converter="{StaticResource ScrollBar.CornerRadiusConverter}"><Binding Path="CornerRadius" RelativeSource="{RelativeSource TemplatedParent}"/><Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}"/></MultiBinding></Border.CornerRadius>
+                <Border.Effect><DropShadowEffect Color="{Binding ShadowColor, RelativeSource={RelativeSource TemplatedParent}}" Opacity="{Binding ShadowOpacity, RelativeSource={RelativeSource TemplatedParent}}" BlurRadius="{Binding ShadowBlurRadius, RelativeSource={RelativeSource TemplatedParent}}" ShadowDepth="{Binding ShadowDepth, RelativeSource={RelativeSource TemplatedParent}}"/></Border.Effect>
+                <Track x:Name="PART_Track" Minimum="{TemplateBinding Minimum}" Maximum="{TemplateBinding Maximum}" Value="{TemplateBinding Value}" ViewportSize="{TemplateBinding ViewportSize}">
+                    <Track.DecreaseRepeatButton><RepeatButton Command="ScrollBar.PageLeftCommand" Opacity="0" Focusable="False" /></Track.DecreaseRepeatButton>
+                    <Track.Thumb><Thumb><Thumb.Template><ControlTemplate TargetType="Thumb"><Border x:Name="ThumbSurface" Background="{Binding ThumbBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ScrollBar}}}" Opacity="{Binding ThumbOpacity, RelativeSource={RelativeSource AncestorType={x:Type local:ScrollBar}}}"><Border.CornerRadius><MultiBinding Converter="{StaticResource ScrollBar.CornerRadiusConverter}"><Binding Path="CornerRadius" RelativeSource="{RelativeSource AncestorType={x:Type local:ScrollBar}}"/><Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}"/></MultiBinding></Border.CornerRadius></Border><ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="ThumbSurface" Property="Background" Value="{Binding ThumbHoverBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ScrollBar}}}"/><Setter TargetName="ThumbSurface" Property="Opacity" Value="1"/></Trigger><Trigger Property="IsDragging" Value="True"><Setter TargetName="ThumbSurface" Property="Background" Value="{Binding ThumbPressedBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ScrollBar}}}"/><Setter TargetName="ThumbSurface" Property="Opacity" Value="1"/></Trigger></ControlTemplate.Triggers></ControlTemplate></Thumb.Template></Thumb></Track.Thumb>
+                    <Track.IncreaseRepeatButton><RepeatButton Command="ScrollBar.PageRightCommand" Opacity="0" Focusable="False" /></Track.IncreaseRepeatButton>
+                </Track>
+            </Border>
+            <RepeatButton x:Name="IncreaseButton" Grid.Column="2" Command="ScrollBar.LineRightCommand" Content="▶" FontSize="8" Focusable="False" />
+        </Grid>
+        <ControlTemplate.Triggers><Trigger Property="ShowButtons" Value="False"><Setter TargetName="DecreaseButton" Property="Visibility" Value="Collapsed"/><Setter TargetName="IncreaseButton" Property="Visibility" Value="Collapsed"/></Trigger><Trigger Property="IsShadowEnabled" Value="False"><Setter TargetName="TrackSurface" Property="Effect" Value="{x:Null}"/></Trigger></ControlTemplate.Triggers>
+    </ControlTemplate>
+
+    <Style TargetType="{x:Type local:ScrollBar}">
+        <Setter Property="Focusable" Value="False"/><Setter Property="MinWidth" Value="0"/><Setter Property="MinHeight" Value="0"/>
+        <Setter Property="Template" Value="{StaticResource ScrollBar.VerticalTemplate}"/>
+        <Style.Triggers><Trigger Property="Orientation" Value="Horizontal"><Setter Property="Template" Value="{StaticResource ScrollBar.HorizontalTemplate}"/></Trigger></Style.Triggers>
+    </Style>
 
     <Style x:Key="Tabs.ItemStyle" TargetType="{x:Type TabItem}">
         <Setter Property="Foreground" Value="{DynamicResource Tabs.Muted}" />
@@ -49,12 +92,12 @@
                 <ControlTemplate TargetType="{x:Type TabItem}">
                     <Grid x:Name="Root" SnapsToDevicePixels="True">
                         <Grid.Margin>
-                            <MultiBinding Converter="{x:Static local:TabSpacingConverter.Instance}"><Binding Path="TabSpacing" RelativeSource="{RelativeSource AncestorType={x:Type local:CustomTabControl}}" /><Binding Path="TabStripPlacement" RelativeSource="{RelativeSource AncestorType={x:Type local:CustomTabControl}}" /></MultiBinding>
+                            <MultiBinding Converter="{x:Static local:TabSpacingConverter.Instance}"><Binding Path="TabSpacing" RelativeSource="{RelativeSource AncestorType={x:Type local:TabControl}}" /><Binding Path="TabStripPlacement" RelativeSource="{RelativeSource AncestorType={x:Type local:TabControl}}" /></MultiBinding>
                         </Grid.Margin>
                         <Border x:Name="Surface" Background="Transparent" Padding="{TemplateBinding Padding}">
                             <DockPanel LastChildFill="True">
                                 <Button x:Name="CloseButton" DockPanel.Dock="Right" Margin="10,0,0,0" Width="20" Height="20"
-                                        Command="{x:Static local:CustomTabControl.CloseTab}" CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
+                                        Command="{x:Static local:TabControl.CloseTab}" CommandParameter="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                         ToolTip="Fechar aba" Visibility="Collapsed"
                                         Foreground="{TemplateBinding Foreground}" Background="Transparent" BorderThickness="0">
                                     <AutomationProperties.Name>
@@ -90,9 +133,9 @@
                     </Grid>
                     <ControlTemplate.Triggers>                        <MultiDataTrigger>
                             <MultiDataTrigger.Conditions>
-                                <Condition Binding="{Binding CanCloseTabs, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}" Value="True" />
-                                <Condition Binding="{Binding ShowCloseButtons, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}" Value="True" />
-                                <Condition Binding="{Binding Path=(local:CustomTabControl.CanCloseTab), RelativeSource={RelativeSource Self}}" Value="True" />
+                                <Condition Binding="{Binding CanCloseTabs, RelativeSource={RelativeSource AncestorType={x:Type local:TabControl}}}" Value="True" />
+                                <Condition Binding="{Binding ShowCloseButtons, RelativeSource={RelativeSource AncestorType={x:Type local:TabControl}}}" Value="True" />
+                                <Condition Binding="{Binding Path=(local:TabControl.CanCloseTab), RelativeSource={RelativeSource Self}}" Value="True" />
                             </MultiDataTrigger.Conditions>
                             <Setter TargetName="CloseButton" Property="Visibility" Value="Visible" />
                         </MultiDataTrigger>
@@ -112,8 +155,8 @@
             </Setter.Value>
         </Setter>
     </Style>
-    <Style TargetType="{x:Type local:CustomTabItem}" BasedOn="{StaticResource Tabs.ItemStyle}" />
-    <Style TargetType="{x:Type local:CustomTabControl}">
+    <Style TargetType="{x:Type local:TabControlItem}" BasedOn="{StaticResource Tabs.ItemStyle}" />
+    <Style TargetType="{x:Type local:TabControl}">
         <Setter Property="Background" Value="{DynamicResource Tabs.Surface}" />
         <Setter Property="Foreground" Value="{DynamicResource Tabs.Text}" />
         <Setter Property="BorderBrush" Value="{DynamicResource Tabs.Edge}" />
@@ -126,7 +169,7 @@
         <Setter Property="ItemContainerStyle" Value="{StaticResource Tabs.ItemStyle}" />
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="{x:Type local:CustomTabControl}">
+                <ControlTemplate TargetType="{x:Type local:TabControl}">
                     <Grid x:Name="PART_Layout" KeyboardNavigation.TabNavigation="Local" SnapsToDevicePixels="True"><Grid.ColumnDefinitions><ColumnDefinition Width="*" /><ColumnDefinition Width="0" /></Grid.ColumnDefinitions>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="Auto" />
@@ -141,15 +184,15 @@
                                         <Setter Property="Effect">
                                             <Setter.Value>
                                                 <DropShadowEffect
-                                                    Color="{Binding ShadowColor, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}"
-                                                    BlurRadius="{Binding ShadowBlurRadius, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}"
-                                                    ShadowDepth="{Binding ShadowDepth, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}"
-                                                    Direction="{Binding ShadowDirection, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}"
-                                                    Opacity="{Binding ShadowOpacity, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}" />
+                                                    Color="{Binding ShadowColor, RelativeSource={RelativeSource AncestorType={x:Type local:TabControl}}}"
+                                                    BlurRadius="{Binding ShadowBlurRadius, RelativeSource={RelativeSource AncestorType={x:Type local:TabControl}}}"
+                                                    ShadowDepth="{Binding ShadowDepth, RelativeSource={RelativeSource AncestorType={x:Type local:TabControl}}}"
+                                                    Direction="{Binding ShadowDirection, RelativeSource={RelativeSource AncestorType={x:Type local:TabControl}}}"
+                                                    Opacity="{Binding ShadowOpacity, RelativeSource={RelativeSource AncestorType={x:Type local:TabControl}}}" />
                                             </Setter.Value>
                                         </Setter>
                                         <Style.Triggers>
-                                            <DataTrigger Binding="{Binding IsShadowEnabled, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}" Value="False">
+                                            <DataTrigger Binding="{Binding IsShadowEnabled, RelativeSource={RelativeSource AncestorType={x:Type local:TabControl}}}" Value="False">
                                                 <Setter Property="Effect" Value="{x:Null}" />
                                             </DataTrigger>
                                         </Style.Triggers>
@@ -179,7 +222,7 @@
                                         MinWidth="38" MinHeight="38" Padding="10,6" Margin="2,0,0,0"
                                         Content="{TemplateBinding AddTabContent}"
                                         ContentTemplate="{TemplateBinding AddTabContentTemplate}"
-                                        Command="{x:Static local:CustomTabControl.AddTab}"
+                                        Command="{x:Static local:TabControl.AddTab}"
                                         CommandParameter="{TemplateBinding AddTabCommandParameter}"
                                         AutomationProperties.Name="Adicionar aba" ToolTip="Adicionar aba"
                                         Foreground="{TemplateBinding Foreground}" Background="Transparent"
@@ -206,7 +249,7 @@
                                         <Style TargetType="Button">
                                             <Setter Property="Visibility" Value="Collapsed" />
                                             <Style.Triggers>
-                                                <DataTrigger Binding="{Binding CanAddTabs, RelativeSource={RelativeSource AncestorType={x:Type local:CustomTabControl}}}" Value="True">
+                                                <DataTrigger Binding="{Binding CanAddTabs, RelativeSource={RelativeSource AncestorType={x:Type local:TabControl}}}" Value="True">
                                                     <Setter Property="Visibility" Value="Visible" />
                                                 </DataTrigger>
                                             </Style.Triggers>
@@ -275,70 +318,22 @@
                                             <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
                                                 Grid.Row="1" Grid.Column="0"
                                                 CanContentScroll="{TemplateBinding CanContentScroll}" />
-                                            <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Row="1" Grid.Column="1" Panel.ZIndex="5"
-                                                Margin="0,6,6,6"
-                                                MinWidth="0"
-                                                Orientation="Vertical" Maximum="{TemplateBinding ScrollableHeight}"
+                                            <local:ScrollBar x:Name="PART_VerticalScrollBar" Grid.Row="1" Grid.Column="1" Panel.ZIndex="5"
+                                                Margin="0,6,6,6" Orientation="Vertical" Maximum="{TemplateBinding ScrollableHeight}"
                                                 Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
-                                                Width="{Binding ScrollBarThickness, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
-                                                Background="{Binding ScrollBarTrackBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
-                                                ViewportSize="{TemplateBinding ViewportHeight}" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}">
-                                                <ScrollBar.Template>
-                                                    <ControlTemplate TargetType="ScrollBar">
-                                                        <Border Background="{TemplateBinding Background}" Padding="2"
-                                                                CornerRadius="{Binding ActualWidth, RelativeSource={RelativeSource Self}, Converter={StaticResource DataGridView.HalfCornerRadiusConverter}}">
-                                                            <Track x:Name="PART_Track" IsDirectionReversed="True">
-                                                                <Track.DecreaseRepeatButton><RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="False" /></Track.DecreaseRepeatButton>
-                                                                <Track.Thumb>
-                                                                    <Thumb>
-                                                                        <Thumb.Template>
-                                                                            <ControlTemplate TargetType="Thumb">
-                                                                                <Border x:Name="ThumbSurface" Opacity="0.72"
-                                                                                        CornerRadius="{Binding ActualWidth, RelativeSource={RelativeSource Self}, Converter={StaticResource DataGridView.HalfCornerRadiusConverter}}"
-                                                                                        Background="{Binding ScrollBarThumbBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" />
-                                                                                <ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="ThumbSurface" Property="Background" Value="{Binding ScrollBarThumbHoverBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" /><Setter TargetName="ThumbSurface" Property="Opacity" Value="1" /></Trigger></ControlTemplate.Triggers>
-                                                                            </ControlTemplate>
-                                                                        </Thumb.Template>
-                                                                    </Thumb>
-                                                                </Track.Thumb>
-                                                                <Track.IncreaseRepeatButton><RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="False" /></Track.IncreaseRepeatButton>
-                                                            </Track>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </ScrollBar.Template>
-                                            </ScrollBar>
-                                            <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Row="2" Grid.ColumnSpan="2" Panel.ZIndex="6"
-                                                Margin="6,0,6,6"
-                                                MinHeight="0"
-                                                Orientation="Horizontal" Maximum="{TemplateBinding ScrollableWidth}"
+                                                Thickness="{Binding ScrollBarThickness, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                TrackBrush="{Binding ScrollBarTrackBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                ThumbBrush="{Binding ScrollBarThumbBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                ThumbHoverBrush="{Binding ScrollBarThumbHoverBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                ViewportSize="{TemplateBinding ViewportHeight}" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
+                                            <local:ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Row="2" Grid.ColumnSpan="2" Panel.ZIndex="6"
+                                                Margin="6,0,6,6" Orientation="Horizontal" Maximum="{TemplateBinding ScrollableWidth}"
                                                 Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
-                                                Height="{Binding ScrollBarThickness, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
-                                                Background="{Binding ScrollBarTrackBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
-                                                ViewportSize="{TemplateBinding ViewportWidth}" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}">
-                                                <ScrollBar.Template>
-                                                    <ControlTemplate TargetType="ScrollBar">
-                                                        <Border Background="{TemplateBinding Background}" Padding="2"
-                                                                CornerRadius="{Binding ActualHeight, RelativeSource={RelativeSource Self}, Converter={StaticResource DataGridView.HalfCornerRadiusConverter}}">
-                                                            <Track x:Name="PART_Track">
-                                                                <Track.DecreaseRepeatButton><RepeatButton Command="ScrollBar.PageLeftCommand" Opacity="0" Focusable="False" /></Track.DecreaseRepeatButton>
-                                                                <Track.Thumb>
-                                                                    <Thumb>
-                                                                        <Thumb.Template>
-                                                                            <ControlTemplate TargetType="Thumb">
-                                                                                <Border x:Name="ThumbSurface" Opacity="0.72"
-                                                                                        CornerRadius="{Binding ActualHeight, RelativeSource={RelativeSource Self}, Converter={StaticResource DataGridView.HalfCornerRadiusConverter}}"
-                                                                                        Background="{Binding ScrollBarThumbBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" />
-                                                                                <ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="ThumbSurface" Property="Background" Value="{Binding ScrollBarThumbHoverBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" /><Setter TargetName="ThumbSurface" Property="Opacity" Value="1" /></Trigger></ControlTemplate.Triggers>
-                                                                            </ControlTemplate>
-                                                                        </Thumb.Template>
-                                                                    </Thumb>
-                                                                </Track.Thumb>
-                                                                <Track.IncreaseRepeatButton><RepeatButton Command="ScrollBar.PageRightCommand" Opacity="0" Focusable="False" /></Track.IncreaseRepeatButton>
-                                                            </Track>
-                                                        </Border>
-                                                    </ControlTemplate>
-                                                </ScrollBar.Template>
-                                            </ScrollBar>
+                                                Thickness="{Binding ScrollBarThickness, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                TrackBrush="{Binding ScrollBarTrackBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                ThumbBrush="{Binding ScrollBarThumbBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                ThumbHoverBrush="{Binding ScrollBarThumbHoverBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                ViewportSize="{TemplateBinding ViewportWidth}" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}" />
                                         </Grid>
                                     </ControlTemplate>
                                 </ScrollViewer.Template>
@@ -526,3 +521,4 @@
         </Setter>
     </Style>
 </ResourceDictionary>
+

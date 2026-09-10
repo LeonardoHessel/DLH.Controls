@@ -13,7 +13,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Shapes;
 using System.Windows.Threading;
-using Tabs = DLH.Controls.Wpf.CustomTabControl;
+using Tabs = DLH.Controls.Wpf.TabControl;
 
 internal static partial class DragDropTests
 {
@@ -367,7 +367,7 @@ internal static partial class DragDropTests
             var close = (Button)f.Item(0).Template.FindName("CloseButton", f.Item(0));
             Assert(close.Visibility == Visibility.Visible, "Close button was not displayed");
             var item = f.Model.Items[0]; var closed = 0; f.Tabs.TabClosed += (_, e) => { if (ReferenceEquals(e.Item, item)) closed++; };
-            DLH.Controls.Wpf.CustomTabControl.CloseTab.Execute(f.Item(0), f.Item(0)); f.Layout();
+            DLH.Controls.Wpf.TabControl.CloseTab.Execute(f.Item(0), f.Item(0)); f.Layout();
             Assert(!f.Model.Items.Contains(item) && closed == 1, "Close command did not remove exactly once");
         });
         Test("close/cancellable event protects data", () =>
@@ -520,3 +520,4 @@ internal static partial class DragDropTests
         return failed == 0;
     }
 }
+

@@ -11,16 +11,16 @@ using System.Windows.Threading;
 
 namespace DLH.Controls.Wpf;
 
-public partial class CustomTabControl
+public partial class TabControl
 {
     public static readonly DependencyProperty CanReorderTabsProperty = DependencyProperty.Register(
-        nameof(CanReorderTabs), typeof(bool), typeof(CustomTabControl),
-        new PropertyMetadata(true, (owner, _) => ((CustomTabControl)owner).CancelTabDrag()));
+        nameof(CanReorderTabs), typeof(bool), typeof(TabControl),
+        new PropertyMetadata(true, (owner, _) => ((TabControl)owner).CancelTabDrag()));
     public bool CanReorderTabs { get => (bool)GetValue(CanReorderTabsProperty); set => SetValue(CanReorderTabsProperty, value); }
 
     /// <summary>Cursor displayed after a header drag exceeds five physical pixels.</summary>
     public static readonly DependencyProperty TabDragCursorProperty = DependencyProperty.Register(
-        nameof(TabDragCursor), typeof(Cursor), typeof(CustomTabControl),
+        nameof(TabDragCursor), typeof(Cursor), typeof(TabControl),
         new PropertyMetadata(Cursors.ScrollWE, (_, _) => Mouse.UpdateCursor()), value => value is Cursor);
     public Cursor TabDragCursor { get => (Cursor)GetValue(TabDragCursorProperty); set => SetValue(TabDragCursorProperty, value); }
 
@@ -274,3 +274,4 @@ public partial class CustomTabControl
         if (hadPointerFeedback) Mouse.UpdateCursor();
     }
 }
+

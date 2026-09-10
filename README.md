@@ -13,18 +13,19 @@ O pacote contém atualmente:
 
 | Componente | Finalidade | Principais recursos |
 |---|---|---|
-| `CustomTabControl` | Organizar páginas e documentos em abas | superfície contínua, quatro posições, drag and drop animado, criação, renomeação, fechamento, persistência, sombra e temas |
+| `TabControl` | Organizar páginas e documentos em abas | superfície contínua, quatro posições, drag and drop animado, criação, renomeação, fechamento, persistência, sombra e temas |
 | `DataGridView` | Exibir coleções em uma tabela rica | seleção configurável, ordenação visual, colunas reordenáveis/ocultáveis, estados de dados, densidades, badges/templates e barras de rolagem customizadas |
+| `ScrollBar` | Padronizar a rolagem em qualquer conteúdo | orientação, espessura, cores, raio seguro, sombra e botões direcionais opcionais |
 
 > Requer **Windows** e **.NET 10** com WPF. O pacote atual é uma versão de pré-lançamento.
 
 ## Visão dos componentes
 
-### CustomTabControl
+### TabControl
 
-O `CustomTabControl` desenha a aba selecionada e o corpo como uma única superfície. O mesmo raio é usado nas bordas externas e nas ligações entre a aba e o conteúdo.
+O `TabControl` desenha a aba selecionada e o corpo como uma única superfície. O mesmo raio é usado nas bordas externas e nas ligações entre a aba e o conteúdo.
 
-![CustomTabControl com abas superiores, inferiores e laterais](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/custom-tab-control.png)
+![TabControl com abas superiores, inferiores e laterais](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/custom-tab-control.png)
 
 Ele pode ser usado com abas declaradas diretamente no XAML ou com uma coleção em `ItemsSource`. A criação, renomeação, remoção e reordenação são opcionais e vêm desativadas ou protegidas por configurações próprias.
 
@@ -101,22 +102,22 @@ Adicione o namespace da biblioteca à janela ou ao controle que utilizará os co
 
 Os estilos padrão estão em `Themes/Generic.xaml` e são carregados pelo sistema de temas do WPF. Não é necessário copiar templates para a aplicação consumidora.
 
-# CustomTabControl
+# TabControl
 
 ## Exemplo mínimo
 
 ```xml
-<dlh:CustomTabControl CornerRadius="12"
+<dlh:TabControl CornerRadius="12"
                       HeaderIndent="0"
                       TabSpacing="0">
-    <dlh:CustomTabItem Header="Visão geral">
+    <dlh:TabControlItem Header="Visão geral">
         <TextBlock Margin="24" Text="Conteúdo da visão geral" />
-    </dlh:CustomTabItem>
+    </dlh:TabControlItem>
 
-    <dlh:CustomTabItem Header="Editor">
+    <dlh:TabControlItem Header="Editor">
         <TextBox Margin="24" AcceptsReturn="True" />
-    </dlh:CustomTabItem>
-</dlh:CustomTabControl>
+    </dlh:TabControlItem>
+</dlh:TabControl>
 ```
 
 `HeaderIndent="0"` alinha a primeira aba à borda do corpo. `TabSpacing="0"` remove espaços entre abas. `CornerRadius` controla todas as curvas do contorno.
@@ -126,8 +127,8 @@ Os estilos padrão estão em `Themes/Generic.xaml` e são carregados pelo sistem
 O `Header` aceita qualquer conteúdo WPF:
 
 ```xml
-<dlh:CustomTabItem>
-    <dlh:CustomTabItem.Header>
+<dlh:TabControlItem>
+    <dlh:TabControlItem.Header>
         <StackPanel Orientation="Horizontal">
             <Image Width="18"
                    Height="18"
@@ -135,10 +136,10 @@ O `Header` aceita qualquer conteúdo WPF:
                    Source="/MinhaAplicacao;component/Assets/Edit.png" />
             <TextBlock VerticalAlignment="Center" Text="Editor" />
         </StackPanel>
-    </dlh:CustomTabItem.Header>
+    </dlh:TabControlItem.Header>
 
     <TextBlock Margin="24" Text="Página do editor" />
-</dlh:CustomTabItem>
+</dlh:TabControlItem>
 ```
 
 Para ícones vetoriais, substitua `Image` por `Path`, `Viewbox` ou outro elemento visual.
@@ -146,27 +147,27 @@ Para ícones vetoriais, substitua `Image` por `Path`, `Viewbox` ou outro element
 ## Uso com ItemsSource e MVVM
 
 ```xml
-<dlh:CustomTabControl ItemsSource="{Binding Documents}"
+<dlh:TabControl ItemsSource="{Binding Documents}"
                       SelectedItem="{Binding SelectedDocument}"
                       ItemKeyPath="Id"
                       TabHeaderPath="Title">
-    <dlh:CustomTabControl.ItemTemplate>
+    <dlh:TabControl.ItemTemplate>
         <DataTemplate>
             <StackPanel Orientation="Horizontal">
                 <TextBlock Margin="0,0,8,0" Text="◆" />
                 <TextBlock Text="{Binding Title}" />
             </StackPanel>
         </DataTemplate>
-    </dlh:CustomTabControl.ItemTemplate>
+    </dlh:TabControl.ItemTemplate>
 
-    <dlh:CustomTabControl.ContentTemplate>
+    <dlh:TabControl.ContentTemplate>
         <DataTemplate>
             <TextBox Margin="24"
                      Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
                      AcceptsReturn="True" />
         </DataTemplate>
-    </dlh:CustomTabControl.ContentTemplate>
-</dlh:CustomTabControl>
+    </dlh:TabControl.ContentTemplate>
+</dlh:TabControl>
 ```
 
 Um modelo simples pode ser definido assim:
@@ -190,10 +191,10 @@ Os dados e o estado editável permanecem no ViewModel. Trocar de aba não recria
 Use a propriedade WPF `TabStripPlacement`:
 
 ```xml
-<dlh:CustomTabControl TabStripPlacement="Top" />
-<dlh:CustomTabControl TabStripPlacement="Bottom" />
-<dlh:CustomTabControl TabStripPlacement="Left" />
-<dlh:CustomTabControl TabStripPlacement="Right" />
+<dlh:TabControl TabStripPlacement="Top" />
+<dlh:TabControl TabStripPlacement="Bottom" />
+<dlh:TabControl TabStripPlacement="Left" />
+<dlh:TabControl TabStripPlacement="Right" />
 ```
 
 O contorno, a direção da rolagem e o eixo do drag and drop acompanham automaticamente a posição.
@@ -201,7 +202,7 @@ O contorno, a direção da rolagem e o eixo do drag and drop acompanham automati
 ## Drag and drop para reorganizar
 
 ```xml
-<dlh:CustomTabControl CanReorderTabs="True"
+<dlh:TabControl CanReorderTabs="True"
                       MinimumDragDistance="5"
                       IsDragPreviewEnabled="True"
                       IsAnimationEnabled="True"
@@ -229,7 +230,7 @@ bool moved = tabs.MoveTab(oldIndex: 3, newIndex: 1);
 A ação `+` é opcional e não participa da seleção, persistência ou reordenação:
 
 ```xml
-<dlh:CustomTabControl ItemsSource="{Binding Documents}"
+<dlh:TabControl ItemsSource="{Binding Documents}"
                       CanAddTabs="True"
                       AddTabCommand="{Binding AddDocumentCommand}"
                       AddTabCommandParameter="{Binding SelectedWorkspace}" />
@@ -247,7 +248,7 @@ tabs.AddTabRequested += (_, e) =>
 ## Renomear diretamente no cabeçalho
 
 ```xml
-<dlh:CustomTabControl ItemsSource="{Binding Documents}"
+<dlh:TabControl ItemsSource="{Binding Documents}"
                       CanRenameTabs="True"
                       TabHeaderPath="Title"
                       RenameActivation="F2AndDoubleClick" />
@@ -262,7 +263,7 @@ tabs.AddTabRequested += (_, e) =>
 ## Fechar abas
 
 ```xml
-<dlh:CustomTabControl ItemsSource="{Binding Documents}"
+<dlh:TabControl ItemsSource="{Binding Documents}"
                       CanCloseTabs="True"
                       ShowCloseButtons="True"
                       CloseTabCommand="{Binding CloseDocumentCommand}" />
@@ -271,8 +272,8 @@ tabs.AddTabRequested += (_, e) =>
 Uma aba individual pode ser protegida:
 
 ```xml
-<dlh:CustomTabItem Header="Início"
-                   dlh:CustomTabControl.CanCloseTab="False" />
+<dlh:TabControlItem Header="Início"
+                   dlh:TabControl.CanCloseTab="False" />
 ```
 
 A aplicação pode cancelar o fechamento antes da remoção:
@@ -290,7 +291,7 @@ A biblioteca não abre diálogos automaticamente; a confirmação pertence à ap
 ## Sombra e aparência
 
 ```xml
-<dlh:CustomTabControl Background="#35373C"
+<dlh:TabControl Background="#35373C"
                       Foreground="#F2F3F5"
                       BorderBrush="#4C5058"
                       BorderThickness="1"
@@ -325,6 +326,27 @@ tabs.RestoreState(state);
 ```
 
 O estado contém chaves, ordem e seleção. O conteúdo das páginas permanece sob responsabilidade da aplicação.
+
+# ScrollBar
+
+Use `controls:ScrollBar` diretamente ou dentro do template de qualquer `ScrollViewer`, lista ou controle próprio. Os comandos, teclado, automação e propriedades nativas continuam disponíveis.
+
+```xml
+<controls:ScrollBar Orientation="Vertical"
+                    Minimum="0"
+                    Maximum="100"
+                    Value="35"
+                    Thickness="10"
+                    CornerRadius="5"
+                    TrackBrush="#3D4046"
+                    ThumbBrush="#686D77"
+                    ThumbHoverBrush="#8B919D"
+                    ShowButtons="False" />
+```
+
+`CornerRadius` aceita um valor uniforme; na renderização ele é limitado automaticamente à metade da espessura. A sombra é opcional por `IsShadowEnabled`, e seus parâmetros podem ser alterados com `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`.
+
+O `DataGridView` já utiliza esse componente internamente. Suas propriedades `ScrollBarThickness`, `ScrollBarTrackBrush`, `ScrollBarThumbBrush` e `ScrollBarThumbHoverBrush` foram preservadas.
 
 # DataGridView
 
@@ -640,7 +662,7 @@ Para coleções grandes, evite colocar o grid dentro de outro `ScrollViewer`, po
 
 As propriedades convencionais `Background`, `Foreground`, `BorderBrush`, `BorderThickness`, `Padding`, `FontFamily` e `FontSize` continuam disponíveis.
 
-Recursos principais do `CustomTabControl`:
+Recursos principais do `TabControl`:
 
 ```xml
 <SolidColorBrush x:Key="Tabs.Surface" Color="#35373C" />
@@ -695,12 +717,12 @@ A rotina compila a solução, executa as suítes por `dotnet test`, salva um rel
 
 Para executar somente uma família, use `--filter TestCategory=DataGridView` ou `--filter TestCategory=TabControl` no projeto `tests/DLH.Controls.Wpf.AutomatedTests`.
 
-A demonstração preserva preferências em `%LOCALAPPDATA%\CustomTabControl.Demo`.
+A demonstração preserva preferências em `%LOCALAPPDATA%\TabControl.Demo`.
 
 # Documentação adicional
 
 - [Manual de uso do DLH Controls](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/Manual.md)
-- [CustomTabControl detalhado](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/TabControl.md)
+- [TabControl detalhado](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/TabControl.md)
 - [Referência da API](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/ApiReference.md)
 - [Integração com dados, MVVM e temas](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/Integration.md)
 - [Preparação e conteúdo do pacote](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/Packaging.md)
@@ -749,3 +771,4 @@ O crédito pode aparecer em **Sobre**, **Créditos** ou **Licenças de terceiros
 - Framework: .NET 10 / WPF
 
 Mudanças posteriores à versão indicada permanecem em desenvolvimento até uma nova release.
+

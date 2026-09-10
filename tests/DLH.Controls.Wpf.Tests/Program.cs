@@ -36,7 +36,7 @@ internal static class Program
             var settingsFrame = new DispatcherFrame();
             Dispatcher.CurrentDispatcher.BeginInvoke(DispatcherPriority.ContextIdle, new Action(() => settingsFrame.Continue = false));
             Dispatcher.PushFrame(settingsFrame); settingsRoot.UpdateLayout();
-            var models = new[] { "DynamicTabs", "SideTabs", "SimpleTabs" }.Select(name => (DLH.Controls.Wpf.CustomTabControl)demo.FindName(name)).ToArray();
+            var models = new[] { "DynamicTabs", "SideTabs", "SimpleTabs" }.Select(name => (DLH.Controls.Wpf.TabControl)demo.FindName(name)).ToArray();
             foreach (var model in models)
             {
                 if (!model.ShowCloseButtons || model.CaptureState().Order.Count != model.Items.Count) throw new Exception("Configuração/chaves ausentes");
@@ -70,8 +70,8 @@ internal static class Program
             Console.WriteLine("PASS: checkbox updates all models, close buttons and toolbar through repeated toggles");
             foreach (var (caption, property) in new[]
             {
-                ("Permitir adição de abas", DLH.Controls.Wpf.CustomTabControl.CanAddTabsProperty),
-                ("Permitir renomear abas", DLH.Controls.Wpf.CustomTabControl.CanRenameTabsProperty)
+                ("Permitir adição de abas", DLH.Controls.Wpf.TabControl.CanAddTabsProperty),
+                ("Permitir renomear abas", DLH.Controls.Wpf.TabControl.CanRenameTabsProperty)
             })
             {
                 var toggle = SettingsDescendants(settingsRoot).OfType<CheckBox>().Single(box => Equals(box.Content, caption));
@@ -85,7 +85,7 @@ internal static class Program
             var sharedCount = models[0].Items.Count; var sideCount = models[1].Items.Count;
             if (!models[0].RequestAddTab(models[0].AddTabCommandParameter) || models[0].Items.Count != sharedCount + 1 || models[2].Items.Count != sharedCount + 1)
                 throw new Exception("Ação integrada não adicionou documento compartilhado");
-            if (!models[1].RequestAddTab() || models[1].Items.Count != sideCount + 1 || models[1].SelectedItem is not CustomTabItem)
+            if (!models[1].RequestAddTab() || models[1].Items.Count != sideCount + 1 || models[1].SelectedItem is not TabControlItem)
                 throw new Exception("Ação integrada não adicionou página lateral");
             var addedDocument = models[0].SelectedItem!;
             if (!models[0].BeginRenameTab(addedDocument)) throw new Exception("Edição integrada não iniciou");
@@ -109,7 +109,7 @@ internal static class Program
                 var item = model.Items[0];
                 var count = model.Items.Count;
                 model.CanCloseTabs = false;
-                if (model.RequestCloseTab(item) || model.Items.Count != count || DLH.Controls.Wpf.CustomTabControl.CloseTab.CanExecute(item, model)) throw new Exception("Exclusão não bloqueada");
+                if (model.RequestCloseTab(item) || model.Items.Count != count || DLH.Controls.Wpf.TabControl.CloseTab.CanExecute(item, model)) throw new Exception("Exclusão não bloqueada");
                 model.CanCloseTabs = true;
                 if (!model.RequestCloseTab(item) || model.Items.Count != count - 1) throw new Exception("Exclusão não reabilitada: " + model.Name);
             }
@@ -159,7 +159,7 @@ internal static class Program
         }
         var window = new MainWindow();
         var vm = (DemoViewModel)window.DataContext;
-        var tabs = (DLH.Controls.Wpf.CustomTabControl)window.FindName("DynamicTabs");
+        var tabs = (DLH.Controls.Wpf.TabControl)window.FindName("DynamicTabs");
         tabs.HeaderIndent = double.NaN;
         void Layout()
         {
@@ -235,7 +235,7 @@ internal static class Program
         tabs.HeaderIndent = double.NaN;
         Layout();
         Layout();
-        Check(tabs.ItemContainerGenerator.ContainerFromIndex(0) is CustomTabItem, "Custom container generation");
+        Check(tabs.ItemContainerGenerator.ContainerFromIndex(0) is TabControlItem, "Custom container generation");
         Check(tabs.Template.FindName("PART_SelectedContentHost", tabs) is ContentPresenter { Content: TabDocument }, "Content template loaded");
         Check(tabs.ItemContainerGenerator.ContainerFromIndex(2) is TabItem { IsEnabled: false }, "Disabled item binding");
         var first = vm.Tabs[0];
@@ -263,8 +263,8 @@ internal static class Program
         vm.SelectedTab = vm.Tabs[1];
         Layout();
         var flags = System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic;
-        typeof(DLH.Controls.Wpf.CustomTabControl).GetField("hoveredItem", flags)!.SetValue(tabs, firstHeader);
-        typeof(DLH.Controls.Wpf.CustomTabControl).GetMethod("UpdateSurface", flags)!.Invoke(tabs, null);
+        typeof(DLH.Controls.Wpf.TabControl).GetField("hoveredItem", flags)!.SetValue(tabs, firstHeader);
+        typeof(DLH.Controls.Wpf.TabControl).GetMethod("UpdateSurface", flags)!.Invoke(tabs, null);
         Layout();
         var hoverPath = (System.Windows.Shapes.Path)tabs.Template.FindName("PART_HoverSurface", tabs);
         Check(!hoverPath.Data.IsEmpty() && hoverPath.Data.GetFlattenedPathGeometry().Figures.Count == 1, "Hover uses one continuous curved silhouette");
@@ -307,7 +307,7 @@ internal static class Program
         rootElement.Arrange(new Rect(0, 0, 600, 560));
         rootElement.UpdateLayout();
         Check(tabs.ActualWidth <= 600 && tabs.ActualHeight > 0, "Compact layout");
-        var sideTabs = (DLH.Controls.Wpf.CustomTabControl)window.FindName("SideTabs");
+        var sideTabs = (DLH.Controls.Wpf.TabControl)window.FindName("SideTabs");
         foreach (var side in new[] { Dock.Left, Dock.Right })
         {
             sideTabs.TabStripPlacement = side;
@@ -362,3 +362,4 @@ internal static class Program
         app.Shutdown();
     }
 }
+

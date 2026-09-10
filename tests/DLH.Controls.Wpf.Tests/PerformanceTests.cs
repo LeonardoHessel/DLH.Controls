@@ -17,7 +17,7 @@ internal static partial class DragDropTests
             {
                 using var f = new Fixture(count: count);
                 var surface = (ShapePath)f.Tabs.Template.FindName("PART_Surface", f.Tabs);
-                var updateSurface = (Action)typeof(DLH.Controls.Wpf.CustomTabControl).GetMethod("UpdateSurface", Private)!.CreateDelegate(typeof(Action), f.Tabs);
+                var updateSurface = (Action)typeof(DLH.Controls.Wpf.TabControl).GetMethod("UpdateSurface", Private)!.CreateDelegate(typeof(Action), f.Tabs);
                 results.Add(Measure(f, surface, count, "idle", 1000, _ => updateSurface()));
                 results.Add(Measure(f, surface, count, "resize", 30, i => { f.LayoutSize = new Size(720 + i % 2 * 40, 340 + i % 3 * 10); f.Layout(); }));
                 results.Add(Measure(f, surface, count, "font", 30, i => { f.Tabs.FontSize = i % 2 == 0 ? 14 : 16; f.Layout(); }));
@@ -68,3 +68,4 @@ internal static class PerformanceTests
 {
     public static void Run(string? reportPath) => DragDropTests.PerformanceTests.Run(reportPath);
 }
+

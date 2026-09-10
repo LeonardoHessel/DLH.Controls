@@ -2,7 +2,7 @@
 
 ## 1. Objetivo e limites
 
-Adicionar duas funcionalidades independentes ao `CustomTabControl`:
+Adicionar duas funcionalidades independentes ao `TabControl`:
 
 1. uma ação visual opcional, representada inicialmente por `+`, para solicitar a criação de uma aba;
 2. edição opcional do título de uma aba diretamente no cabeçalho.
@@ -85,7 +85,7 @@ Ordem de integração:
 
 ### Editor visual
 
-O cabeçalho alterna entre sua apresentação normal e um `TextBox` no próprio `CustomTabItem`. O editor herda fonte, cores e alinhamento do cabeçalho, seleciona o texto ao abrir e mantém a largura inicial mínima para reduzir saltos de layout.
+O cabeçalho alterna entre sua apresentação normal e um `TextBox` no próprio `TabItem`. O editor herda fonte, cores e alinhamento do cabeçalho, seleciona o texto ao abrir e mantém a largura inicial mínima para reduzir saltos de layout.
 
 - `F2` ou duplo clique inicia a edição da aba apontada/selecionada.
 - `Enter` solicita a confirmação.
@@ -172,3 +172,4 @@ Documentar em `README.md`, `docs/TabControl.md`, `docs/Integration.md` e `docs/A
 4. **Documentação e validação final:** guias, referência de API, checklist manual e pacote local. Commit sugerido: `docs: document tab creation and inline renaming`.
 
 Cada etapa deve encerrar com build da solução e apenas os testes relevantes; a última executa `eng/Validate.ps1` e confirma que o pacote contém os recursos e a documentação esperados. A versão NuGet só deve ser alterada quando houver decisão de publicar uma nova prévia.
+

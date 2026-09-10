@@ -103,7 +103,7 @@ public partial class MainWindow : Window
             Resources[ColorKeys[i]] = new SolidColorBrush((Color)ColorConverter.ConvertFromString(ThemeColors[themeIndex][i]));
         ThemeName.Text = ThemeNames[themeIndex];
     }
-    private static string LayoutPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CustomTabControl.Demo", "layout.json");
+    private static string LayoutPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TabControl.Demo", "layout.json");
 
     private void ConfirmTabClosing(object? sender, TabClosingEventArgs e)
     {
@@ -118,7 +118,7 @@ public partial class MainWindow : Window
     private void AddSideTab(object? sender, AddTabRequestedEventArgs e)
     {
         var number = sideTabIndex++;
-        var item = new CustomTabItem
+        var item = new TabControlItem
         {
             Header = $"Página {number}",
             ToolTip = $"Página {number}",
@@ -129,7 +129,7 @@ public partial class MainWindow : Window
                 FontSize = 16
             }
         };
-        CustomTabControl.SetTabKey(item, $"Página lateral {number}");
+        TabControl.SetTabKey(item, $"Página lateral {number}");
         SideTabs.Items.Add(item);
         SideTabs.SelectedItem = item;
         InteractionStatus.Text = $"Página lateral {number} adicionada.";
@@ -175,3 +175,4 @@ public partial class MainWindow : Window
         catch (Exception error) when (error is IOException or UnauthorizedAccessException or InvalidOperationException or ArgumentException or JsonException)
         { InteractionStatus.Text = "Não foi possível restaurar a organização: " + error.Message; }
     }}
+

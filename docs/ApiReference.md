@@ -72,9 +72,13 @@ Chaves inválidas ou fontes incompatíveis geram InvalidOperationException; valo
 
 ## Tipos auxiliares e compatibilidade
 
-CustomTabItem é opcional: TabItem nativo também é aceito. TabControlState, TabControlConfiguration e os argumentos de eventos são públicos. TabCursors.ClosedHand e TabSpacingConverter também foram publicados: não serão removidos ou tornados internos nesta revisão. O primeiro é um cursor compartilhado, não deve ser descartado pelo consumidor; o segundo é infraestrutura do template, sem necessidade de uso direto na maioria das aplicações.
+`TabControlItem` é opcional: o `System.Windows.Controls.TabItem` nativo também é aceito. `TabControlState`, `TabControlConfiguration` e os argumentos de eventos são públicos. `TabCursors.ClosedHand` e `TabSpacingConverter` também são públicos.
 
-Mantidos os nomes CustomTabControl, CanCloseTabs (global) e CanCloseTab (individual). Renomeá-los agora quebraria consumidores sem benefício suficiente. Nenhuma assinatura pública foi alterada nesta revisão.
+Os nomes foram padronizados durante a fase de pré-lançamento: `TabControl` substitui `CustomTabControl` e `TabControlItem` substitui `CustomTabItem`.
+
+# Referência da API — ScrollBar
+
+`ScrollBar` deriva de `System.Windows.Controls.Primitives.ScrollBar`. `Thickness` controla o eixo transversal conforme `Orientation`; `CornerRadius` deve ser uniforme e é limitado visualmente à metade da espessura. `TrackBrush`, `ThumbBrush`, `ThumbHoverBrush`, `ThumbPressedBrush`, `TrackPadding` e `ThumbOpacity` controlam o visual. `ShowButtons` exibe comandos direcionais. A sombra é opt-in por `IsShadowEnabled` e usa `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`.
 
 # Referência da API — DataGridView
 
@@ -110,3 +114,4 @@ O formato atual usa `Version=1`. Estados com versão desconhecida, chaves duplic
 `Filters` expõe os filtros ativos. Use `SetFilter(column, value, operador)`, `ClearFilter(column)` e `ClearFilters()`. Os operadores disponíveis são `Contains`, `Equals`, `StartsWith`, `EndsWith`, `GreaterThan` e `LessThan`. `DataGridView.FilterMemberPath` escolhe a propriedade consultada e `DataGridView.CanUserFilter` desativa filtros em uma coluna. O filtro existente na `ICollectionView` é preservado e combinado com os filtros do controle.
 
 `IsMultiColumnSortEnabled` é `false` por padrão. Quando habilitada, clique simples substitui a ordenação, `Shift+clique` acrescenta um critério e `Ctrl+clique` remove o critério da coluna. `ApplySort(column, direction, append)` e `RemoveSort(column)` oferecem o mesmo controle por código. A propriedade anexada somente leitura `SortPriority` informa a posição, iniciando em 1 quando existem múltiplos critérios.
+

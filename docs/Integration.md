@@ -11,23 +11,23 @@ xmlns:dlh="clr-namespace:DLH.Controls.Wpf;assembly=DLH.Controls.Wpf"
 Exemplo de controle ligado à coleção Documents do DataContext:
 
 ```xml
-<dlh:CustomTabControl x:Name="Tabs"
+<dlh:TabControl x:Name="Tabs"
     ItemsSource="{Binding Documents}" ItemKeyPath="Id"
     SelectedItem="{Binding SelectedDocument, Mode=TwoWay}"
     CanCloseTabs="True" ShowCloseButtons="True"
     CanAddTabs="True" AddTabCommand="{Binding AddDocumentCommand}"
     CanRenameTabs="True" TabHeaderPath="Title"
     CloseTabCommand="{Binding CloseDocumentCommand}">
-    <dlh:CustomTabControl.ItemTemplate>
+    <dlh:TabControl.ItemTemplate>
         <DataTemplate><TextBlock Text="{Binding Title}" /></DataTemplate>
-    </dlh:CustomTabControl.ItemTemplate>
-    <dlh:CustomTabControl.ContentTemplate>
+    </dlh:TabControl.ItemTemplate>
+    <dlh:TabControl.ContentTemplate>
         <DataTemplate>
             <TextBox Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
                      AcceptsReturn="True" TextWrapping="Wrap" />
         </DataTemplate>
-    </dlh:CustomTabControl.ContentTemplate>
-</dlh:CustomTabControl>
+    </dlh:TabControl.ContentTemplate>
+</dlh:TabControl>
 ```
 
 No view model: Documents deve ser uma ObservableCollection de modelos com Id string estável, Title e Notes. SelectedDocument deve notificar alterações com INotifyPropertyChanged. CloseDocumentCommand recebe o documento; CanExecute determina se pode fechar e Execute remove da coleção de forma síncrona. A biblioteca não exige um framework MVVM. Veja a implementação executável em samples/DLH.Controls.Wpf.Demo/DemoViewModel.cs e MainWindow.xaml.
@@ -49,7 +49,7 @@ Document e HasUnsavedChanges representam o modelo da aplicação. Para confirma�
 `ItemTemplate` define a aparência de cada cabeçalho. O ícone pode ser texto, imagem ou geometria vetorial; o título continua no modelo:
 
 ```xml
-<dlh:CustomTabControl.ItemTemplate>
+<dlh:TabControl.ItemTemplate>
     <DataTemplate>
         <StackPanel Orientation="Horizontal">
             <Path Width="16" Height="16" Margin="0,0,8,0"
@@ -58,7 +58,7 @@ Document e HasUnsavedChanges representam o modelo da aplicação. Para confirma�
             <TextBlock Text="{Binding Title}" />
         </StackPanel>
     </DataTemplate>
-</dlh:CustomTabControl.ItemTemplate>
+</dlh:TabControl.ItemTemplate>
 ```
 
 O modelo deve notificar alterações de `Title` para que o cabeçalho e o contorno sejam recalculados. Durante a edição, o editor textual substitui temporariamente a apresentação composta; o ícone e o template reaparecem intactos ao confirmar ou cancelar.
@@ -81,7 +81,7 @@ Use `AddTabContent` para trocar o sinal ou `AddTabContentTemplate` para fornecer
 Para edição direta, indique a propriedade textual gravável:
 
 ```xml
-<dlh:CustomTabControl CanRenameTabs="True"
+<dlh:TabControl CanRenameTabs="True"
                       TabHeaderPath="Title"
                       RenameActivation="F2AndDoubleClick" />
 ```
@@ -127,3 +127,4 @@ Tabs.RestoreConfiguration(
 ```
 
 Ao reabrir, carregue os documentos antes de restaurar a ordem. Trate arquivos ausentes, dados inválidos e erros de leitura. Não armazene senhas como parte dessas configurações. Reaplicar um binding pode substituir um valor restaurado; mantenha as fontes do view model coerentes.
+

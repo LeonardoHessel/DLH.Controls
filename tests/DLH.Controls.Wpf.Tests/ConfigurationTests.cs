@@ -5,7 +5,7 @@ using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Media;
 using DLH.Controls.Wpf;
-using Tabs = DLH.Controls.Wpf.CustomTabControl;
+using Tabs = DLH.Controls.Wpf.TabControl;
 
 internal static class ConfigurationTests
 {
@@ -97,3 +97,4 @@ internal static class ConfigurationTests
         finally { if (System.IO.File.Exists(path)) System.IO.File.Delete(path); demo.Close(); }
     }
 }
+

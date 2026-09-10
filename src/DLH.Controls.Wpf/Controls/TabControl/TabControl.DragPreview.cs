@@ -7,7 +7,7 @@ using System.Windows.Media.Imaging;
 
 namespace DLH.Controls.Wpf;
 
-public partial class CustomTabControl
+public partial class TabControl
 {
     private sealed record HeaderMotion(FrameworkElement Root, Transform Original, TranslateTransform Offset, Size InitialSize);
     private readonly Dictionary<TabItem, HeaderMotion> headerMotions = new();
@@ -137,3 +137,4 @@ public partial class CustomTabControl
         previewTarget = -2;
     }
 }
+

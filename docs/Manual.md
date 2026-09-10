@@ -6,7 +6,7 @@ Este manual apresenta o uso da biblioteca **DLH Controls** pelo ponto de vista d
 
 1. [Instalação](#1-instalação)
 2. [Preparação do XAML](#2-preparação-do-xaml)
-3. [CustomTabControl](#3-customtabcontrol)
+3. [TabControl](#3-tabcontrol)
 4. [DataGridView](#4-datagridview)
 5. [Temas e personalização](#5-temas-e-personalização)
 6. [Acessibilidade e teclado](#6-acessibilidade-e-teclado)
@@ -47,26 +47,26 @@ Declare o namespace da biblioteca na janela ou no controle que receberá os comp
 
 Os estilos padrão são carregados automaticamente. A aplicação só precisa mesclar `Themes/Generic.xaml` quando quiser referenciar diretamente os estilos ou recursos publicados pela biblioteca.
 
-## 3. CustomTabControl
+## 3. TabControl
 
-O `CustomTabControl` organiza conteúdos em abas e desenha a aba selecionada e seu corpo como uma única superfície. O controle aceita tanto `CustomTabItem` quanto `TabItem` nativo.
+O `TabControl` organiza conteúdos em abas e desenha a aba selecionada e seu corpo como uma única superfície. O controle aceita tanto `TabControlItem` quanto `System.Windows.Controls.TabItem` nativo.
 
-![CustomTabControl em diferentes posições](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/custom-tab-control.png)
+![TabControl em diferentes posições](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/custom-tab-control.png)
 
 ### 3.1 Uso básico
 
 ```xml
-<dlh:CustomTabControl CornerRadius="12"
+<dlh:TabControl CornerRadius="12"
                       HeaderIndent="0"
                       TabSpacing="0">
-    <dlh:CustomTabItem Header="Visão geral">
+    <dlh:TabControlItem Header="Visão geral">
         <TextBlock Margin="24" Text="Conteúdo da visão geral" />
-    </dlh:CustomTabItem>
+    </dlh:TabControlItem>
 
-    <dlh:CustomTabItem Header="Editor">
+    <dlh:TabControlItem Header="Editor">
         <TextBox Margin="24" AcceptsReturn="True" />
-    </dlh:CustomTabItem>
-</dlh:CustomTabControl>
+    </dlh:TabControlItem>
+</dlh:TabControl>
 ```
 
 - `CornerRadius` define o mesmo raio para todas as curvas do contorno.
@@ -79,8 +79,8 @@ O `CustomTabControl` organiza conteúdos em abas e desenha a aba selecionada e s
 O cabeçalho aceita qualquer conteúdo WPF:
 
 ```xml
-<dlh:CustomTabItem>
-    <dlh:CustomTabItem.Header>
+<dlh:TabControlItem>
+    <dlh:TabControlItem.Header>
         <StackPanel Orientation="Horizontal">
             <Path Width="16"
                   Height="16"
@@ -90,10 +90,10 @@ O cabeçalho aceita qualquer conteúdo WPF:
                   Data="M2,2 L14,2 14,14 2,14 Z" />
             <TextBlock VerticalAlignment="Center" Text="Editor" />
         </StackPanel>
-    </dlh:CustomTabItem.Header>
+    </dlh:TabControlItem.Header>
 
     <TextBlock Margin="24" Text="Conteúdo da aba" />
-</dlh:CustomTabItem>
+</dlh:TabControlItem>
 ```
 
 Com `ItemsSource`, use `ItemTemplate` para montar o cabeçalho e `ContentTemplate` para apresentar a página.
@@ -101,23 +101,23 @@ Com `ItemsSource`, use `ItemTemplate` para montar o cabeçalho e `ContentTemplat
 ### 3.3 Uso com MVVM
 
 ```xml
-<dlh:CustomTabControl ItemsSource="{Binding Documents}"
+<dlh:TabControl ItemsSource="{Binding Documents}"
                       SelectedItem="{Binding SelectedDocument, Mode=TwoWay}"
                       ItemKeyPath="Id"
                       TabHeaderPath="Title">
-    <dlh:CustomTabControl.ItemTemplate>
+    <dlh:TabControl.ItemTemplate>
         <DataTemplate>
             <TextBlock Text="{Binding Title}" />
         </DataTemplate>
-    </dlh:CustomTabControl.ItemTemplate>
+    </dlh:TabControl.ItemTemplate>
 
-    <dlh:CustomTabControl.ContentTemplate>
+    <dlh:TabControl.ContentTemplate>
         <DataTemplate>
             <TextBox Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
                      AcceptsReturn="True" />
         </DataTemplate>
-    </dlh:CustomTabControl.ContentTemplate>
-</dlh:CustomTabControl>
+    </dlh:TabControl.ContentTemplate>
+</dlh:TabControl>
 ```
 
 Use uma `ObservableCollection<T>` para que inclusões, remoções e mudanças de posição sejam refletidas na interface.
@@ -125,7 +125,7 @@ Use uma `ObservableCollection<T>` para que inclusões, remoções e mudanças de
 ### 3.4 Reordenar abas
 
 ```xml
-<dlh:CustomTabControl CanReorderTabs="True"
+<dlh:TabControl CanReorderTabs="True"
                       MinimumDragDistance="5"
                       IsDragPreviewEnabled="True"
                       IsAnimationEnabled="True"
@@ -140,7 +140,7 @@ O arraste começa somente após ultrapassar a distância mínima. Abas superiore
 A ação de adicionar vem desativada. Quando habilitada, aparece depois da última aba e não participa dos índices nem da seleção:
 
 ```xml
-<dlh:CustomTabControl CanAddTabs="True"
+<dlh:TabControl CanAddTabs="True"
                       AddTabContent="+"
                       AddTabCommand="{Binding AddDocumentCommand}" />
 ```
@@ -150,7 +150,7 @@ O comando recebe `AddTabCommandParameter`, quando definido. Sem comando, trate o
 ### 3.6 Renomear abas
 
 ```xml
-<dlh:CustomTabControl CanRenameTabs="True"
+<dlh:TabControl CanRenameTabs="True"
                       TabHeaderPath="Title"
                       RenameActivation="F2AndDoubleClick" />
 ```
@@ -164,17 +164,17 @@ O comando recebe `AddTabCommandParameter`, quando definido. Sem comando, trate o
 ### 3.7 Fechar abas
 
 ```xml
-<dlh:CustomTabControl CanCloseTabs="True"
+<dlh:TabControl CanCloseTabs="True"
                       ShowCloseButtons="True"
                       CloseTabCommand="{Binding CloseDocumentCommand}" />
 ```
 
-`CanCloseTabs` concede a permissão global. `ShowCloseButtons` controla apenas a aparência. Use a propriedade anexada `CustomTabControl.CanCloseTab="False"` para proteger uma aba específica. O evento `TabClosing` permite cancelar a operação antes da remoção.
+`CanCloseTabs` concede a permissão global. `ShowCloseButtons` controla apenas a aparência. Use a propriedade anexada `TabControl.CanCloseTab="False"` para proteger uma aba específica. O evento `TabClosing` permite cancelar a operação antes da remoção.
 
 ### 3.8 Sombra e contorno
 
 ```xml
-<dlh:CustomTabControl IsShadowEnabled="True"
+<dlh:TabControl IsShadowEnabled="True"
                       ShadowColor="#494949"
                       ShadowOpacity="0.5"
                       ShadowBlurRadius="10"
@@ -396,7 +396,7 @@ Os recursos são dinâmicos e podem ser trocados durante a execução. Consulte 
 - Forneça textos acessíveis para cabeçalhos compostos apenas por ícones.
 - Não remova indicadores de foco sem oferecer uma alternativa visível.
 - Teste navegação com `Tab`, setas e `Ctrl+Tab`.
-- No `CustomTabControl`, `Ctrl+Shift` com as setas reorganiza abas quando permitido.
+- No `TabControl`, `Ctrl+Shift` com as setas reorganiza abas quando permitido.
 - No `DataGridView`, os comportamentos de teclado do `DataGrid` continuam disponíveis.
 
 Consulte a [lista de verificação de acessibilidade](AccessibilityChecklist.md) antes de publicar uma aplicação.
@@ -449,9 +449,10 @@ A demonstração permite experimentar os controles, alterar configurações e ob
 ## 10. Documentos de referência
 
 - [Referência da API](ApiReference.md)
-- [Guia detalhado do CustomTabControl](TabControl.md)
+- [Guia detalhado do TabControl](TabControl.md)
 - [Integração com dados, MVVM e temas](Integration.md)
 - [Lista de verificação de acessibilidade](AccessibilityChecklist.md)
 - [Histórico de versões](../CHANGELOG.md)
 - [Como contribuir](../CONTRIBUTING.md)
 - [Política de segurança](../SECURITY.md)
+

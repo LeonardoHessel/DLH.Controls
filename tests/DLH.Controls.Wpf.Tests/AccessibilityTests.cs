@@ -31,7 +31,8 @@ internal static partial class DragDropTests
             var peer = UIElementAutomationPeer.CreatePeerForElement(button) ?? new ButtonAutomationPeer(button);
             Assert(peer.GetName().Contains(f.Model.Items[0].Title), "Close action does not identify its tab");
             f.Tabs.CanCloseTabs = false; f.Layout();
-            Assert(button.Visibility != Visibility.Visible && !DLH.Controls.Wpf.CustomTabControl.CloseTab.CanExecute(f.Model.Items[0], f.Tabs), "Blocked close remains executable");
+            Assert(button.Visibility != Visibility.Visible && !DLH.Controls.Wpf.TabControl.CloseTab.CanExecute(f.Model.Items[0], f.Tabs), "Blocked close remains executable");
         });
     }
 }
+

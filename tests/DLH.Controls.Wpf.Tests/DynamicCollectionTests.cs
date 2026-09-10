@@ -3,7 +3,7 @@ using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using Tabs = DLH.Controls.Wpf.CustomTabControl;
+using Tabs = DLH.Controls.Wpf.TabControl;
 
 internal static partial class DragDropTests
 {
@@ -87,3 +87,4 @@ internal static partial class DragDropTests
         });
     }
 }
+

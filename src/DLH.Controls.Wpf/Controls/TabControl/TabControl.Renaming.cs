@@ -44,7 +44,7 @@ public sealed class TabRenamedEventArgs(object item, string oldHeader, string ne
     public string NewHeader { get; } = newHeader;
 }
 
-public partial class CustomTabControl
+public partial class TabControl
 {
     private TabItem? editingTab;
     private object? editingItem;
@@ -58,22 +58,22 @@ public partial class CustomTabControl
     public event EventHandler<TabRenamedEventArgs>? TabRenamed;
 
     public static readonly DependencyProperty CanRenameTabsProperty = DependencyProperty.Register(
-        nameof(CanRenameTabs), typeof(bool), typeof(CustomTabControl),
-        new PropertyMetadata(false, (owner, args) => { if (!(bool)args.NewValue) ((CustomTabControl)owner).CancelTabRename(); }));
+        nameof(CanRenameTabs), typeof(bool), typeof(TabControl),
+        new PropertyMetadata(false, (owner, args) => { if (!(bool)args.NewValue) ((TabControl)owner).CancelTabRename(); }));
     public bool CanRenameTabs { get => (bool)GetValue(CanRenameTabsProperty); set => SetValue(CanRenameTabsProperty, value); }
 
     public static readonly DependencyProperty TabHeaderPathProperty = DependencyProperty.Register(
-        nameof(TabHeaderPath), typeof(string), typeof(CustomTabControl),
-        new PropertyMetadata(null, (owner, _) => ((CustomTabControl)owner).CancelTabRename()),
+        nameof(TabHeaderPath), typeof(string), typeof(TabControl),
+        new PropertyMetadata(null, (owner, _) => ((TabControl)owner).CancelTabRename()),
         value => value is null || value is string path && !string.IsNullOrWhiteSpace(path));
     public string? TabHeaderPath { get => (string?)GetValue(TabHeaderPathProperty); set => SetValue(TabHeaderPathProperty, value); }
 
     public static readonly DependencyProperty RenameTabCommandProperty = DependencyProperty.Register(
-        nameof(RenameTabCommand), typeof(ICommand), typeof(CustomTabControl), new PropertyMetadata(null));
+        nameof(RenameTabCommand), typeof(ICommand), typeof(TabControl), new PropertyMetadata(null));
     public ICommand? RenameTabCommand { get => (ICommand?)GetValue(RenameTabCommandProperty); set => SetValue(RenameTabCommandProperty, value); }
 
     public static readonly DependencyProperty RenameActivationProperty = DependencyProperty.Register(
-        nameof(RenameActivation), typeof(TabRenameActivation), typeof(CustomTabControl),
+        nameof(RenameActivation), typeof(TabRenameActivation), typeof(TabControl),
         new PropertyMetadata(TabRenameActivation.F2AndDoubleClick),
         value => value is TabRenameActivation activation && (activation & ~TabRenameActivation.F2AndDoubleClick) == 0);
     public TabRenameActivation RenameActivation { get => (TabRenameActivation)GetValue(RenameActivationProperty); set => SetValue(RenameActivationProperty, value); }
@@ -227,3 +227,4 @@ public partial class CustomTabControl
         return tab is not null && BeginRenameTab(tab);
     }
 }
+

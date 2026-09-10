@@ -8,7 +8,7 @@ using System.Collections.Specialized;
 
 namespace DLH.Controls.Wpf;
 
-public partial class CustomTabControl : TabControl
+public partial class TabControl : System.Windows.Controls.TabControl
 {
     private Path? surface;
     private Path? hoverSurface;
@@ -18,20 +18,20 @@ public partial class CustomTabControl : TabControl
     private (Rect Body, Rect Tab, Rect Hover, CornerRadius Radius, double Stroke)? lastShape;
     private object? selectionAnchor;
 
-    static CustomTabControl()
+    static TabControl()
     {
-        DefaultStyleKeyProperty.OverrideMetadata(typeof(CustomTabControl), new FrameworkPropertyMetadata(typeof(CustomTabControl)));
-        TabStripPlacementProperty.OverrideMetadata(typeof(CustomTabControl),
+        DefaultStyleKeyProperty.OverrideMetadata(typeof(TabControl), new FrameworkPropertyMetadata(typeof(TabControl)));
+        TabStripPlacementProperty.OverrideMetadata(typeof(TabControl),
             new FrameworkPropertyMetadata(Dock.Top, FrameworkPropertyMetadataOptions.AffectsMeasure, (owner, _) =>
             {
-                var control = (CustomTabControl)owner;
+                var control = (TabControl)owner;
                 control.CancelTabDrag();
                 control.ResetDragPreview();
                 control.ConfigurePlacement();
             }));
     }
 
-    public CustomTabControl()
+    public TabControl()
     {
         CommandBindings.Add(new CommandBinding(AddTab,
             (_, e) => { RequestAddTab(e.Parameter); e.Handled = true; },
@@ -44,25 +44,25 @@ public partial class CustomTabControl : TabControl
     }
 
     public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
-        nameof(CornerRadius), typeof(CornerRadius), typeof(CustomTabControl), new FrameworkPropertyMetadata(new CornerRadius(12), FrameworkPropertyMetadataOptions.AffectsArrange),
+        nameof(CornerRadius), typeof(CornerRadius), typeof(TabControl), new FrameworkPropertyMetadata(new CornerRadius(12), FrameworkPropertyMetadataOptions.AffectsArrange),
         value => value is CornerRadius radius && double.IsFinite(radius.TopLeft) && radius.TopLeft >= 0 &&
             radius.TopLeft == radius.TopRight && radius.TopLeft == radius.BottomRight && radius.TopLeft == radius.BottomLeft);
     public CornerRadius CornerRadius { get => (CornerRadius)GetValue(CornerRadiusProperty); set => SetValue(CornerRadiusProperty, value); }
 
     public static readonly DependencyProperty TabSpacingProperty = DependencyProperty.Register(
-        nameof(TabSpacing), typeof(double), typeof(CustomTabControl), new PropertyMetadata(0d),
+        nameof(TabSpacing), typeof(double), typeof(TabControl), new PropertyMetadata(0d),
         value => value is double number && double.IsFinite(number) && number >= 0);
     public double TabSpacing { get => (double)GetValue(TabSpacingProperty); set => SetValue(TabSpacingProperty, value); }
 
     /// <summary>Left header inset; NaN automatically reserves room for the corner transitions.</summary>
     public static readonly DependencyProperty HeaderIndentProperty = DependencyProperty.Register(
-        nameof(HeaderIndent), typeof(double), typeof(CustomTabControl),
+        nameof(HeaderIndent), typeof(double), typeof(TabControl),
         new FrameworkPropertyMetadata(double.NaN, FrameworkPropertyMetadataOptions.AffectsArrange),
         value => value is double number && (double.IsNaN(number) || double.IsFinite(number) && number >= 0));
     public double HeaderIndent { get => (double)GetValue(HeaderIndentProperty); set => SetValue(HeaderIndentProperty, value); }
 
     protected override bool IsItemItsOwnContainerOverride(object item) => item is TabItem;
-    protected override DependencyObject GetContainerForItemOverride() => new CustomTabItem();
+    protected override DependencyObject GetContainerForItemOverride() => new TabControlItem();
 
     protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
     {
@@ -247,8 +247,9 @@ public partial class CustomTabControl : TabControl
     }
 }
 
-public class CustomTabItem : TabItem
+public class TabControlItem : System.Windows.Controls.TabItem
 {
-    static CustomTabItem() => DefaultStyleKeyProperty.OverrideMetadata(
-        typeof(CustomTabItem), new FrameworkPropertyMetadata(typeof(CustomTabItem)));
+    static TabControlItem() => DefaultStyleKeyProperty.OverrideMetadata(
+        typeof(TabControlItem), new FrameworkPropertyMetadata(typeof(TabControlItem)));
 }
+

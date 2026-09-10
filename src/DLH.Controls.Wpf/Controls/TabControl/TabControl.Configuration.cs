@@ -12,7 +12,7 @@ public sealed class TabControlConfiguration
     public Dictionary<string, string?> Values { get; set; } = new();
 }
 
-public partial class CustomTabControl
+public partial class TabControl
 {
     private static DependencyProperty[] ConfigurationProperties =>
     [
@@ -81,3 +81,4 @@ public partial class CustomTabControl
             SetCurrentValue(property, property.GetMetadata(GetType()).DefaultValue);
     }
 }
+

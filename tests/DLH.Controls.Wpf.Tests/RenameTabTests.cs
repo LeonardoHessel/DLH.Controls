@@ -59,8 +59,8 @@ internal static partial class DragDropTests
 
         test("rename/explicit TabItem and activation options", () =>
         {
-            var tabs = new DLH.Controls.Wpf.CustomTabControl { CanRenameTabs = true };
-            var item = new DLH.Controls.Wpf.CustomTabItem { Header = "Original" }; tabs.Items.Add(item);
+            var tabs = new DLH.Controls.Wpf.TabControl { CanRenameTabs = true };
+            var item = new DLH.Controls.Wpf.TabControlItem { Header = "Original" }; tabs.Items.Add(item);
             var window = new Window { Content = tabs };
             try
             {
@@ -91,3 +91,4 @@ internal static partial class DragDropTests
         });
     }
 }
+

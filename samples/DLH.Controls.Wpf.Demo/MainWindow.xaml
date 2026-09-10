@@ -62,21 +62,21 @@
             <CheckBox Content="Prévia" VerticalAlignment="Center" Margin="0,0,12,0" Foreground="{DynamicResource Tabs.Text}" IsChecked="{Binding IsDragPreviewEnabled, ElementName=DynamicTabs, Mode=OneWay}" Click="ToggleAllPreview" />
             <TextBlock x:Name="ThemeName" VerticalAlignment="Center" Margin="6,0,0,0" Foreground="{DynamicResource Tabs.Muted}" />
         </WrapPanel>
-        <controls:CustomTabControl x:Name="DynamicTabs" ShowCloseButtons="True" ItemKeyPath="Id" CloseTabCommand="{Binding CloseTabCommand}"
+        <controls:TabControl x:Name="DynamicTabs" ShowCloseButtons="True" ItemKeyPath="Id" CloseTabCommand="{Binding CloseTabCommand}"
                                    CanAddTabs="True" AddTabCommand="{Binding AddTabCommand}" CanRenameTabs="True" TabHeaderPath="Header"
                                    TabClosing="ConfirmTabClosing" TabReordered="OnTabReordered" Grid.Row="2" Margin="0,0,24,0" HeaderIndent="0" ItemsSource="{Binding Tabs}" SelectedItem="{Binding SelectedTab, Mode=TwoWay}">
-            <controls:CustomTabControl.ItemContainerStyle>
+            <controls:TabControl.ItemContainerStyle>
                 <Style TargetType="TabItem" BasedOn="{StaticResource Tabs.ItemStyle}">
                     <Setter Property="IsEnabled" Value="{Binding IsEnabled}" />
                     <Setter Property="AutomationProperties.Name" Value="{Binding Header}" />
                 </Style>
-            </controls:CustomTabControl.ItemContainerStyle>
-            <controls:CustomTabControl.ItemTemplate>
+            </controls:TabControl.ItemContainerStyle>
+            <controls:TabControl.ItemTemplate>
                 <DataTemplate>
                     <StackPanel Orientation="Horizontal"><TextBlock Text="{Binding Icon}" FontSize="{Binding DataContext.HeaderFontSize, RelativeSource={RelativeSource AncestorType=Window}}" Margin="0,0,8,0" Foreground="{DynamicResource Demo.Accent}" /><TextBlock Text="{Binding Header}" FontSize="{Binding DataContext.HeaderFontSize, RelativeSource={RelativeSource AncestorType=Window}}" /></StackPanel>
                 </DataTemplate>
-            </controls:CustomTabControl.ItemTemplate>
-            <controls:CustomTabControl.ContentTemplate>
+            </controls:TabControl.ItemTemplate>
+            <controls:TabControl.ContentTemplate>
                 <DataTemplate>
                     <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
                         <StackPanel>
@@ -96,8 +96,8 @@
                         </StackPanel>
                     </ScrollViewer>
                 </DataTemplate>
-            </controls:CustomTabControl.ContentTemplate>
-        </controls:CustomTabControl>
+            </controls:TabControl.ContentTemplate>
+        </controls:TabControl>
         <Grid Grid.Row="2" Grid.Column="1">
             <Grid.Resources>
                 <Style x:Key="SideField" TargetType="TextBox">
@@ -114,13 +114,13 @@
                 </ComboBox>
                 <StackPanel><TextBlock Text="Painel de demonstração" FontSize="20" FontWeight="SemiBold" /><TextBlock Text="MODELO LATERAL" FontSize="10" Foreground="{DynamicResource Tabs.Muted}" Margin="0,4,0,0" /></StackPanel>
             </DockPanel>
-            <controls:CustomTabControl x:Name="SideTabs" Grid.Row="1" TabStripPlacement="Left" HeaderIndent="0" CornerRadius="10" Padding="18" TabDragCursor="ScrollNS" SelectedIndex="0"
+            <controls:TabControl x:Name="SideTabs" Grid.Row="1" TabStripPlacement="Left" HeaderIndent="0" CornerRadius="10" Padding="18" TabDragCursor="ScrollNS" SelectedIndex="0"
                                        CanAddTabs="True" CanRenameTabs="True" AddTabRequested="AddSideTab">
-                <controls:CustomTabControl.ItemContainerStyle>
+                <controls:TabControl.ItemContainerStyle>
                     <Style TargetType="TabItem" BasedOn="{StaticResource Tabs.ItemStyle}"><Setter Property="Padding" Value="7" /></Style>
-                </controls:CustomTabControl.ItemContainerStyle>
-                <controls:CustomTabItem controls:CustomTabControl.TabKey="Licença" ToolTip="Licença" AutomationProperties.Name="Licença">
-                    <controls:CustomTabItem.Header><Path Width="28" Height="28" Stretch="Uniform" Stroke="{DynamicResource Demo.Accent}" StrokeThickness="1.8" StrokeLineJoin="Round" Data="M4,2 H16 L21,7 V22 H4 Z M16,2 V7 H21 M8,12 H17 M8,16 H17" /></controls:CustomTabItem.Header>
+                </controls:TabControl.ItemContainerStyle>
+                <controls:TabControlItem controls:TabControl.TabKey="Licença" ToolTip="Licença" AutomationProperties.Name="Licença">
+                    <controls:TabControlItem.Header><Path Width="28" Height="28" Stretch="Uniform" Stroke="{DynamicResource Demo.Accent}" StrokeThickness="1.8" StrokeLineJoin="Round" Data="M4,2 H16 L21,7 V22 H4 Z M16,2 V7 H21 M8,12 H17 M8,16 H17" /></controls:TabControlItem.Header>
                     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
                         <TextBlock Text="Licença" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
                         <TextBlock Text="CNPJ" /><TextBox Style="{StaticResource SideField}" Text="00.000.000/0001-00" />
@@ -128,9 +128,9 @@
                         <TextBlock Text="Razão social" /><TextBox Style="{StaticResource SideField}" Text="EMPRESA DE EXEMPLO" />
                         <TextBlock Text="Fantasia" /><TextBox Style="{StaticResource SideField}" Text="Empresa de demonstração" />
                     </StackPanel></ScrollViewer>
-                </controls:CustomTabItem>
-                <controls:CustomTabItem controls:CustomTabControl.TabKey="Banco de dados" ToolTip="Banco de dados" AutomationProperties.Name="Banco de dados">
-                    <controls:CustomTabItem.Header><Path Width="28" Height="28" Stretch="Uniform" Stroke="{DynamicResource Demo.Accent}" StrokeThickness="1.8" StrokeLineJoin="Round" Data="M3,5 C3,1 21,1 21,5 V19 C21,23 3,23 3,19 Z M3,5 C3,9 21,9 21,5 M3,12 C3,16 21,16 21,12" /></controls:CustomTabItem.Header>
+                </controls:TabControlItem>
+                <controls:TabControlItem controls:TabControl.TabKey="Banco de dados" ToolTip="Banco de dados" AutomationProperties.Name="Banco de dados">
+                    <controls:TabControlItem.Header><Path Width="28" Height="28" Stretch="Uniform" Stroke="{DynamicResource Demo.Accent}" StrokeThickness="1.8" StrokeLineJoin="Round" Data="M3,5 C3,1 21,1 21,5 V19 C21,23 3,23 3,19 Z M3,5 C3,9 21,9 21,5 M3,12 C3,16 21,16 21,12" /></controls:TabControlItem.Header>
                     <ScrollViewer VerticalScrollBarVisibility="Auto"><StackPanel>
                         <TextBlock Text="Banco de dados" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
                         <TextBlock Text="Servidor" /><TextBox Style="{StaticResource SideField}" Text="LOCALHOST" />
@@ -138,37 +138,38 @@
                         <TextBlock Text="Usuário" /><TextBox Style="{StaticResource SideField}" Text="Usuário de exemplo" />
                         <TextBlock Text="Dados ilustrativos; nenhuma conexão é realizada." TextWrapping="Wrap" Foreground="{DynamicResource Tabs.Muted}" />
                     </StackPanel></ScrollViewer>
-                </controls:CustomTabItem>
-                <controls:CustomTabItem controls:CustomTabControl.TabKey="Procedimentos" ToolTip="Procedimentos" AutomationProperties.Name="Procedimentos">
-                    <controls:CustomTabItem.Header><Path Width="28" Height="28" Stretch="Uniform" Stroke="{DynamicResource Demo.Accent}" StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Data="M4,3 H20 V21 H4 Z M8,8 L10,10 L14,6 M8,15 H17 M8,18 H15" /></controls:CustomTabItem.Header>
+                </controls:TabControlItem>
+                <controls:TabControlItem controls:TabControl.TabKey="Procedimentos" ToolTip="Procedimentos" AutomationProperties.Name="Procedimentos">
+                    <controls:TabControlItem.Header><Path Width="28" Height="28" Stretch="Uniform" Stroke="{DynamicResource Demo.Accent}" StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" StrokeLineJoin="Round" Data="M4,3 H20 V21 H4 Z M8,8 L10,10 L14,6 M8,15 H17 M8,18 H15" /></controls:TabControlItem.Header>
                     <StackPanel><TextBlock Text="Procedimentos" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
                         <TextBox Style="{StaticResource SideField}" AcceptsReturn="True" MinHeight="140" Text="Consultar terminal&#10;Validar produto&#10;Criar comanda&#10;Adicionar item" />
                         <TextBlock Text="Arraste os ícones para reorganizar as páginas." TextWrapping="Wrap" Foreground="{DynamicResource Tabs.Muted}" />
                     </StackPanel>
-                </controls:CustomTabItem>
-                <controls:CustomTabItem controls:CustomTabControl.TabKey="Informações" ToolTip="Informações" AutomationProperties.Name="Informações">
-                    <controls:CustomTabItem.Header><Path Width="28" Height="28" Stretch="Uniform" Stroke="{DynamicResource Demo.Accent}" StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M12,2 A10,10 0 1 1 11.99,2 M12,10 V18 M12,6 V7" /></controls:CustomTabItem.Header>
+                </controls:TabControlItem>
+                <controls:TabControlItem controls:TabControl.TabKey="Informações" ToolTip="Informações" AutomationProperties.Name="Informações">
+                    <controls:TabControlItem.Header><Path Width="28" Height="28" Stretch="Uniform" Stroke="{DynamicResource Demo.Accent}" StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M12,2 A10,10 0 1 1 11.99,2 M12,10 V18 M12,6 V7" /></controls:TabControlItem.Header>
                     <StackPanel><TextBlock Text="Informações" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
                         <TextBlock Text="DLH Controls" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,12" />
                         <TextBlock Text="Exemplo de navegação lateral com quatro ícones vetoriais. O contorno e a sombra acompanham a aba selecionada." TextWrapping="Wrap" Margin="0,0,0,16" />
                         <TextBlock Text="Use o tema Cinza e laranja para comparar com a referência." TextWrapping="Wrap" Foreground="{DynamicResource Tabs.Muted}" />
                     </StackPanel>
-                </controls:CustomTabItem>
-            </controls:CustomTabControl>
+                </controls:TabControlItem>
+            </controls:TabControl>
         </Grid>
         <TextBlock x:Name="InteractionStatus" Grid.ColumnSpan="2" Grid.Row="3" Text="Os controles superior e inferior compartilham documentos e ordem, mas mantêm seleções independentes." Margin="0,22,0,12" FontSize="11" Foreground="{DynamicResource Tabs.Muted}" />
-        <controls:CustomTabControl x:Name="SimpleTabs" Grid.ColumnSpan="2" Grid.Row="4" Padding="18" HeaderIndent="0" TabSpacing="0" CornerRadius="8"
+        <controls:TabControl x:Name="SimpleTabs" Grid.ColumnSpan="2" Grid.Row="4" Padding="18" HeaderIndent="0" TabSpacing="0" CornerRadius="8"
                                    ItemsSource="{Binding Tabs}" SelectedItem="{Binding ComparisonSelectedTab, Mode=TwoWay}" ItemKeyPath="Id" CloseTabCommand="{Binding CloseTabCommand}"
                                    CanAddTabs="True" AddTabCommand="{Binding AddTabCommand}" CanRenameTabs="True" TabHeaderPath="Header">
-            <controls:CustomTabControl.ItemContainerStyle>
+            <controls:TabControl.ItemContainerStyle>
                 <Style TargetType="TabItem" BasedOn="{StaticResource Tabs.ItemStyle}"><Setter Property="IsEnabled" Value="{Binding IsEnabled}" /><Setter Property="AutomationProperties.Name" Value="{Binding Header}" /></Style>
-            </controls:CustomTabControl.ItemContainerStyle>
-            <controls:CustomTabControl.ItemTemplate>
+            </controls:TabControl.ItemContainerStyle>
+            <controls:TabControl.ItemTemplate>
                 <DataTemplate><TextBlock Text="{Binding Header}" /></DataTemplate>
-            </controls:CustomTabControl.ItemTemplate>
-            <controls:CustomTabControl.ContentTemplate>
+            </controls:TabControl.ItemTemplate>
+            <controls:TabControl.ContentTemplate>
                 <DataTemplate><TextBlock Text="{Binding Header, StringFormat=Seleção independente: {0}}" TextWrapping="Wrap" /></DataTemplate>
-            </controls:CustomTabControl.ContentTemplate>
-        </controls:CustomTabControl>
+            </controls:TabControl.ContentTemplate>
+        </controls:TabControl>
     </Grid>
 </Window>
+

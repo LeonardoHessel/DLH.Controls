@@ -33,6 +33,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using DLH.Controls.Wpf;
+using PackageTabControl = DLH.Controls.Wpf.TabControl;
+using PackageScrollBar = DLH.Controls.Wpf.ScrollBar;
 
 internal static class Program
 {
@@ -55,9 +57,11 @@ internal static class Program
         grid.ExportCsv(csv);
         if (!csv.ToString().Contains("Produto A") || grid.CaptureState().Columns.Count != 2) return 10;
 
-        var tabs = new CustomTabControl { ItemsSource = new ObservableCollection<string> { "Geral", "Estoque" } };
+        var tabs = new PackageTabControl { ItemsSource = new ObservableCollection<string> { "Geral", "Estoque" } };
         tabs.Measure(new Size(500, 300)); tabs.Arrange(new Rect(0, 0, 500, 300)); tabs.ApplyTemplate();
         if (tabs.Items.Count != 2 || tabs.CornerRadius.TopLeft <= 0) return 11;
+        var scrollBar = new PackageScrollBar { Thickness = 8, CornerRadius = new CornerRadius(20) };
+        if (scrollBar.Thickness != 8 || scrollBar.CornerRadius.TopLeft != 20) return 12;
         app.Shutdown();
         return 0;
     }
@@ -69,3 +73,4 @@ if ($LASTEXITCODE -ne 0) { throw 'Falha ao restaurar o pacote na aplicação con
 & dotnet run --project (Join-Path $workspace 'Consumer.csproj') -c Release --no-restore
 if ($LASTEXITCODE -ne 0) { throw "Aplicação consumidora falhou com código $LASTEXITCODE." }
 Write-Host "PASS: pacote $version instalado e executado em aplicação WPF isolada."
+

@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace DLH.Controls.Wpf;
 
-public partial class CustomTabControl
+public partial class TabControl
 {
     private Dock? appliedPlacement;
     private Grid? appliedLayout;
@@ -66,3 +66,4 @@ var vertical = IsVerticalTabStrip;
         return geometry;
     }
 }
+

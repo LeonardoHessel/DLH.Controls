@@ -7,23 +7,23 @@ using System.Windows.Media;
 
 namespace DLH.Controls.Wpf;
 
-public partial class CustomTabControl
+public partial class TabControl
 {
-    public static readonly RoutedUICommand CloseTab = new("Fechar aba", nameof(CloseTab), typeof(CustomTabControl));
+    public static readonly RoutedUICommand CloseTab = new("Fechar aba", nameof(CloseTab), typeof(TabControl));
     public static readonly DependencyProperty CanCloseTabsProperty = DependencyProperty.Register(
-        nameof(CanCloseTabs), typeof(bool), typeof(CustomTabControl), new PropertyMetadata(true, (_, _) => CommandManager.InvalidateRequerySuggested()));
+        nameof(CanCloseTabs), typeof(bool), typeof(TabControl), new PropertyMetadata(true, (_, _) => CommandManager.InvalidateRequerySuggested()));
     public bool CanCloseTabs { get => (bool)GetValue(CanCloseTabsProperty); set => SetValue(CanCloseTabsProperty, value); }
 
     public static readonly DependencyProperty ShowCloseButtonsProperty = DependencyProperty.Register(
-        nameof(ShowCloseButtons), typeof(bool), typeof(CustomTabControl), new PropertyMetadata(false));
+        nameof(ShowCloseButtons), typeof(bool), typeof(TabControl), new PropertyMetadata(false));
     public bool ShowCloseButtons { get => (bool)GetValue(ShowCloseButtonsProperty); set => SetValue(ShowCloseButtonsProperty, value); }
 
     public static readonly DependencyProperty CloseTabCommandProperty = DependencyProperty.Register(
-        nameof(CloseTabCommand), typeof(ICommand), typeof(CustomTabControl), new PropertyMetadata(null, (_, _) => CommandManager.InvalidateRequerySuggested()));
+        nameof(CloseTabCommand), typeof(ICommand), typeof(TabControl), new PropertyMetadata(null, (_, _) => CommandManager.InvalidateRequerySuggested()));
     public ICommand? CloseTabCommand { get => (ICommand?)GetValue(CloseTabCommandProperty); set => SetValue(CloseTabCommandProperty, value); }
 
     public static readonly DependencyProperty CanCloseTabProperty = DependencyProperty.RegisterAttached(
-        "CanCloseTab", typeof(bool), typeof(CustomTabControl), new PropertyMetadata(true, (_, _) => CommandManager.InvalidateRequerySuggested()));
+        "CanCloseTab", typeof(bool), typeof(TabControl), new PropertyMetadata(true, (_, _) => CommandManager.InvalidateRequerySuggested()));
     public static bool GetCanCloseTab(DependencyObject item) => (bool)item.GetValue(CanCloseTabProperty);
     public static void SetCanCloseTab(DependencyObject item, bool value) => item.SetValue(CanCloseTabProperty, value);
 
@@ -92,3 +92,4 @@ public partial class CustomTabControl
         return true;
     }
 }
+

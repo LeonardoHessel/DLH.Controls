@@ -14,13 +14,13 @@ public sealed class TabControlState
     public string? SelectedKey { get; set; }
 }
 
-public partial class CustomTabControl
+public partial class TabControl
 {
     public static readonly DependencyProperty ItemKeyPathProperty = DependencyProperty.Register(
-        nameof(ItemKeyPath), typeof(string), typeof(CustomTabControl), new PropertyMetadata("Id"), value => value is string path && !string.IsNullOrWhiteSpace(path));
+        nameof(ItemKeyPath), typeof(string), typeof(TabControl), new PropertyMetadata("Id"), value => value is string path && !string.IsNullOrWhiteSpace(path));
     public string ItemKeyPath { get => (string)GetValue(ItemKeyPathProperty); set => SetValue(ItemKeyPathProperty, value); }
     public static readonly DependencyProperty TabKeyProperty = DependencyProperty.RegisterAttached(
-        "TabKey", typeof(string), typeof(CustomTabControl), new PropertyMetadata(null));
+        "TabKey", typeof(string), typeof(TabControl), new PropertyMetadata(null));
     public static string? GetTabKey(DependencyObject item) => (string?)item.GetValue(TabKeyProperty);
     public static void SetTabKey(DependencyObject item, string? value) => item.SetValue(TabKeyProperty, value);
 
@@ -89,3 +89,4 @@ public partial class CustomTabControl
     public void LoadState(Stream source, Func<object, string>? keySelector = null) =>
         RestoreState(JsonSerializer.Deserialize<TabControlState>(source) ?? throw new InvalidDataException("Estado vazio."), keySelector);
 }
+

@@ -3,7 +3,7 @@ using System.Globalization;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using Tabs = DLH.Controls.Wpf.CustomTabControl;
+using Tabs = DLH.Controls.Wpf.TabControl;
 
 namespace DLH.Controls.Wpf.Demo;
 
@@ -126,3 +126,4 @@ public sealed class TabSettingsWindow : Window
         status.Text = $"Configurações aplicadas a {selected.Length} modelo(s).";
     }
 }
+

@@ -15,7 +15,7 @@ Autor: Leonardo D. de L. Hessel. Licença personalizada de atribuição visível
 
 Antes de publicar: verificar disponibilidade/permissão do ID e configurar autenticação de publicação. Atualmente somente net10.0-windows.
 
-A mudança de namespace/assembly de CustomTabControl.Controls para DLH.Controls.Wpf exige atualizar referências e URIs XAML em consumidores existentes. O nome público CustomTabControl permanece.
+A mudança de namespace/assembly de TabControl.Controls para DLH.Controls.Wpf exige atualizar referências e URIs XAML em consumidores existentes. O nome público TabControl permanece.
 
 ## GitHub Actions
 O workflow `.github/workflows/ci.yml` executa em pushes para main, pull requests para main e por acionamento manual. Usa Windows e .NET 10, com permissão somente de leitura do repositório.
@@ -30,7 +30,7 @@ dotnet test tests/DLH.Controls.Wpf.AutomatedTests --filter TestCategory=TabContr
 dotnet test tests/DLH.Controls.Wpf.AutomatedTests --logger trx
 ```
 
-A categoria `Visual` compara capturas do `CustomTabControl` e do `DataGridView` com referências versionadas. Diferenças pequenas de antialiasing são toleradas; mudanças superiores a 2% dos pixels ou diferença média superior a 3 falham. A execução conserva as imagens `actual` e `diff` no diretório de resultados.
+A categoria `Visual` compara capturas do `TabControl` e do `DataGridView` com referências versionadas. Diferenças pequenas de antialiasing são toleradas; mudanças superiores a 2% dos pixels ou diferença média superior a 3 falham. A execução conserva as imagens `actual` e `diff` no diretório de resultados.
 
 No GitHub Actions, a solução é compilada separadamente em Debug e Release. A validação completa e o empacotamento só começam depois das duas configurações serem aprovadas. As capturas visual atual e de diferenças são anexadas ao resultado do teste e incluídas nos artefatos do workflow.
 
@@ -41,3 +41,4 @@ O teste da categoria `API` compara tipos e membros públicos com `tests/DLH.Cont
 Não publica no NuGet, não exige chave NuGet e não cria releases. Pode ser executado localmente no Windows com `./eng/Validate.ps1`.
 
 Publicação automática por release: consulte [Publishing.md](Publishing.md). O CI de push/PR continua sem publicar; o workflow publish.yml utiliza Trusted Publishing após o cadastro da política no NuGet.
+

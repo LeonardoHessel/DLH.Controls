@@ -1,4 +1,4 @@
-# CustomTabControl · WPF / .NET 10
+# TabControl · WPF / .NET 10
 
 Controle reutilizável de abas com contorno unificado, cantos uniformes, sombra configurável, temas, reordenação animada, criação opcional e edição direta de títulos. A solução separa a biblioteca, a demonstração e os testes.
 
@@ -21,26 +21,26 @@ xmlns:controls="clr-namespace:DLH.Controls.Wpf;assembly=DLH.Controls.Wpf"
 ```
 
 ```xml
-<controls:CustomTabControl
+<controls:TabControl
     TabStripPlacement="Top"
     HeaderIndent="0"
     CornerRadius="12"
     TabSpacing="0">
-    <controls:CustomTabItem Header="Primeira" controls:CustomTabControl.TabKey="first">
+    <controls:TabControlItem Header="Primeira" controls:TabControl.TabKey="first">
         <TextBlock Text="Conteúdo livre" />
-    </controls:CustomTabItem>
-    <controls:CustomTabItem Header="Segunda" controls:CustomTabControl.TabKey="second" />
-</controls:CustomTabControl>
+    </controls:TabControlItem>
+    <controls:TabControlItem Header="Segunda" controls:TabControl.TabKey="second" />
+</controls:TabControl>
 ```
 
-O estilo é carregado automaticamente de `Themes/Generic.xaml`. Itens `TabItem` nativos são aceitos; com `ItemsSource`, o controle gera `CustomTabItem`. Use `ItemTemplate` para os cabeçalhos, `ContentTemplate` para as páginas e `SelectedItem` com binding de duas vias.
+O estilo é carregado automaticamente de `Themes/Generic.xaml`. Itens `TabItem` nativos são aceitos; com `ItemsSource`, o controle gera `TabItem`. Use `ItemTemplate` para os cabeçalhos, `ContentTemplate` para as páginas e `SelectedItem` com binding de duas vias.
 
 Dados editáveis devem permanecer no modelo. O controle não mantém um cache de árvores visuais para cada item de dados.
 
 ## Adicionar abas
 
 ```xml
-<controls:CustomTabControl
+<controls:TabControl
     ItemsSource="{Binding Documents}"
     CanAddTabs="True"
     AddTabCommand="{Binding AddDocumentCommand}" />
@@ -51,7 +51,7 @@ O padrão de `CanAddTabs` é `false`. Quando ativada, a ação `+` aparece depoi
 ## Editar títulos
 
 ```xml
-<controls:CustomTabControl
+<controls:TabControl
     ItemsSource="{Binding Documents}"
     CanRenameTabs="True"
     TabHeaderPath="Title"
@@ -75,7 +75,7 @@ Os recursos `Tabs.Surface`, `Tabs.Hover`, `Tabs.Text`, `Tabs.Muted`, `Tabs.Edge`
 ## Sombra
 
 ```xml
-<controls:CustomTabControl
+<controls:TabControl
     IsShadowEnabled="True"
     ShadowColor="#494949"
     ShadowOpacity="0.5"
@@ -89,7 +89,7 @@ Esses são os padrões. Opacidade varia de 0 a 1; desfoque e distância são nã
 ## Reordenação e animação
 
 ```xml
-<controls:CustomTabControl
+<controls:TabControl
     CanReorderTabs="True"
     MinimumDragDistance="5"
     IsDragPreviewEnabled="True"
@@ -128,7 +128,7 @@ Com o cabeçalho focado, use **Ctrl+Shift+Esquerda/Direita** para reorganizar ab
 `ShowCloseButtons` é `false` por padrão. Ative para mostrar os botões de fechamento:
 
 ```xml
-<controls:CustomTabControl ShowCloseButtons="True"
+<controls:TabControl ShowCloseButtons="True"
                           CloseTabCommand="{Binding CloseDocumentCommand}"
                           TabClosing="OnTabClosing" />
 ```
@@ -137,14 +137,14 @@ Com o cabeçalho focado, use **Ctrl+Shift+Esquerda/Direita** para reorganizar ab
 
 `TabClosing` ocorre antes de executar o comando ou remover o item; defina `e.Cancel = true` para impedir o fechamento. A demonstração usa esse evento para pedir confirmação quando há anotações. A biblioteca não exibe diálogos. `TabClosed` só ocorre depois de confirmar que o item saiu da coleção. Comandos assíncronos devem coordenar sua própria confirmação/remoção; não fazem parte desse contrato síncrono.
 
-Para proteger uma aba, use `controls:CustomTabControl.CanCloseTab="False"` no contêiner ou configure essa propriedade no `ItemContainerStyle`. O botão é ocultado e `RequestCloseTab` também respeita a proteção. Fechar a selecionada escolhe a próxima aba habilitada, ou a anterior quando necessário; fechar outra preserva a seleção. Fechar a última limpa a seleção.
+Para proteger uma aba, use `controls:TabControl.CanCloseTab="False"` no contêiner ou configure essa propriedade no `ItemContainerStyle`. O botão é ocultado e `RequestCloseTab` também respeita a proteção. Fechar a selecionada escolhe a próxima aba habilitada, ou a anterior quando necessário; fechar outra preserva a seleção. Fechar a última limpa a seleção.
 
 ## Persistir ordem e seleção
 
 O estado contém somente chaves, ordem, seleção e versão do formato, sem serializar páginas ou seus dados. Cada item precisa de uma chave de texto única e estável:
 
 - `ItemKeyPath="Id"` (padrão) para modelos; aceita caminho como `Document.Id`.
-- `controls:CustomTabControl.TabKey="first"` para itens explícitos.
+- `controls:TabControl.TabKey="first"` para itens explícitos.
 - Um `Func<object, string>` opcional nos métodos para extrair a chave.
 
 ```csharp
@@ -158,7 +158,7 @@ tabs.RestoreState(state);
 
 O chamador é responsável por abrir/fechar os streams e escolher onde armazená-los. Também pode serializar `TabControlState` por conta própria. `RestoreState` ignora chaves de itens ausentes e coloca itens novos no final, preservando sua ordem relativa. Chaves duplicadas/vazias e versões desconhecidas são rejeitadas antes de reorganizar. A restauração requer fonte mutável sem filtro, agrupamento ou ordenação, mas funciona com arraste desabilitado.
 
-A demonstração salva explicitamente em `%LOCALAPPDATA%\CustomTabControl.Demo\layout.json`, restaura pelo botão e tenta restaurar ao abrir. Apenas as abas existentes são reorganizadas: documentos fechados/ausentes não são recriados e anotações não são gravadas nesse arquivo.
+A demonstração salva explicitamente em `%LOCALAPPDATA%\TabControl.Demo\layout.json`, restaura pelo botão e tenta restaurar ao abrir. Apenas as abas existentes são reorganizadas: documentos fechados/ausentes não são recriados e anotações não são gravadas nesse arquivo.
 
 ## Validação
 
@@ -179,7 +179,7 @@ Verificação do painel: `dotnet run --project tests/DLH.Controls.Wpf.Tests -c R
 
 O checkbox **Permitir exclusão de abas** controla CanCloseTabs nos três modelos. Desmarcar bloqueia RequestCloseTab e o comando de fechamento, oculta os botões de fechar e desabilita Remover selecionada. ShowCloseButtons continua sendo apenas uma preferência visual independente.
 
-Os checkboxes **Permitir adição de abas** e **Permitir renomear abas** controlam as novas opções nos três modelos. Documentos e Simples criam um item na coleção compartilhada; o modelo lateral cria um `CustomTabItem` explícito. No primeiro e terceiro modelos, edite `Header`; nas páginas laterais adicionadas, edite diretamente o Header textual.
+Os checkboxes **Permitir adição de abas** e **Permitir renomear abas** controlam as novas opções nos três modelos. Documentos e Simples criam um item na coleção compartilhada; o modelo lateral cria um `TabItem` explícito. No primeiro e terceiro modelos, edite `Header`; nas páginas laterais adicionadas, edite diretamente o Header textual.
 
 ## Configurações reutilizáveis em qualquer aplicação
 
@@ -189,7 +189,7 @@ A biblioteca não escolhe caminhos, não grava arquivos e não conhece os temas 
 var configuration = tabs.CaptureConfiguration();
 var json = JsonSerializer.Serialize(configuration); // a aplicação escolhe o armazenamento
 var restored = JsonSerializer.Deserialize<TabControlConfiguration>(json)!;
-CustomTabControl.ValidateConfiguration(restored); // opcional; RestoreConfiguration também valida
+TabControl.ValidateConfiguration(restored); // opcional; RestoreConfiguration também valida
  tabs.RestoreConfiguration(restored);
  tabs.ResetConfiguration();
 ```
@@ -198,6 +198,7 @@ O objeto versionado usa valores textuais com cultura invariável. Inclui as prop
 
 A restauração preserva bindings com SetCurrentValue. Alterações futuras na fonte do binding podem prevalecer. ResetConfiguration usa os valores padrão registrados na biblioteca (inclusive abas superiores e botões de fechar ocultos), sem remover os documentos. Valores como brushes/cursor precisam ser representáveis pelo conversor WPF; recursos personalizados sem representação textual não são portáveis por esta API. Cores são capturadas como valores, não como chaves DynamicResource.
 
-No visualizador, **Salvar configurações** grava `%LOCALAPPDATA%\CustomTabControl.Demo\configuration.json`, com um registro por modelo e o tema da aplicação. A leitura é automática ao abrir ou pelo botão **Restaurar configurações**. O arquivo de organização anterior continua separado. No painel, **Restaurar padrões** respeita o modelo escolhido; para persistir o resultado, use Salvar configurações. Alternar tema reaplica suas cores aos três modelos. Alterações não salvas permanecem somente na sessão.
+No visualizador, **Salvar configurações** grava `%LOCALAPPDATA%\TabControl.Demo\configuration.json`, com um registro por modelo e o tema da aplicação. A leitura é automática ao abrir ou pelo botão **Restaurar configurações**. O arquivo de organização anterior continua separado. No painel, **Restaurar padrões** respeita o modelo escolhido; para persistir o resultado, use Salvar configurações. Alternar tema reaplica suas cores aos três modelos. Alterações não salvas permanecem somente na sessão.
 
 Teste da API e integração de arquivo: `dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release -- --configuration-only`.
+

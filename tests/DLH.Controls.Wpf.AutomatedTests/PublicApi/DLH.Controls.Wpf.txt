@@ -1,100 +1,6 @@
 type DLH.Controls.Wpf.AddTabRequestedEventArgs
   ctor(System.Object)
   property System.Object Parameter { get;  }
-type DLH.Controls.Wpf.CustomTabControl
-  ctor()
-  event System.EventHandler StateRestored
-  event System.EventHandler<DLH.Controls.Wpf.AddTabRequestedEventArgs> AddTabRequested
-  event System.EventHandler<DLH.Controls.Wpf.TabClosedEventArgs> TabClosed
-  event System.EventHandler<DLH.Controls.Wpf.TabClosingEventArgs> TabClosing
-  event System.EventHandler<DLH.Controls.Wpf.TabRenameRequestedEventArgs> TabRenameRequested
-  event System.EventHandler<DLH.Controls.Wpf.TabRenamedEventArgs> TabRenamed
-  event System.EventHandler<DLH.Controls.Wpf.TabRenamingEventArgs> TabRenaming
-  event System.EventHandler<DLH.Controls.Wpf.TabReorderedEventArgs> TabReordered
-  field System.Windows.DependencyProperty AddTabCommandParameterProperty
-  field System.Windows.DependencyProperty AddTabCommandProperty
-  field System.Windows.DependencyProperty AddTabContentProperty
-  field System.Windows.DependencyProperty AddTabContentTemplateProperty
-  field System.Windows.DependencyProperty CanAddTabsProperty
-  field System.Windows.DependencyProperty CanCloseTabProperty
-  field System.Windows.DependencyProperty CanCloseTabsProperty
-  field System.Windows.DependencyProperty CanRenameTabsProperty
-  field System.Windows.DependencyProperty CanReorderTabsProperty
-  field System.Windows.DependencyProperty CloseTabCommandProperty
-  field System.Windows.DependencyProperty CornerRadiusProperty
-  field System.Windows.DependencyProperty DragAnimationDurationProperty
-  field System.Windows.DependencyProperty DragPreviewOpacityProperty
-  field System.Windows.DependencyProperty HeaderIndentProperty
-  field System.Windows.DependencyProperty IsAnimationEnabledProperty
-  field System.Windows.DependencyProperty IsDragPreviewEnabledProperty
-  field System.Windows.DependencyProperty IsShadowEnabledProperty
-  field System.Windows.DependencyProperty ItemKeyPathProperty
-  field System.Windows.DependencyProperty MinimumDragDistanceProperty
-  field System.Windows.DependencyProperty RenameActivationProperty
-  field System.Windows.DependencyProperty RenameTabCommandProperty
-  field System.Windows.DependencyProperty ShadowBlurRadiusProperty
-  field System.Windows.DependencyProperty ShadowColorProperty
-  field System.Windows.DependencyProperty ShadowDepthProperty
-  field System.Windows.DependencyProperty ShadowDirectionProperty
-  field System.Windows.DependencyProperty ShadowOpacityProperty
-  field System.Windows.DependencyProperty ShowCloseButtonsProperty
-  field System.Windows.DependencyProperty TabDragCursorProperty
-  field System.Windows.DependencyProperty TabHeaderPathProperty
-  field System.Windows.DependencyProperty TabKeyProperty
-  field System.Windows.DependencyProperty TabSpacingProperty
-  field System.Windows.Input.RoutedUICommand AddTab
-  field System.Windows.Input.RoutedUICommand CloseTab
-  method DLH.Controls.Wpf.TabControlConfiguration CaptureConfiguration()
-  method DLH.Controls.Wpf.TabControlState CaptureState(System.Func<System.Object,System.String>)
-  method System.Boolean BeginRenameTab(System.Object)
-  method System.Boolean CommitTabRename()
-  method System.Boolean GetCanCloseTab(System.Windows.DependencyObject)
-  method System.Boolean MoveTab(System.Int32, System.Int32)
-  method System.Boolean RequestAddTab(System.Object)
-  method System.Boolean RequestCloseTab(System.Object)
-  method System.String GetTabKey(System.Windows.DependencyObject)
-  method System.Void CancelTabRename()
-  method System.Void LoadState(System.IO.Stream, System.Func<System.Object,System.String>)
-  method System.Void OnApplyTemplate()
-  method System.Void ResetConfiguration()
-  method System.Void RestoreConfiguration(DLH.Controls.Wpf.TabControlConfiguration)
-  method System.Void RestoreState(DLH.Controls.Wpf.TabControlState, System.Func<System.Object,System.String>)
-  method System.Void SaveState(System.IO.Stream, System.Func<System.Object,System.String>)
-  method System.Void SetCanCloseTab(System.Windows.DependencyObject, System.Boolean)
-  method System.Void SetTabKey(System.Windows.DependencyObject, System.String)
-  method System.Void ValidateConfiguration(DLH.Controls.Wpf.TabControlConfiguration)
-  property DLH.Controls.Wpf.TabRenameActivation RenameActivation { get; set;  }
-  property System.Boolean CanAddTabs { get; set;  }
-  property System.Boolean CanCloseTabs { get; set;  }
-  property System.Boolean CanRenameTabs { get; set;  }
-  property System.Boolean CanReorderTabs { get; set;  }
-  property System.Boolean IsAnimationEnabled { get; set;  }
-  property System.Boolean IsDragPreviewEnabled { get; set;  }
-  property System.Boolean IsRenamingTab { get;  }
-  property System.Boolean IsShadowEnabled { get; set;  }
-  property System.Boolean ShowCloseButtons { get; set;  }
-  property System.Double DragPreviewOpacity { get; set;  }
-  property System.Double HeaderIndent { get; set;  }
-  property System.Double MinimumDragDistance { get; set;  }
-  property System.Double ShadowBlurRadius { get; set;  }
-  property System.Double ShadowDepth { get; set;  }
-  property System.Double ShadowDirection { get; set;  }
-  property System.Double ShadowOpacity { get; set;  }
-  property System.Double TabSpacing { get; set;  }
-  property System.Object AddTabCommandParameter { get; set;  }
-  property System.Object AddTabContent { get; set;  }
-  property System.String ItemKeyPath { get; set;  }
-  property System.String TabHeaderPath { get; set;  }
-  property System.TimeSpan DragAnimationDuration { get; set;  }
-  property System.Windows.CornerRadius CornerRadius { get; set;  }
-  property System.Windows.DataTemplate AddTabContentTemplate { get; set;  }
-  property System.Windows.Input.Cursor TabDragCursor { get; set;  }
-  property System.Windows.Input.ICommand AddTabCommand { get; set;  }
-  property System.Windows.Input.ICommand CloseTabCommand { get; set;  }
-  property System.Windows.Input.ICommand RenameTabCommand { get; set;  }
-  property System.Windows.Media.Color ShadowColor { get; set;  }
-type DLH.Controls.Wpf.CustomTabItem
-  ctor()
 type DLH.Controls.Wpf.DataGridView
   ctor()
   event System.EventHandler<DLH.Controls.Wpf.DataGridViewStateRestoredEventArgs> StateRestored
@@ -284,6 +190,36 @@ type DLH.Controls.Wpf.DataGridViewState
 type DLH.Controls.Wpf.DataGridViewStateRestoredEventArgs
   ctor(DLH.Controls.Wpf.DataGridViewState)
   property DLH.Controls.Wpf.DataGridViewState State { get;  }
+type DLH.Controls.Wpf.ScrollBar
+  ctor()
+  field System.Windows.DependencyProperty CornerRadiusProperty
+  field System.Windows.DependencyProperty IsShadowEnabledProperty
+  field System.Windows.DependencyProperty ShadowBlurRadiusProperty
+  field System.Windows.DependencyProperty ShadowColorProperty
+  field System.Windows.DependencyProperty ShadowDepthProperty
+  field System.Windows.DependencyProperty ShadowOpacityProperty
+  field System.Windows.DependencyProperty ShowButtonsProperty
+  field System.Windows.DependencyProperty ThicknessProperty
+  field System.Windows.DependencyProperty ThumbBrushProperty
+  field System.Windows.DependencyProperty ThumbHoverBrushProperty
+  field System.Windows.DependencyProperty ThumbOpacityProperty
+  field System.Windows.DependencyProperty ThumbPressedBrushProperty
+  field System.Windows.DependencyProperty TrackBrushProperty
+  field System.Windows.DependencyProperty TrackPaddingProperty
+  property System.Boolean IsShadowEnabled { get; set;  }
+  property System.Boolean ShowButtons { get; set;  }
+  property System.Double ShadowBlurRadius { get; set;  }
+  property System.Double ShadowDepth { get; set;  }
+  property System.Double ShadowOpacity { get; set;  }
+  property System.Double Thickness { get; set;  }
+  property System.Double ThumbOpacity { get; set;  }
+  property System.Windows.CornerRadius CornerRadius { get; set;  }
+  property System.Windows.Media.Brush ThumbBrush { get; set;  }
+  property System.Windows.Media.Brush ThumbHoverBrush { get; set;  }
+  property System.Windows.Media.Brush ThumbPressedBrush { get; set;  }
+  property System.Windows.Media.Brush TrackBrush { get; set;  }
+  property System.Windows.Media.Color ShadowColor { get; set;  }
+  property System.Windows.Thickness TrackPadding { get; set;  }
 type DLH.Controls.Wpf.TabClosedEventArgs
   ctor(System.Object)
   property System.Object Item { get;  }
@@ -291,10 +227,104 @@ type DLH.Controls.Wpf.TabClosingEventArgs
   ctor(System.Object)
   property System.Boolean Cancel { get; set;  }
   property System.Object Item { get;  }
+type DLH.Controls.Wpf.TabControl
+  ctor()
+  event System.EventHandler StateRestored
+  event System.EventHandler<DLH.Controls.Wpf.AddTabRequestedEventArgs> AddTabRequested
+  event System.EventHandler<DLH.Controls.Wpf.TabClosedEventArgs> TabClosed
+  event System.EventHandler<DLH.Controls.Wpf.TabClosingEventArgs> TabClosing
+  event System.EventHandler<DLH.Controls.Wpf.TabRenameRequestedEventArgs> TabRenameRequested
+  event System.EventHandler<DLH.Controls.Wpf.TabRenamedEventArgs> TabRenamed
+  event System.EventHandler<DLH.Controls.Wpf.TabRenamingEventArgs> TabRenaming
+  event System.EventHandler<DLH.Controls.Wpf.TabReorderedEventArgs> TabReordered
+  field System.Windows.DependencyProperty AddTabCommandParameterProperty
+  field System.Windows.DependencyProperty AddTabCommandProperty
+  field System.Windows.DependencyProperty AddTabContentProperty
+  field System.Windows.DependencyProperty AddTabContentTemplateProperty
+  field System.Windows.DependencyProperty CanAddTabsProperty
+  field System.Windows.DependencyProperty CanCloseTabProperty
+  field System.Windows.DependencyProperty CanCloseTabsProperty
+  field System.Windows.DependencyProperty CanRenameTabsProperty
+  field System.Windows.DependencyProperty CanReorderTabsProperty
+  field System.Windows.DependencyProperty CloseTabCommandProperty
+  field System.Windows.DependencyProperty CornerRadiusProperty
+  field System.Windows.DependencyProperty DragAnimationDurationProperty
+  field System.Windows.DependencyProperty DragPreviewOpacityProperty
+  field System.Windows.DependencyProperty HeaderIndentProperty
+  field System.Windows.DependencyProperty IsAnimationEnabledProperty
+  field System.Windows.DependencyProperty IsDragPreviewEnabledProperty
+  field System.Windows.DependencyProperty IsShadowEnabledProperty
+  field System.Windows.DependencyProperty ItemKeyPathProperty
+  field System.Windows.DependencyProperty MinimumDragDistanceProperty
+  field System.Windows.DependencyProperty RenameActivationProperty
+  field System.Windows.DependencyProperty RenameTabCommandProperty
+  field System.Windows.DependencyProperty ShadowBlurRadiusProperty
+  field System.Windows.DependencyProperty ShadowColorProperty
+  field System.Windows.DependencyProperty ShadowDepthProperty
+  field System.Windows.DependencyProperty ShadowDirectionProperty
+  field System.Windows.DependencyProperty ShadowOpacityProperty
+  field System.Windows.DependencyProperty ShowCloseButtonsProperty
+  field System.Windows.DependencyProperty TabDragCursorProperty
+  field System.Windows.DependencyProperty TabHeaderPathProperty
+  field System.Windows.DependencyProperty TabKeyProperty
+  field System.Windows.DependencyProperty TabSpacingProperty
+  field System.Windows.Input.RoutedUICommand AddTab
+  field System.Windows.Input.RoutedUICommand CloseTab
+  method DLH.Controls.Wpf.TabControlConfiguration CaptureConfiguration()
+  method DLH.Controls.Wpf.TabControlState CaptureState(System.Func<System.Object,System.String>)
+  method System.Boolean BeginRenameTab(System.Object)
+  method System.Boolean CommitTabRename()
+  method System.Boolean GetCanCloseTab(System.Windows.DependencyObject)
+  method System.Boolean MoveTab(System.Int32, System.Int32)
+  method System.Boolean RequestAddTab(System.Object)
+  method System.Boolean RequestCloseTab(System.Object)
+  method System.String GetTabKey(System.Windows.DependencyObject)
+  method System.Void CancelTabRename()
+  method System.Void LoadState(System.IO.Stream, System.Func<System.Object,System.String>)
+  method System.Void OnApplyTemplate()
+  method System.Void ResetConfiguration()
+  method System.Void RestoreConfiguration(DLH.Controls.Wpf.TabControlConfiguration)
+  method System.Void RestoreState(DLH.Controls.Wpf.TabControlState, System.Func<System.Object,System.String>)
+  method System.Void SaveState(System.IO.Stream, System.Func<System.Object,System.String>)
+  method System.Void SetCanCloseTab(System.Windows.DependencyObject, System.Boolean)
+  method System.Void SetTabKey(System.Windows.DependencyObject, System.String)
+  method System.Void ValidateConfiguration(DLH.Controls.Wpf.TabControlConfiguration)
+  property DLH.Controls.Wpf.TabRenameActivation RenameActivation { get; set;  }
+  property System.Boolean CanAddTabs { get; set;  }
+  property System.Boolean CanCloseTabs { get; set;  }
+  property System.Boolean CanRenameTabs { get; set;  }
+  property System.Boolean CanReorderTabs { get; set;  }
+  property System.Boolean IsAnimationEnabled { get; set;  }
+  property System.Boolean IsDragPreviewEnabled { get; set;  }
+  property System.Boolean IsRenamingTab { get;  }
+  property System.Boolean IsShadowEnabled { get; set;  }
+  property System.Boolean ShowCloseButtons { get; set;  }
+  property System.Double DragPreviewOpacity { get; set;  }
+  property System.Double HeaderIndent { get; set;  }
+  property System.Double MinimumDragDistance { get; set;  }
+  property System.Double ShadowBlurRadius { get; set;  }
+  property System.Double ShadowDepth { get; set;  }
+  property System.Double ShadowDirection { get; set;  }
+  property System.Double ShadowOpacity { get; set;  }
+  property System.Double TabSpacing { get; set;  }
+  property System.Object AddTabCommandParameter { get; set;  }
+  property System.Object AddTabContent { get; set;  }
+  property System.String ItemKeyPath { get; set;  }
+  property System.String TabHeaderPath { get; set;  }
+  property System.TimeSpan DragAnimationDuration { get; set;  }
+  property System.Windows.CornerRadius CornerRadius { get; set;  }
+  property System.Windows.DataTemplate AddTabContentTemplate { get; set;  }
+  property System.Windows.Input.Cursor TabDragCursor { get; set;  }
+  property System.Windows.Input.ICommand AddTabCommand { get; set;  }
+  property System.Windows.Input.ICommand CloseTabCommand { get; set;  }
+  property System.Windows.Input.ICommand RenameTabCommand { get; set;  }
+  property System.Windows.Media.Color ShadowColor { get; set;  }
 type DLH.Controls.Wpf.TabControlConfiguration
   ctor()
   property System.Collections.Generic.Dictionary<System.String,System.String> Values { get; set;  }
   property System.Int32 Version { get; set;  }
+type DLH.Controls.Wpf.TabControlItem
+  ctor()
 type DLH.Controls.Wpf.TabControlState
   ctor()
   property System.Collections.Generic.List<System.String> Order { get; set;  }

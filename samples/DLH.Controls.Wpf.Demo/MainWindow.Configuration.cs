@@ -15,8 +15,8 @@ public sealed class DemoConfiguration
 
 public partial class MainWindow
 {
-    private static string ConfigurationPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "CustomTabControl.Demo", "configuration.json");
-    private Dictionary<string, DLH.Controls.Wpf.CustomTabControl> ConfigurationTargets => new()
+    private static string ConfigurationPath => Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "TabControl.Demo", "configuration.json");
+    private Dictionary<string, DLH.Controls.Wpf.TabControl> ConfigurationTargets => new()
     { ["Documentos"] = DynamicTabs, ["Lateral"] = SideTabs, ["Simples"] = SimpleTabs };
 
     private void WriteConfiguration(string? path = null)
@@ -45,7 +45,7 @@ public partial class MainWindow
             foreach (var entry in data.Controls)
             {
                 if (!ConfigurationTargets.ContainsKey(entry.Key)) throw new ArgumentException("Modelo desconhecido.");
-                DLH.Controls.Wpf.CustomTabControl.ValidateConfiguration(entry.Value);
+                DLH.Controls.Wpf.TabControl.ValidateConfiguration(entry.Value);
             }
             themeIndex = data.Theme; ApplyTheme();
             foreach (var entry in data.Controls) ConfigurationTargets[entry.Key].RestoreConfiguration(entry.Value);
@@ -73,3 +73,4 @@ public partial class MainWindow
         }
     }
 }
+

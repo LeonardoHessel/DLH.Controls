@@ -1,6 +1,8 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
+using System.Globalization;
+using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using DLH.Controls.Wpf;
@@ -72,6 +74,48 @@ public sealed class DataGridViewApiTests
         grid.IsGroupingEnabled = false;
         Assert.IsEmpty(view.GroupDescriptions);
         Assert.HasCount(3, rows);
+    }
+
+    [STATestMethod]
+    public void CompleteUserFlowRestoresLayoutAndExportsCurrentView()
+    {
+        var (grid, rows, name, quantity, status) = CreateGrid();
+        grid.IsMultiColumnSortEnabled = true;
+        grid.ApplySort(status, ListSortDirection.Ascending);
+        grid.ApplySort(quantity, ListSortDirection.Descending, append: true);
+        grid.SetFilter(status, "Pendente", DataGridViewFilterOperator.Equals);
+        quantity.Visibility = Visibility.Collapsed;
+        status.DisplayIndex = 0; name.DisplayIndex = 1; quantity.DisplayIndex = 2;
+        using var state = new MemoryStream();
+        grid.SaveState(state);
+        using var csv = new StringWriter();
+        grid.ExportCsv(csv);
+        var exported = csv.ToString();
+        StringAssert.StartsWith(exported, "Status;Name");
+        Assert.DoesNotContain("Concluído", exported);
+        Assert.DoesNotContain("Quantity", exported);
+
+        grid.ClearFilters(); grid.ClearSorting(); quantity.Visibility = Visibility.Visible;
+        state.Position = 0; grid.LoadState(state);
+        Assert.AreEqual(Visibility.Collapsed, quantity.Visibility);
+        Assert.HasCount(2, CollectionViewSource.GetDefaultView(rows).SortDescriptions);
+    }
+
+    [STATestMethod]
+    [DataRow("pt-BR", "12,5")]
+    [DataRow("en-US", "12.5")]
+    public void CsvUsesTheConfiguredCulture(string cultureName, string expectedNumber)
+    {
+        var (grid, _, name, quantity, status) = CreateGrid();
+        name.Visibility = Visibility.Collapsed;
+        status.Visibility = Visibility.Collapsed;
+        using var writer = new StringWriter();
+        grid.ExportCsv(writer, new DataGridViewCsvOptions
+        {
+            Culture = CultureInfo.GetCultureInfo(cultureName),
+            ValueSelector = (_, column) => column == quantity ? 12.5m : null
+        });
+        StringAssert.Contains(writer.ToString(), expectedNumber);
     }
 
     private static (DataGridView Grid, ObservableCollection<Row> Rows, DataGridTextColumn Name,

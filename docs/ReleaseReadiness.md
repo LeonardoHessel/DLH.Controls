@@ -22,6 +22,7 @@ Corrigido: README ainda afirmava que o pacote não estava publicado; guia citava
 | Compatibilidade da API pública | Contrato versionado e comparado antes do pacote |
 | Consumo do pacote em aplicação independente | Automatizado com o `.nupkg` recém-gerado |
 | Regressão visual do TabControl | Automatizada com tolerância e imagem de diferenças |
+| Fluxo combinado do DataGridView e culturas pt-BR/en-US | Automatizado em testes STA independentes |
 | Mouse físico: arraste, soltar fora, captura e Alt+Tab | Pendente manual |
 | Monitores com DPI 125%, 150%, 200% e troca entre monitores | Pendente manual; LayoutTransform não substitui DPI |
 | Percurso Tab/Shift+Tab, setas, Ctrl+Tab, foco visível | Pendente manual completo |

@@ -629,21 +629,21 @@ A demonstração preserva preferências em `%LOCALAPPDATA%\CustomTabControl.Demo
 
 Se o **DLH Controls** estiver ajudando sua aplicação, você pode apoiar a manutenção da biblioteca, a correção de problemas e o desenvolvimento de novos componentes.
 
-## Brasil — Pix
+## Apoie diretamente pelo Pix
 
-Escaneie o QR Code com o aplicativo do seu banco. O valor pode ser escolhido no momento da contribuição.
+O **Pix é a forma principal de apoiar o DLH Controls no Brasil**. Escaneie o QR Code com o aplicativo do seu banco e escolha o valor da contribuição.
 
 <p align="center">
   <img src="https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/pix-qrcode.png"
-       width="280"
+       width="340"
        alt="QR Code para apoiar o DLH Controls por Pix">
 </p>
 
 **Chave Pix aleatória:** `65e95283-e2bd-46c3-b045-8773e8157df8`
 
-## Outros países — GitHub Sponsors
+### Apoio internacional — GitHub Sponsors
 
-Contribuições internacionais, únicas ou mensais, podem ser feitas pelo GitHub Sponsors:
+Para pessoas de outros países, contribuições únicas ou mensais podem ser feitas pelo GitHub Sponsors:
 
 [![Apoie pelo GitHub Sponsors](https://img.shields.io/badge/Apoie-GitHub%20Sponsors-EA4AAA?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/LeonardoHessel)
 
@@ -662,7 +662,7 @@ O crédito pode aparecer em **Sobre**, **Créditos** ou **Licenças de terceiros
 # Pacote e autoria
 
 - Pacote: [DLH.Controls.Wpf no NuGet.org](https://www.nuget.org/packages/DLH.Controls.Wpf)
-- Versão publicada mais recente: `0.2.0-preview.1`
+- Versão publicada mais recente: `0.2.0-preview.2`
 - Autor: **Leonardo D. de L. Hessel**
 - Plataforma: Windows
 - Framework: .NET 10 / WPF

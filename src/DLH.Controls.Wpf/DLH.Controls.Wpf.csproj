@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <PackageId>DLH.Controls.Wpf</PackageId>
-    <Version>0.2.0-preview.1</Version>
+    <Version>0.2.0-preview.2</Version>
     <Authors>Leonardo D. de L. Hessel</Authors>
     <Description>Componentes WPF customizáveis, incluindo TabControl com superfície contínua e DataGridView com seleção, ordenação e colunas configuráveis.</Description>
     <PackageTags>WPF;Controls;TabControl;DataGrid;DataGridView;Windows;Paket</PackageTags>

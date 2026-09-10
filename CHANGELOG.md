@@ -4,6 +4,11 @@
 
 Nenhuma alteração registrada.
 
+## 0.2.0-preview.4 — 10 de setembro de 2026
+
+- Corrige a exibição do QR Code do Pix no README publicado pelo NuGet.
+- Substitui o bloco HTML por uma imagem em Markdown compatível com a galeria.
+
 ## 0.2.0-preview.3 — 10 de setembro de 2026
 
 - Novo manual de uso em português-BR, com instalação, exemplos, configuração, acessibilidade, desempenho e diagnóstico de problemas.

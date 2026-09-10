@@ -18,6 +18,7 @@
 - Contrato versionado da API pública para detectar alterações incompatíveis antes do empacotamento.
 - Snapshot visual independente do `DataGridView`, com imagens atual e de diferenças anexadas ao resultado.
 - Cenário integrado de filtro, ordenação, layout e exportação, mais matriz cultural `pt-BR` e `en-US`.
+- Testes STA individuais para seleção múltipla, comandos em lote, edição opt-in e aparência da validação.
 
 ## 0.2.0-preview.4 — 10 de setembro de 2026
 

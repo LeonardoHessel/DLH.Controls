@@ -67,6 +67,8 @@ dotnet test tests/DLH.Controls.Wpf.AutomatedTests -c Release --filter TestCatego
 
 O executável deste diretório continua disponível para diagnóstico direto e para a migração gradual dos cenários antigos.
 
+Os testes independentes também incluem um contrato da API pública. Mudanças nesse arquivo devem acompanhar apenas alterações de API deliberadas e revisadas.
+
 ## Ampliação de cobertura
 25 cenários adicionais: 50 abas com reordenações repetidas e arraste/rolagem nas quatro posições; LayoutTransform de 125%, 150% e 200%; alteração de permissões/animação/prévia durante arraste; limites de reordenação por teclado e metadados de foco/fechamento; JSON inválido e referências removidas.
 

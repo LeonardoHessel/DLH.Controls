@@ -16,7 +16,7 @@ try {
     Invoke-DotNet 'restore' @('restore','DLH.Controls.sln')
     Invoke-DotNet 'build' (@('build','DLH.Controls.sln','-c','Release','--no-restore') + $versionArgs)
     $project = 'tests/DLH.Controls.Wpf.AutomatedTests'
-    Invoke-DotNet 'automated-tests' @('test',$project,'-c','Release','--no-build','--logger','trx;LogFileName=automated.trx','--results-directory','artifacts/test-results')
+    Invoke-DotNet 'automated-tests' @('test',$project,'-c','Release','--no-build','--logger','trx;LogFileName=automated.trx','--collect','Code Coverage','--results-directory','artifacts/test-results')
     Invoke-DotNet 'pack' (@('pack','src/DLH.Controls.Wpf','-c','Release','--no-build','--no-restore','-o','artifacts/packages') + $versionArgs)
     $packages = @(Get-ChildItem artifacts/packages -Filter '*.nupkg' | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1)
     if ($packages.Count -eq 0) { throw 'No package generated.' }

@@ -34,6 +34,10 @@ A categoria `Visual` compara a captura do `CustomTabControl` com a referência v
 
 No GitHub Actions, a solução é compilada separadamente em Debug e Release. A validação completa e o empacotamento só começam depois das duas configurações serem aprovadas. As capturas visual atual e de diferenças são anexadas ao resultado do teste e incluídas nos artefatos do workflow.
 
+A execução completa também usa o coletor de cobertura do Visual Studio. O arquivo `.coverage` acompanha o TRX no artefato `test-results`; inicialmente ele serve para acompanhar a migração dos cenários para métodos independentes, sem bloquear releases por uma porcentagem arbitrária.
+
+O teste da categoria `API` compara tipos e membros públicos com `tests/DLH.Controls.Wpf.AutomatedTests/PublicApi/DLH.Controls.Wpf.txt`. Quando uma mudança pública for intencional, revise sua compatibilidade e execute o teste localmente com `UPDATE_PUBLIC_API=1`; copie o contrato gerado para a pasta versionada e revise o diff antes do commit.
+
 Não publica no NuGet, não exige chave NuGet e não cria releases. Pode ser executado localmente no Windows com `./eng/Validate.ps1`.
 
 Publicação automática por release: consulte [Publishing.md](Publishing.md). O CI de push/PR continua sem publicar; o workflow publish.yml utiliza Trusted Publishing após o cadastro da política no NuGet.

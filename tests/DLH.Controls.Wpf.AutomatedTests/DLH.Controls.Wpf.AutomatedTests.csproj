@@ -14,10 +14,12 @@
 
   <ItemGroup>
     <ProjectReference Include="../DLH.Controls.Wpf.Tests/DLH.Controls.Wpf.Tests.csproj" />
+    <ProjectReference Include="../../src/DLH.Controls.Wpf/DLH.Controls.Wpf.csproj" />
   </ItemGroup>
 
   <ItemGroup>
     <Content Include="VisualBaselines/**/*.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="PublicApi/**/*.txt" CopyToOutputDirectory="PreserveNewest" />
   </ItemGroup>
 
   <ItemGroup>

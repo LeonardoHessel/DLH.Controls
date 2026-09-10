@@ -14,6 +14,8 @@
 - Comparação visual automatizada com imagem de referência, tolerância a antialiasing e artefato de diferenças.
 - Primeiros testes STA independentes do `DataGridView`, executáveis individualmente pelo Visual Studio e `dotnet test`.
 - CI com compilação separada em Debug e Release e anexos das comparações visuais no relatório de testes.
+- Coleta de cobertura de código integrada à validação completa e publicada com os artefatos de teste.
+- Contrato versionado da API pública para detectar alterações incompatíveis antes do empacotamento.
 
 ## 0.2.0-preview.4 — 10 de setembro de 2026
 

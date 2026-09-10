@@ -1,0 +1,351 @@
+type DLH.Controls.Wpf.AddTabRequestedEventArgs
+  ctor(System.Object)
+  property System.Object Parameter { get;  }
+type DLH.Controls.Wpf.CustomTabControl
+  ctor()
+  event System.EventHandler StateRestored
+  event System.EventHandler<DLH.Controls.Wpf.AddTabRequestedEventArgs> AddTabRequested
+  event System.EventHandler<DLH.Controls.Wpf.TabClosedEventArgs> TabClosed
+  event System.EventHandler<DLH.Controls.Wpf.TabClosingEventArgs> TabClosing
+  event System.EventHandler<DLH.Controls.Wpf.TabRenameRequestedEventArgs> TabRenameRequested
+  event System.EventHandler<DLH.Controls.Wpf.TabRenamedEventArgs> TabRenamed
+  event System.EventHandler<DLH.Controls.Wpf.TabRenamingEventArgs> TabRenaming
+  event System.EventHandler<DLH.Controls.Wpf.TabReorderedEventArgs> TabReordered
+  field System.Windows.DependencyProperty AddTabCommandParameterProperty
+  field System.Windows.DependencyProperty AddTabCommandProperty
+  field System.Windows.DependencyProperty AddTabContentProperty
+  field System.Windows.DependencyProperty AddTabContentTemplateProperty
+  field System.Windows.DependencyProperty CanAddTabsProperty
+  field System.Windows.DependencyProperty CanCloseTabProperty
+  field System.Windows.DependencyProperty CanCloseTabsProperty
+  field System.Windows.DependencyProperty CanRenameTabsProperty
+  field System.Windows.DependencyProperty CanReorderTabsProperty
+  field System.Windows.DependencyProperty CloseTabCommandProperty
+  field System.Windows.DependencyProperty CornerRadiusProperty
+  field System.Windows.DependencyProperty DragAnimationDurationProperty
+  field System.Windows.DependencyProperty DragPreviewOpacityProperty
+  field System.Windows.DependencyProperty HeaderIndentProperty
+  field System.Windows.DependencyProperty IsAnimationEnabledProperty
+  field System.Windows.DependencyProperty IsDragPreviewEnabledProperty
+  field System.Windows.DependencyProperty IsShadowEnabledProperty
+  field System.Windows.DependencyProperty ItemKeyPathProperty
+  field System.Windows.DependencyProperty MinimumDragDistanceProperty
+  field System.Windows.DependencyProperty RenameActivationProperty
+  field System.Windows.DependencyProperty RenameTabCommandProperty
+  field System.Windows.DependencyProperty ShadowBlurRadiusProperty
+  field System.Windows.DependencyProperty ShadowColorProperty
+  field System.Windows.DependencyProperty ShadowDepthProperty
+  field System.Windows.DependencyProperty ShadowDirectionProperty
+  field System.Windows.DependencyProperty ShadowOpacityProperty
+  field System.Windows.DependencyProperty ShowCloseButtonsProperty
+  field System.Windows.DependencyProperty TabDragCursorProperty
+  field System.Windows.DependencyProperty TabHeaderPathProperty
+  field System.Windows.DependencyProperty TabKeyProperty
+  field System.Windows.DependencyProperty TabSpacingProperty
+  field System.Windows.Input.RoutedUICommand AddTab
+  field System.Windows.Input.RoutedUICommand CloseTab
+  method DLH.Controls.Wpf.TabControlConfiguration CaptureConfiguration()
+  method DLH.Controls.Wpf.TabControlState CaptureState(System.Func<System.Object,System.String>)
+  method System.Boolean BeginRenameTab(System.Object)
+  method System.Boolean CommitTabRename()
+  method System.Boolean GetCanCloseTab(System.Windows.DependencyObject)
+  method System.Boolean MoveTab(System.Int32, System.Int32)
+  method System.Boolean RequestAddTab(System.Object)
+  method System.Boolean RequestCloseTab(System.Object)
+  method System.String GetTabKey(System.Windows.DependencyObject)
+  method System.Void CancelTabRename()
+  method System.Void LoadState(System.IO.Stream, System.Func<System.Object,System.String>)
+  method System.Void OnApplyTemplate()
+  method System.Void ResetConfiguration()
+  method System.Void RestoreConfiguration(DLH.Controls.Wpf.TabControlConfiguration)
+  method System.Void RestoreState(DLH.Controls.Wpf.TabControlState, System.Func<System.Object,System.String>)
+  method System.Void SaveState(System.IO.Stream, System.Func<System.Object,System.String>)
+  method System.Void SetCanCloseTab(System.Windows.DependencyObject, System.Boolean)
+  method System.Void SetTabKey(System.Windows.DependencyObject, System.String)
+  method System.Void ValidateConfiguration(DLH.Controls.Wpf.TabControlConfiguration)
+  property DLH.Controls.Wpf.TabRenameActivation RenameActivation { get; set;  }
+  property System.Boolean CanAddTabs { get; set;  }
+  property System.Boolean CanCloseTabs { get; set;  }
+  property System.Boolean CanRenameTabs { get; set;  }
+  property System.Boolean CanReorderTabs { get; set;  }
+  property System.Boolean IsAnimationEnabled { get; set;  }
+  property System.Boolean IsDragPreviewEnabled { get; set;  }
+  property System.Boolean IsRenamingTab { get;  }
+  property System.Boolean IsShadowEnabled { get; set;  }
+  property System.Boolean ShowCloseButtons { get; set;  }
+  property System.Double DragPreviewOpacity { get; set;  }
+  property System.Double HeaderIndent { get; set;  }
+  property System.Double MinimumDragDistance { get; set;  }
+  property System.Double ShadowBlurRadius { get; set;  }
+  property System.Double ShadowDepth { get; set;  }
+  property System.Double ShadowDirection { get; set;  }
+  property System.Double ShadowOpacity { get; set;  }
+  property System.Double TabSpacing { get; set;  }
+  property System.Object AddTabCommandParameter { get; set;  }
+  property System.Object AddTabContent { get; set;  }
+  property System.String ItemKeyPath { get; set;  }
+  property System.String TabHeaderPath { get; set;  }
+  property System.TimeSpan DragAnimationDuration { get; set;  }
+  property System.Windows.CornerRadius CornerRadius { get; set;  }
+  property System.Windows.DataTemplate AddTabContentTemplate { get; set;  }
+  property System.Windows.Input.Cursor TabDragCursor { get; set;  }
+  property System.Windows.Input.ICommand AddTabCommand { get; set;  }
+  property System.Windows.Input.ICommand CloseTabCommand { get; set;  }
+  property System.Windows.Input.ICommand RenameTabCommand { get; set;  }
+  property System.Windows.Media.Color ShadowColor { get; set;  }
+type DLH.Controls.Wpf.CustomTabItem
+  ctor()
+type DLH.Controls.Wpf.DataGridView
+  ctor()
+  event System.EventHandler<DLH.Controls.Wpf.DataGridViewStateRestoredEventArgs> StateRestored
+  field System.Windows.DependencyProperty ActiveSortIconBrushProperty
+  field System.Windows.DependencyProperty AllowMultipleSelectionProperty
+  field System.Windows.DependencyProperty AscendingSortIconProperty
+  field System.Windows.DependencyProperty BatchActionCommandProperty
+  field System.Windows.DependencyProperty BatchSelectionChangedCommandProperty
+  field System.Windows.DependencyProperty CanUserFilterProperty
+  field System.Windows.DependencyProperty CanUserToggleColumnVisibilityProperty
+  field System.Windows.DependencyProperty CellEditEndingCommandProperty
+  field System.Windows.DependencyProperty CellPaddingProperty
+  field System.Windows.DependencyProperty ColumnKeyProperty
+  field System.Windows.DependencyProperty CornerRadiusProperty
+  field System.Windows.DependencyProperty DefaultSortDirectionProperty
+  field System.Windows.DependencyProperty DefaultSortMemberPathProperty
+  field System.Windows.DependencyProperty DensityProperty
+  field System.Windows.DependencyProperty DescendingSortIconProperty
+  field System.Windows.DependencyProperty EmptyMessageProperty
+  field System.Windows.DependencyProperty ErrorMessageProperty
+  field System.Windows.DependencyProperty FilterMemberPathProperty
+  field System.Windows.DependencyProperty GroupMemberPathProperty
+  field System.Windows.DependencyProperty IsCellEditingEnabledProperty
+  field System.Windows.DependencyProperty IsGroupingEnabledProperty
+  field System.Windows.DependencyProperty IsLoadingProperty
+  field System.Windows.DependencyProperty IsMultiColumnSortEnabledProperty
+  field System.Windows.DependencyProperty LoadingMessageProperty
+  field System.Windows.DependencyProperty ScrollBarThicknessProperty
+  field System.Windows.DependencyProperty ScrollBarThumbBrushProperty
+  field System.Windows.DependencyProperty ScrollBarThumbHoverBrushProperty
+  field System.Windows.DependencyProperty ScrollBarTrackBrushProperty
+  field System.Windows.DependencyProperty SelectedColumnProperty
+  field System.Windows.DependencyProperty SelectionBehaviorProperty
+  field System.Windows.DependencyProperty SelectionChangedCommandProperty
+  field System.Windows.DependencyProperty ShowClearSortMenuItemProperty
+  field System.Windows.DependencyProperty ShowFilterMenuItemsProperty
+  field System.Windows.DependencyProperty ShowRestoreDefaultSortMenuItemProperty
+  field System.Windows.DependencyProperty ShowRowDetailsOnSelectionProperty
+  field System.Windows.DependencyProperty ShowRowSeparatorsProperty
+  field System.Windows.DependencyProperty ShowSortIndicatorsProperty
+  field System.Windows.DependencyProperty ShowValidationErrorsProperty
+  field System.Windows.DependencyProperty SortIconBrushProperty
+  field System.Windows.DependencyProperty SortIconSizeProperty
+  field System.Windows.DependencyProperty SortPriorityProperty
+  field System.Windows.DependencyProperty UnsortedIconProperty
+  field System.Windows.DependencyProperty ValidationErrorBrushProperty
+  method DLH.Controls.Wpf.DataGridViewBatchSelection GetBatchSelection()
+  method DLH.Controls.Wpf.DataGridViewState CaptureState()
+  method System.Boolean ApplyDefaultSort()
+  method System.Boolean ApplySort(System.Windows.Controls.DataGridColumn, System.ComponentModel.ListSortDirection, System.Boolean)
+  method System.Boolean ClearFilter(System.Windows.Controls.DataGridColumn)
+  method System.Boolean ExecuteBatchAction()
+  method System.Boolean GetCanUserFilter(System.Windows.DependencyObject)
+  method System.Boolean RemoveSort(System.Windows.Controls.DataGridColumn)
+  method System.Boolean ResetState()
+  method System.Boolean SetFilter(System.Windows.Controls.DataGridColumn, System.String, DLH.Controls.Wpf.DataGridViewFilterOperator, System.Boolean)
+  method System.Boolean SetRowDetailsVisibility(System.Object, System.Boolean)
+  method System.Int32 GetSortPriority(System.Windows.DependencyObject)
+  method System.String GetColumnKey(System.Windows.DependencyObject)
+  method System.String GetFilterMemberPath(System.Windows.DependencyObject)
+  method System.Void ClearFilters()
+  method System.Void ClearSorting()
+  method System.Void ExportCsv(System.IO.Stream, DLH.Controls.Wpf.DataGridViewCsvOptions, System.Text.Encoding)
+  method System.Void ExportCsv(System.IO.TextWriter, DLH.Controls.Wpf.DataGridViewCsvOptions)
+  method System.Void LoadState(System.IO.Stream)
+  method System.Void OnApplyTemplate()
+  method System.Void RefreshFilters()
+  method System.Void RestoreState(DLH.Controls.Wpf.DataGridViewState)
+  method System.Void SaveState(System.IO.Stream)
+  method System.Void SetCanUserFilter(System.Windows.DependencyObject, System.Boolean)
+  method System.Void SetColumnKey(System.Windows.DependencyObject, System.String)
+  method System.Void SetFilterMemberPath(System.Windows.DependencyObject, System.String)
+  property DLH.Controls.Wpf.DataGridViewDensity Density { get; set;  }
+  property DLH.Controls.Wpf.DataGridViewSelectionBehavior SelectionBehavior { get; set;  }
+  property System.Boolean AllowMultipleSelection { get; set;  }
+  property System.Boolean CanUserToggleColumnVisibility { get; set;  }
+  property System.Boolean IsCellEditingEnabled { get; set;  }
+  property System.Boolean IsGroupingEnabled { get; set;  }
+  property System.Boolean IsLoading { get; set;  }
+  property System.Boolean IsMultiColumnSortEnabled { get; set;  }
+  property System.Boolean ShowClearSortMenuItem { get; set;  }
+  property System.Boolean ShowFilterMenuItems { get; set;  }
+  property System.Boolean ShowRestoreDefaultSortMenuItem { get; set;  }
+  property System.Boolean ShowRowDetailsOnSelection { get; set;  }
+  property System.Boolean ShowRowSeparators { get; set;  }
+  property System.Boolean ShowSortIndicators { get; set;  }
+  property System.Boolean ShowValidationErrors { get; set;  }
+  property System.Collections.ObjectModel.ObservableCollection<DLH.Controls.Wpf.DataGridViewFilter> Filters { get;  }
+  property System.ComponentModel.ListSortDirection DefaultSortDirection { get; set;  }
+  property System.Double ScrollBarThickness { get; set;  }
+  property System.Double SortIconSize { get; set;  }
+  property System.String DefaultSortMemberPath { get; set;  }
+  property System.String EmptyMessage { get; set;  }
+  property System.String ErrorMessage { get; set;  }
+  property System.String GroupMemberPath { get; set;  }
+  property System.String LoadingMessage { get; set;  }
+  property System.Windows.Controls.DataGridColumn SelectedColumn { get; set;  }
+  property System.Windows.CornerRadius CornerRadius { get; set;  }
+  property System.Windows.Input.ICommand BatchActionCommand { get; set;  }
+  property System.Windows.Input.ICommand BatchSelectionChangedCommand { get; set;  }
+  property System.Windows.Input.ICommand CellEditEndingCommand { get; set;  }
+  property System.Windows.Input.ICommand SelectionChangedCommand { get; set;  }
+  property System.Windows.Media.Brush ActiveSortIconBrush { get; set;  }
+  property System.Windows.Media.Brush ScrollBarThumbBrush { get; set;  }
+  property System.Windows.Media.Brush ScrollBarThumbHoverBrush { get; set;  }
+  property System.Windows.Media.Brush ScrollBarTrackBrush { get; set;  }
+  property System.Windows.Media.Brush SortIconBrush { get; set;  }
+  property System.Windows.Media.Brush ValidationErrorBrush { get; set;  }
+  property System.Windows.Media.Geometry AscendingSortIcon { get; set;  }
+  property System.Windows.Media.Geometry DescendingSortIcon { get; set;  }
+  property System.Windows.Media.Geometry UnsortedIcon { get; set;  }
+  property System.Windows.Thickness CellPadding { get; set;  }
+type DLH.Controls.Wpf.DataGridViewBatchSelection
+  ctor(System.Collections.Generic.IReadOnlyList<System.Object>, System.Collections.Generic.IReadOnlyList<System.Windows.Controls.DataGridCellInfo>, System.Windows.Controls.DataGridColumn)
+  method DLH.Controls.Wpf.DataGridViewBatchSelection <Clone>$()
+  method System.Boolean Equals(DLH.Controls.Wpf.DataGridViewBatchSelection)
+  method System.Boolean Equals(System.Object)
+  method System.Int32 GetHashCode()
+  method System.String ToString()
+  method System.Void Deconstruct(System.Collections.Generic.IReadOnlyList<System.Object>&, System.Collections.Generic.IReadOnlyList<System.Windows.Controls.DataGridCellInfo>&, System.Windows.Controls.DataGridColumn&)
+  property System.Collections.Generic.IReadOnlyList<System.Object> Items { get; set;  }
+  property System.Collections.Generic.IReadOnlyList<System.Windows.Controls.DataGridCellInfo> Cells { get; set;  }
+  property System.Windows.Controls.DataGridColumn Column { get; set;  }
+type DLH.Controls.Wpf.DataGridViewCellEditContext
+  ctor()
+  property System.Boolean Cancel { get; set;  }
+  property System.Object Item { get; set;  }
+  property System.Windows.Controls.DataGridColumn Column { get; set;  }
+  property System.Windows.Controls.DataGridEditAction Action { get; set;  }
+type DLH.Controls.Wpf.DataGridViewColumnState
+  ctor()
+  property System.Double WidthValue { get; set;  }
+  property System.Int32 DisplayIndex { get; set;  }
+  property System.String Key { get; set;  }
+  property System.Windows.Controls.DataGridLengthUnitType WidthUnitType { get; set;  }
+  property System.Windows.Visibility Visibility { get; set;  }
+type DLH.Controls.Wpf.DataGridViewCsvOptions
+  ctor()
+  property System.Boolean IncludeHeaders { get; set;  }
+  property System.Func<System.Object,System.Windows.Controls.DataGridColumn,System.Object> ValueSelector { get; set;  }
+  property System.Globalization.CultureInfo Culture { get; set;  }
+  property System.String Delimiter { get; set;  }
+type DLH.Controls.Wpf.DataGridViewDensity
+  field DLH.Controls.Wpf.DataGridViewDensity Comfortable
+  field DLH.Controls.Wpf.DataGridViewDensity Compact
+  field DLH.Controls.Wpf.DataGridViewDensity Default
+  field System.Int32 value__
+type DLH.Controls.Wpf.DataGridViewFilter
+  ctor()
+  property DLH.Controls.Wpf.DataGridViewFilterOperator Operator { get; set;  }
+  property System.Boolean IsCaseSensitive { get; set;  }
+  property System.String ColumnKey { get; set;  }
+  property System.String Value { get; set;  }
+type DLH.Controls.Wpf.DataGridViewFilterOperator
+  field DLH.Controls.Wpf.DataGridViewFilterOperator Contains
+  field DLH.Controls.Wpf.DataGridViewFilterOperator EndsWith
+  field DLH.Controls.Wpf.DataGridViewFilterOperator Equals
+  field DLH.Controls.Wpf.DataGridViewFilterOperator GreaterThan
+  field DLH.Controls.Wpf.DataGridViewFilterOperator LessThan
+  field DLH.Controls.Wpf.DataGridViewFilterOperator StartsWith
+  field System.Int32 value__
+type DLH.Controls.Wpf.DataGridViewSelection
+  ctor(System.Object, System.Windows.Controls.DataGridColumn)
+  method DLH.Controls.Wpf.DataGridViewSelection <Clone>$()
+  method System.Boolean Equals(DLH.Controls.Wpf.DataGridViewSelection)
+  method System.Boolean Equals(System.Object)
+  method System.Int32 GetHashCode()
+  method System.String ToString()
+  method System.Void Deconstruct(System.Object&, System.Windows.Controls.DataGridColumn&)
+  property System.Object Item { get; set;  }
+  property System.Windows.Controls.DataGridColumn Column { get; set;  }
+type DLH.Controls.Wpf.DataGridViewSelectionBehavior
+  field DLH.Controls.Wpf.DataGridViewSelectionBehavior Cell
+  field DLH.Controls.Wpf.DataGridViewSelectionBehavior Column
+  field DLH.Controls.Wpf.DataGridViewSelectionBehavior None
+  field DLH.Controls.Wpf.DataGridViewSelectionBehavior Row
+  field System.Int32 value__
+type DLH.Controls.Wpf.DataGridViewSortState
+  ctor()
+  property System.ComponentModel.ListSortDirection Direction { get; set;  }
+  property System.String ColumnKey { get; set;  }
+type DLH.Controls.Wpf.DataGridViewState
+  ctor()
+  property System.Collections.Generic.List<DLH.Controls.Wpf.DataGridViewColumnState> Columns { get; set;  }
+  property System.Collections.Generic.List<DLH.Controls.Wpf.DataGridViewSortState> Sorting { get; set;  }
+  property System.Int32 Version { get; set;  }
+type DLH.Controls.Wpf.DataGridViewStateRestoredEventArgs
+  ctor(DLH.Controls.Wpf.DataGridViewState)
+  property DLH.Controls.Wpf.DataGridViewState State { get;  }
+type DLH.Controls.Wpf.TabClosedEventArgs
+  ctor(System.Object)
+  property System.Object Item { get;  }
+type DLH.Controls.Wpf.TabClosingEventArgs
+  ctor(System.Object)
+  property System.Boolean Cancel { get; set;  }
+  property System.Object Item { get;  }
+type DLH.Controls.Wpf.TabControlConfiguration
+  ctor()
+  property System.Collections.Generic.Dictionary<System.String,System.String> Values { get; set;  }
+  property System.Int32 Version { get; set;  }
+type DLH.Controls.Wpf.TabControlState
+  ctor()
+  property System.Collections.Generic.List<System.String> Order { get; set;  }
+  property System.Int32 Version { get; set;  }
+  property System.String SelectedKey { get; set;  }
+type DLH.Controls.Wpf.TabCursors
+  property System.Windows.Input.Cursor ClosedHand { get;  }
+type DLH.Controls.Wpf.TabRenameActivation
+  field DLH.Controls.Wpf.TabRenameActivation DoubleClick
+  field DLH.Controls.Wpf.TabRenameActivation F2
+  field DLH.Controls.Wpf.TabRenameActivation F2AndDoubleClick
+  field DLH.Controls.Wpf.TabRenameActivation None
+  field System.Int32 value__
+type DLH.Controls.Wpf.TabRenameRequest
+  ctor(System.Object, System.String, System.String)
+  property System.Object Item { get;  }
+  property System.String NewHeader { get;  }
+  property System.String OldHeader { get;  }
+type DLH.Controls.Wpf.TabRenameRequestedEventArgs
+  ctor(System.Object, System.String, System.String)
+  property System.Boolean Cancel { get; set;  }
+  property System.Object Item { get;  }
+  property System.String NewHeader { get;  }
+  property System.String OldHeader { get;  }
+type DLH.Controls.Wpf.TabRenamedEventArgs
+  ctor(System.Object, System.String, System.String)
+  property System.Object Item { get;  }
+  property System.String NewHeader { get;  }
+  property System.String OldHeader { get;  }
+type DLH.Controls.Wpf.TabRenamingEventArgs
+  ctor(System.Object, System.String)
+  property System.Boolean Cancel { get; set;  }
+  property System.Object Item { get;  }
+  property System.String OldHeader { get;  }
+type DLH.Controls.Wpf.TabReorderReason
+  field DLH.Controls.Wpf.TabReorderReason Drag
+  field DLH.Controls.Wpf.TabReorderReason Keyboard
+  field DLH.Controls.Wpf.TabReorderReason Programmatic
+  field System.Int32 value__
+type DLH.Controls.Wpf.TabReorderedEventArgs
+  ctor(System.Object, System.Int32, System.Int32, DLH.Controls.Wpf.TabReorderReason)
+  property DLH.Controls.Wpf.TabReorderReason Reason { get;  }
+  property System.Int32 NewIndex { get;  }
+  property System.Int32 OldIndex { get;  }
+  property System.Object Item { get;  }
+type DLH.Controls.Wpf.TabSpacingConverter
+  ctor()
+  method System.Object Convert(System.Object, System.Type, System.Object, System.Globalization.CultureInfo)
+  method System.Object Convert(System.Object[], System.Type, System.Object, System.Globalization.CultureInfo)
+  method System.Object ConvertBack(System.Object, System.Type, System.Object, System.Globalization.CultureInfo)
+  method System.Object[] ConvertBack(System.Object, System.Type[], System.Object, System.Globalization.CultureInfo)
+  property DLH.Controls.Wpf.TabSpacingConverter Instance { get;  }
+type XamlGeneratedNamespace.GeneratedInternalTypeHelper
+  ctor()

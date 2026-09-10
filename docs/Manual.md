@@ -315,7 +315,11 @@ grid.ResetState();
 
 O formato versionado registra ordem, largura, unidade de largura, visibilidade e ordenação. A biblioteca não escolhe o caminho do arquivo. Colunas ausentes são ignoradas, colunas novas permanecem no final e dados inválidos não são aplicados parcialmente.
 
-### 4.6 Células personalizadas
+### 4.7 Edição e validação
+
+Ative a edição explicitamente com `IsCellEditingEnabled="True"`. As regras declaradas no `Binding` continuam responsáveis pela validação. Células inválidas recebem borda e dica de erro; personalize com `ShowValidationErrors` e `ValidationErrorBrush`. O `CellEditEndingCommand` pode inspecionar item, coluna e ação e cancelar a confirmação.
+
+### 4.8 Células personalizadas
 
 ```xml
 <DataGridTemplateColumn Header="Status" SortMemberPath="Status">
@@ -337,7 +341,7 @@ O formato versionado registra ordem, largura, unidade de largura, visibilidade e
 
 O mesmo recurso permite apresentar ícones, botões, imagens, links ou editores próprios.
 
-### 4.7 Estados da coleção
+### 4.9 Estados da coleção
 
 ```xml
 <dlh:DataGridView EmptyMessage="Nenhum item encontrado."

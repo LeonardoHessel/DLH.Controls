@@ -502,6 +502,10 @@ grid.ClearFilters();
                     CanUserSort="False" />
 ```
 
+## Edição e validação
+
+As células permanecem somente leitura por padrão. Ative `IsCellEditingEnabled="True"` e use as regras de validação normais dos bindings WPF. `ShowValidationErrors` controla o destaque, `ValidationErrorBrush` define sua cor e `CellEditEndingCommand` recebe um `DataGridViewCellEditContext` que pode cancelar a confirmação.
+
 ## Persistir o layout das colunas
 
 Defina uma chave estável com `SortMemberPath` ou com a propriedade anexada `ColumnKey`. O estado inclui ordem, largura, visibilidade e ordenação:

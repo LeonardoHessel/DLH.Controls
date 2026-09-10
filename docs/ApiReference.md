@@ -80,6 +80,8 @@ Mantidos os nomes CustomTabControl, CanCloseTabs (global) e CanCloseTab (individ
 
 `AllowMultipleSelection` alterna entre seleção simples e estendida. `GetBatchSelection()` retorna `DataGridViewBatchSelection`; `BatchSelectionChangedCommand` recebe mudanças e `BatchActionCommand` é executado por `ExecuteBatchAction()`.
 
+`IsCellEditingEnabled` libera a edição nativa. `ShowValidationErrors` e `ValidationErrorBrush` configuram o retorno visual das regras WPF. `CellEditEndingCommand` recebe `DataGridViewCellEditContext`; defina `Cancel=true` para impedir a confirmação.
+
 ## Persistência do layout
 
 `DataGridView.ColumnKey` define uma chave estável por coluna. Na ausência dela, `SortMemberPath` é utilizado. Todas as colunas precisam de chaves não vazias e únicas para usar a persistência.

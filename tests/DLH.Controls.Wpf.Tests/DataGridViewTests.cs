@@ -145,6 +145,19 @@ internal static class DataGridViewTests
                 Check(grid.SelectionMode == DataGridSelectionMode.Single, "Single selection was not restored");
             });
 
+            Test("datagrid/optional editing and validation appearance", () =>
+            {
+                Check(!grid.IsCellEditingEnabled && grid.IsReadOnly && grid.ShowValidationErrors,
+                    "Safe editing defaults are wrong");
+                grid.IsCellEditingEnabled = true;
+                Check(!grid.IsReadOnly, "Editing did not unlock the native grid");
+                var brush = new SolidColorBrush(Colors.OrangeRed);
+                grid.ValidationErrorBrush = brush;
+                Check(ReferenceEquals(grid.ValidationErrorBrush, brush), "Validation brush was not retained");
+                grid.IsCellEditingEnabled = false;
+                Check(grid.IsReadOnly, "Read-only mode was not restored");
+            });
+
             Test("datagrid/sort indicator customization", () =>
             {
                 grid.ShowSortIndicators = false;

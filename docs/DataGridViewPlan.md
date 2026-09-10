@@ -70,6 +70,7 @@ No WPF, esses recursos serão expostos sobre o `DataGrid` nativo. Isso mantém c
 - Ordenação e preservação da coleção de origem.
 - Filtros por coluna, combinação de critérios e preservação do filtro externo da visualização.
 - Seleção múltipla opcional com comandos para ações em lote.
+- Edição opt-in com integração às regras de validação do WPF e retorno visual configurável.
 - Atualizações de `ObservableCollection` e virtualização com volume maior.
 - Estado vazio/carregando e retorno aos dados.
 - Teclado, nomes acessíveis, alto contraste e DPI.

@@ -496,6 +496,15 @@
                                 <ControlTemplate.Triggers>
                                     <Trigger Property="IsSelected" Value="True"><Setter TargetName="CellSurface" Property="Background" Value="{DynamicResource DataGridView.Selection}" /></Trigger>
                                     <Trigger Property="IsKeyboardFocusWithin" Value="True"><Setter TargetName="CellSurface" Property="BorderBrush" Value="{DynamicResource DataGridView.Focus}" /><Setter TargetName="CellSurface" Property="BorderThickness" Value="1" /></Trigger>
+                                    <MultiDataTrigger>
+                                        <MultiDataTrigger.Conditions>
+                                            <Condition Binding="{Binding Path=(Validation.HasError), RelativeSource={RelativeSource Self}}" Value="True" />
+                                            <Condition Binding="{Binding ShowValidationErrors, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" Value="True" />
+                                        </MultiDataTrigger.Conditions>
+                                        <Setter TargetName="CellSurface" Property="BorderBrush" Value="{Binding ValidationErrorBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" />
+                                        <Setter TargetName="CellSurface" Property="BorderThickness" Value="1" />
+                                        <Setter Property="ToolTip" Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+                                    </MultiDataTrigger>
                                 </ControlTemplate.Triggers>
                             </ControlTemplate>
                         </Setter.Value>

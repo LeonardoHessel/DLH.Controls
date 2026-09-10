@@ -1,7 +1,9 @@
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using Microsoft.Win32;
 using DLH.Controls.Wpf;
 
 namespace DLH.Controls.Wpf.Demo;
@@ -106,6 +108,15 @@ public partial class DataGridViewDemoWindow : Window
     {
         var selection = ShipmentsGrid.GetBatchSelection();
         StatusText.Text = $"Ação aplicada a {selection.Items.Count} registro(s).";
+    }
+
+    private void ExportCsv_Click(object sender, RoutedEventArgs e)
+    {
+        var dialog = new SaveFileDialog { Filter = "Arquivo CSV (*.csv)|*.csv", FileName = "inspecoes.csv" };
+        if (dialog.ShowDialog(this) != true) return;
+        using var stream = File.Create(dialog.FileName);
+        ShipmentsGrid.ExportCsv(stream);
+        StatusText.Text = "Dados visíveis exportados para CSV.";
     }
 
     private void RestoreColumns_Click(object sender, RoutedEventArgs e)

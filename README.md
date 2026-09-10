@@ -506,6 +506,15 @@ grid.ClearFilters();
 
 As células permanecem somente leitura por padrão. Ative `IsCellEditingEnabled="True"` e use as regras de validação normais dos bindings WPF. `ShowValidationErrors` controla o destaque, `ValidationErrorBrush` define sua cor e `CellEditEndingCommand` recebe um `DataGridViewCellEditContext` que pode cancelar a confirmação.
 
+## Exportação CSV
+
+`ExportCsv` grava as linhas da visualização atual e somente as colunas visíveis, na ordem apresentada. Assim, filtros e ordenações ativos são respeitados. `DataGridViewCsvOptions` configura cabeçalhos, delimitador, cultura e um seletor para colunas com templates.
+
+```csharp
+using var file = File.Create("dados.csv");
+grid.ExportCsv(file, new DataGridViewCsvOptions { Delimiter = ";" });
+```
+
 ## Persistir o layout das colunas
 
 Defina uma chave estável com `SortMemberPath` ou com a propriedade anexada `ColumnKey`. O estado inclui ordem, largura, visibilidade e ordenação:

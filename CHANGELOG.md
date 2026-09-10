@@ -7,6 +7,7 @@
 - Filtros combináveis por coluna, com operadores textuais e comparativos.
 - Seleção múltipla opcional e comandos para seleção e ações em lote.
 - Edição opcional de células, comando de confirmação/cancelamento e destaque configurável de erros de validação.
+- Exportação CSV das linhas e colunas visíveis, respeitando filtros, ordenação e posição das colunas.
 
 ## 0.2.0-preview.4 — 10 de setembro de 2026
 

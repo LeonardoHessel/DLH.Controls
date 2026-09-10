@@ -158,6 +158,27 @@ internal static class DataGridViewTests
                 Check(grid.IsReadOnly, "Read-only mode was not restored");
             });
 
+            Test("datagrid/csv follows view and visible display order", () =>
+            {
+                name.DisplayIndex = 0; quantity.DisplayIndex = 1; status.DisplayIndex = 2;
+                quantity.Visibility = Visibility.Collapsed;
+                grid.SetFilter(status, "Pendente", DataGridViewFilterOperator.Equals);
+                grid.ApplySort(name, ListSortDirection.Descending);
+                using var writer = new StringWriter(System.Globalization.CultureInfo.InvariantCulture);
+                grid.ExportCsv(writer);
+                var lines = writer.ToString().Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+                Check(lines.Length == 3 && lines[0] == "Embarque;Status" && lines[1].StartsWith("Embarque 20;"),
+                    "CSV ignored visible columns, filtering or sorting");
+                using var customWriter = new StringWriter();
+                grid.ExportCsv(customWriter, new DataGridViewCsvOptions
+                {
+                    Delimiter = ",",
+                    ValueSelector = (item, column) => column == status ? "texto, com \"aspas\"" : null
+                });
+                Check(customWriter.ToString().Contains("\"texto, com \"\"aspas\"\"\""), "CSV escaping is invalid");
+                grid.ClearFilters(); grid.ClearSorting(); quantity.Visibility = Visibility.Visible;
+            });
+
             Test("datagrid/sort indicator customization", () =>
             {
                 grid.ShowSortIndicators = false;

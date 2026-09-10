@@ -319,7 +319,11 @@ O formato versionado registra ordem, largura, unidade de largura, visibilidade e
 
 Ative a edição explicitamente com `IsCellEditingEnabled="True"`. As regras declaradas no `Binding` continuam responsáveis pela validação. Células inválidas recebem borda e dica de erro; personalize com `ShowValidationErrors` e `ValidationErrorBrush`. O `CellEditEndingCommand` pode inspecionar item, coluna e ação e cancelar a confirmação.
 
-### 4.8 Células personalizadas
+### 4.8 Exportação CSV
+
+Use `ExportCsv` para gravar apenas colunas visíveis, na ordem atual, e as linhas produzidas pelos filtros e ordenação. Para `DataGridTemplateColumn`, informe `DataGridViewCsvOptions.ValueSelector` quando `SortMemberPath` não representar o conteúdo exibido.
+
+### 4.9 Células personalizadas
 
 ```xml
 <DataGridTemplateColumn Header="Status" SortMemberPath="Status">
@@ -341,7 +345,7 @@ Ative a edição explicitamente com `IsCellEditingEnabled="True"`. As regras dec
 
 O mesmo recurso permite apresentar ícones, botões, imagens, links ou editores próprios.
 
-### 4.9 Estados da coleção
+### 4.10 Estados da coleção
 
 ```xml
 <dlh:DataGridView EmptyMessage="Nenhum item encontrado."
@@ -352,7 +356,7 @@ O mesmo recurso permite apresentar ícones, botões, imagens, links ou editores 
 
 A prioridade é: erro, carregamento, coleção vazia e, por fim, dados.
 
-### 4.8 Densidade e rolagem
+### 4.11 Densidade e rolagem
 
 ```xml
 <dlh:DataGridView Density="Compact"

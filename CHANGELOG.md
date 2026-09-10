@@ -16,6 +16,7 @@
 - CI com compilação separada em Debug e Release e anexos das comparações visuais no relatório de testes.
 - Coleta de cobertura de código integrada à validação completa e publicada com os artefatos de teste.
 - Contrato versionado da API pública para detectar alterações incompatíveis antes do empacotamento.
+- Snapshot visual independente do `DataGridView`, com imagens atual e de diferenças anexadas ao resultado.
 
 ## 0.2.0-preview.4 — 10 de setembro de 2026
 

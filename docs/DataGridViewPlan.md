@@ -1,16 +1,16 @@
 # Plano — DataGridView para WPF
 
-## Referência MAUI
+## Referência multiplataforma
 
-O controle analisado em `controle de tabela MAUI usado como referÃªncia` oferece colunas declarativas, leitura e formatação de propriedades, ordenação, seleção de linha ou célula, rolagem horizontal sincronizada, cabeçalho fixo, mensagem vazia, carregamento, separadores e limites de altura.
+Controles de tabela multiplataforma oferecem colunas declarativas, leitura e formatação de propriedades, ordenação, seleção de linha ou célula, rolagem horizontal sincronizada, cabeçalho fixo, mensagem vazia, carregamento, separadores e limites de altura.
 
 No MAUI, cabeçalho e linhas são reconstruídos em code-behind porque o cenário Android evita `CollectionView` dentro de `ScrollView`. Essa estratégia não deve ser copiada no WPF: `System.Windows.Controls.DataGrid` já possui virtualização, colunas, ordenação, cabeçalho fixo, rolagem sincronizada, edição, teclado e automação. O novo controle será uma especialização do DataGrid nativo.
 
-## Referência web — aplicaÃ§Ã£o web de referÃªncia
+## Referência web
 
 O componente Angular em `shared/components/data-table` fornece a casca visual arredondada, cabeçalho fixo, densidades compacta/padrão/confortável, linhas alternadas, hover e estilos de seleção. A camada `list-table` acrescenta colunas dirigidas por metadados, ordenação, alinhamento, seleção múltipla, templates de célula, ações, navegação por teclado e estados de vazio, carregamento e erro.
 
-No WPF, esses recursos serão expostos sobre o `DataGrid` nativo. Isso mantém colunas declarativas em XAML, `DataGridTemplateColumn`, ordenação, navegação por teclado, automação e virtualização. O projeto web foi usado somente como referência de comportamento e permaneceu sem alterações.
+No WPF, esses recursos serão expostos sobre o `DataGrid` nativo. Isso mantém colunas declarativas em XAML, `DataGridTemplateColumn`, ordenação, navegação por teclado, automação e virtualização.
 
 ## Nome e pacote
 

@@ -319,7 +319,7 @@ internal static class Program
             var headerBounds = sideHeader.TransformToVisual(sideTabs).TransformBounds(new Rect(sideHeader.RenderSize));
             var bodyBounds = sideBody.TransformToVisual(sideTabs).TransformBounds(new Rect(sideBody.RenderSize));
             var joint = new Point(side == Dock.Left ? bodyBounds.Left : bodyBounds.Right, headerBounds.Top + headerBounds.Height / 2);
-            Check(((Image)sideItem.Header).Source is BitmapSource { PixelWidth: > 0 } &&
+            Check(sideItem.Header is System.Windows.Shapes.Path { Data: not null } icon && icon.ActualWidth > 0 && icon.ActualHeight > 0 &&
                 sideSurface.Data.FillContains(joint) && !sideSurface.Data.StrokeContains(new Pen(Brushes.Black, 1), joint),
                 $"{side} icons load and connect to one continuous surface");
         }

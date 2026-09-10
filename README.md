@@ -624,6 +624,8 @@ A demonstração preserva preferências em `%LOCALAPPDATA%\CustomTabControl.Demo
 - [Publicação automática](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/Publishing.md)
 - [Preparação para a versão 1.0.0](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/ReleaseReadiness.md)
 - [Histórico de versões](https://github.com/LeonardoHessel/DLH.Controls/blob/main/CHANGELOG.md)
+- [Como contribuir](https://github.com/LeonardoHessel/DLH.Controls/blob/main/CONTRIBUTING.md)
+- [Política de segurança](https://github.com/LeonardoHessel/DLH.Controls/blob/main/SECURITY.md)
 
 # Apoie o projeto
 

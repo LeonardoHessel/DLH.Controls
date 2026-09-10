@@ -112,7 +112,7 @@
                     <ComboBoxItem Content="Esquerda" Tag="{x:Static Dock.Left}" />
                     <ComboBoxItem Content="Direita" Tag="{x:Static Dock.Right}" />
                 </ComboBox>
-                <StackPanel><TextBlock Text="Painel de demonstraÃ§Ã£o" FontSize="20" FontWeight="SemiBold" /><TextBlock Text="MODELO LATERAL" FontSize="10" Foreground="{DynamicResource Tabs.Muted}" Margin="0,4,0,0" /></StackPanel>
+                <StackPanel><TextBlock Text="Painel de demonstração" FontSize="20" FontWeight="SemiBold" /><TextBlock Text="MODELO LATERAL" FontSize="10" Foreground="{DynamicResource Tabs.Muted}" Margin="0,4,0,0" /></StackPanel>
             </DockPanel>
             <controls:CustomTabControl x:Name="SideTabs" Grid.Row="1" TabStripPlacement="Left" HeaderIndent="0" CornerRadius="10" Padding="18" TabDragCursor="ScrollNS" SelectedIndex="0"
                                        CanAddTabs="True" CanRenameTabs="True" AddTabRequested="AddSideTab">
@@ -126,7 +126,7 @@
                         <TextBlock Text="CNPJ" /><TextBox Style="{StaticResource SideField}" Text="00.000.000/0001-00" />
                         <TextBlock Text="Licença" /><TextBox Style="{StaticResource SideField}" Text="DEMONSTRAÇÃO" />
                         <TextBlock Text="Razão social" /><TextBox Style="{StaticResource SideField}" Text="EMPRESA DE EXEMPLO" />
-                        <TextBlock Text="Fantasia" /><TextBox Style="{StaticResource SideField}" Text="aplicaÃ§Ã£o de demonstraÃ§Ã£o" />
+                        <TextBlock Text="Fantasia" /><TextBox Style="{StaticResource SideField}" Text="Empresa de demonstração" />
                     </StackPanel></ScrollViewer>
                 </controls:CustomTabItem>
                 <controls:CustomTabItem controls:CustomTabControl.TabKey="Banco de dados" ToolTip="Banco de dados" AutomationProperties.Name="Banco de dados">
@@ -149,8 +149,8 @@
                 <controls:CustomTabItem controls:CustomTabControl.TabKey="Informações" ToolTip="Informações" AutomationProperties.Name="Informações">
                     <controls:CustomTabItem.Header><Path Width="28" Height="28" Stretch="Uniform" Stroke="{DynamicResource Demo.Accent}" StrokeThickness="1.8" StrokeStartLineCap="Round" StrokeEndLineCap="Round" Data="M12,2 A10,10 0 1 1 11.99,2 M12,10 V18 M12,6 V7" /></controls:CustomTabItem.Header>
                     <StackPanel><TextBlock Text="Informações" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,12" />
-                        <TextBlock Text="Painel de demonstraÃ§Ã£o" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,12" />
-                        <TextBlock Text="Exemplo de navegação lateral com os quatro ícones fornecidos. O contorno e a sombra acompanham a aba selecionada." TextWrapping="Wrap" Margin="0,0,0,16" />
+                        <TextBlock Text="DLH Controls" FontWeight="SemiBold" FontSize="16" Margin="0,0,0,12" />
+                        <TextBlock Text="Exemplo de navegação lateral com quatro ícones vetoriais. O contorno e a sombra acompanham a aba selecionada." TextWrapping="Wrap" Margin="0,0,0,16" />
                         <TextBlock Text="Use o tema Cinza e laranja para comparar com a referência." TextWrapping="Wrap" Foreground="{DynamicResource Tabs.Muted}" />
                     </StackPanel>
                 </controls:CustomTabItem>

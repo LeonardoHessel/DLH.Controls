@@ -5,9 +5,9 @@ Status: plano técnico executado em 4 de setembro de 2026. Melhorias A, B, D e E
 
 ## 1. Objetivo e escopo
 
-Evoluir a robustez, a acessibilidade e a capacidade de demonstrar o TabControl da biblioteca DLH.Controls.Wpf, aproveitando os cenários observados no implementaÃ§Ã£o MAUI de referÃªncia. A implementação continua específica de WPF. Não se propõe transportar os problemas de layout do Android nem dividir o fundo e o cabeçalho do componente WPF: a superfície unificada existente deve ser preservada.
+Evoluir a robustez, a acessibilidade e a capacidade de demonstrar o TabControl da biblioteca DLH.Controls.Wpf, considerando cenários comuns em aplicações multiplataforma. A implementação continua específica de WPF. A superfície unificada existente deve ser preservada.
 
-O plano contempla cinco melhorias no componente e quatro cenários no visualizador. A aplicação aplicaÃ§Ã£o de demonstraÃ§Ã£o e a implementação MAUI estão fora do escopo de alterações.
+O plano contempla cinco melhorias no componente e quatro cenários no visualizador. Aplicações consumidoras e implementações para outras plataformas estão fora do escopo de alterações.
 
 Princípios:
 
@@ -283,8 +283,8 @@ Manter evidências separadas: testes automatizados, observações visuais, avali
 
 ## 11. Fora do escopo
 
-- Conexão com banco, licenciamento e serviço da aplicação aplicaÃ§Ã£o de demonstraÃ§Ã£o.
-- Alterações no implementaÃ§Ã£o MAUI de referÃªncia ou criação imediata de um pacote MAUI.
+- Conexão real com banco, licenciamento ou serviços externos.
+- Alterações em aplicações consumidoras ou criação imediata de um pacote MAUI.
 - Transferência de abas entre janelas, docking e fechamento assíncrono.
 - Expansão de frameworks suportados sem projeto de compatibilidade próprio.
 - Garantia de que todas as melhorias farão parte da versão 1.0.0.

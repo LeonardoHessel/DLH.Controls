@@ -95,6 +95,7 @@ public partial class DataGridView
         externalFilter = null;
         base.OnItemsSourceChanged(oldValue, newValue);
         ApplyFilters();
+        ApplyGrouping();
     }
 
     private bool ClearFilterCore(string key)

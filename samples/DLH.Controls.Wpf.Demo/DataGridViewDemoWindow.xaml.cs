@@ -50,6 +50,9 @@ public partial class DataGridViewDemoWindow : Window
         ShipmentsGrid.CanUserSortColumns = EnableSorting.IsChecked == true;
         ShipmentsGrid.AllowMultipleSelection = MultipleSelection.IsChecked == true;
         ShipmentsGrid.IsCellEditingEnabled = EnableEditing.IsChecked == true;
+        ShipmentsGrid.IsGroupingEnabled = GroupRows.IsChecked == true;
+        ShipmentsGrid.GroupMemberPath = nameof(ShipmentRow.Status);
+        ShipmentsGrid.ShowRowDetailsOnSelection = ShowDetails.IsChecked == true;
         ShipmentsGrid.IsMultiColumnSortEnabled = MultiColumnSort.IsChecked == true;
         ShipmentsGrid.CanUserReorderColumns = ReorderColumns.IsChecked == true;
         ShipmentsGrid.CanUserToggleColumnVisibility = ColumnMenu.IsChecked == true;

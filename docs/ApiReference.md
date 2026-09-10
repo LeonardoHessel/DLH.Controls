@@ -84,6 +84,8 @@ Mantidos os nomes CustomTabControl, CanCloseTabs (global) e CanCloseTab (individ
 
 `ExportCsv(TextWriter, options)` e `ExportCsv(Stream, options, encoding)` exportam a visualização corrente. `DataGridViewCsvOptions` oferece `Delimiter`, `IncludeHeaders`, `Culture` e `ValueSelector`.
 
+`IsGroupingEnabled` aplica um `PropertyGroupDescription` para `GroupMemberPath`. `ShowRowDetailsOnSelection` controla os detalhes na seleção e `SetRowDetailsVisibility(item, visible)` atua em uma linha materializada.
+
 ## Persistência do layout
 
 `DataGridView.ColumnKey` define uma chave estável por coluna. Na ausência dela, `SortMemberPath` é utilizado. Todas as colunas precisam de chaves não vazias e únicas para usar a persistência.

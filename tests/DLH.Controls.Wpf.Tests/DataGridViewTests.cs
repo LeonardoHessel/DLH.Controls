@@ -179,6 +179,22 @@ internal static class DataGridViewTests
                 grid.ClearFilters(); grid.ClearSorting(); quantity.Visibility = Visibility.Visible;
             });
 
+            Test("datagrid/grouping and expandable details", () =>
+            {
+                grid.GroupMemberPath = nameof(Row.Status);
+                grid.IsGroupingEnabled = true;
+                var view = CollectionViewSource.GetDefaultView(rows);
+                Check(view.GroupDescriptions.OfType<PropertyGroupDescription>().Any(group => group.PropertyName == nameof(Row.Status)),
+                    "Configured grouping was not applied");
+                grid.ShowRowDetailsOnSelection = true;
+                Check(grid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.VisibleWhenSelected,
+                    "Selection details mode was not applied");
+                grid.ShowRowDetailsOnSelection = false;
+                grid.IsGroupingEnabled = false;
+                Check(view.GroupDescriptions.Count == 0 && grid.RowDetailsVisibilityMode == DataGridRowDetailsVisibilityMode.Collapsed,
+                    "Grouping or details mode was not cleared");
+            });
+
             Test("datagrid/sort indicator customization", () =>
             {
                 grid.ShowSortIndicators = false;

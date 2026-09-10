@@ -72,6 +72,7 @@ No WPF, esses recursos serão expostos sobre o `DataGrid` nativo. Isso mantém c
 - Seleção múltipla opcional com comandos para ações em lote.
 - Edição opt-in com integração às regras de validação do WPF e retorno visual configurável.
 - Exportação CSV da visualização corrente, com escape de campos e personalização de valores.
+- Agrupamento opcional por propriedade e detalhes de linha por template.
 - Atualizações de `ObservableCollection` e virtualização com volume maior.
 - Estado vazio/carregando e retorno aos dados.
 - Teclado, nomes acessíveis, alto contraste e DPI.

@@ -345,7 +345,11 @@ Use `ExportCsv` para gravar apenas colunas visíveis, na ordem atual, e as linha
 
 O mesmo recurso permite apresentar ícones, botões, imagens, links ou editores próprios.
 
-### 4.10 Estados da coleção
+### 4.10 Agrupamento e detalhes
+
+Configure `GroupMemberPath` e `IsGroupingEnabled="True"` para agrupar a visualização. O cabeçalho de cada grupo continua personalizável pela coleção `GroupStyle` nativa. Defina um `RowDetailsTemplate` e ative `ShowRowDetailsOnSelection` para abrir detalhes com a seleção; `SetRowDetailsVisibility` permite controlar uma linha materializada por código.
+
+### 4.11 Estados da coleção
 
 ```xml
 <dlh:DataGridView EmptyMessage="Nenhum item encontrado."
@@ -356,7 +360,7 @@ O mesmo recurso permite apresentar ícones, botões, imagens, links ou editores 
 
 A prioridade é: erro, carregamento, coleção vazia e, por fim, dados.
 
-### 4.11 Densidade e rolagem
+### 4.12 Densidade e rolagem
 
 ```xml
 <dlh:DataGridView Density="Compact"

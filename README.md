@@ -515,6 +515,22 @@ using var file = File.Create("dados.csv");
 grid.ExportCsv(file, new DataGridViewCsvOptions { Delimiter = ";" });
 ```
 
+## Agrupamento e detalhes de linha
+
+Defina `GroupMemberPath` e ative `IsGroupingEnabled` para criar grupos sem substituir agrupamentos externos. `ShowRowDetailsOnSelection` apresenta o `RowDetailsTemplate` ao selecionar uma linha. Para controle direto sobre uma linha materializada, use `SetRowDetailsVisibility(item, visible)`.
+
+```xml
+<dlh:DataGridView IsGroupingEnabled="True"
+                  GroupMemberPath="Status"
+                  ShowRowDetailsOnSelection="True">
+    <dlh:DataGridView.RowDetailsTemplate>
+        <DataTemplate>
+            <TextBlock Text="{Binding Notes}" />
+        </DataTemplate>
+    </dlh:DataGridView.RowDetailsTemplate>
+</dlh:DataGridView>
+```
+
 ## Persistir o layout das colunas
 
 Defina uma chave estável com `SortMemberPath` ou com a propriedade anexada `ColumnKey`. O estado inclui ordem, largura, visibilidade e ordenação:

@@ -78,6 +78,8 @@ Mantidos os nomes CustomTabControl, CanCloseTabs (global) e CanCloseTab (individ
 
 # Referência da API — DataGridView
 
+`AllowMultipleSelection` alterna entre seleção simples e estendida. `GetBatchSelection()` retorna `DataGridViewBatchSelection`; `BatchSelectionChangedCommand` recebe mudanças e `BatchActionCommand` é executado por `ExecuteBatchAction()`.
+
 ## Persistência do layout
 
 `DataGridView.ColumnKey` define uma chave estável por coluna. Na ausência dela, `SortMemberPath` é utilizado. Todas as colunas precisam de chaves não vazias e únicas para usar a persistência.

@@ -46,6 +46,7 @@ public partial class DataGridViewDemoWindow : Window
     {
         if (ShipmentsGrid is null) return;
         ShipmentsGrid.CanUserSortColumns = EnableSorting.IsChecked == true;
+        ShipmentsGrid.AllowMultipleSelection = MultipleSelection.IsChecked == true;
         ShipmentsGrid.IsMultiColumnSortEnabled = MultiColumnSort.IsChecked == true;
         ShipmentsGrid.CanUserReorderColumns = ReorderColumns.IsChecked == true;
         ShipmentsGrid.CanUserToggleColumnVisibility = ColumnMenu.IsChecked == true;
@@ -98,6 +99,12 @@ public partial class DataGridViewDemoWindow : Window
     private void RemoveSelected_Click(object sender, RoutedEventArgs e)
     {
         if (ShipmentsGrid.SelectedItem is ShipmentRow row) Rows.Remove(row);
+    }
+
+    private void ProcessSelected_Click(object sender, RoutedEventArgs e)
+    {
+        var selection = ShipmentsGrid.GetBatchSelection();
+        StatusText.Text = $"Ação aplicada a {selection.Items.Count} registro(s).";
     }
 
     private void RestoreColumns_Click(object sender, RoutedEventArgs e)

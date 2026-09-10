@@ -232,6 +232,8 @@ O `DataGridView` mantém a infraestrutura do `DataGrid` nativo e acrescenta apar
 
 `SelectionBehavior` aceita:
 
+Defina `AllowMultipleSelection="True"` para selecionar várias linhas ou células com Ctrl/Shift. Use `GetBatchSelection()` para ler a seleção atual e `ExecuteBatchAction()` para encaminhá-la ao `BatchActionCommand`.
+
 | Valor | Comportamento |
 |---|---|
 | `None` | Não permite seleção pelo controle |

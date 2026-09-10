@@ -128,6 +128,23 @@ internal static class DataGridViewTests
                 Check(status.DisplayIndex == 0 && name.DisplayIndex == 1 && quantity.DisplayIndex == 2, "Native column reorder failed");
             });
 
+            Test("datagrid/multiple row selection and batch action", () =>
+            {
+                var changes = new List<DataGridViewBatchSelection>();
+                DataGridViewBatchSelection? action = null;
+                grid.BatchSelectionChangedCommand = new Command(value => changes.Add((DataGridViewBatchSelection)value!));
+                grid.BatchActionCommand = new Command(value => action = (DataGridViewBatchSelection)value!);
+                grid.SelectionBehavior = DataGridViewSelectionBehavior.Row;
+                grid.AllowMultipleSelection = true;
+                grid.SelectedItems.Add(rows[0]); grid.SelectedItems.Add(rows[1]); Pump();
+                Check(grid.SelectionMode == DataGridSelectionMode.Extended && grid.GetBatchSelection().Items.Count == 2,
+                    "Extended row selection did not retain both items");
+                Check(changes.Count > 0 && grid.ExecuteBatchAction() && action?.Items.Count == 2,
+                    "Batch commands did not receive the selection");
+                grid.UnselectAll(); grid.AllowMultipleSelection = false;
+                Check(grid.SelectionMode == DataGridSelectionMode.Single, "Single selection was not restored");
+            });
+
             Test("datagrid/sort indicator customization", () =>
             {
                 grid.ShowSortIndicators = false;

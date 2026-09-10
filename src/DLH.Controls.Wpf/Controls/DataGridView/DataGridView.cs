@@ -74,6 +74,7 @@ public partial class DataGridView : DataGrid
         SetCurrentValue(CanUserReorderColumnsProperty, true);
         Sorting += OnGridSorting;
         InitializeFiltering();
+        ApplySelectionMode();
         Loaded += (_, _) =>
         {
             if (!string.IsNullOrWhiteSpace(DefaultSortMemberPath) &&
@@ -426,13 +427,13 @@ public partial class DataGridView : DataGrid
     protected override void OnSelectionChanged(SelectionChangedEventArgs e)
     {
         base.OnSelectionChanged(e);
-        if (!applyingSelectionBehavior) NotifySelectionChanged();
+        if (!applyingSelectionBehavior) { NotifySelectionChanged(); NotifyBatchSelectionChanged(); }
     }
 
     protected override void OnSelectedCellsChanged(SelectedCellsChangedEventArgs e)
     {
         base.OnSelectedCellsChanged(e);
-        if (!applyingSelectionBehavior) NotifySelectionChanged();
+        if (!applyingSelectionBehavior) { NotifySelectionChanged(); NotifyBatchSelectionChanged(); }
     }
 
     private void NotifySelectionChanged()

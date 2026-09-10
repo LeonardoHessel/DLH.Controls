@@ -391,6 +391,8 @@ Para receber a seleção no ViewModel:
 
 O comando recebe `DataGridViewSelection`, contendo `Item` e `Column` de acordo com o modo selecionado.
 
+Para permitir seleção múltipla, defina `AllowMultipleSelection="True"`. `GetBatchSelection()` retorna uma fotografia dos itens e células selecionados; `BatchSelectionChangedCommand` acompanha as mudanças e `BatchActionCommand` pode ser acionado por `ExecuteBatchAction()`.
+
 ```csharp
 private void OnSelectionChanged(DataGridViewSelection selection)
 {

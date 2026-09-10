@@ -1,9 +1,15 @@
 # Preparação NuGet
 
-ID: `DLH.Controls.Wpf`. Versão publicada mais recente: `0.1.0-preview.3`. Alterações posteriores permanecem em desenvolvimento até a definição de uma nova versão.
+ID: `DLH.Controls.Wpf`. Versão atual: `0.2.0-preview.1`. Alterações posteriores permanecem em desenvolvimento até a definição de uma nova versão.
 A solução tem um único projeto empacotável; novos componentes entram no mesmo projeto em `Controls/NomeDoComponente`.
 
 O pacote inclui DLL, recursos WPF compilados , README e LICENSE.txt. Não inclui demonstração, ícones de exemplo ou testes.
+
+## Compatibilidade com Paket
+
+Paket utiliza o mesmo formato `.nupkg` e não exige um artefato ou metadado exclusivo. O README incluído no pacote documenta `paket add`, `paket.dependencies`, `paket.references` e `paket install`. A página do NuGet.org apresenta a opção Paket CLI automaticamente para pacotes NuGet compatíveis.
+
+A validação de empacotamento confirma que o README efetivamente incluído no `.nupkg` contém as instruções do Paket. Isso evita publicar uma versão cuja página não explique como adicionar a biblioteca por esse gerenciador.
 
 Autor: Leonardo D. de L. Hessel. Licença personalizada de atribuição visível, versão 1.0, incluída via PackageLicenseFile. O texto completo está em LICENSE.txt.
 

@@ -2,13 +2,16 @@
 
   <PropertyGroup>
     <PackageId>DLH.Controls.Wpf</PackageId>
-    <Version>0.1.0-preview.3</Version>
+    <Version>0.2.0-preview.1</Version>
     <Authors>Leonardo D. de L. Hessel</Authors>
-    <Description>DLH Controls: componentes WPF customizáveis. Inclui TabControl com superfície contínua, reordenação e configurações.</Description>
-    <PackageTags>WPF;Controls;TabControl;Windows</PackageTags>
+    <Description>Componentes WPF customizáveis, incluindo TabControl com superfície contínua e DataGridView com seleção, ordenação e colunas configuráveis.</Description>
+    <PackageTags>WPF;Controls;TabControl;DataGrid;DataGridView;Windows;Paket</PackageTags>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Copyright>Copyright © 2026 Leonardo D. de L. Hessel</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/LeonardoHessel/DLH.Controls</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/LeonardoHessel/DLH.Controls.git</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
     <IsPackable>true</IsPackable>
     <TargetFramework>net10.0-windows</TargetFramework>
     <Nullable>enable</Nullable>

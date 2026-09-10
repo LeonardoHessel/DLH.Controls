@@ -67,6 +67,19 @@ public partial class DataGridViewDemoWindow : Window
         if (ShipmentsGrid is not null) ShipmentsGrid.ScrollBarThickness = e.NewValue;
     }
 
+    private void FilterText_Changed(object sender, TextChangedEventArgs e)
+    {
+        if (ShipmentsGrid?.Columns.Count > 0)
+            ShipmentsGrid.SetFilter(ShipmentsGrid.Columns[0], FilterText.Text);
+    }
+
+    private void ClearFilter_Click(object sender, RoutedEventArgs e)
+    {
+        FilterText.Clear();
+        ShipmentsGrid.ClearFilters();
+        StatusText.Text = "Filtros removidos.";
+    }
+
     private void OnSelection(object? value)
     {
         if (value is not DataGridViewSelection selection) return;

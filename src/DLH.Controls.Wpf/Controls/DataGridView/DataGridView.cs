@@ -73,6 +73,7 @@ public partial class DataGridView : DataGrid
         SetCurrentValue(EnableColumnVirtualizationProperty, true);
         SetCurrentValue(CanUserReorderColumnsProperty, true);
         Sorting += OnGridSorting;
+        InitializeFiltering();
         Loaded += (_, _) =>
         {
             if (!string.IsNullOrWhiteSpace(DefaultSortMemberPath) &&
@@ -465,7 +466,7 @@ public partial class DataGridView : DataGrid
     {
         if (FindAncestor<DataGridColumnHeader>(e.OriginalSource as DependencyObject) is { } header)
         {
-            var menu = CreateColumnHeaderMenu();
+            var menu = CreateColumnHeaderMenu(header.Column);
             if (menu.Items.Count == 0)
             {
                 base.OnPreviewMouseRightButtonDown(e);
@@ -483,7 +484,7 @@ public partial class DataGridView : DataGrid
     internal ContextMenu CreateColumnVisibilityMenu()
         => CreateColumnHeaderMenu();
 
-    internal ContextMenu CreateColumnHeaderMenu()
+    internal ContextMenu CreateColumnHeaderMenu(DataGridColumn? contextColumn = null)
     {
         var menu = new ContextMenu();
         if (ShowClearSortMenuItem)
@@ -502,6 +503,24 @@ public partial class DataGridView : DataGrid
             };
             restoreDefault.Click += (_, _) => ApplyDefaultSort();
             menu.Items.Add(restoreDefault);
+        }
+
+        if (ShowFilterMenuItems && Filters.Count > 0)
+        {
+            if (menu.Items.Count > 0) menu.Items.Add(new Separator());
+            if (contextColumn is not null)
+            {
+                var clearColumnFilter = new MenuItem
+                {
+                    Header = "Limpar filtro desta coluna",
+                    IsEnabled = Filters.Any(filter => string.Equals(filter.ColumnKey, GetStableColumnKey(contextColumn), StringComparison.Ordinal))
+                };
+                clearColumnFilter.Click += (_, _) => ClearFilter(contextColumn);
+                menu.Items.Add(clearColumnFilter);
+            }
+            var clearFilters = new MenuItem { Header = "Limpar todos os filtros" };
+            clearFilters.Click += (_, _) => ClearFilters();
+            menu.Items.Add(clearFilters);
         }
 
         if (CanUserToggleColumnVisibility)

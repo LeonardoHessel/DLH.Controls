@@ -129,13 +129,19 @@ public partial class DataGridView
         var used = new HashSet<string>(StringComparer.Ordinal);
         foreach (var column in Columns)
         {
-            var key = GetColumnKey(column);
-            if (string.IsNullOrWhiteSpace(key)) key = column.SortMemberPath;
+            var key = GetStableColumnKey(column);
             if (string.IsNullOrWhiteSpace(key) || !used.Add(key))
                 throw new InvalidOperationException("Cada coluna deve ter uma chave estável, não vazia e única (ColumnKey ou SortMemberPath).");
             result.Add((key, column));
         }
         return result;
+    }
+
+    private static string GetStableColumnKey(DataGridColumn column)
+    {
+        var key = GetColumnKey(column);
+        if (string.IsNullOrWhiteSpace(key)) key = column.SortMemberPath;
+        return key ?? string.Empty;
     }
 
     private void ValidateState(DataGridViewState state, List<(string Key, DataGridColumn Column)> current)

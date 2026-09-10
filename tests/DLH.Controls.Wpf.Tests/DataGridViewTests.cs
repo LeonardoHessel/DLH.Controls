@@ -184,6 +184,35 @@ internal static class DataGridViewTests
                 grid.IsMultiColumnSortEnabled = false;
             });
 
+            Test("datagrid/column filters compose and preserve external filter", () =>
+            {
+                var view = CollectionViewSource.GetDefaultView(rows);
+                view.Filter = item => ((Row)item).Quantity >= 3;
+                Check(grid.SetFilter(status, "pendente", DataGridViewFilterOperator.Equals), "Status filter was rejected");
+                Check(view.Cast<Row>().Count() == 2, "Case-insensitive equality filter returned the wrong rows");
+                Check(grid.SetFilter(quantity, "15", DataGridViewFilterOperator.GreaterThan), "Numeric filter was rejected");
+                Check(view.Cast<Row>().SequenceEqual(new[] { rows[0] }), "Column filters were not combined");
+                Check(grid.ClearFilter(quantity) && view.Cast<Row>().Count() == 2, "Column filter was not cleared");
+                grid.ClearFilters();
+                Check(view.Cast<Row>().Count() == 3 && view.Filter is not null, "External filter was not restored");
+                view.Filter = null;
+            });
+
+            Test("datagrid/filter options and menu", () =>
+            {
+                DataGridView.SetCanUserFilter(quantity, false);
+                Check(!grid.SetFilter(quantity, "10"), "A disabled column accepted a filter");
+                DataGridView.SetCanUserFilter(quantity, true);
+                DataGridView.SetFilterMemberPath(status, nameof(Row.Status));
+                grid.SetFilter(status, "Pendente");
+                var method = typeof(DataGridView).GetMethod("CreateColumnHeaderMenu", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+                var menu = (ContextMenu)method.Invoke(grid, new object?[] { status })!;
+                Check(menu.Items.OfType<MenuItem>().Any(item => Equals(item.Header, "Limpar filtro desta coluna")) &&
+                      menu.Items.OfType<MenuItem>().Any(item => Equals(item.Header, "Limpar todos os filtros")),
+                    "Filter cleanup actions are missing");
+                grid.ClearFilters();
+            });
+
             Test("datagrid/column state roundtrip, JSON and new columns", () =>
             {
                 name.DisplayIndex = 0; quantity.DisplayIndex = 1; status.DisplayIndex = 2;
@@ -243,12 +272,12 @@ internal static class DataGridViewTests
                 var method = typeof(DataGridView).GetMethod("CreateColumnHeaderMenu", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
                 grid.ShowClearSortMenuItem = false;
                 grid.ShowRestoreDefaultSortMenuItem = true;
-                var menu = (ContextMenu)method.Invoke(grid, null)!;
+                var menu = (ContextMenu)method.Invoke(grid, new object?[] { null })!;
                 Check(menu.Items.OfType<MenuItem>().All(item => !Equals(item.Header, "Limpar ordenação")) &&
                       menu.Items.OfType<MenuItem>().Any(item => Equals(item.Header, "Restaurar ordenação padrão")),
                       "Clear action visibility was not respected");
                 grid.ShowRestoreDefaultSortMenuItem = false;
-                menu = (ContextMenu)method.Invoke(grid, null)!;
+                menu = (ContextMenu)method.Invoke(grid, new object?[] { null })!;
                 Check(menu.Items.OfType<MenuItem>().All(item => !Equals(item.Header, "Restaurar ordenação padrão")),
                       "Restore action visibility was not respected");
                 grid.ShowClearSortMenuItem = true;

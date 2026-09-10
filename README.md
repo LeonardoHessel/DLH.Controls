@@ -466,6 +466,17 @@ bool applied = grid.ApplyDefaultSort();
 
 Por código, use `ApplySort(column, direction, append)` e `RemoveSort(column)`. A ordem completa também é preservada por `CaptureState()`.
 
+## Filtros por coluna
+
+Use `SetFilter` para combinar filtros em diferentes colunas. O caminho padrão vem de `SortMemberPath` e pode ser substituído por `DataGridView.FilterMemberPath`.
+
+```csharp
+grid.SetFilter(grid.Columns[0], "EXP-2026", DataGridViewFilterOperator.StartsWith);
+grid.SetFilter(grid.Columns[3], "50", DataGridViewFilterOperator.GreaterThan);
+grid.ClearFilter(grid.Columns[3]);
+grid.ClearFilters();
+```
+
 ## Reordenar, redimensionar e ocultar colunas
 
 ```xml

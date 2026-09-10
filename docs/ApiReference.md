@@ -97,4 +97,8 @@ O formato atual usa `Version=1`. Estados com versão desconhecida, chaves duplic
 
 ## Ordenação múltipla
 
+## Filtros por coluna
+
+`Filters` expõe os filtros ativos. Use `SetFilter(column, value, operador)`, `ClearFilter(column)` e `ClearFilters()`. Os operadores disponíveis são `Contains`, `Equals`, `StartsWith`, `EndsWith`, `GreaterThan` e `LessThan`. `DataGridView.FilterMemberPath` escolhe a propriedade consultada e `DataGridView.CanUserFilter` desativa filtros em uma coluna. O filtro existente na `ICollectionView` é preservado e combinado com os filtros do controle.
+
 `IsMultiColumnSortEnabled` é `false` por padrão. Quando habilitada, clique simples substitui a ordenação, `Shift+clique` acrescenta um critério e `Ctrl+clique` remove o critério da coluna. `ApplySort(column, direction, append)` e `RemoveSort(column)` oferecem o mesmo controle por código. A propriedade anexada somente leitura `SortPriority` informa a posição, iniciando em 1 quando existem múltiplos critérios.

@@ -264,7 +264,20 @@ grid.ApplySort(dateColumn, ListSortDirection.Descending, append: true);
 grid.RemoveSort(nameColumn);
 ```
 
-### 4.4 Organização das colunas
+### 4.4 Filtros por coluna
+
+Os filtros são combinados com **E** e também respeitam um filtro que já exista na visualização WPF:
+
+```csharp
+grid.SetFilter(statusColumn, "Pendente", DataGridViewFilterOperator.Equals);
+grid.SetFilter(quantityColumn, "10", DataGridViewFilterOperator.GreaterThan);
+grid.ClearFilter(statusColumn);
+grid.ClearFilters();
+```
+
+Defina `dlh:DataGridView.FilterMemberPath="Customer.Name"` na coluna quando o valor filtrado não for o mesmo usado para ordenação. Use `dlh:DataGridView.CanUserFilter="False"` para impedir filtros naquela coluna. O menu do cabeçalho oferece ações para limpar o filtro da coluna e todos os filtros ativos.
+
+### 4.5 Organização das colunas
 
 ```xml
 <dlh:DataGridView CanUserReorderColumns="True"
@@ -274,7 +287,7 @@ grid.RemoveSort(nameColumn);
 
 O usuário pode arrastar cabeçalhos, redimensionar divisórias e usar o menu de contexto para mostrar ou ocultar colunas. O controle preserva pelo menos uma coluna visível.
 
-### 4.5 Persistência do layout
+### 4.6 Persistência do layout
 
 Cada coluna precisa de uma chave estável. `SortMemberPath` é usado automaticamente quando for único; para colunas sem ordenação ou com caminhos repetidos, defina `DataGridView.ColumnKey`:
 

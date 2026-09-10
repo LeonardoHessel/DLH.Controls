@@ -68,6 +68,7 @@ No WPF, esses recursos serão expostos sobre o `DataGrid` nativo. Isso mantém c
 - Padrões, propriedades inválidas e bindings.
 - Seleção por linha/célula e execução única do comando.
 - Ordenação e preservação da coleção de origem.
+- Filtros por coluna, combinação de critérios e preservação do filtro externo da visualização.
 - Atualizações de `ObservableCollection` e virtualização com volume maior.
 - Estado vazio/carregando e retorno aos dados.
 - Teclado, nomes acessíveis, alto contraste e DPI.

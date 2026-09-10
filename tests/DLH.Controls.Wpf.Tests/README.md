@@ -56,6 +56,17 @@ A suíte também cobre evento de reordenação (origem e índices), ausência de
 
 O modo `--drag-only` foi preservado por compatibilidade e agora inclui esses testes comportamentais relacionados às abas.
 
+## Execução padronizada
+
+O projeto `DLH.Controls.Wpf.AutomatedTests` apresenta as suítes ao Visual Studio, `dotnet test` e GitHub Actions. Cada suíte WPF roda em processo isolado, evitando que o estado global de `Application` passe de uma categoria para outra.
+
+```powershell
+dotnet test tests/DLH.Controls.Wpf.AutomatedTests -c Release
+dotnet test tests/DLH.Controls.Wpf.AutomatedTests -c Release --filter TestCategory=DataGridView
+```
+
+O executável deste diretório continua disponível para diagnóstico direto e para a migração gradual dos cenários antigos.
+
 ## Ampliação de cobertura
 25 cenários adicionais: 50 abas com reordenações repetidas e arraste/rolagem nas quatro posições; LayoutTransform de 125%, 150% e 200%; alteração de permissões/animação/prévia durante arraste; limites de reordenação por teclado e metadados de foco/fechamento; JSON inválido e referências removidas.
 

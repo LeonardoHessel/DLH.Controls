@@ -9,6 +9,8 @@
 - Edição opcional de células, comando de confirmação/cancelamento e destaque configurável de erros de validação.
 - Exportação CSV das linhas e colunas visíveis, respeitando filtros, ordenação e posição das colunas.
 - Agrupamento opcional por propriedade e detalhes de linha expansíveis ou exibidos na seleção.
+- Suítes WPF integradas ao `dotnet test`, com categorias, relatório TRX e isolamento por processo.
+- Validação do pacote em uma aplicação WPF temporária que instala somente o arquivo NuGet gerado.
 
 ## 0.2.0-preview.4 — 10 de setembro de 2026
 

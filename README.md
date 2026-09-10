@@ -691,7 +691,9 @@ Validação completa antes de publicar:
 ./eng/Validate.ps1
 ```
 
-A rotina compila a solução, executa as suítes WPF, gera o pacote e verifica DLL, README, licença e instruções do Paket. Somente a biblioteca é empacotada; demonstração e testes não entram no `.nupkg`.
+A rotina compila a solução, executa as suítes por `dotnet test`, salva um relatório TRX, gera o pacote e verifica DLL, README, licença e instruções do Paket. Em seguida, instala o `.nupkg` em uma aplicação WPF temporária, compila e executa os dois controles. Somente a biblioteca é empacotada; demonstração e testes não entram no `.nupkg`.
+
+Para executar somente uma família, use `--filter TestCategory=DataGridView` ou `--filter TestCategory=TabControl` no projeto `tests/DLH.Controls.Wpf.AutomatedTests`.
 
 A demonstração preserva preferências em `%LOCALAPPDATA%\CustomTabControl.Demo`.
 

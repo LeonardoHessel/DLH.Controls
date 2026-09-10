@@ -15,11 +15,8 @@ try {
     }
     Invoke-DotNet 'restore' @('restore','DLH.Controls.sln')
     Invoke-DotNet 'build' (@('build','DLH.Controls.sln','-c','Release','--no-restore') + $versionArgs)
-    $project = 'tests/DLH.Controls.Wpf.Tests'
-    $preview = Join-Path $repo 'artifacts/test-results/preview.png'
-    Invoke-DotNet 'integration' @('run','--project',$project,'-c','Release','--no-build','--',$preview)
-    Invoke-DotNet 'settings' @('run','--project',$project,'-c','Release','--no-build','--','--settings-only')
-    Invoke-DotNet 'configuration' @('run','--project',$project,'-c','Release','--no-build','--','--configuration-only')
+    $project = 'tests/DLH.Controls.Wpf.AutomatedTests'
+    Invoke-DotNet 'automated-tests' @('test',$project,'-c','Release','--no-build','--logger','trx;LogFileName=automated.trx','--results-directory','artifacts/test-results')
     Invoke-DotNet 'pack' (@('pack','src/DLH.Controls.Wpf','-c','Release','--no-build','--no-restore','-o','artifacts/packages') + $versionArgs)
     $packages = @(Get-ChildItem artifacts/packages -Filter '*.nupkg' | Sort-Object LastWriteTimeUtc -Descending | Select-Object -First 1)
     if ($packages.Count -eq 0) { throw 'No package generated.' }
@@ -48,4 +45,6 @@ try {
             }
         } finally { $zip.Dispose() }
     }
+    & pwsh -NoProfile -File "$PSScriptRoot/Test-PackageConsumer.ps1" -PackagePath $packages[0].FullName 2>&1 | Tee-Object -FilePath 'artifacts/test-results/package-consumer.log'
+    if ($LASTEXITCODE -ne 0) { throw 'Package consumer validation failed.' }
 } finally { Pop-Location }

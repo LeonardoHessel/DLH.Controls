@@ -20,7 +20,15 @@ A mudança de namespace/assembly de CustomTabControl.Controls para DLH.Controls.
 ## GitHub Actions
 O workflow `.github/workflows/ci.yml` executa em pushes para main, pull requests para main e por acionamento manual. Usa Windows e .NET 10, com permissão somente de leitura do repositório.
 
-`eng/Validate.ps1` compila, executa as três suítes de integração (executáveis WPF, não dotnet test), gera o pacote somente após sucesso e verifica DLL, README e licença. Logs e prévia ficam no artefato test-results; o nupkg fica no artefato DLH.Controls.Wpf. Retenção de 14 dias. Na aba Actions, abra uma execução aprovada e baixe o pacote em Artifacts.
+`eng/Validate.ps1` compila, executa as suítes pelo `dotnet test`, gera um relatório TRX, empacota somente após sucesso, verifica DLL, README e licença e instala o `.nupkg` em uma aplicação WPF temporária. Essa aplicação compila e executa usando apenas o pacote, cobrindo os recursos e APIs básicas dos dois controles. Logs e prévia ficam no artefato `test-results`; o nupkg fica no artefato `DLH.Controls.Wpf`.
+
+Os testes podem ser filtrados por categoria:
+
+```powershell
+dotnet test tests/DLH.Controls.Wpf.AutomatedTests --filter TestCategory=DataGridView
+dotnet test tests/DLH.Controls.Wpf.AutomatedTests --filter TestCategory=TabControl
+dotnet test tests/DLH.Controls.Wpf.AutomatedTests --logger trx
+```
 
 Não publica no NuGet, não exige chave NuGet e não cria releases. Pode ser executado localmente no Windows com `./eng/Validate.ps1`.
 

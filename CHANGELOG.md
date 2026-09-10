@@ -13,6 +13,7 @@
 - Validação do pacote em uma aplicação WPF temporária que instala somente o arquivo NuGet gerado.
 - Comparação visual automatizada com imagem de referência, tolerância a antialiasing e artefato de diferenças.
 - Primeiros testes STA independentes do `DataGridView`, executáveis individualmente pelo Visual Studio e `dotnet test`.
+- CI com compilação separada em Debug e Release e anexos das comparações visuais no relatório de testes.
 
 ## 0.2.0-preview.4 — 10 de setembro de 2026
 

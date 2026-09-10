@@ -80,6 +80,8 @@ public sealed class LegacySuiteTests
             difference[index + 3] = 255;
         }
         SavePixels(differencePath, actual.Width, actual.Height, difference);
+        TestContext.AddResultFile(actualPath);
+        TestContext.AddResultFile(differencePath);
         var pixels = actual.Width * actual.Height;
         var changedRatio = (double)changed / pixels;
         var meanDifference = (double)totalDifference / (pixels * 3);

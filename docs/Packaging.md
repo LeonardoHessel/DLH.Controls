@@ -32,6 +32,8 @@ dotnet test tests/DLH.Controls.Wpf.AutomatedTests --logger trx
 
 A categoria `Visual` compara a captura do `CustomTabControl` com a referência versionada. Diferenças pequenas de antialiasing são toleradas; mudanças superiores a 2% dos pixels ou diferença média superior a 3 falham. A execução conserva as imagens `actual` e `diff` no diretório de resultados.
 
+No GitHub Actions, a solução é compilada separadamente em Debug e Release. A validação completa e o empacotamento só começam depois das duas configurações serem aprovadas. As capturas visual atual e de diferenças são anexadas ao resultado do teste e incluídas nos artefatos do workflow.
+
 Não publica no NuGet, não exige chave NuGet e não cria releases. Pode ser executado localmente no Windows com `./eng/Validate.ps1`.
 
 Publicação automática por release: consulte [Publishing.md](Publishing.md). O CI de push/PR continua sem publicar; o workflow publish.yml utiliza Trusted Publishing após o cadastro da política no NuGet.

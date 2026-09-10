@@ -1,11 +1,13 @@
-# DLH Controls para WPF
+# DLH Controls
 
 [![NuGet](https://img.shields.io/nuget/vpre/DLH.Controls.Wpf?label=NuGet)](https://www.nuget.org/packages/DLH.Controls.Wpf)
 [![Downloads](https://img.shields.io/nuget/dt/DLH.Controls.Wpf?label=Downloads)](https://www.nuget.org/packages/DLH.Controls.Wpf)
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)
 ![Plataforma](https://img.shields.io/badge/plataforma-Windows-0078D4)
 
-**DLH.Controls.Wpf** é uma biblioteca de componentes visuais customizáveis para aplicações WPF. O pacote reúne controles com aparência moderna, suporte a MVVM, teclado, acessibilidade e propriedades WPF convencionais, sem exigir um framework visual adicional.
+**DLH Controls** é uma biblioteca de controles de interface reutilizáveis e personalizáveis para aplicações .NET. O projeto concentra componentes, comportamentos, temas, acessibilidade, documentação e exemplos em uma base preparada para crescer com novos controles e plataformas.
+
+O primeiro pacote disponível é o **DLH.Controls.Wpf**, destinado a aplicações WPF. Ele oferece aparência moderna, suporte a MVVM, teclado, acessibilidade e propriedades WPF convencionais, sem exigir um framework visual adicional.
 
 O pacote contém atualmente:
 

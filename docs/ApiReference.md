@@ -75,3 +75,22 @@ Chaves inválidas ou fontes incompatíveis geram InvalidOperationException; valo
 CustomTabItem é opcional: TabItem nativo também é aceito. TabControlState, TabControlConfiguration e os argumentos de eventos são públicos. TabCursors.ClosedHand e TabSpacingConverter também foram publicados: não serão removidos ou tornados internos nesta revisão. O primeiro é um cursor compartilhado, não deve ser descartado pelo consumidor; o segundo é infraestrutura do template, sem necessidade de uso direto na maioria das aplicações.
 
 Mantidos os nomes CustomTabControl, CanCloseTabs (global) e CanCloseTab (individual). Renomeá-los agora quebraria consumidores sem benefício suficiente. Nenhuma assinatura pública foi alterada nesta revisão.
+
+# Referência da API — DataGridView
+
+## Persistência do layout
+
+`DataGridView.ColumnKey` define uma chave estável por coluna. Na ausência dela, `SortMemberPath` é utilizado. Todas as colunas precisam de chaves não vazias e únicas para usar a persistência.
+
+| Tipo ou operação | Contrato |
+|---|---|
+| `DataGridViewState` | Formato versionado com colunas e ordenações |
+| `DataGridViewColumnState` | Chave, índice visual, largura, unidade e visibilidade |
+| `DataGridViewSortState` | Chave da coluna e direção da ordenação |
+| `CaptureState()` | Captura a configuração atual sem manter referências às colunas |
+| `RestoreState(state)` | Valida integralmente e restaura; colunas desconhecidas são ignoradas e novas são anexadas |
+| `SaveState(stream)` / `LoadState(stream)` | Serializa ou lê JSON sem fechar o stream do chamador |
+| `ResetState()` | Restaura o estado inicial capturado no carregamento e informa se estava disponível |
+| `StateRestored` | Emitido uma vez depois de uma restauração concluída |
+
+O formato atual usa `Version=1`. Estados com versão desconhecida, chaves duplicadas, índices repetidos, larguras inválidas, enumerações inválidas ou nenhuma coluna visível são rejeitados antes da aplicação.

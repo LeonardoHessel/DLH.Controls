@@ -10,6 +10,7 @@ public partial class DataGridViewDemoWindow : Window
 {
     private int nextRow = 19;
     private readonly List<ShipmentRow> emptyStateBackup = [];
+    private DataGridViewState? savedLayout;
 
     public ObservableCollection<ShipmentRow> Rows { get; } =
     [
@@ -88,6 +89,30 @@ public partial class DataGridViewDemoWindow : Window
     private void RestoreColumns_Click(object sender, RoutedEventArgs e)
     {
         foreach (var column in ShipmentsGrid.Columns) column.Visibility = Visibility.Visible;
+    }
+
+    private void SaveLayout_Click(object sender, RoutedEventArgs e)
+    {
+        savedLayout = ShipmentsGrid.CaptureState();
+        StatusText.Text = "Layout das colunas salvo na sessão.";
+    }
+
+    private void LoadLayout_Click(object sender, RoutedEventArgs e)
+    {
+        if (savedLayout is null)
+        {
+            StatusText.Text = "Salve um layout antes de restaurá-lo.";
+            return;
+        }
+        ShipmentsGrid.RestoreState(savedLayout);
+        StatusText.Text = "Layout salvo restaurado.";
+    }
+
+    private void ResetLayout_Click(object sender, RoutedEventArgs e)
+    {
+        StatusText.Text = ShipmentsGrid.ResetState()
+            ? "Layout inicial restaurado."
+            : "O layout inicial ainda não está disponível.";
     }
 
     private void ToggleLoading_Click(object sender, RoutedEventArgs e)

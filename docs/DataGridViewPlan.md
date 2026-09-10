@@ -78,3 +78,11 @@ No WPF, esses recursos serão expostos sobre o `DataGrid` nativo. Isso mantém c
 O componente não repetirá `PropertyName`, `ValueSelector` e `ValueFormatter` do MAUI na primeira versão. No WPF, `Binding`, `SortMemberPath`, conversores e `DataGridTemplateColumn` atendem esses casos de maneira nativa e com suporte das ferramentas XAML. Uma camada de colunas própria só será adicionada se surgir uma necessidade que os tipos nativos não resolvam.
 
 `EnableHorizontalScroll` e `EnableFixedHeader` também não serão duplicados. O WPF já expõe `HorizontalScrollBarVisibility`, `VerticalScrollBarVisibility`, `MaxHeight` e mantém o cabeçalho fora da rolagem vertical.
+
+## Evolução — persistência do layout
+
+- Estado versionado para ordem, largura, unidade, visibilidade e ordenação.
+- Chave estável por `DataGridView.ColumnKey`, com fallback para `SortMemberPath` único.
+- Captura, restauração, JSON e retorno ao estado inicial sem definir armazenamento na biblioteca.
+- Compatibilidade com colunas adicionadas ou removidas entre versões da aplicação.
+- Validação completa antes da alteração e tentativa de rollback se uma aplicação personalizada lançar uma exceção.

@@ -27,7 +27,7 @@ public enum DataGridViewDensity
 public sealed record DataGridViewSelection(object? Item, DataGridColumn? Column);
 
 [ContentProperty(nameof(Columns))]
-public class DataGridView : DataGrid
+public partial class DataGridView : DataGrid
 {
     private object? lastNotifiedItem;
     private DataGridColumn? lastNotifiedColumn;
@@ -76,6 +76,7 @@ public class DataGridView : DataGrid
         {
             if (!string.IsNullOrWhiteSpace(DefaultSortMemberPath) &&
                 Columns.All(column => column.SortDirection is null)) ApplyDefaultSort();
+            CaptureInitialState();
         };
         ApplySelectionBehavior();
     }

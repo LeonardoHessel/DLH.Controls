@@ -476,6 +476,29 @@ bool applied = grid.ApplyDefaultSort();
                     CanUserSort="False" />
 ```
 
+## Persistir o layout das colunas
+
+Defina uma chave estável com `SortMemberPath` ou com a propriedade anexada `ColumnKey`. O estado inclui ordem, largura, visibilidade e ordenação:
+
+```xml
+<DataGridTextColumn Header="Descrição"
+                    dlh:DataGridView.ColumnKey="description"
+                    Binding="{Binding Description}"
+                    SortMemberPath="Description" />
+```
+
+```csharp
+using (var output = File.Create("grid-layout.json"))
+    grid.SaveState(output);
+
+using (var input = File.OpenRead("grid-layout.json"))
+    grid.LoadState(input);
+
+grid.ResetState(); // retorna ao layout capturado quando o controle foi carregado
+```
+
+Colunas removidas são ignoradas e colunas novas são colocadas depois das conhecidas. Um estado inválido é rejeitado antes de modificar o controle.
+
 ## Células personalizadas
 
 Use `DataGridTemplateColumn` para status, ícones, botões ou qualquer conteúdo WPF:

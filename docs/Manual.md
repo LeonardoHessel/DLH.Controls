@@ -264,7 +264,33 @@ O menu do cabeçalho pode limpar a ordenação atual ou reaplicar a ordenação 
 
 O usuário pode arrastar cabeçalhos, redimensionar divisórias e usar o menu de contexto para mostrar ou ocultar colunas. O controle preserva pelo menos uma coluna visível.
 
-### 4.5 Células personalizadas
+### 4.5 Persistência do layout
+
+Cada coluna precisa de uma chave estável. `SortMemberPath` é usado automaticamente quando for único; para colunas sem ordenação ou com caminhos repetidos, defina `DataGridView.ColumnKey`:
+
+```xml
+<DataGridTemplateColumn Header="Ações"
+                        dlh:DataGridView.ColumnKey="actions">
+    <!-- template da aplicação -->
+</DataGridTemplateColumn>
+```
+
+```csharp
+DataGridViewState state = grid.CaptureState();
+grid.RestoreState(state);
+
+using (var output = File.Create("grid-layout.json"))
+    grid.SaveState(output);
+
+using (var input = File.OpenRead("grid-layout.json"))
+    grid.LoadState(input);
+
+grid.ResetState();
+```
+
+O formato versionado registra ordem, largura, unidade de largura, visibilidade e ordenação. A biblioteca não escolhe o caminho do arquivo. Colunas ausentes são ignoradas, colunas novas permanecem no final e dados inválidos não são aplicados parcialmente.
+
+### 4.6 Células personalizadas
 
 ```xml
 <DataGridTemplateColumn Header="Status" SortMemberPath="Status">
@@ -286,7 +312,7 @@ O usuário pode arrastar cabeçalhos, redimensionar divisórias e usar o menu de
 
 O mesmo recurso permite apresentar ícones, botões, imagens, links ou editores próprios.
 
-### 4.6 Estados da coleção
+### 4.7 Estados da coleção
 
 ```xml
 <dlh:DataGridView EmptyMessage="Nenhum item encontrado."
@@ -297,7 +323,7 @@ O mesmo recurso permite apresentar ícones, botões, imagens, links ou editores 
 
 A prioridade é: erro, carregamento, coleção vazia e, por fim, dados.
 
-### 4.7 Densidade e rolagem
+### 4.8 Densidade e rolagem
 
 ```xml
 <dlh:DataGridView Density="Compact"

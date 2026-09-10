@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
@@ -161,6 +162,60 @@ internal static class DataGridViewTests
                 Check(grid.Columns.All(column => column.SortDirection is null) &&
                       CollectionViewSource.GetDefaultView(rows).SortDescriptions.Count == 0,
                       "Sorting was not cleared");
+            });
+
+            Test("datagrid/column state roundtrip, JSON and new columns", () =>
+            {
+                name.DisplayIndex = 0; quantity.DisplayIndex = 1; status.DisplayIndex = 2;
+                name.Width = new DataGridLength(2, DataGridLengthUnitType.Star);
+                quantity.Width = new DataGridLength(96, DataGridLengthUnitType.Pixel);
+                quantity.Visibility = Visibility.Collapsed;
+                grid.DefaultSortMemberPath = nameof(Row.Quantity);
+                grid.DefaultSortDirection = ListSortDirection.Descending;
+                grid.ApplyDefaultSort();
+                var state = grid.CaptureState();
+                Check(state.Version == 1 && state.Columns.Count == 3 && state.Sorting.Count == 1,
+                    "Captured state is incomplete");
+
+                var extra = new DataGridTextColumn { Header = "Extra", SortMemberPath = "Extra", Width = new DataGridLength(40) };
+                grid.Columns.Add(extra);
+                status.DisplayIndex = 0;
+                name.Width = new DataGridLength(33);
+                quantity.Visibility = Visibility.Visible;
+                grid.ClearSorting();
+                var restored = 0;
+                grid.StateRestored += (_, e) => { restored++; Check(e.State.Version == 1, "Restored event state is invalid"); };
+                grid.RestoreState(state);
+                Check(name.DisplayIndex == 0 && quantity.DisplayIndex == 1 && status.DisplayIndex == 2 && extra.DisplayIndex == 3,
+                    "Column order or new-column placement was not restored");
+                Check(name.Width.UnitType == DataGridLengthUnitType.Star && name.Width.Value == 2 &&
+                      quantity.Width.UnitType == DataGridLengthUnitType.Pixel && quantity.Width.Value == 96,
+                    "Column widths were not restored");
+                Check(quantity.Visibility == Visibility.Collapsed && quantity.SortDirection == ListSortDirection.Descending,
+                    "Visibility or sorting was not restored");
+
+                using var stream = new MemoryStream();
+                grid.SaveState(stream);
+                stream.Position = 0;
+                name.Width = new DataGridLength(51);
+                grid.LoadState(stream);
+                Check(name.Width.UnitType == DataGridLengthUnitType.Star && restored == 2,
+                    "JSON state did not restore the layout or event");
+
+                var beforeInvalid = grid.CaptureState();
+                var invalid = grid.CaptureState();
+                invalid.Columns[1].DisplayIndex = invalid.Columns[0].DisplayIndex;
+                var rejected = false;
+                try { grid.RestoreState(invalid); } catch (ArgumentException) { rejected = true; }
+                Check(rejected && grid.CaptureState().Columns.Select(column => column.DisplayIndex)
+                        .SequenceEqual(beforeInvalid.Columns.Select(column => column.DisplayIndex)),
+                    "Invalid state was not rejected atomically");
+
+                grid.Columns.Remove(extra);
+                name.Width = DataGridLength.Auto;
+                quantity.Width = DataGridLength.Auto;
+                quantity.Visibility = Visibility.Visible;
+                grid.ClearSorting();
             });
 
             Test("datagrid/sort menu action visibility", () =>

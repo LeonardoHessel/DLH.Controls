@@ -46,6 +46,7 @@ public partial class DataGridViewDemoWindow : Window
     {
         if (ShipmentsGrid is null) return;
         ShipmentsGrid.CanUserSortColumns = EnableSorting.IsChecked == true;
+        ShipmentsGrid.IsMultiColumnSortEnabled = MultiColumnSort.IsChecked == true;
         ShipmentsGrid.CanUserReorderColumns = ReorderColumns.IsChecked == true;
         ShipmentsGrid.CanUserToggleColumnVisibility = ColumnMenu.IsChecked == true;
         ShipmentsGrid.ShowClearSortMenuItem = ShowClearSort.IsChecked == true;

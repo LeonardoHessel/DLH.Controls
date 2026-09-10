@@ -186,6 +186,7 @@ public partial class DataGridView
             view.SortDescriptions.Add(new SortDescription(column.SortMemberPath, sort.Direction));
             column.SortDirection = sort.Direction;
         }
+        UpdateSortPriorities();
     }
 
     private static DataGridViewState CloneState(DataGridViewState state) => new()

@@ -72,6 +72,7 @@ public partial class DataGridView : DataGrid
         SetCurrentValue(EnableRowVirtualizationProperty, true);
         SetCurrentValue(EnableColumnVirtualizationProperty, true);
         SetCurrentValue(CanUserReorderColumnsProperty, true);
+        Sorting += OnGridSorting;
         Loaded += (_, _) =>
         {
             if (!string.IsNullOrWhiteSpace(DefaultSortMemberPath) &&
@@ -333,6 +334,7 @@ public partial class DataGridView : DataGrid
         var view = CollectionViewSource.GetDefaultView(ItemsSource);
         if (view?.CanSort == true) view.SortDescriptions.Clear();
         foreach (var column in Columns) column.SortDirection = null;
+        UpdateSortPriorities();
     }
 
     public bool ApplyDefaultSort()
@@ -348,10 +350,7 @@ public partial class DataGridView : DataGrid
         var view = CollectionViewSource.GetDefaultView(ItemsSource);
         if (column is null || view?.CanSort != true) return false;
 
-        ClearSorting();
-        view.SortDescriptions.Add(new SortDescription(DefaultSortMemberPath, DefaultSortDirection));
-        column.SortDirection = DefaultSortDirection;
-        return true;
+        return ApplySort(column, DefaultSortDirection);
     }
 
     private static void OnDensityChanged(DependencyObject owner, DependencyPropertyChangedEventArgs args)

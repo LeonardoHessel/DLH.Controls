@@ -254,6 +254,16 @@ Defina `SelectionChangedCommand` para receber um `DataGridViewSelection` no View
 
 O menu do cabeçalho pode limpar a ordenação atual ou reaplicar a ordenação padrão. Por código, use `ClearSorting()` e `ApplyDefaultSort()`.
 
+#### Ordenação por múltiplas colunas
+
+Ative `IsMultiColumnSortEnabled`. Um clique inicia a ordenação, `Shift+clique` acrescenta critérios e `Ctrl+clique` remove o critério apontado. Quando existem dois ou mais critérios, o cabeçalho exibe números que indicam sua prioridade.
+
+```csharp
+grid.ApplySort(nameColumn, ListSortDirection.Ascending);
+grid.ApplySort(dateColumn, ListSortDirection.Descending, append: true);
+grid.RemoveSort(nameColumn);
+```
+
 ### 4.4 Organização das colunas
 
 ```xml

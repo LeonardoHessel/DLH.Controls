@@ -453,6 +453,19 @@ grid.ClearSorting();
 bool applied = grid.ApplyDefaultSort();
 ```
 
+## Ordenação por múltiplas colunas
+
+```xml
+<dlh:DataGridView IsMultiColumnSortEnabled="True" />
+```
+
+- Um clique inicia ou alterna a ordenação de uma coluna.
+- `Shift+clique` acrescenta a coluna como novo critério.
+- `Ctrl+clique` remove a coluna da ordenação.
+- O número ao lado da seta informa a prioridade de cada critério.
+
+Por código, use `ApplySort(column, direction, append)` e `RemoveSort(column)`. A ordem completa também é preservada por `CaptureState()`.
+
 ## Reordenar, redimensionar e ocultar colunas
 
 ```xml

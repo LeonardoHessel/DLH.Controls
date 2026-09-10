@@ -399,13 +399,19 @@
                                     <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
                                             Padding="{TemplateBinding Padding}">
                                         <DockPanel LastChildFill="True">
-                                            <Path x:Name="SortIndicator" DockPanel.Dock="Right" Margin="8,0,0,0"
-                                                  Width="{Binding SortIconSize, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
-                                                  Height="{Binding SortIconSize, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
-                                                  Data="{Binding UnsortedIcon, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
-                                                  Stroke="{Binding SortIconBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
-                                                  StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
-                                                  Stretch="Uniform" VerticalAlignment="Center" />
+                                            <StackPanel DockPanel.Dock="Right" Margin="8,0,0,0" Orientation="Horizontal" VerticalAlignment="Center">
+                                                <TextBlock x:Name="SortPriority" Margin="0,0,3,0" VerticalAlignment="Center"
+                                                           Foreground="{Binding ActiveSortIconBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                           FontSize="10" FontWeight="Bold"
+                                                           Text="{Binding Column.(local:DataGridView.SortPriority), RelativeSource={RelativeSource TemplatedParent}}" />
+                                                <Path x:Name="SortIndicator"
+                                                      Width="{Binding SortIconSize, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                      Height="{Binding SortIconSize, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                      Data="{Binding UnsortedIcon, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                      Stroke="{Binding SortIconBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                      StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                                      Stretch="Uniform" VerticalAlignment="Center" />
+                                            </StackPanel>
                                             <ContentPresenter RecognizesAccessKey="True" VerticalAlignment="Center"
                                                               HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
                                         </DockPanel>
@@ -426,6 +432,9 @@
                                     </DataTrigger>
                                     <DataTrigger Binding="{Binding CanUserSortColumns, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" Value="False">
                                         <Setter TargetName="SortIndicator" Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding Column.(local:DataGridView.SortPriority), RelativeSource={RelativeSource Self}}" Value="0">
+                                        <Setter TargetName="SortPriority" Property="Visibility" Value="Collapsed" />
                                     </DataTrigger>
                                     <Trigger Property="SortDirection" Value="Ascending">
                                         <Setter TargetName="SortIndicator" Property="Data" Value="{Binding AscendingSortIcon, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" />

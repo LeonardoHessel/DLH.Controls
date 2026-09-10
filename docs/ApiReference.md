@@ -94,3 +94,7 @@ Mantidos os nomes CustomTabControl, CanCloseTabs (global) e CanCloseTab (individ
 | `StateRestored` | Emitido uma vez depois de uma restauração concluída |
 
 O formato atual usa `Version=1`. Estados com versão desconhecida, chaves duplicadas, índices repetidos, larguras inválidas, enumerações inválidas ou nenhuma coluna visível são rejeitados antes da aplicação.
+
+## Ordenação múltipla
+
+`IsMultiColumnSortEnabled` é `false` por padrão. Quando habilitada, clique simples substitui a ordenação, `Shift+clique` acrescenta um critério e `Ctrl+clique` remove o critério da coluna. `ApplySort(column, direction, append)` e `RemoveSort(column)` oferecem o mesmo controle por código. A propriedade anexada somente leitura `SortPriority` informa a posição, iniciando em 1 quando existem múltiplos critérios.

@@ -164,6 +164,26 @@ internal static class DataGridViewTests
                       "Sorting was not cleared");
             });
 
+            Test("datagrid/multiple sorting and priority", () =>
+            {
+                grid.IsMultiColumnSortEnabled = true;
+                Check(grid.ApplySort(status, ListSortDirection.Ascending), "Primary sort was not applied");
+                Check(grid.ApplySort(quantity, ListSortDirection.Descending, append: true), "Secondary sort was not applied");
+                var descriptions = CollectionViewSource.GetDefaultView(rows).SortDescriptions;
+                Check(descriptions.Count == 2 && descriptions[0].PropertyName == nameof(Row.Status) &&
+                      descriptions[1].PropertyName == nameof(Row.Quantity), "Multiple sort order is wrong");
+                Check(DataGridView.GetSortPriority(status) == 1 && DataGridView.GetSortPriority(quantity) == 2,
+                    "Multiple sort priorities are wrong");
+                Check(grid.CaptureState().Sorting.Select(sort => sort.ColumnKey)
+                    .SequenceEqual(new[] { nameof(Row.Status), nameof(Row.Quantity) }),
+                    "Multiple sorting was not captured in state");
+                Check(grid.RemoveSort(status) && descriptions.Count == 1 &&
+                      DataGridView.GetSortPriority(status) == 0 && DataGridView.GetSortPriority(quantity) == 0,
+                    "Removing a sort did not update priorities");
+                grid.ClearSorting();
+                grid.IsMultiColumnSortEnabled = false;
+            });
+
             Test("datagrid/column state roundtrip, JSON and new columns", () =>
             {
                 name.DisplayIndex = 0; quantity.DisplayIndex = 1; status.DisplayIndex = 2;

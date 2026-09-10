@@ -86,3 +86,10 @@ O componente não repetirá `PropertyName`, `ValueSelector` e `ValueFormatter` d
 - Captura, restauração, JSON e retorno ao estado inicial sem definir armazenamento na biblioteca.
 - Compatibilidade com colunas adicionadas ou removidas entre versões da aplicação.
 - Validação completa antes da alteração e tentativa de rollback se uma aplicação personalizada lançar uma exceção.
+
+## Evolução — ordenação múltipla
+
+- Ativação opcional por `IsMultiColumnSortEnabled`, preservando o comportamento nativo como padrão.
+- Clique simples para substituir, `Shift+clique` para acrescentar e `Ctrl+clique` para remover critérios.
+- Métodos públicos para aplicação e remoção programática.
+- Indicador numérico de prioridade no cabeçalho e persistência da lista ordenada de critérios.

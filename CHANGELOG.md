@@ -2,6 +2,32 @@
 
 ## Não publicado
 
+Nenhuma alteração registrada.
+
+## 0.2.0-preview.3 — 10 de setembro de 2026
+
+- Novo manual de uso em português-BR, com instalação, exemplos, configuração, acessibilidade, desempenho e diagnóstico de problemas.
+- README reorganizado para apresentar a biblioteca DLH Controls e seus componentes antes da implementação WPF atual.
+- Exemplos de instalação atualizados para a versão mais recente.
+- Links e imagens da documentação revisados para exibição no GitHub e no NuGet.
+
+## 0.2.0-preview.2 — 10 de setembro de 2026
+
+- Adição do QR Code e da chave Pix ao README.
+- GitHub Sponsors oferecido como alternativa para contribuições internacionais.
+- Configuração do botão Sponsor por meio de `.github/FUNDING.yml`.
+- README publicado dentro do pacote NuGet.
+
+## 0.2.0-preview.1 — 10 de setembro de 2026
+
+- Novo `DataGridView` com seleção configurável, ordenação visual e colunas reordenáveis, redimensionáveis e ocultáveis.
+- Estados de carregamento, vazio e erro.
+- Barras de rolagem customizáveis, densidades e separadores.
+- Menu de cabeçalho para gerenciar colunas e ordenação.
+- Instruções de uso com Paket.
+
+## 0.1.0-preview.4 — 10 de setembro de 2026
+
 - Ação opcional `+` para solicitar novas abas por comando ou evento, sem criar um item artificial na coleção.
 - Edição opcional do título por `F2`, duplo clique e API, com confirmação, cancelamento, comandos e eventos de validação.
 - Configuração e visualizador atualizados para criação e renomeação nas quatro posições.

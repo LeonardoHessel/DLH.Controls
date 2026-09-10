@@ -41,20 +41,20 @@ O exemplo mostra ordenação com indicadores, status renderizado por template, m
 ### CLI do .NET
 
 ```powershell
-dotnet add package DLH.Controls.Wpf --version 0.1.0-preview.4
+dotnet add package DLH.Controls.Wpf --version 0.2.0-preview.3
 ```
 
 ### Package Manager do Visual Studio
 
 ```powershell
-Install-Package DLH.Controls.Wpf -Version 0.1.0-preview.4
+Install-Package DLH.Controls.Wpf -Version 0.2.0-preview.3
 ```
 
 ### PackageReference
 
 ```xml
 <ItemGroup>
-    <PackageReference Include="DLH.Controls.Wpf" Version="0.1.0-preview.4" />
+    <PackageReference Include="DLH.Controls.Wpf" Version="0.2.0-preview.3" />
 </ItemGroup>
 ```
 
@@ -63,14 +63,14 @@ Install-Package DLH.Controls.Wpf -Version 0.1.0-preview.4
 Informe o projeto que receberá a referência:
 
 ```powershell
-paket add DLH.Controls.Wpf --version 0.1.0-preview.4 --project caminho/SeuProjeto.csproj
+paket add DLH.Controls.Wpf --version 0.2.0-preview.3 --project caminho/SeuProjeto.csproj
 ```
 
 Ou declare o pacote no arquivo `paket.dependencies`:
 
 ```text
 source https://api.nuget.org/v3/index.json
-nuget DLH.Controls.Wpf 0.1.0-preview.4
+nuget DLH.Controls.Wpf 0.2.0-preview.3
 ```
 
 Adicione esta linha ao `paket.references` do projeto WPF:
@@ -619,6 +619,7 @@ A demonstração preserva preferências em `%LOCALAPPDATA%\CustomTabControl.Demo
 
 # Documentação adicional
 
+- [Manual de uso do DLH Controls](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/Manual.md)
 - [CustomTabControl detalhado](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/TabControl.md)
 - [Referência da API](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/ApiReference.md)
 - [Integração com dados, MVVM e temas](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/Integration.md)
@@ -666,7 +667,7 @@ O crédito pode aparecer em **Sobre**, **Créditos** ou **Licenças de terceiros
 # Pacote e autoria
 
 - Pacote: [DLH.Controls.Wpf no NuGet.org](https://www.nuget.org/packages/DLH.Controls.Wpf)
-- Versão publicada mais recente: `0.2.0-preview.2`
+- Versão publicada mais recente: `0.2.0-preview.3`
 - Autor: **Leonardo D. de L. Hessel**
 - Plataforma: Windows
 - Framework: .NET 10 / WPF

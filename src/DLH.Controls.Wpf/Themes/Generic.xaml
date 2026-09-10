@@ -15,8 +15,12 @@
     <SolidColorBrush x:Key="DataGridView.Text" Color="#F2F3F5" />
     <SolidColorBrush x:Key="DataGridView.Edge" Color="#4C5058" />
     <SolidColorBrush x:Key="DataGridView.Focus" Color="#9CC9FF" />
+    <SolidColorBrush x:Key="DataGridView.Muted" Color="#B7BBC4" />
+    <SolidColorBrush x:Key="DataGridView.Stripe" Color="#24373A40" />
+    <SolidColorBrush x:Key="DataGridView.Error" Color="#FF7777" />
     <local:TabCloseAutomationNameConverter x:Key="Tabs.CloseAutomationNameConverter" />
     <local:DataGridViewColumnSelectionConverter x:Key="DataGridView.ColumnSelectionConverter" />
+    <local:HalfValueToCornerRadiusConverter x:Key="DataGridView.HalfCornerRadiusConverter" />
     <Thickness x:Key="Tabs.HeaderPadding">22,13,22,13</Thickness>
 
     <Style x:Key="Tabs.ItemStyle" TargetType="{x:Type TabItem}">
@@ -225,7 +229,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type local:DataGridView}">
+    <Style TargetType="{x:Type local:DataGridView}" BasedOn="{StaticResource {x:Type DataGrid}}">
         <Setter Property="Background" Value="{DynamicResource DataGridView.Surface}" />
         <Setter Property="Foreground" Value="{DynamicResource DataGridView.Text}" />
         <Setter Property="BorderBrush" Value="{DynamicResource DataGridView.Edge}" />
@@ -237,9 +241,147 @@
         <Setter Property="AlternatingRowBackground" Value="Transparent" />
         <Setter Property="RowHeaderWidth" Value="0" />
         <Setter Property="SelectionMode" Value="Single" />
+        <Setter Property="AlternationCount" Value="2" />
+        <Setter Property="ClipToBounds" Value="True" />
         <Setter Property="ScrollViewer.CanContentScroll" Value="True" />
         <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Auto" />
         <Setter Property="ScrollViewer.VerticalScrollBarVisibility" Value="Auto" />
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:DataGridView}">
+                    <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                            SnapsToDevicePixels="True" ClipToBounds="True">
+                        <Grid x:Name="PART_ClipRoot">
+                            <ScrollViewer x:Name="DG_ScrollViewer" Focusable="False">
+                                <ScrollViewer.Template>
+                                    <ControlTemplate TargetType="ScrollViewer">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition Height="Auto" />
+                                                <RowDefinition Height="*" />
+                                                <RowDefinition Height="Auto" />
+                                            </Grid.RowDefinitions>
+                                            <Border Grid.Row="0" Grid.ColumnSpan="2"
+                                                    Background="{DynamicResource DataGridView.Header}"
+                                                    BorderBrush="{DynamicResource DataGridView.Edge}"
+                                                    BorderThickness="0,0,0,1" />
+                                            <DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter"
+                                                Grid.Row="0" Grid.ColumnSpan="2" />
+                                            <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
+                                                Grid.Row="1" Grid.Column="0"
+                                                CanContentScroll="{TemplateBinding CanContentScroll}" />
+                                            <ScrollBar x:Name="PART_VerticalScrollBar" Grid.Row="1" Grid.Column="1" Panel.ZIndex="5"
+                                                Margin="0,6,6,6"
+                                                MinWidth="0"
+                                                Orientation="Vertical" Maximum="{TemplateBinding ScrollableHeight}"
+                                                Visibility="{TemplateBinding ComputedVerticalScrollBarVisibility}"
+                                                Width="{Binding ScrollBarThickness, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                Background="{Binding ScrollBarTrackBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                ViewportSize="{TemplateBinding ViewportHeight}" Value="{Binding VerticalOffset, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}">
+                                                <ScrollBar.Template>
+                                                    <ControlTemplate TargetType="ScrollBar">
+                                                        <Border Background="{TemplateBinding Background}" Padding="2"
+                                                                CornerRadius="{Binding ActualWidth, RelativeSource={RelativeSource Self}, Converter={StaticResource DataGridView.HalfCornerRadiusConverter}}">
+                                                            <Track x:Name="PART_Track" IsDirectionReversed="True">
+                                                                <Track.DecreaseRepeatButton><RepeatButton Command="ScrollBar.PageUpCommand" Opacity="0" Focusable="False" /></Track.DecreaseRepeatButton>
+                                                                <Track.Thumb>
+                                                                    <Thumb>
+                                                                        <Thumb.Template>
+                                                                            <ControlTemplate TargetType="Thumb">
+                                                                                <Border x:Name="ThumbSurface" Opacity="0.72"
+                                                                                        CornerRadius="{Binding ActualWidth, RelativeSource={RelativeSource Self}, Converter={StaticResource DataGridView.HalfCornerRadiusConverter}}"
+                                                                                        Background="{Binding ScrollBarThumbBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" />
+                                                                                <ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="ThumbSurface" Property="Background" Value="{Binding ScrollBarThumbHoverBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" /><Setter TargetName="ThumbSurface" Property="Opacity" Value="1" /></Trigger></ControlTemplate.Triggers>
+                                                                            </ControlTemplate>
+                                                                        </Thumb.Template>
+                                                                    </Thumb>
+                                                                </Track.Thumb>
+                                                                <Track.IncreaseRepeatButton><RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="False" /></Track.IncreaseRepeatButton>
+                                                            </Track>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </ScrollBar.Template>
+                                            </ScrollBar>
+                                            <ScrollBar x:Name="PART_HorizontalScrollBar" Grid.Row="2" Grid.ColumnSpan="2" Panel.ZIndex="6"
+                                                Margin="6,0,6,6"
+                                                MinHeight="0"
+                                                Orientation="Horizontal" Maximum="{TemplateBinding ScrollableWidth}"
+                                                Visibility="{TemplateBinding ComputedHorizontalScrollBarVisibility}"
+                                                Height="{Binding ScrollBarThickness, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                Background="{Binding ScrollBarTrackBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                ViewportSize="{TemplateBinding ViewportWidth}" Value="{Binding HorizontalOffset, RelativeSource={RelativeSource TemplatedParent}, Mode=OneWay}">
+                                                <ScrollBar.Template>
+                                                    <ControlTemplate TargetType="ScrollBar">
+                                                        <Border Background="{TemplateBinding Background}" Padding="2"
+                                                                CornerRadius="{Binding ActualHeight, RelativeSource={RelativeSource Self}, Converter={StaticResource DataGridView.HalfCornerRadiusConverter}}">
+                                                            <Track x:Name="PART_Track">
+                                                                <Track.DecreaseRepeatButton><RepeatButton Command="ScrollBar.PageLeftCommand" Opacity="0" Focusable="False" /></Track.DecreaseRepeatButton>
+                                                                <Track.Thumb>
+                                                                    <Thumb>
+                                                                        <Thumb.Template>
+                                                                            <ControlTemplate TargetType="Thumb">
+                                                                                <Border x:Name="ThumbSurface" Opacity="0.72"
+                                                                                        CornerRadius="{Binding ActualHeight, RelativeSource={RelativeSource Self}, Converter={StaticResource DataGridView.HalfCornerRadiusConverter}}"
+                                                                                        Background="{Binding ScrollBarThumbBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" />
+                                                                                <ControlTemplate.Triggers><Trigger Property="IsMouseOver" Value="True"><Setter TargetName="ThumbSurface" Property="Background" Value="{Binding ScrollBarThumbHoverBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" /><Setter TargetName="ThumbSurface" Property="Opacity" Value="1" /></Trigger></ControlTemplate.Triggers>
+                                                                            </ControlTemplate>
+                                                                        </Thumb.Template>
+                                                                    </Thumb>
+                                                                </Track.Thumb>
+                                                                <Track.IncreaseRepeatButton><RepeatButton Command="ScrollBar.PageRightCommand" Opacity="0" Focusable="False" /></Track.IncreaseRepeatButton>
+                                                            </Track>
+                                                        </Border>
+                                                    </ControlTemplate>
+                                                </ScrollBar.Template>
+                                            </ScrollBar>
+                                        </Grid>
+                                    </ControlTemplate>
+                                </ScrollViewer.Template>
+                                <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                            </ScrollViewer>
+                            <Border x:Name="EmptyState" Margin="1,35,1,1" Padding="24" Background="{TemplateBinding Background}"
+                                    Visibility="Collapsed">
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource DataGridView.Muted}"
+                                           Text="{TemplateBinding EmptyMessage}" TextWrapping="Wrap" />
+                            </Border>
+                            <Border x:Name="LoadingState" Margin="1,35,1,1" Padding="24" Background="{TemplateBinding Background}"
+                                    Visibility="Collapsed">
+                                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <ProgressBar Width="120" Height="3" IsIndeterminate="True" />
+                                    <TextBlock Margin="0,12,0,0" Foreground="{DynamicResource DataGridView.Muted}"
+                                               Text="{TemplateBinding LoadingMessage}" />
+                                </StackPanel>
+                            </Border>
+                            <Border x:Name="ErrorState" Margin="1,35,1,1" Padding="24" Background="{TemplateBinding Background}">
+                                <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource DataGridView.Error}"
+                                           Text="{TemplateBinding ErrorMessage}" TextWrapping="Wrap" />
+                                <Border.Style>
+                                    <Style TargetType="Border">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <Trigger Property="Tag" Value="{x:Null}"><Setter Property="Visibility" Value="Collapsed" /></Trigger>
+                                            <Trigger Property="Tag" Value=""><Setter Property="Visibility" Value="Collapsed" /></Trigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Border.Style>
+                                <Border.Tag><Binding Path="ErrorMessage" RelativeSource="{RelativeSource TemplatedParent}" /></Border.Tag>
+                            </Border>
+                        </Grid>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="HasItems" Value="False"><Setter TargetName="EmptyState" Property="Visibility" Value="Visible" /></Trigger>
+                        <Trigger Property="IsLoading" Value="True"><Setter TargetName="EmptyState" Property="Visibility" Value="Collapsed" /><Setter TargetName="LoadingState" Property="Visibility" Value="Visible" /></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
         <Setter Property="ColumnHeaderStyle">
             <Setter.Value>
                 <Style TargetType="DataGridColumnHeader">
@@ -250,6 +392,56 @@
                     <Setter Property="Padding" Value="10,8" />
                     <Setter Property="FontWeight" Value="SemiBold" />
                     <Setter Property="HorizontalContentAlignment" Value="Stretch" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="DataGridColumnHeader">
+                                <Grid Background="{TemplateBinding Background}" SnapsToDevicePixels="True">
+                                    <Border BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}"
+                                            Padding="{TemplateBinding Padding}">
+                                        <DockPanel LastChildFill="True">
+                                            <Path x:Name="SortIndicator" DockPanel.Dock="Right" Margin="8,0,0,0"
+                                                  Width="{Binding SortIconSize, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                  Height="{Binding SortIconSize, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                  Data="{Binding UnsortedIcon, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                  Stroke="{Binding SortIconBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
+                                                  StrokeThickness="1.5" StrokeStartLineCap="Round" StrokeEndLineCap="Round"
+                                                  Stretch="Uniform" VerticalAlignment="Center" />
+                                            <ContentPresenter RecognizesAccessKey="True" VerticalAlignment="Center"
+                                                              HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" />
+                                        </DockPanel>
+                                    </Border>
+                                    <Thumb x:Name="PART_LeftHeaderGripper" Width="8" HorizontalAlignment="Left" Background="Transparent">
+                                        <Thumb.Template><ControlTemplate TargetType="Thumb"><Border Background="Transparent" /></ControlTemplate></Thumb.Template>
+                                    </Thumb>
+                                    <Thumb x:Name="PART_RightHeaderGripper" Width="8" HorizontalAlignment="Right" Background="Transparent">
+                                        <Thumb.Template><ControlTemplate TargetType="Thumb"><Border Background="Transparent" /></ControlTemplate></Thumb.Template>
+                                    </Thumb>
+                                </Grid>
+                                <ControlTemplate.Triggers>
+                                    <DataTrigger Binding="{Binding Column.CanUserSort, RelativeSource={RelativeSource Self}}" Value="False">
+                                        <Setter TargetName="SortIndicator" Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding ShowSortIndicators, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" Value="False">
+                                        <Setter TargetName="SortIndicator" Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding CanUserSortColumns, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" Value="False">
+                                        <Setter TargetName="SortIndicator" Property="Visibility" Value="Collapsed" />
+                                    </DataTrigger>
+                                    <Trigger Property="SortDirection" Value="Ascending">
+                                        <Setter TargetName="SortIndicator" Property="Data" Value="{Binding AscendingSortIcon, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" />
+                                        <Setter TargetName="SortIndicator" Property="Stroke" Value="{Binding ActiveSortIconBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" />
+                                    </Trigger>
+                                    <Trigger Property="SortDirection" Value="Descending">
+                                        <Setter TargetName="SortIndicator" Property="Data" Value="{Binding DescendingSortIcon, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" />
+                                        <Setter TargetName="SortIndicator" Property="Stroke" Value="{Binding ActiveSortIconBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" />
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="Foreground" Value="{DynamicResource DataGridView.Text}" />
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
                     <Style.Triggers>
                         <DataTrigger Value="True">
                             <DataTrigger.Binding>
@@ -272,6 +464,7 @@
                     <Setter Property="Background" Value="Transparent" />
                     <Setter Property="BorderThickness" Value="0" />
                     <Style.Triggers>
+                        <Trigger Property="AlternationIndex" Value="1"><Setter Property="Background" Value="{DynamicResource DataGridView.Stripe}" /></Trigger>
                         <Trigger Property="IsMouseOver" Value="True"><Setter Property="Background" Value="{DynamicResource DataGridView.Hover}" /></Trigger>
                         <Trigger Property="IsSelected" Value="True"><Setter Property="Background" Value="{DynamicResource DataGridView.Selection}" /></Trigger>
                     </Style.Triggers>

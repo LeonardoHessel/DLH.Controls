@@ -6,6 +6,12 @@ O controle analisado em `controle de tabela MAUI usado como referÃªncia` ofere
 
 No MAUI, cabeçalho e linhas são reconstruídos em code-behind porque o cenário Android evita `CollectionView` dentro de `ScrollView`. Essa estratégia não deve ser copiada no WPF: `System.Windows.Controls.DataGrid` já possui virtualização, colunas, ordenação, cabeçalho fixo, rolagem sincronizada, edição, teclado e automação. O novo controle será uma especialização do DataGrid nativo.
 
+## Referência web — aplicaÃ§Ã£o web de referÃªncia
+
+O componente Angular em `shared/components/data-table` fornece a casca visual arredondada, cabeçalho fixo, densidades compacta/padrão/confortável, linhas alternadas, hover e estilos de seleção. A camada `list-table` acrescenta colunas dirigidas por metadados, ordenação, alinhamento, seleção múltipla, templates de célula, ações, navegação por teclado e estados de vazio, carregamento e erro.
+
+No WPF, esses recursos serão expostos sobre o `DataGrid` nativo. Isso mantém colunas declarativas em XAML, `DataGridTemplateColumn`, ordenação, navegação por teclado, automação e virtualização. O projeto web foi usado somente como referência de comportamento e permaneceu sem alterações.
+
 ## Nome e pacote
 
 - Tipo público: `DLH.Controls.Wpf.DataGridView`.
@@ -21,6 +27,20 @@ No MAUI, cabeçalho e linhas são reconstruídos em code-behind porque o cenári
 - `SelectedItem` e `CurrentCell` continuam disponíveis para binding nativo.
 - Separadores e espaçamento de célula configuráveis.
 - Ordenação nativa, controlada por `CanUserSortColumns` e `SortMemberPath`.
+- `CanUserSortColumns="False"` desativa a ordenação de toda a tabela e oculta todos os seus indicadores.
+- `DefaultSortMemberPath` e `DefaultSortDirection` definem a ordenação inicial e permitem restaurá-la pelo menu do cabeçalho.
+- O menu do cabeçalho oferece `Limpar ordenação` e, quando configurada, `Restaurar ordenação padrão`.
+- `ShowClearSortMenuItem` e `ShowRestoreDefaultSortMenuItem` controlam independentemente a presença dessas ações no menu.
+- As barras de rolagem seguem o tema do controle; `ScrollBarThickness`, `ScrollBarTrackBrush`, `ScrollBarThumbBrush` e `ScrollBarThumbHoverBrush` permitem personalização.
+- As barras são sobrepostas ao corpo com margens internas e transparência, sem criar uma faixa separada nem um bloco quadrado entre os eixos.
+- O raio das extremidades é calculado pela dimensão real e nunca ultrapassa metade da largura vertical ou metade da altura horizontal.
+- Quando visível, a barra horizontal reserva sua própria faixa para que nenhuma linha fique encoberta.
+- O polegar usa o comprimento proporcional calculado pelo `Track`, mantendo as duas extremidades dentro da área disponível; o trilho visível comunica toda a área de rolagem.
+- O template remove os mínimos de aproximadamente 16 px impostos pelo tema nativo, permitindo que `ScrollBarThickness` seja respeitado até o limite validado pelo componente.
+- A barra vertical possui uma coluna interna reservada; cabeçalhos e células nunca ficam sob ela, enquanto a barra horizontal ocupa a largura total.
+- O fundo e o apresentador do cabeçalho atravessam também a área reservada, criando um acabamento contínuo até a borda direita; o espaço final acompanha a espessura efetiva da barra vertical.
+- Indicador neutro em toda coluna ordenável e indicadores destacados para ordem crescente ou decrescente.
+- `ShowSortIndicators`, `SortIconSize`, cores e geometrias permitem personalizar completamente os símbolos de ordenação.
 - Reordenação nativa, controlada por `CanUserReorderColumns` e ativada por padrão.
 - Menu no botão direito de qualquer cabeçalho para mostrar ou ocultar colunas, controlado por `CanUserToggleColumnVisibility`.
 - Virtualização de linhas e colunas mantida.
@@ -31,6 +51,9 @@ No MAUI, cabeçalho e linhas são reconstruídos em code-behind porque o cenári
 - `IsLoading`, `LoadingMessage` e `LoadingContentTemplate`.
 - Sobreposição de carregamento bloqueia interação com linhas antigas sem esconder cabeçalhos.
 - Estado vazio aparece somente quando não há itens e não há carregamento.
+- `ErrorMessage` substitui o corpo por uma mensagem de falha até ser limpo.
+- `Density` oferece `Compact`, `Default` e `Comfortable`.
+- `CornerRadius` controla o arredondamento da superfície completa.
 
 ## Etapa C — visualizador e cenários
 

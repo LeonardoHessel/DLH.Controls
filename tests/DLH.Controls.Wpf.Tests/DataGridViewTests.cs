@@ -1,8 +1,10 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Threading;
 using DLH.Controls.Wpf;
 
@@ -53,6 +55,49 @@ internal static class DataGridViewTests
                 Check(grid.CanUserReorderColumns && grid.CanUserToggleColumnVisibility && grid.ShowRowSeparators, "Column options use wrong defaults");
                 Check(grid.EnableRowVirtualization && grid.EnableColumnVirtualization && !grid.AutoGenerateColumns && grid.IsReadOnly, "Safe WPF defaults were not applied");
                 Check(grid.CellPadding == new Thickness(10, 7, 10, 7), "Cell padding default is wrong");
+                Check(grid.Density == DataGridViewDensity.Default && grid.CornerRadius == new CornerRadius(10), "Visual defaults are wrong");
+                Check(!grid.IsLoading && grid.LoadingMessage == "Carregando..." && grid.EmptyMessage == "Nenhum registro encontrado.", "State defaults are wrong");
+                Check(grid.ShowSortIndicators && grid.SortIconSize == 14 && grid.UnsortedIcon is not null &&
+                      grid.AscendingSortIcon is not null && grid.DescendingSortIcon is not null,
+                      "Sort indicator defaults are wrong");
+                Check(grid.ShowClearSortMenuItem && grid.ShowRestoreDefaultSortMenuItem,
+                      "Sort menu actions should be visible by default");
+                Check(grid.ScrollBarThickness == 10 && grid.ScrollBarTrackBrush is not null &&
+                      grid.ScrollBarThumbBrush is not null && grid.ScrollBarThumbHoverBrush is not null,
+                      "Scrollbar defaults are wrong");
+            });
+
+            Test("datagrid/density and data states", () =>
+            {
+                grid.Density = DataGridViewDensity.Compact;
+                Check(grid.CellPadding == new Thickness(12, 6, 12, 6), "Compact density was not applied");
+                grid.Density = DataGridViewDensity.Comfortable;
+                Check(grid.CellPadding == new Thickness(18, 12, 18, 12), "Comfortable density was not applied");
+                grid.IsLoading = true;
+                grid.ErrorMessage = "Falha de teste";
+                Check(grid.IsLoading && grid.ErrorMessage == "Falha de teste", "Data states were not retained");
+                grid.IsLoading = false;
+                grid.ErrorMessage = null;
+            });
+
+            Test("datagrid/rounded content clipping", () =>
+            {
+                grid.CornerRadius = new CornerRadius(16);
+                grid.ApplyTemplate();
+                grid.UpdateLayout();
+                var clipRoot = (FrameworkElement)grid.Template.FindName("PART_ClipRoot", grid)!;
+                Check(clipRoot.Clip is RectangleGeometry { RadiusX: 15, RadiusY: 15 },
+                    "Content does not use the configured rounded clipping");
+            });
+
+            Test("datagrid/scrollbar radius is half its cross axis", () =>
+            {
+                var converterType = typeof(DataGridView).Assembly.GetType("DLH.Controls.Wpf.HalfValueToCornerRadiusConverter")!;
+                var converter = (IValueConverter)Activator.CreateInstance(converterType, nonPublic: true)!;
+                Check((CornerRadius)converter.Convert(6d, typeof(CornerRadius), null!, System.Globalization.CultureInfo.InvariantCulture) == new CornerRadius(3),
+                    "Thin scrollbar radius exceeded half its dimension");
+                Check((CornerRadius)converter.Convert(20d, typeof(CornerRadius), null!, System.Globalization.CultureInfo.InvariantCulture) == new CornerRadius(10),
+                    "Thick scrollbar radius exceeded half its dimension");
             });
 
             Test("datagrid/row, column and cell selection command", () =>
@@ -68,7 +113,6 @@ internal static class DataGridViewTests
                 Check(notifications.Last() is { Item: null, Column: not null } selection && ReferenceEquals(selection.Column, quantity), "Column selection payload is wrong");
 
                 grid.SelectionBehavior = DataGridViewSelectionBehavior.Cell;
-                grid.SelectedItem = rows[1];
                 grid.CurrentCell = new DataGridCellInfo(rows[1], status);
                 grid.SelectedCells.Clear(); grid.SelectedCells.Add(grid.CurrentCell); Pump();
                 Check(notifications.Last() is { Item: not null, Column: not null } cell && ReferenceEquals(cell.Item, rows[1]) && ReferenceEquals(cell.Column, status), "Cell selection payload is wrong");
@@ -83,19 +127,73 @@ internal static class DataGridViewTests
                 Check(status.DisplayIndex == 0 && name.DisplayIndex == 1 && quantity.DisplayIndex == 2, "Native column reorder failed");
             });
 
+            Test("datagrid/sort indicator customization", () =>
+            {
+                grid.ShowSortIndicators = false;
+                grid.SortIconSize = 18;
+                var custom = Geometry.Parse("M 0,0 L 5,5");
+                grid.AscendingSortIcon = custom;
+                Check(!grid.ShowSortIndicators && grid.SortIconSize == 18 && ReferenceEquals(grid.AscendingSortIcon, custom),
+                    "Sort indicator customization was not retained");
+                var rejected = false;
+                try { grid.SortIconSize = 0; } catch (ArgumentException) { rejected = true; }
+                Check(rejected, "Invalid sort icon size was accepted");
+                grid.ShowSortIndicators = true;
+            });
+
+            Test("datagrid/global sorting switch", () =>
+            {
+                grid.CanUserSortColumns = false;
+                Check(!grid.CanUserSortColumns, "Global sorting was not disabled");
+                grid.CanUserSortColumns = true;
+                Check(grid.CanUserSortColumns, "Global sorting was not restored");
+            });
+
+            Test("datagrid/clear and restore default sorting", () =>
+            {
+                grid.DefaultSortMemberPath = nameof(Row.Quantity);
+                grid.DefaultSortDirection = ListSortDirection.Descending;
+                Check(grid.ApplyDefaultSort(), "Default sorting could not be applied");
+                Check(quantity.SortDirection == ListSortDirection.Descending &&
+                      CollectionViewSource.GetDefaultView(rows).SortDescriptions is [{ PropertyName: nameof(Row.Quantity), Direction: ListSortDirection.Descending }],
+                      "Default sorting used the wrong column or direction");
+                grid.ClearSorting();
+                Check(grid.Columns.All(column => column.SortDirection is null) &&
+                      CollectionViewSource.GetDefaultView(rows).SortDescriptions.Count == 0,
+                      "Sorting was not cleared");
+            });
+
+            Test("datagrid/sort menu action visibility", () =>
+            {
+                var method = typeof(DataGridView).GetMethod("CreateColumnHeaderMenu", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+                grid.ShowClearSortMenuItem = false;
+                grid.ShowRestoreDefaultSortMenuItem = true;
+                var menu = (ContextMenu)method.Invoke(grid, null)!;
+                Check(menu.Items.OfType<MenuItem>().All(item => !Equals(item.Header, "Limpar ordenação")) &&
+                      menu.Items.OfType<MenuItem>().Any(item => Equals(item.Header, "Restaurar ordenação padrão")),
+                      "Clear action visibility was not respected");
+                grid.ShowRestoreDefaultSortMenuItem = false;
+                menu = (ContextMenu)method.Invoke(grid, null)!;
+                Check(menu.Items.OfType<MenuItem>().All(item => !Equals(item.Header, "Restaurar ordenação padrão")),
+                      "Restore action visibility was not respected");
+                grid.ShowClearSortMenuItem = true;
+                grid.ShowRestoreDefaultSortMenuItem = true;
+            });
+
             Test("datagrid/column visibility menu and last visible guard", () =>
             {
                 var method = typeof(DataGridView).GetMethod("CreateColumnVisibilityMenu", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
                 var menu = (ContextMenu)method.Invoke(grid, null)!;
-                Check(menu.Items.Count == 3 && menu.Items.Cast<MenuItem>().All(item => item.IsCheckable && item.IsChecked), "Visibility menu does not represent columns");
-                var statusItem = menu.Items.Cast<MenuItem>().Single(item => ReferenceEquals(item.Tag, status));
+                var columnItems = menu.Items.OfType<MenuItem>().Where(item => item.Tag is DataGridColumn).ToList();
+                Check(columnItems.Count == 3 && columnItems.All(item => item.IsCheckable && item.IsChecked), "Visibility menu does not represent columns");
+                var statusItem = columnItems.Single(item => ReferenceEquals(item.Tag, status));
                 statusItem.IsChecked = false; statusItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
                 Check(status.Visibility == Visibility.Collapsed, "Menu did not hide column");
                 name.Visibility = Visibility.Collapsed;
                 menu = (ContextMenu)method.Invoke(grid, null)!;
-                var onlyVisible = menu.Items.Cast<MenuItem>().Single(item => ReferenceEquals(item.Tag, quantity));
+                var onlyVisible = menu.Items.OfType<MenuItem>().Single(item => ReferenceEquals(item.Tag, quantity));
                 Check(onlyVisible.IsChecked && !onlyVisible.IsEnabled, "Last visible column can be hidden");
-                var hidden = menu.Items.Cast<MenuItem>().Single(item => ReferenceEquals(item.Tag, status));
+                var hidden = menu.Items.OfType<MenuItem>().Single(item => ReferenceEquals(item.Tag, status));
                 Check(!hidden.IsChecked && hidden.IsEnabled, "Hidden column cannot be restored");
                 hidden.IsChecked = true; hidden.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
                 Check(status.Visibility == Visibility.Visible, "Menu did not restore column");
@@ -116,6 +214,9 @@ internal static class DataGridViewTests
                 var rejected = false;
                 try { grid.CellPadding = new Thickness(-1); } catch (ArgumentException) { rejected = true; }
                 Check(rejected, "Negative padding was accepted");
+                rejected = false;
+                try { grid.ScrollBarThickness = 0; } catch (ArgumentException) { rejected = true; }
+                Check(rejected, "Invalid scrollbar thickness was accepted");
             });
         }
         finally { window.Close(); Pump(); }

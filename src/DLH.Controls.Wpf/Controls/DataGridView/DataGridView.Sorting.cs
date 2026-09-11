@@ -24,6 +24,7 @@ public partial class DataGridView
 
     private void OnGridSorting(object sender, DataGridSortingEventArgs e)
     {
+        RefreshPinnedSortIndicatorsAfterSorting();
         if (!IsMultiColumnSortEnabled || !CanUserSortColumns || !e.Column.CanUserSort ||
             string.IsNullOrWhiteSpace(e.Column.SortMemberPath)) return;
 
@@ -38,6 +39,15 @@ public partial class DataGridView
             ? ListSortDirection.Descending
             : ListSortDirection.Ascending;
         ApplySort(e.Column, direction, Keyboard.Modifiers.HasFlag(ModifierKeys.Shift));
+    }
+
+    private void RefreshPinnedSortIndicatorsAfterSorting()
+    {
+        Dispatcher.BeginInvoke(() =>
+        {
+            pinningLayoutSignature = string.Empty;
+            QueuePinningVisualUpdate();
+        }, System.Windows.Threading.DispatcherPriority.ContextIdle);
     }
 
     public bool ApplySort(DataGridColumn column, ListSortDirection direction, bool append = false)

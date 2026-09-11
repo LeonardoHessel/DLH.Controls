@@ -212,6 +212,17 @@ public sealed class DataGridViewPinningTests
                 "O cabeçalho fixado deve preservar o indicador da ordenação existente.");
             Assert.AreEqual("Linha 9", firstOverlay.Items.Cast<Row>().First().Name,
                 "A representação fixada deve compartilhar a ordem já aplicada ao grid principal.");
+
+            typeof(DataGridView).GetMethod("OnGridSorting",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+                .Invoke(grid, [grid, new DataGridSortingEventArgs(columns[0])]);
+            columns[0].SortDirection = ListSortDirection.Ascending;
+            grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ContextIdle);
+            grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+            firstOverlay = layer.Children.Cast<DataGridView>()
+                .Single(overlay => Math.Abs(Canvas.GetLeft(overlay) - positions[0]) < 1d);
+            Assert.AreEqual(ListSortDirection.Ascending, firstOverlay.Columns[0].SortDirection,
+                "O indicador fixado deve ser atualizado depois do clique que altera a ordenação.");
         }
         finally { window.Close(); }
     }

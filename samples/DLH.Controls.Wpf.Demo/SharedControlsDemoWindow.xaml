@@ -83,7 +83,7 @@
                                     <GridLength x:Key="ContextMenu.IconColumnWidth">26</GridLength>
                                     <GridLength x:Key="ContextMenu.ArrowColumnWidth">24</GridLength>
                                     <GridLength x:Key="ContextMenu.IconAreaWidth">36</GridLength>
-                                    <GridLength x:Key="ContextMenu.ArrowAreaWidth">34</GridLength>
+                                    <sys:Double x:Key="ContextMenu.ArrowAreaWidth" xmlns:sys="clr-namespace:System;assembly=System.Runtime">34</sys:Double>
                                     <Thickness x:Key="ContextMenu.ItemVerticalMargin">0,7</Thickness>
                                     <Color x:Key="ContextMenu.ShadowColor">#494949</Color>
                                     <sys:Double x:Key="ContextMenu.ShadowOpacity" xmlns:sys="clr-namespace:System;assembly=System.Runtime">0.5</sys:Double>
@@ -171,7 +171,7 @@
                             <CheckBox x:Name="MenuChoiceWrap" Grid.Row="2" Grid.ColumnSpan="2" Content="Reiniciar ao chegar ao fim" IsChecked="True" Checked="OptionsChanged" Unchecked="OptionsChanged"/>
                             <TextBlock Grid.Row="3" Text="Largura da seta"/><Slider x:Name="MenuChoiceArrowWidth" Grid.Row="3" Grid.Column="1" Minimum="12" Maximum="60" Value="24" ValueChanged="OptionsChanged"/>
                             <TextBlock Grid.Row="4" Text="Tema selecionado"/><Slider x:Name="MenuChoiceIndex" Grid.Row="4" Grid.Column="1" Minimum="0" Maximum="2" TickFrequency="1" IsSnapToTickEnabled="True" Value="0" ValueChanged="OptionsChanged"/>
-                            <TextBlock Grid.Row="5" Text="Direção do menu"/><ComboBox x:Name="MenuFlowDirection" Grid.Row="5" Grid.Column="1" Margin="6,3" Padding="6" SelectedIndex="0" SelectionChanged="OptionsChanged"><ComboBoxItem Content="Esquerda → direita"/><ComboBoxItem Content="Direita → esquerda"/></ComboBox>
+                            <TextBlock Grid.Row="5" Text="Lado do submenu"/><ComboBox x:Name="MenuSubmenuDirection" Grid.Row="5" Grid.Column="1" Margin="6,3" Padding="6" SelectedIndex="0" SelectionChanged="OptionsChanged"><ComboBoxItem Content="Direita"/><ComboBoxItem Content="Esquerda"/></ComboBox>
                         </Grid>
                     </GroupBox>
 

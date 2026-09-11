@@ -16,8 +16,10 @@ type DLH.Controls.Wpf.ChoiceMenuItem
   field System.Windows.DependencyProperty SelectedItemProperty
   field System.Windows.DependencyProperty SelectedValuePathProperty
   field System.Windows.DependencyProperty SelectedValueProperty
+  field System.Windows.DependencyProperty SubmenuPlacementDirectionProperty
   method System.Void CycleSelection()
   property DLH.Controls.Wpf.ChoiceCycleDirection CycleDirection { get; set;  }
+  property DLH.Controls.Wpf.SubmenuPlacementDirection SubmenuPlacementDirection { get; set;  }
   property System.Boolean IsCycleWrappingEnabled { get; set;  }
   property System.Double DropDownButtonWidth { get; set;  }
   property System.Int32 SelectedIndex { get; set;  }
@@ -53,10 +55,12 @@ type DLH.Controls.Wpf.ContextMenu
   field System.Windows.DependencyProperty ShadowColorProperty
   field System.Windows.DependencyProperty ShadowDepthProperty
   field System.Windows.DependencyProperty ShadowOpacityProperty
+  field System.Windows.DependencyProperty SubmenuPlacementDirectionProperty
   method System.Void ActivatePath(System.Windows.Controls.MenuItem)
   method System.Void CollapseAfter(System.Windows.Controls.MenuItem)
   method System.Void CollapseAll()
   method System.Void OnApplyTemplate()
+  property DLH.Controls.Wpf.SubmenuPlacementDirection SubmenuPlacementDirection { get; set;  }
   property System.Boolean IsShadowEnabled { get; set;  }
   property System.Double ArrowColumnWidth { get; set;  }
   property System.Double DisabledOpacity { get; set;  }
@@ -268,9 +272,12 @@ type DLH.Controls.Wpf.MenuInteraction
   method System.Void CollapseAll(System.Windows.DependencyObject)
   method System.Void SetIsScopeRoot(System.Windows.DependencyObject, System.Boolean)
 type DLH.Controls.Wpf.MenuItemAssist
+  field System.Windows.DependencyProperty SubmenuPlacementDirectionProperty
   field System.Windows.DependencyProperty ValueProperty
   field System.Windows.DependencyProperty ValueTemplateProperty
+  method DLH.Controls.Wpf.SubmenuPlacementDirection GetSubmenuPlacementDirection(System.Windows.DependencyObject)
   method System.Object GetValue(System.Windows.DependencyObject)
+  method System.Void SetSubmenuPlacementDirection(System.Windows.DependencyObject, DLH.Controls.Wpf.SubmenuPlacementDirection)
   method System.Void SetValue(System.Windows.DependencyObject, System.Object)
   method System.Void SetValueTemplate(System.Windows.DependencyObject, System.Windows.DataTemplate)
   method System.Windows.DataTemplate GetValueTemplate(System.Windows.DependencyObject)
@@ -304,6 +311,10 @@ type DLH.Controls.Wpf.ScrollBar
   property System.Windows.Media.Brush TrackBrush { get; set;  }
   property System.Windows.Media.Color ShadowColor { get; set;  }
   property System.Windows.Thickness TrackPadding { get; set;  }
+type DLH.Controls.Wpf.SubmenuPlacementDirection
+  field DLH.Controls.Wpf.SubmenuPlacementDirection Left
+  field DLH.Controls.Wpf.SubmenuPlacementDirection Right
+  field System.Int32 value__
 type DLH.Controls.Wpf.TabClosedEventArgs
   ctor(System.Object)
   property System.Object Item { get;  }

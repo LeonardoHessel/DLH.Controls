@@ -30,7 +30,7 @@
     <GridLength x:Key="ContextMenu.IconColumnWidth">26</GridLength>
     <GridLength x:Key="ContextMenu.ArrowColumnWidth">24</GridLength>
     <GridLength x:Key="ContextMenu.IconAreaWidth">36</GridLength>
-    <GridLength x:Key="ContextMenu.ArrowAreaWidth">34</GridLength>
+    <sys:Double x:Key="ContextMenu.ArrowAreaWidth">34</sys:Double>
     <Thickness x:Key="ContextMenu.ItemVerticalMargin">0,7</Thickness>
     <Color x:Key="ContextMenu.ShadowColor">#494949</Color>
     <sys:Double x:Key="ContextMenu.ShadowOpacity">0.5</sys:Double>
@@ -76,13 +76,19 @@
                 <ControlTemplate TargetType="{x:Type MenuItem}">
                     <Grid>
                         <Border x:Name="ItemSurface" Background="{TemplateBinding Background}" CornerRadius="4"/>
-                        <Grid x:Name="ItemLayout" Margin="{DynamicResource ContextMenu.ItemVerticalMargin}">
+                        <DockPanel x:Name="ItemLayout" LastChildFill="True" Margin="{DynamicResource ContextMenu.ItemVerticalMargin}">
+                            <Grid x:Name="DropDownHost" DockPanel.Dock="Right" Width="{DynamicResource ContextMenu.ArrowAreaWidth}" Background="Transparent">
+                                <TextBlock x:Name="SubmenuArrow" Text="›" FontSize="16"
+                                           FlowDirection="LeftToRight" TextAlignment="Center"
+                                           HorizontalAlignment="Center" VerticalAlignment="Center"
+                                           Visibility="Collapsed"/>
+                            </Grid>
+                            <Grid x:Name="ContentLayout">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="{DynamicResource ContextMenu.IconAreaWidth}"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="ContextMenuValue"/>
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="ContextMenuGesture"/>
-                                <ColumnDefinition Width="{DynamicResource ContextMenu.ArrowAreaWidth}"/>
                             </Grid.ColumnDefinitions>
                             <Grid x:Name="IconHost" Grid.Column="0" FlowDirection="LeftToRight"
                                   UseLayoutRounding="True" SnapsToDevicePixels="True"
@@ -118,13 +124,8 @@
                             <TextBlock x:Name="GesturePresenter" Grid.Column="3" Margin="14,0,4,0" Text="{TemplateBinding InputGestureText}"
                                        FlowDirection="LeftToRight"
                                        Opacity=".65" HorizontalAlignment="Right" VerticalAlignment="Center"/>
-                            <Grid x:Name="DropDownHost" Grid.Column="4" Background="Transparent">
-                                <TextBlock x:Name="SubmenuArrow" Text="›" FontSize="16"
-                                           FlowDirection="LeftToRight" TextAlignment="Center"
-                                           HorizontalAlignment="Center" VerticalAlignment="Center"
-                                           Visibility="Collapsed"/>
                             </Grid>
-                        </Grid>
+                        </DockPanel>
                         <Popup x:Name="PART_Popup" AllowsTransparency="True" Focusable="False"
                                IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                Placement="Right" HorizontalOffset="-3">
@@ -160,11 +161,12 @@
                         <Trigger Property="HasItems" Value="True"><Setter TargetName="SubmenuArrow" Property="Visibility" Value="Visible"/></Trigger>
                         <Trigger Property="InputGestureText" Value=""><Setter TargetName="GesturePresenter" Property="Visibility" Value="Collapsed"/></Trigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=(local:MenuItemAssist.Value)}" Value="{x:Null}"><Setter TargetName="ValuePresenter" Property="Visibility" Value="Collapsed"/></DataTrigger>
-                        <Trigger Property="FlowDirection" Value="RightToLeft">
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=(local:MenuItemAssist.SubmenuPlacementDirection)}" Value="Left">
                             <Setter TargetName="SubmenuArrow" Property="Text" Value="‹"/>
+                            <Setter TargetName="DropDownHost" Property="DockPanel.Dock" Value="Left"/>
                             <Setter TargetName="PART_Popup" Property="Placement" Value="Left"/>
                             <Setter TargetName="PART_Popup" Property="HorizontalOffset" Value="3"/>
-                        </Trigger>
+                        </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

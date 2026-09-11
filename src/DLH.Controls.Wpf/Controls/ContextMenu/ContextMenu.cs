@@ -33,6 +33,16 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
 
     public void CollapseAll() => MenuInteraction.CollapseAll(this);
 
+    public static readonly DependencyProperty SubmenuPlacementDirectionProperty =
+        MenuItemAssist.SubmenuPlacementDirectionProperty.AddOwner(typeof(ContextMenu),
+            new FrameworkPropertyMetadata(SubmenuPlacementDirection.Right, FrameworkPropertyMetadataOptions.Inherits));
+
+    public SubmenuPlacementDirection SubmenuPlacementDirection
+    {
+        get => (SubmenuPlacementDirection)GetValue(SubmenuPlacementDirectionProperty);
+        set => SetValue(SubmenuPlacementDirectionProperty, value);
+    }
+
     protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
     {
         RememberConsumerStyle(element);
@@ -75,7 +85,7 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
             menuItem.Resources["ContextMenu.IconColumnWidth"] = new GridLength(IconColumnWidth);
             var arrowWidth = menuItem is ChoiceMenuItem choice ? choice.DropDownButtonWidth : ArrowColumnWidth;
             menuItem.Resources["ContextMenu.IconAreaWidth"] = new GridLength(IconColumnWidth + ItemPadding.Left);
-            menuItem.Resources["ContextMenu.ArrowAreaWidth"] = new GridLength(arrowWidth + ItemPadding.Right);
+            menuItem.Resources["ContextMenu.ArrowAreaWidth"] = arrowWidth + ItemPadding.Right;
             menuItem.Resources["ContextMenu.ItemVerticalMargin"] = new Thickness(0, ItemPadding.Top, 0, ItemPadding.Bottom);
             menuItem.Resources["ContextMenu.CornerRadius"] = CornerRadius;
             menuItem.Resources["ContextMenu.Padding"] = Padding;
@@ -128,7 +138,8 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
         property == ItemPaddingProperty || property == IconSizeProperty || property == IconColumnWidthProperty || property == ArrowColumnWidthProperty ||
         property == HoverBrushProperty || property == CheckedBrushProperty || property == SeparatorBrushProperty ||
         property == DisabledOpacityProperty || property == IsShadowEnabledProperty || property == ShadowColorProperty ||
-        property == ShadowOpacityProperty || property == ShadowBlurRadiusProperty || property == ShadowDepthProperty;
+        property == ShadowOpacityProperty || property == ShadowBlurRadiusProperty || property == ShadowDepthProperty ||
+        property == SubmenuPlacementDirectionProperty;
 
     public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
         nameof(CornerRadius), typeof(CornerRadius), typeof(ContextMenu),

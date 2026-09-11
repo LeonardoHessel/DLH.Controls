@@ -413,7 +413,7 @@ O `DataGridView` usa os dois componentes internamente. Eles também estão dispo
 
 Os itens são organizados em cinco colunas: ícone, título, valor, atalho e seta. `MenuItemAssist.Value` permite preencher a coluna de valor de qualquer item, enquanto `MenuItemAssist.ValueTemplate` permite personalizar sua apresentação. Submenus usam a mesma estrutura.
 
-`FlowDirection="RightToLeft"` espelha a estrutura, posiciona a seta na coluna mais à esquerda e faz o submenu abrir para a esquerda. `LeftToRight` mantém o comportamento padrão.
+`SubmenuPlacementDirection="Left"` move somente a coluna da seta para o início e faz o submenu abrir para a esquerda. As colunas de ícone, título, valor e atalho não mudam de ordem. O valor padrão é `Right`.
 
 Cada menu possui um caminho ativo. Clicar em outro ramo fecha os submenus que não pertencem ao novo caminho. Um componente externo pode chamar `ContextMenu.ActivatePath(item)`, `CollapseAfter(item)` ou `CollapseAll()`. Em menus fixos, marque a raiz com `MenuInteraction.IsScopeRoot="True"` e chame os métodos equivalentes de `MenuInteraction`, informando a raiz. Isso permite que um clique externo feche toda a árvore sem interferir em outros menus da janela.
 

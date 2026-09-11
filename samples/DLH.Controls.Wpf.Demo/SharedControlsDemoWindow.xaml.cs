@@ -53,7 +53,7 @@ public partial class SharedControlsDemoWindow : Window
         MenuHover.Text = "#454850"; MenuChecked.Text = "#9CC9FF"; MenuSeparator.Text = "#4C5058"; MenuShadowColor.Text = "#494949";
         MenuShadow.IsChecked = true; MenuShadowOpacity.Value = .5; MenuShadowBlur.Value = 10; MenuShadowDepth.Value = 0;
         MenuDetailsValue.IsChecked = true; MenuChoiceDirection.SelectedIndex = 0; MenuChoiceWrap.IsChecked = true;
-        MenuChoiceArrowWidth.Value = 24; MenuChoiceIndex.Value = 0; MenuFlowDirection.SelectedIndex = 0;
+        MenuChoiceArrowWidth.Value = 24; MenuChoiceIndex.Value = 0; MenuSubmenuDirection.SelectedIndex = 0;
         ApplyOptions(includeTextFields: true);
     }
 
@@ -82,7 +82,9 @@ public partial class SharedControlsDemoWindow : Window
             DemoMenu.ShadowOpacity = MenuShadowOpacity.Value;
             DemoMenu.ShadowBlurRadius = MenuShadowBlur.Value;
             DemoMenu.ShadowDepth = MenuShadowDepth.Value;
-            DemoMenu.FlowDirection = MenuFlowDirection.SelectedIndex == 1 ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
+            DemoMenu.SubmenuPlacementDirection = MenuSubmenuDirection.SelectedIndex == 1
+                ? SubmenuPlacementDirection.Left
+                : SubmenuPlacementDirection.Right;
             DetailsToggleItem.IsChecked = MenuDetailsValue.IsChecked == true;
             ThemeChoiceItem.CycleDirection = MenuChoiceDirection.SelectedIndex == 1 ? ChoiceCycleDirection.Backward : ChoiceCycleDirection.Forward;
             ThemeChoiceItem.IsCycleWrappingEnabled = MenuChoiceWrap.IsChecked == true;
@@ -93,7 +95,7 @@ public partial class SharedControlsDemoWindow : Window
             PersistentThemeChoiceItem.IsCycleWrappingEnabled = ThemeChoiceItem.IsCycleWrappingEnabled;
             PersistentThemeChoiceItem.DropDownButtonWidth = ThemeChoiceItem.DropDownButtonWidth;
             PersistentThemeChoiceItem.SelectedIndex = ThemeChoiceItem.SelectedIndex;
-            PersistentMenuSurface.FlowDirection = DemoMenu.FlowDirection;
+            MenuItemAssist.SetSubmenuPlacementDirection(PersistentMenuSurface, DemoMenu.SubmenuPlacementDirection);
 
             if (includeTextFields)
             {
@@ -151,7 +153,7 @@ public partial class SharedControlsDemoWindow : Window
         PersistentMenuSurface.Resources["ContextMenu.IconColumnWidth"] = new GridLength(DemoMenu.IconColumnWidth);
         PersistentMenuSurface.Resources["ContextMenu.ArrowColumnWidth"] = new GridLength(DemoMenu.ArrowColumnWidth);
         PersistentMenuSurface.Resources["ContextMenu.IconAreaWidth"] = new GridLength(DemoMenu.IconColumnWidth + DemoMenu.ItemPadding.Left);
-        PersistentMenuSurface.Resources["ContextMenu.ArrowAreaWidth"] = new GridLength(DemoMenu.ArrowColumnWidth + DemoMenu.ItemPadding.Right);
+        PersistentMenuSurface.Resources["ContextMenu.ArrowAreaWidth"] = DemoMenu.ArrowColumnWidth + DemoMenu.ItemPadding.Right;
         PersistentMenuSurface.Resources["ContextMenu.ItemVerticalMargin"] = new Thickness(0, DemoMenu.ItemPadding.Top, 0, DemoMenu.ItemPadding.Bottom);
         PersistentMenuSurface.Resources["ContextMenu.CornerRadius"] = DemoMenu.CornerRadius;
         PersistentMenuSurface.Resources["ContextMenu.Padding"] = DemoMenu.Padding;

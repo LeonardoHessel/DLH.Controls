@@ -5,6 +5,16 @@ namespace DLH.Controls.Wpf;
 /// <summary>Provides optional value-column content for any WPF menu item.</summary>
 public static class MenuItemAssist
 {
+    public static readonly DependencyProperty SubmenuPlacementDirectionProperty = DependencyProperty.RegisterAttached(
+        "SubmenuPlacementDirection", typeof(SubmenuPlacementDirection), typeof(MenuItemAssist),
+        new FrameworkPropertyMetadata(SubmenuPlacementDirection.Right, FrameworkPropertyMetadataOptions.Inherits));
+
+    public static SubmenuPlacementDirection GetSubmenuPlacementDirection(DependencyObject element) =>
+        (SubmenuPlacementDirection)element.GetValue(SubmenuPlacementDirectionProperty);
+
+    public static void SetSubmenuPlacementDirection(DependencyObject element, SubmenuPlacementDirection value) =>
+        element.SetValue(SubmenuPlacementDirectionProperty, value);
+
     public static readonly DependencyProperty ValueProperty = DependencyProperty.RegisterAttached(
         "Value", typeof(object), typeof(MenuItemAssist), new FrameworkPropertyMetadata(null));
 

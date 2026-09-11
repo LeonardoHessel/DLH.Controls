@@ -393,7 +393,7 @@ Use `Background`, `Foreground`, `BorderBrush`, `BorderThickness` e `Padding` par
 
 Cada linha usa cinco colunas alinhadas: ícone, título, valor, atalho e seta. Use `MenuItemAssist.Value` e `MenuItemAssist.ValueTemplate` para preencher a coluna de valor em qualquer `MenuItem`; colunas sem conteúdo permanecem vazias. A mesma estrutura é aplicada recursivamente aos submenus.
 
-Defina `FlowDirection="RightToLeft"` para inverter o sentido do menu. Nessa configuração, a coluna da seta passa para o lado esquerdo, o indicador aponta para a esquerda e o submenu abre desse lado. O padrão é `LeftToRight`.
+Defina `SubmenuPlacementDirection="Left"` para usar o menu junto à borda direita de uma janela. Somente a coluna da seta passa para o lado esquerdo, o indicador aponta para a esquerda e o submenu abre desse lado. Ícone, título, valor e atalho preservam sua ordem e orientação. O padrão é `Right`.
 
 O menu mantém somente um caminho ativo da árvore. Ao interagir com outro ramo, os submenus incompatíveis são fechados automaticamente. Outros componentes também podem controlar esse estado:
 

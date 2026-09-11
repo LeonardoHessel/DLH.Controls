@@ -27,7 +27,7 @@ public class ChoiceMenuItem : MenuItem
     public ChoiceMenuItem()
     {
         SetCurrentValue(StaysOpenOnClickProperty, true);
-        Resources["ContextMenu.ArrowAreaWidth"] = new GridLength(DropDownButtonWidth + Padding.Right);
+        Resources["ContextMenu.ArrowAreaWidth"] = DropDownButtonWidth + Padding.Right;
         AddHandler(ClickEvent, new RoutedEventHandler(OnDescendantClick));
     }
 
@@ -115,9 +115,19 @@ public class ChoiceMenuItem : MenuItem
         set => SetValue(DropDownButtonWidthProperty, value);
     }
 
+    public static readonly DependencyProperty SubmenuPlacementDirectionProperty =
+        MenuItemAssist.SubmenuPlacementDirectionProperty.AddOwner(typeof(ChoiceMenuItem),
+            new FrameworkPropertyMetadata(SubmenuPlacementDirection.Right, FrameworkPropertyMetadataOptions.Inherits));
+
+    public SubmenuPlacementDirection SubmenuPlacementDirection
+    {
+        get => (SubmenuPlacementDirection)GetValue(SubmenuPlacementDirectionProperty);
+        set => SetValue(SubmenuPlacementDirectionProperty, value);
+    }
+
     private static void OnDropDownButtonWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
         ((ChoiceMenuItem)d).Resources["ContextMenu.ArrowAreaWidth"] =
-            new GridLength((double)e.NewValue + ((ChoiceMenuItem)d).Padding.Right);
+            (double)e.NewValue + ((ChoiceMenuItem)d).Padding.Right;
 
     protected override bool IsItemItsOwnContainerOverride(object item) => item is MenuItem;
 

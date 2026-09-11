@@ -121,7 +121,7 @@ public sealed class SharedControlsTests
         {
             Header = "Tema",
             SelectedIndex = 0,
-            FlowDirection = FlowDirection.RightToLeft
+            SubmenuPlacementDirection = SubmenuPlacementDirection.Left
         };
         choice.Items.Add(new ChoiceMenuOption { Content = "Escuro", Value = "Dark" });
         choice.Items.Add(new ChoiceMenuOption { Content = "Claro", Value = "Light" });
@@ -143,7 +143,7 @@ public sealed class SharedControlsTests
             generated.ApplyTemplate();
 
             Assert.AreSame(choice.Template, generated.Template);
-            Assert.HasCount(5, ((Grid)generated.Template.FindName("ItemLayout", generated)!).ColumnDefinitions);
+            Assert.HasCount(4, ((Grid)generated.Template.FindName("ContentLayout", generated)!).ColumnDefinitions);
             Assert.AreEqual(System.Windows.Controls.Primitives.PlacementMode.Left,
                 popup.Placement);
             Assert.AreEqual("‹", ((TextBlock)choice.Template.FindName("SubmenuArrow", choice)!).Text);
@@ -156,6 +156,10 @@ public sealed class SharedControlsTests
             var dropDownHost = (FrameworkElement)choice.Template.FindName("DropDownHost", choice)!;
             var dropDownCenter = dropDownHost.TranslatePoint(
                 new Point(dropDownHost.ActualWidth / 2, dropDownHost.ActualHeight / 2), choice);
+            var iconHost = (FrameworkElement)choice.Template.FindName("IconHost", choice)!;
+            var iconCenter = iconHost.TranslatePoint(new Point(iconHost.ActualWidth / 2, 0), choice).X;
+            Assert.IsLessThan(iconCenter, dropDownCenter.X,
+                "Ao abrir para a esquerda, somente a seta deve ficar antes da coluna de ícone.");
             var hitTest = typeof(ChoiceMenuItem).GetMethod("IsDropDownColumnHit",
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
             Assert.IsTrue((bool)hitTest.Invoke(choice, [dropDownCenter])!);
@@ -278,9 +282,9 @@ public sealed class SharedControlsTests
             Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)item.Template.FindName("IconPresenter", item)!).HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)item.Template.FindName("CheckMark", item)!).HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)submenu.Template.FindName("SubmenuArrow", submenu)!).HorizontalAlignment);
-            var itemLayout = (Grid)item.Template.FindName("ItemLayout", item)!;
+            var itemLayout = (Grid)item.Template.FindName("ContentLayout", item)!;
             var iconHost = (FrameworkElement)item.Template.FindName("IconHost", item)!;
-            Assert.HasCount(5, itemLayout.ColumnDefinitions);
+            Assert.HasCount(4, itemLayout.ColumnDefinitions);
             var iconCenter = iconHost.TranslatePoint(new Point(iconHost.ActualWidth / 2, 0), itemLayout).X;
             Assert.AreEqual(itemLayout.ColumnDefinitions[0].ActualWidth / 2, iconCenter, .5,
                 "O centro do ícone deve coincidir com o centro da primeira coluna completa.");

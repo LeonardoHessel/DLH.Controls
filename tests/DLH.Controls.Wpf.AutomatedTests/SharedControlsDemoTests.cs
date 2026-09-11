@@ -75,7 +75,7 @@ public sealed class SharedControlsDemoTests
             CheckBox("MenuChoiceWrap").IsChecked = false;
             Slider("MenuChoiceArrowWidth").Value = 32;
             Slider("MenuChoiceIndex").Value = 2;
-            ComboBox("MenuFlowDirection").SelectedIndex = 1;
+            ComboBox("MenuSubmenuDirection").SelectedIndex = 1;
 
             Assert.IsTrue(window.ApplyOptions(includeTextFields: true));
 
@@ -112,8 +112,10 @@ public sealed class SharedControlsDemoTests
             Assert.AreEqual(32d, fixedChoice.DropDownButtonWidth);
             Assert.AreEqual(2, fixedChoice.SelectedIndex);
             Assert.AreEqual("System", fixedChoice.SelectedValue);
-            Assert.AreEqual(FlowDirection.RightToLeft, fixedSurface.FlowDirection);
-            Assert.AreEqual(FlowDirection.RightToLeft, menu.FlowDirection);
+            Assert.AreEqual(FlowDirection.LeftToRight, fixedSurface.FlowDirection);
+            Assert.AreEqual(FlowDirection.LeftToRight, menu.FlowDirection);
+            Assert.AreEqual(SubmenuPlacementDirection.Left, menu.SubmenuPlacementDirection);
+            Assert.AreEqual(SubmenuPlacementDirection.Left, MenuItemAssist.GetSubmenuPlacementDirection(fixedSurface));
         }
         finally { window.Close(); }
 

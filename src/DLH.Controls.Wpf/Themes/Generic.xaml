@@ -84,7 +84,8 @@
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="ContextMenuGesture"/>
                                 <ColumnDefinition Width="{DynamicResource ContextMenu.ArrowAreaWidth}"/>
                             </Grid.ColumnDefinitions>
-                            <Grid x:Name="IconHost" Grid.Column="0" UseLayoutRounding="True" SnapsToDevicePixels="True"
+                            <Grid x:Name="IconHost" Grid.Column="0" FlowDirection="LeftToRight"
+                                  UseLayoutRounding="True" SnapsToDevicePixels="True"
                                   Width="{DynamicResource ContextMenu.IconSize}"
                                   Height="{DynamicResource ContextMenu.IconSize}"
                                   HorizontalAlignment="Center" VerticalAlignment="Center">
@@ -105,6 +106,7 @@
                             </Grid>
                             <TextBlock x:Name="CheckMark" Grid.Column="0" Text="✓" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ContextMenu.Checked}"
+                                       FlowDirection="LeftToRight"
                                        TextAlignment="Center" HorizontalAlignment="Center"
                                        VerticalAlignment="Center" Visibility="Collapsed"/>
                             <ContentPresenter Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True"
@@ -114,8 +116,10 @@
                                               ContentTemplate="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(local:MenuItemAssist.ValueTemplate)}"
                                               Opacity=".78" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             <TextBlock x:Name="GesturePresenter" Grid.Column="3" Margin="14,0,4,0" Text="{TemplateBinding InputGestureText}"
+                                       FlowDirection="LeftToRight"
                                        Opacity=".65" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                             <TextBlock x:Name="SubmenuArrow" Grid.Column="4" Text="›" FontSize="16"
+                                       FlowDirection="LeftToRight"
                                        TextAlignment="Center" HorizontalAlignment="Center"
                                        VerticalAlignment="Center" Visibility="Collapsed"/>
                         </Grid>

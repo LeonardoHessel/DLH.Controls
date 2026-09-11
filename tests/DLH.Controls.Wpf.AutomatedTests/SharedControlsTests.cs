@@ -144,6 +144,12 @@ public sealed class SharedControlsTests
             Assert.AreEqual(System.Windows.Controls.Primitives.PlacementMode.Left,
                 popup.Placement);
             Assert.AreEqual("‹", ((TextBlock)choice.Template.FindName("SubmenuArrow", choice)!).Text);
+            Assert.AreEqual(FlowDirection.LeftToRight,
+                ((FrameworkElement)choice.Template.FindName("IconHost", choice)!).FlowDirection,
+                "A direção do menu não pode espelhar o desenho do ícone.");
+            Assert.AreEqual(FlowDirection.LeftToRight,
+                ((FrameworkElement)choice.Template.FindName("SubmenuArrow", choice)!).FlowDirection,
+                "O glifo da seta deve preservar a orientação definida pelo template.");
         }
         finally { menu.IsOpen = false; window.Close(); }
     }

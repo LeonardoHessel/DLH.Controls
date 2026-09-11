@@ -15,6 +15,7 @@ public partial class DataGridView
     private ScrollViewer? pinningScrollViewer;
     private FrameworkElement? pinningViewport;
     private readonly Dictionary<object, (double Offset, double Height)> pinnedRowMetrics = [];
+    private readonly Dictionary<object, Brush> pinnedRowBackgrounds = [];
     private readonly Dictionary<DataGridColumn, (double Offset, double Width)> pinnedColumnMetrics = [];
     private bool pinningUpdatePending;
     private string pinningLayoutSignature = string.Empty;
@@ -62,6 +63,7 @@ public partial class DataGridView
             if (ItemContainerGenerator.ContainerFromItem(item) is not DataGridRow row || row.ActualHeight <= 0) continue;
             var position = row.TranslatePoint(new Point(), pinningLayer);
             pinnedRowMetrics[item] = (position.Y - viewportOrigin.Y + pinningScrollViewer.VerticalOffset, row.ActualHeight);
+            pinnedRowBackgrounds[item] = IsVisibleBrush(row.Background) ? row.Background : Background;
         }
         foreach (var header in VisualChildren<DataGridColumnHeader>(this))
         {
@@ -89,6 +91,7 @@ public partial class DataGridView
         pinnedColumnOverlays.Clear();
         AddPinnedRows(origin);
         AddPinnedColumns(origin);
+        AddPinnedIntersections(origin);
     }
 
     private string CreatePinningLayoutSignature(Point origin)
@@ -231,12 +234,70 @@ public partial class DataGridView
     {
         if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null) return;
         var overlay = CreateOverlayGrid(DataGridHeadersVisibility.None, new[] { item });
+        ApplyPinnedRowBackground(overlay, item);
         foreach (var column in Columns.Where(column => column.Visibility == Visibility.Visible).OrderBy(column => column.DisplayIndex))
             overlay.Columns.Add(CloneColumn(column));
         PlaceOverlay(overlay, left, top, width, height);
         pinnedRowOverlays.Add(overlay);
         SyncOverlayScroll(overlay, pinningScrollViewer.HorizontalOffset, 0);
     }
+
+    private void AddPinnedIntersections(Point origin)
+    {
+        if (pinningViewport is null) return;
+        var (startRows, endRows) = ClassifyPinnedRows(origin);
+        var (startColumns, endColumns) = ClassifyPinnedColumns(origin);
+        var rows = new List<(object Item, double Top, double Height)>();
+        var occupied = 0d;
+        foreach (var entry in startRows)
+        {
+            rows.Add((entry.Item, origin.Y + occupied, entry.Metric.Height));
+            occupied += entry.Metric.Height;
+        }
+        occupied = 0;
+        foreach (var entry in endRows)
+        {
+            occupied += entry.Metric.Height;
+            rows.Add((entry.Item, origin.Y + pinningViewport.ActualHeight - occupied, entry.Metric.Height));
+        }
+
+        var columns = new List<(DataGridColumn Column, double Left, double Width)>();
+        occupied = 0;
+        foreach (var entry in startColumns)
+        {
+            columns.Add((entry.Column, origin.X + occupied, entry.Metric.Width));
+            occupied += entry.Metric.Width;
+        }
+        occupied = 0;
+        foreach (var entry in endColumns)
+        {
+            occupied += entry.Metric.Width;
+            columns.Add((entry.Column, origin.X + pinningViewport.ActualWidth - occupied, entry.Metric.Width));
+        }
+
+        foreach (var row in rows)
+        foreach (var column in columns)
+        {
+            var overlay = CreateOverlayGrid(DataGridHeadersVisibility.None, new[] { row.Item });
+            ApplyPinnedRowBackground(overlay, row.Item);
+            overlay.Columns.Add(CloneColumn(column.Column));
+            PlaceOverlay(overlay, column.Left, row.Top, column.Width, row.Height);
+            Panel.SetZIndex(overlay, 2);
+        }
+    }
+
+    private void ApplyPinnedRowBackground(DataGridView overlay, object item)
+    {
+        var brush = pinnedRowBackgrounds.TryGetValue(item, out var captured) && IsVisibleBrush(captured)
+            ? captured
+            : Background;
+        overlay.Background = brush;
+        overlay.RowBackground = brush;
+        overlay.AlternatingRowBackground = brush;
+    }
+
+    private static bool IsVisibleBrush(Brush? brush) => brush is not null && brush.Opacity > 0 &&
+        (brush is not SolidColorBrush solid || solid.Color.A > 0);
 
     private void AddPinnedColumn(DataGridColumn column, double left, double top, double width, double height)
     {

@@ -118,12 +118,22 @@ public sealed class DataGridViewPinningTests
             Assert.IsGreaterThanOrEqualTo(2, layer.Children.Count,
                 "A linha e a coluna devem ganhar representações aderentes depois de cruzarem as bordas.");
             var rowOverlay = layer.Children.OfType<DataGridView>()
-                .Single(overlay => overlay.HeadersVisibility == DataGridHeadersVisibility.None);
+                .Single(overlay => overlay.HeadersVisibility == DataGridHeadersVisibility.None && overlay.Columns.Count > 1);
             rowOverlay.UpdateLayout();
             Assert.AreEqual(0d, rowOverlay.ColumnHeaderHeight, 0.1d,
                 "A representação de uma linha fixada não deve reservar espaço para o cabeçalho.");
             Assert.IsNotNull(rowOverlay.ItemContainerGenerator.ContainerFromIndex(0),
                 "A célula da linha, e não o cabeçalho, deve ocupar a representação fixada.");
+            Assert.IsGreaterThan(0d, rowOverlay.RowBackground.Opacity,
+                "A linha fixada deve ter fundo opaco para ocultar o conteúdo que passa por baixo.");
+            var intersection = layer.Children.OfType<DataGridView>()
+                .Single(overlay => overlay.HeadersVisibility == DataGridHeadersVisibility.None && overlay.Columns.Count == 1);
+            Assert.AreSame(rows[0], intersection.Items.Cast<Row>().Single(),
+                "A interseção deve exibir o registro fixado, e não a linha móvel da coluna fixada.");
+            Assert.AreEqual(firstColumn.Header, intersection.Columns[0].Header,
+                "A interseção deve usar a célula da coluna fixada.");
+            Assert.IsGreaterThan(0d, intersection.RowBackground.Opacity,
+                "A interseção entre linha e coluna fixadas deve ser opaca.");
             var overlays = layer.Children.Cast<UIElement>().ToArray();
             viewer.ScrollToHorizontalOffset(300);
             viewer.ScrollToVerticalOffset(650);

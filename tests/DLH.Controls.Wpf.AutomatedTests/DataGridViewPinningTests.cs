@@ -155,7 +155,7 @@ public sealed class DataGridViewPinningTests
             Assert.IsInstanceOfType<SolidColorBrush>(backdrop.Background);
             Assert.AreEqual(byte.MaxValue, ((SolidColorBrush)backdrop.Background).Color.A,
                 "O bloco de linhas fixadas deve ter uma superfície contínua e opaca atrás das linhas.");
-            Assert.IsGreaterThan(fixedRow.ActualHeight, backdrop.Height,
+            Assert.IsGreaterThanOrEqualTo(fixedRow.ActualHeight, backdrop.Height,
                 "A superfície deve avançar até a borda do conjunto para eliminar frestas.");
             var overlays = layer.Children.Cast<UIElement>().ToArray();
             viewer.ScrollToHorizontalOffset(300);
@@ -325,6 +325,53 @@ public sealed class DataGridViewPinningTests
         Assert.HasCount(1, grid.PinnedColumns);
         Assert.AreSame(rows[1], grid.PinnedRows[0]);
         Assert.AreSame(column, grid.PinnedColumns[0]);
+    }
+
+    [STATestMethod]
+    public void MultiplePinnedRowIntersectionsMatchTheFullRowBounds()
+    {
+        var rows = new ObservableCollection<Row>(Enumerable.Range(1, 30).Select(index => new Row($"Linha {index}")));
+        var grid = new DataGridView
+        {
+            Width = 300, Height = 180, ItemsSource = rows, CanPinRows = true, CanPinColumns = true
+        };
+        var columns = Enumerable.Range(1, 6).Select(index => new DataGridTextColumn
+        {
+            Header = $"Coluna {index}", Binding = new System.Windows.Data.Binding(nameof(Row.Name)), Width = 100
+        }).ToArray();
+        foreach (var column in columns) grid.Columns.Add(column);
+        grid.LoadingRow += (_, args) => args.Row.Height = rows.IndexOf((Row)args.Row.Item) % 2 == 0 ? 31 : 43;
+        var window = new Window { Content = grid, Width = 320, Height = 220, WindowStyle = WindowStyle.None, ShowInTaskbar = false };
+        window.Show();
+        try
+        {
+            grid.UpdateLayout();
+            grid.PinRow(rows[0]); grid.PinRow(rows[1]);
+            grid.PinColumn(columns[0]); grid.PinColumn(columns[2]);
+            var viewer = (ScrollViewer)grid.Template.FindName("DG_ScrollViewer", grid)!;
+            viewer.ScrollToHorizontalOffset(115);
+            viewer.ScrollToVerticalOffset(100);
+            grid.UpdateLayout();
+            grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+            var layer = (Canvas)grid.Template.FindName("PART_PinningLayer", grid)!;
+            var fullRows = layer.Children.OfType<DataGridView>()
+                .Where(overlay => overlay.HeadersVisibility == DataGridHeadersVisibility.None && overlay.Columns.Count == 6)
+                .ToArray();
+            var intersections = layer.Children.OfType<DataGridView>()
+                .Where(overlay => overlay.HeadersVisibility == DataGridHeadersVisibility.None && overlay.Columns.Count == 2)
+                .ToArray();
+            Assert.HasCount(2, fullRows);
+            Assert.HasCount(2, intersections);
+            foreach (var fullRow in fullRows)
+            {
+                var item = fullRow.Items.Cast<Row>().Single();
+                var intersection = intersections.Single(candidate => ReferenceEquals(candidate.Items.Cast<Row>().Single(), item));
+                Assert.AreEqual(Canvas.GetTop(fullRow), Canvas.GetTop(intersection), 0.01d);
+                Assert.AreEqual(fullRow.Height, intersection.Height, 0.01d,
+                    "A interseção deve usar exatamente os mesmos limites físicos da linha fixada.");
+            }
+        }
+        finally { window.Close(); }
     }
 
     [STATestMethod]

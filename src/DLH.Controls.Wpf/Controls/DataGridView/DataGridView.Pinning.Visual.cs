@@ -309,29 +309,28 @@ public partial class DataGridView
             rows.Add((entry.Item, origin.Y + pinningViewport.ActualHeight - occupied, entry.Metric.Height));
         }
 
-        var columns = new List<(DataGridColumn Column, double Left, double Width)>();
-        occupied = 0;
-        foreach (var entry in startColumns)
-        {
-            columns.Add((entry.Column, origin.X + occupied, entry.Metric.Width));
-            occupied += entry.Metric.Width;
-        }
-        occupied = 0;
-        foreach (var entry in endColumns)
-        {
-            occupied += entry.Metric.Width;
-            columns.Add((entry.Column, origin.X + pinningViewport.ActualWidth - occupied, entry.Metric.Width));
-        }
-
         foreach (var row in rows)
-        foreach (var column in columns)
         {
-            var overlay = CreateOverlayGrid(DataGridHeadersVisibility.None, new[] { row.Item });
-            ApplyPinnedRowBackground(overlay, row.Item);
-            overlay.Columns.Add(CloneColumn(column.Column));
-            PlaceOverlay(overlay, column.Left, row.Top, column.Width, row.Height);
-            Panel.SetZIndex(overlay, 2);
+            var startWidth = startColumns.Sum(entry => entry.Metric.Width);
+            if (startColumns.Count > 0)
+                AddPinnedIntersectionGroup(row.Item, startColumns, origin.X, row.Top, startWidth, row.Height);
+            var orderedEnd = endColumns.OrderBy(entry => entry.Metric.Offset).ToList();
+            var endWidth = orderedEnd.Sum(entry => entry.Metric.Width);
+            if (orderedEnd.Count > 0)
+                AddPinnedIntersectionGroup(row.Item, orderedEnd,
+                    origin.X + pinningViewport.ActualWidth - endWidth, row.Top, endWidth, row.Height);
         }
+    }
+
+    private void AddPinnedIntersectionGroup(object item,
+        IReadOnlyList<(DataGridColumn Column, (double Offset, double Width) Metric)> columns,
+        double left, double top, double width, double height)
+    {
+        var overlay = CreateOverlayGrid(DataGridHeadersVisibility.None, new[] { item });
+        ApplyPinnedRowBackground(overlay, item);
+        foreach (var entry in columns) overlay.Columns.Add(CloneColumn(entry.Column));
+        PlaceOverlay(overlay, left, top, width, height);
+        Panel.SetZIndex(overlay, 2);
     }
 
     private void ApplyPinnedRowBackground(DataGridView overlay, object item)
@@ -447,7 +446,7 @@ public partial class DataGridView
             Background = Background,
             Foreground = Foreground,
             BorderBrush = BorderBrush,
-            BorderThickness = new Thickness(0, 0, 1, 1),
+            BorderThickness = new Thickness(0),
             RowBackground = RowBackground,
             AlternatingRowBackground = AlternatingRowBackground,
             AlternationCount = AlternationCount,
@@ -489,10 +488,14 @@ public partial class DataGridView
     private void PlaceOverlay(FrameworkElement overlay, double left, double top, double width, double height)
     {
         if (pinningLayer is null) return;
-        overlay.Width = Math.Max(0, width);
-        overlay.Height = Math.Max(0, height);
-        Canvas.SetLeft(overlay, left);
-        Canvas.SetTop(overlay, top);
+        var dpi = VisualTreeHelper.GetDpi(this);
+        static double Round(double value, double scale) => Math.Round(value * scale) / scale;
+        overlay.UseLayoutRounding = true;
+        overlay.SnapsToDevicePixels = true;
+        overlay.Width = Math.Max(0, Round(width, dpi.DpiScaleX));
+        overlay.Height = Math.Max(0, Round(height, dpi.DpiScaleY));
+        Canvas.SetLeft(overlay, Round(left, dpi.DpiScaleX));
+        Canvas.SetTop(overlay, Round(top, dpi.DpiScaleY));
         pinningLayer.Children.Add(overlay);
     }
 

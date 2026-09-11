@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using Tabs = DLH.Controls.Wpf.TabControl;
+using ComboBox = System.Windows.Controls.ComboBox;
 
 namespace DLH.Controls.Wpf.Demo;
 

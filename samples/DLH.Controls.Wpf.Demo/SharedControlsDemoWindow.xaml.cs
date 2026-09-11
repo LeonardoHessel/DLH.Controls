@@ -18,6 +18,21 @@ public partial class SharedControlsDemoWindow : Window
 
     private void ApplyTextOptions_Click(object sender, RoutedEventArgs e) => ApplyOptions(includeTextFields: true);
 
+    private void PickColor_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: TextBox target }) return;
+        using var dialog = new System.Windows.Forms.ColorDialog { FullOpen = true, AnyColor = true };
+        try
+        {
+            var current = ParseColor(target.Text);
+            dialog.Color = System.Drawing.Color.FromArgb(current.A, current.R, current.G, current.B);
+        }
+        catch { }
+        if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+        target.Text = $"#{dialog.Color.R:X2}{dialog.Color.G:X2}{dialog.Color.B:X2}";
+        ApplyOptions(includeTextFields: true);
+    }
+
     private void OpenMenu_Click(object sender, RoutedEventArgs e)
     {
         ApplyOptions(includeTextFields: true);
@@ -100,8 +115,8 @@ public partial class SharedControlsDemoWindow : Window
         }
     }
 
-    private static Brush ParseBrush(string value) => (Brush)new BrushConverter().ConvertFromString(value)!;
-    private static Color ParseColor(string value) => (Color)ColorConverter.ConvertFromString(value);
+    private static System.Windows.Media.Brush ParseBrush(string value) => (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(value)!;
+    private static System.Windows.Media.Color ParseColor(string value) => (System.Windows.Media.Color)ColorConverter.ConvertFromString(value);
     private static Thickness ParseThickness(string value) => (Thickness)new ThicknessConverter().ConvertFromString(null, CultureInfo.InvariantCulture, value)!;
     private static CornerRadius ParseCornerRadius(string value) => (CornerRadius)new CornerRadiusConverter().ConvertFromString(null, CultureInfo.InvariantCulture, value)!;
 }

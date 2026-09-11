@@ -14,6 +14,22 @@ namespace DLH.Controls.Wpf.AutomatedTests;
 public sealed class SharedControlsDemoTests
 {
     [STATestMethod]
+    public void EveryColorOptionHasAVisualPicker()
+    {
+        var window = new SharedControlsDemoWindow();
+        try
+        {
+            window.Show();
+            window.UpdateLayout();
+            var pickers = Descendants((DependencyObject)window.Content).OfType<Button>().Where(button => button.Tag is TextBox).ToList();
+            Assert.HasCount(12, pickers);
+            Assert.HasCount(12, pickers.Select(button => (TextBox)button.Tag).Distinct().ToList());
+            Assert.IsFalse(pickers.Any(button => !Equals(button.ToolTip, "Escolher cor")));
+        }
+        finally { window.Close(); }
+    }
+
+    [STATestMethod]
     public void ConfigurationScreenAppliesEveryCustomOption()
     {
         var window = new SharedControlsDemoWindow();
@@ -100,5 +116,15 @@ public sealed class SharedControlsDemoTests
             Assert.StartsWith("Valor inválido:", ((TextBlock)window.FindName("ValidationMessage")).Text);
         }
         finally { window.Close(); }
+    }
+
+    private static IEnumerable<DependencyObject> Descendants(DependencyObject parent)
+    {
+        for (var index = 0; index < VisualTreeHelper.GetChildrenCount(parent); index++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, index);
+            yield return child;
+            foreach (var descendant in Descendants(child)) yield return descendant;
+        }
     }
 }

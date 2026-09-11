@@ -77,12 +77,18 @@ type DLH.Controls.Wpf.ContextMenu
   property System.Windows.Thickness ItemPadding { get; set;  }
 type DLH.Controls.Wpf.DataGridView
   ctor()
+  event System.EventHandler<DLH.Controls.Wpf.DataGridViewColumnPinChangedEventArgs> ColumnPinned
+  event System.EventHandler<DLH.Controls.Wpf.DataGridViewColumnPinChangedEventArgs> ColumnUnpinned
+  event System.EventHandler<DLH.Controls.Wpf.DataGridViewRowPinChangedEventArgs> RowPinned
+  event System.EventHandler<DLH.Controls.Wpf.DataGridViewRowPinChangedEventArgs> RowUnpinned
   event System.EventHandler<DLH.Controls.Wpf.DataGridViewStateRestoredEventArgs> StateRestored
   field System.Windows.DependencyProperty ActiveSortIconBrushProperty
   field System.Windows.DependencyProperty AllowMultipleSelectionProperty
   field System.Windows.DependencyProperty AscendingSortIconProperty
   field System.Windows.DependencyProperty BatchActionCommandProperty
   field System.Windows.DependencyProperty BatchSelectionChangedCommandProperty
+  field System.Windows.DependencyProperty CanPinColumnsProperty
+  field System.Windows.DependencyProperty CanPinRowsProperty
   field System.Windows.DependencyProperty CanUserFilterProperty
   field System.Windows.DependencyProperty CanUserToggleColumnVisibilityProperty
   field System.Windows.DependencyProperty CellEditEndingCommandProperty
@@ -107,6 +113,8 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty IsSmoothHorizontalScrollingEnabledProperty
   field System.Windows.DependencyProperty IsSmoothVerticalScrollingEnabledProperty
   field System.Windows.DependencyProperty LoadingMessageProperty
+  field System.Windows.DependencyProperty MaxPinnedColumnsProperty
+  field System.Windows.DependencyProperty MaxPinnedRowsProperty
   field System.Windows.DependencyProperty MousePanningSpeedProperty
   field System.Windows.DependencyProperty ScrollBarThicknessProperty
   field System.Windows.DependencyProperty ScrollBarThumbBrushProperty
@@ -116,9 +124,11 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty SelectionBehaviorProperty
   field System.Windows.DependencyProperty SelectionChangedCommandProperty
   field System.Windows.DependencyProperty ShowClearSortMenuItemProperty
+  field System.Windows.DependencyProperty ShowColumnPinButtonProperty
   field System.Windows.DependencyProperty ShowFilterMenuItemsProperty
   field System.Windows.DependencyProperty ShowRestoreDefaultSortMenuItemProperty
   field System.Windows.DependencyProperty ShowRowDetailsOnSelectionProperty
+  field System.Windows.DependencyProperty ShowRowPinButtonProperty
   field System.Windows.DependencyProperty ShowRowSeparatorsProperty
   field System.Windows.DependencyProperty ShowSortIndicatorsProperty
   field System.Windows.DependencyProperty ShowValidationErrorsProperty
@@ -136,10 +146,16 @@ type DLH.Controls.Wpf.DataGridView
   method System.Boolean ClearFilter(System.Windows.Controls.DataGridColumn)
   method System.Boolean ExecuteBatchAction()
   method System.Boolean GetCanUserFilter(System.Windows.DependencyObject)
+  method System.Boolean PinColumn(System.Windows.Controls.DataGridColumn)
+  method System.Boolean PinRow(System.Object)
   method System.Boolean RemoveSort(System.Windows.Controls.DataGridColumn)
   method System.Boolean ResetState()
   method System.Boolean SetFilter(System.Windows.Controls.DataGridColumn, System.String, DLH.Controls.Wpf.DataGridViewFilterOperator, System.Boolean)
   method System.Boolean SetRowDetailsVisibility(System.Object, System.Boolean)
+  method System.Boolean ToggleColumnPin(System.Windows.Controls.DataGridColumn)
+  method System.Boolean ToggleRowPin(System.Object)
+  method System.Boolean UnpinColumn(System.Windows.Controls.DataGridColumn)
+  method System.Boolean UnpinRow(System.Object)
   method System.Int32 GetSortPriority(System.Windows.DependencyObject)
   method System.String GetColumnKey(System.Windows.DependencyObject)
   method System.String GetFilterMemberPath(System.Windows.DependencyObject)
@@ -155,9 +171,13 @@ type DLH.Controls.Wpf.DataGridView
   method System.Void SetCanUserFilter(System.Windows.DependencyObject, System.Boolean)
   method System.Void SetColumnKey(System.Windows.DependencyObject, System.String)
   method System.Void SetFilterMemberPath(System.Windows.DependencyObject, System.String)
+  method System.Void UnpinAllColumns()
+  method System.Void UnpinAllRows()
   property DLH.Controls.Wpf.DataGridViewDensity Density { get; set;  }
   property DLH.Controls.Wpf.DataGridViewSelectionBehavior SelectionBehavior { get; set;  }
   property System.Boolean AllowMultipleSelection { get; set;  }
+  property System.Boolean CanPinColumns { get; set;  }
+  property System.Boolean CanPinRows { get; set;  }
   property System.Boolean CanUserToggleColumnVisibility { get; set;  }
   property System.Boolean IsCellEditingEnabled { get; set;  }
   property System.Boolean IsGroupingEnabled { get; set;  }
@@ -167,19 +187,25 @@ type DLH.Controls.Wpf.DataGridView
   property System.Boolean IsSmoothHorizontalScrollingEnabled { get; set;  }
   property System.Boolean IsSmoothVerticalScrollingEnabled { get; set;  }
   property System.Boolean ShowClearSortMenuItem { get; set;  }
+  property System.Boolean ShowColumnPinButton { get; set;  }
   property System.Boolean ShowFilterMenuItems { get; set;  }
   property System.Boolean ShowRestoreDefaultSortMenuItem { get; set;  }
   property System.Boolean ShowRowDetailsOnSelection { get; set;  }
+  property System.Boolean ShowRowPinButton { get; set;  }
   property System.Boolean ShowRowSeparators { get; set;  }
   property System.Boolean ShowSortIndicators { get; set;  }
   property System.Boolean ShowValidationErrors { get; set;  }
   property System.Collections.ObjectModel.ObservableCollection<DLH.Controls.Wpf.DataGridViewFilter> Filters { get;  }
+  property System.Collections.ObjectModel.ReadOnlyObservableCollection<System.Object> PinnedRows { get;  }
+  property System.Collections.ObjectModel.ReadOnlyObservableCollection<System.Windows.Controls.DataGridColumn> PinnedColumns { get;  }
   property System.ComponentModel.ListSortDirection DefaultSortDirection { get; set;  }
   property System.Double HorizontalMouseWheelScrollAmount { get; set;  }
   property System.Double MousePanningSpeed { get; set;  }
   property System.Double ScrollBarThickness { get; set;  }
   property System.Double SortIconSize { get; set;  }
   property System.Double VerticalMouseWheelScrollAmount { get; set;  }
+  property System.Int32 MaxPinnedColumns { get; set;  }
+  property System.Int32 MaxPinnedRows { get; set;  }
   property System.String DefaultSortMemberPath { get; set;  }
   property System.String EmptyMessage { get; set;  }
   property System.String ErrorMessage { get; set;  }
@@ -220,6 +246,9 @@ type DLH.Controls.Wpf.DataGridViewCellEditContext
   property System.Object Item { get; set;  }
   property System.Windows.Controls.DataGridColumn Column { get; set;  }
   property System.Windows.Controls.DataGridEditAction Action { get; set;  }
+type DLH.Controls.Wpf.DataGridViewColumnPinChangedEventArgs
+  ctor(System.Windows.Controls.DataGridColumn)
+  property System.Windows.Controls.DataGridColumn Column { get;  }
 type DLH.Controls.Wpf.DataGridViewColumnState
   ctor()
   property System.Double WidthValue { get; set;  }
@@ -252,6 +281,9 @@ type DLH.Controls.Wpf.DataGridViewFilterOperator
   field DLH.Controls.Wpf.DataGridViewFilterOperator LessThan
   field DLH.Controls.Wpf.DataGridViewFilterOperator StartsWith
   field System.Int32 value__
+type DLH.Controls.Wpf.DataGridViewRowPinChangedEventArgs
+  ctor(System.Object)
+  property System.Object Item { get;  }
 type DLH.Controls.Wpf.DataGridViewSelection
   ctor(System.Object, System.Windows.Controls.DataGridColumn)
   method DLH.Controls.Wpf.DataGridViewSelection <Clone>$()

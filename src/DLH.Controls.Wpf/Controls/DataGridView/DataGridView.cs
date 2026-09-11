@@ -309,6 +309,7 @@ public partial class DataGridView : DataGrid
         SetCurrentValue(EnableColumnVirtualizationProperty, true);
         SetCurrentValue(VirtualizingPanel.ScrollUnitProperty, ScrollUnit.Pixel);
         SetCurrentValue(CanUserReorderColumnsProperty, true);
+        InitializePinning();
         Sorting += OnGridSorting;
         InitializeFiltering();
         ApplySelectionMode();

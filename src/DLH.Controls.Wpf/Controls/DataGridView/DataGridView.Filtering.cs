@@ -94,6 +94,7 @@ public partial class DataGridView
         filteredView = null;
         externalFilter = null;
         base.OnItemsSourceChanged(oldValue, newValue);
+        OnItemsSourceChangedForPinning(newValue);
         ApplyFilters();
         ApplyGrouping();
     }

@@ -532,8 +532,7 @@
                                 </ScrollViewer.Template>
                                 <ItemsPresenter SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
                             </ScrollViewer>
-                            <Canvas x:Name="PART_PinningLayer" Panel.ZIndex="20" ClipToBounds="True"
-                                    IsHitTestVisible="False" />
+                            <Canvas x:Name="PART_PinningLayer" Panel.ZIndex="20" ClipToBounds="True" />
                             <Border x:Name="EmptyState" Margin="1,35,1,1" Padding="24" Background="{TemplateBinding Background}"
                                     Visibility="Collapsed">
                                 <TextBlock HorizontalAlignment="Center" VerticalAlignment="Center"

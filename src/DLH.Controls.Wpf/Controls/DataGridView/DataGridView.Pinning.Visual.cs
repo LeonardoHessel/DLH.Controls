@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
+using System.Windows.Input;
 using System.Windows.Threading;
 using System.Runtime.CompilerServices;
 
@@ -228,7 +229,7 @@ public partial class DataGridView
 
     private void AddPinnedRow(object item, double left, double top, double width, double height)
     {
-        if (pinningLayer is null || pinningScrollViewer is null) return;
+        if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null) return;
         var overlay = CreateOverlayGrid(DataGridHeadersVisibility.None, new[] { item });
         foreach (var column in Columns.Where(column => column.Visibility == Visibility.Visible).OrderBy(column => column.DisplayIndex))
             overlay.Columns.Add(CloneColumn(column));
@@ -239,12 +240,57 @@ public partial class DataGridView
 
     private void AddPinnedColumn(DataGridColumn column, double left, double top, double width, double height)
     {
-        if (pinningLayer is null || pinningScrollViewer is null) return;
+        if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null) return;
         var overlay = CreateOverlayGrid(DataGridHeadersVisibility.Column, ItemsSource ?? Items);
         overlay.Columns.Add(CloneColumn(column));
         PlaceOverlay(overlay, left, top, width, height);
         pinnedColumnOverlays.Add(overlay);
         SyncOverlayScroll(overlay, 0, pinningScrollViewer.VerticalOffset);
+        AddPinnedColumnHeaderHitTarget(column, left, width,
+            Math.Max(0, pinningViewport.TranslatePoint(new Point(), pinningLayer).Y));
+    }
+
+    private void AddPinnedColumnHeaderHitTarget(DataGridColumn column, double left, double width, double height)
+    {
+        if (pinningLayer is null || height <= 0) return;
+        var target = new Border
+        {
+            Width = width,
+            Height = height,
+            Background = Brushes.Transparent,
+            Tag = column
+        };
+        target.PreviewMouseDown += (_, args) => args.Handled = true;
+        target.MouseLeftButtonUp += (_, args) =>
+        {
+            args.Handled = true;
+            SortFromPinnedColumnHeader(column);
+        };
+        target.MouseRightButtonUp += (_, args) =>
+        {
+            args.Handled = true;
+            var menu = CreateColumnHeaderMenu(column);
+            menu.PlacementTarget = target;
+            menu.IsOpen = true;
+        };
+        Canvas.SetLeft(target, left);
+        Canvas.SetTop(target, 0);
+        Panel.SetZIndex(target, 1);
+        pinningLayer.Children.Add(target);
+    }
+
+    private void SortFromPinnedColumnHeader(DataGridColumn column)
+    {
+        if (!CanUserSortColumns || !column.CanUserSort || string.IsNullOrWhiteSpace(column.SortMemberPath)) return;
+        if (IsMultiColumnSortEnabled && Keyboard.Modifiers.HasFlag(ModifierKeys.Control))
+        {
+            RemoveSort(column);
+            return;
+        }
+        var direction = column.SortDirection == System.ComponentModel.ListSortDirection.Ascending
+            ? System.ComponentModel.ListSortDirection.Descending
+            : System.ComponentModel.ListSortDirection.Ascending;
+        ApplySort(column, direction, IsMultiColumnSortEnabled && Keyboard.Modifiers.HasFlag(ModifierKeys.Shift));
     }
 
     private DataGridView CreateOverlayGrid(DataGridHeadersVisibility headers, System.Collections.IEnumerable source) => new()

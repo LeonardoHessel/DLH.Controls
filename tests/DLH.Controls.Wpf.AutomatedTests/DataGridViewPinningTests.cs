@@ -101,6 +101,7 @@ public sealed class DataGridViewPinningTests
         var firstColumn = new DataGridTextColumn { Header = "Nome", Binding = new System.Windows.Data.Binding(nameof(Row.Name)), Width = 220 };
         grid.Columns.Add(firstColumn);
         grid.Columns.Add(new DataGridTextColumn { Header = "Complemento", Binding = new System.Windows.Data.Binding(nameof(Row.Name)), Width = 420 });
+        grid.LoadingRow += (_, args) => args.Row.Height = rows.IndexOf((Row)args.Row.Item) % 2 == 0 ? 30 : 42;
         var window = new Window { Content = grid, Width = 340, Height = 260, WindowStyle = WindowStyle.None, ShowInTaskbar = false };
         window.Show();
         try
@@ -139,6 +140,16 @@ public sealed class DataGridViewPinningTests
                 "A interseção deve usar a célula da coluna fixada.");
             Assert.IsGreaterThan(0d, intersection.RowBackground.Opacity,
                 "A interseção entre linha e coluna fixadas deve ser opaca.");
+            var columnOverlay = layer.Children.OfType<DataGridView>()
+                .Single(overlay => overlay.HeadersVisibility == DataGridHeadersVisibility.Column);
+            columnOverlay.UpdateLayout();
+            var sharedItem = rows.First(item =>
+                grid.ItemContainerGenerator.ContainerFromItem(item) is DataGridRow &&
+                columnOverlay.ItemContainerGenerator.ContainerFromItem(item) is DataGridRow);
+            var sourceHeight = ((DataGridRow)grid.ItemContainerGenerator.ContainerFromItem(sharedItem)!).ActualHeight;
+            var fixedColumnHeight = ((DataGridRow)columnOverlay.ItemContainerGenerator.ContainerFromItem(sharedItem)!).ActualHeight;
+            Assert.AreEqual(sourceHeight, fixedColumnHeight, 0.1d,
+                "A parte fixada e a parte móvel devem reutilizar a mesma altura de cada registro.");
             var backdrop = layer.Children.OfType<Border>()
                 .Single(element => Equals(element.Tag, "PinnedRowBackdrop:Start"));
             Assert.IsInstanceOfType<SolidColorBrush>(backdrop.Background);

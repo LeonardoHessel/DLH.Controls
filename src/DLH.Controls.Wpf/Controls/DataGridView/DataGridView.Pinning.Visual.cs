@@ -16,6 +16,7 @@ public partial class DataGridView
     private FrameworkElement? pinningViewport;
     private readonly Dictionary<object, (double Offset, double Height)> pinnedRowMetrics = [];
     private readonly Dictionary<object, Brush> pinnedRowBackgrounds = [];
+    private readonly Dictionary<object, double> renderedRowHeights = [];
     private readonly Dictionary<DataGridColumn, (double Offset, double Width)> pinnedColumnMetrics = [];
     private bool pinningUpdatePending;
     private string pinningLayoutSignature = string.Empty;
@@ -57,6 +58,10 @@ public partial class DataGridView
     private void CapturePinnedMetrics()
     {
         if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null) return;
+        renderedRowHeights.Clear();
+        foreach (var row in VisualChildren<DataGridRow>(this))
+            if (ItemsControl.ItemsControlFromItemContainer(row) == this && row.Item is not null && row.ActualHeight > 0)
+                renderedRowHeights[row.Item] = row.ActualHeight;
         var viewportOrigin = pinningViewport.TranslatePoint(new Point(), pinningLayer);
         foreach (var item in pinnedRows)
         {
@@ -185,8 +190,16 @@ public partial class DataGridView
     private void SyncActiveOverlayScrolls()
     {
         if (pinningScrollViewer is null) return;
-        foreach (var overlay in pinnedRowOverlays) SyncOverlayScrollNow(overlay, pinningScrollViewer.HorizontalOffset, 0);
-        foreach (var overlay in pinnedColumnOverlays) SyncOverlayScrollNow(overlay, 0, pinningScrollViewer.VerticalOffset);
+        foreach (var overlay in pinnedRowOverlays)
+        {
+            SyncOverlayScrollNow(overlay, pinningScrollViewer.HorizontalOffset, 0);
+            SyncOverlayRowHeights(overlay);
+        }
+        foreach (var overlay in pinnedColumnOverlays)
+        {
+            SyncOverlayScrollNow(overlay, 0, pinningScrollViewer.VerticalOffset);
+            SyncOverlayRowHeights(overlay);
+        }
     }
 
     private void AddPinnedRows(Point origin)
@@ -423,39 +436,55 @@ public partial class DataGridView
         ApplySort(column, direction, IsMultiColumnSortEnabled && Keyboard.Modifiers.HasFlag(ModifierKeys.Shift));
     }
 
-    private DataGridView CreateOverlayGrid(DataGridHeadersVisibility headers, System.Collections.IEnumerable source) => new()
+    private DataGridView CreateOverlayGrid(DataGridHeadersVisibility headers, System.Collections.IEnumerable source)
     {
-        ItemsSource = source,
-        HeadersVisibility = headers,
-        IsReadOnly = IsReadOnly,
-        IsHitTestVisible = false,
-        Background = Background,
-        Foreground = Foreground,
-        BorderBrush = BorderBrush,
-        BorderThickness = new Thickness(0, 0, 1, 1),
-        RowBackground = RowBackground,
-        AlternatingRowBackground = AlternatingRowBackground,
-        AlternationCount = AlternationCount,
-        HorizontalGridLinesBrush = HorizontalGridLinesBrush,
-        GridLinesVisibility = GridLinesVisibility,
-        CellPadding = CellPadding,
-        Density = Density,
-        ColumnHeaderHeight = headers.HasFlag(DataGridHeadersVisibility.Column) ? ColumnHeaderHeight : 0,
-        RowHeight = RowHeight,
-        CanUserReorderColumns = false,
-        CanUserResizeColumns = false,
-        CanUserSortColumns = CanUserSortColumns,
-        ShowSortIndicators = ShowSortIndicators,
-        SortIconSize = SortIconSize,
-        SortIconBrush = SortIconBrush,
-        ActiveSortIconBrush = ActiveSortIconBrush,
-        UnsortedIcon = UnsortedIcon,
-        AscendingSortIcon = AscendingSortIcon,
-        DescendingSortIcon = DescendingSortIcon,
-        HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden,
-        VerticalScrollBarVisibility = ScrollBarVisibility.Hidden,
-        CornerRadius = new CornerRadius(0)
-    };
+        var overlay = new DataGridView
+        {
+            ItemsSource = source,
+            HeadersVisibility = headers,
+            IsReadOnly = IsReadOnly,
+            IsHitTestVisible = false,
+            Background = Background,
+            Foreground = Foreground,
+            BorderBrush = BorderBrush,
+            BorderThickness = new Thickness(0, 0, 1, 1),
+            RowBackground = RowBackground,
+            AlternatingRowBackground = AlternatingRowBackground,
+            AlternationCount = AlternationCount,
+            HorizontalGridLinesBrush = HorizontalGridLinesBrush,
+            GridLinesVisibility = GridLinesVisibility,
+            CellPadding = CellPadding,
+            Density = Density,
+            ColumnHeaderHeight = headers.HasFlag(DataGridHeadersVisibility.Column) ? ColumnHeaderHeight : 0,
+            RowHeight = RowHeight,
+            CanUserReorderColumns = false,
+            CanUserResizeColumns = false,
+            CanUserSortColumns = CanUserSortColumns,
+            ShowSortIndicators = ShowSortIndicators,
+            SortIconSize = SortIconSize,
+            SortIconBrush = SortIconBrush,
+            ActiveSortIconBrush = ActiveSortIconBrush,
+            UnsortedIcon = UnsortedIcon,
+            AscendingSortIcon = AscendingSortIcon,
+            DescendingSortIcon = DescendingSortIcon,
+            HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden,
+            VerticalScrollBarVisibility = ScrollBarVisibility.Hidden,
+            CornerRadius = new CornerRadius(0)
+        };
+        overlay.LoadingRow += (_, args) =>
+        {
+            if (args.Row.Item is not null && renderedRowHeights.TryGetValue(args.Row.Item, out var height))
+                args.Row.Height = height;
+        };
+        return overlay;
+    }
+
+    private void SyncOverlayRowHeights(DataGridView overlay)
+    {
+        foreach (var entry in renderedRowHeights)
+            if (overlay.ItemContainerGenerator.ContainerFromItem(entry.Key) is DataGridRow row)
+                row.Height = entry.Value;
+    }
 
     private void PlaceOverlay(FrameworkElement overlay, double left, double top, double width, double height)
     {

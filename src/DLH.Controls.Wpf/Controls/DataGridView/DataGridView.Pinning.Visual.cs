@@ -310,7 +310,7 @@ public partial class DataGridView
         GridLinesVisibility = GridLinesVisibility,
         CellPadding = CellPadding,
         Density = Density,
-        ColumnHeaderHeight = ColumnHeaderHeight,
+        ColumnHeaderHeight = headers.HasFlag(DataGridHeadersVisibility.Column) ? ColumnHeaderHeight : 0,
         RowHeight = RowHeight,
         CanUserReorderColumns = false,
         CanUserResizeColumns = false,

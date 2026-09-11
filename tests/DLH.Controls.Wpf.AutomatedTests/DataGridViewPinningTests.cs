@@ -117,6 +117,13 @@ public sealed class DataGridViewPinningTests
             grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
             Assert.IsGreaterThanOrEqualTo(2, layer.Children.Count,
                 "A linha e a coluna devem ganhar representações aderentes depois de cruzarem as bordas.");
+            var rowOverlay = layer.Children.OfType<DataGridView>()
+                .Single(overlay => overlay.HeadersVisibility == DataGridHeadersVisibility.None);
+            rowOverlay.UpdateLayout();
+            Assert.AreEqual(0d, rowOverlay.ColumnHeaderHeight, 0.1d,
+                "A representação de uma linha fixada não deve reservar espaço para o cabeçalho.");
+            Assert.IsNotNull(rowOverlay.ItemContainerGenerator.ContainerFromIndex(0),
+                "A célula da linha, e não o cabeçalho, deve ocupar a representação fixada.");
             var overlays = layer.Children.Cast<UIElement>().ToArray();
             viewer.ScrollToHorizontalOffset(300);
             viewer.ScrollToVerticalOffset(650);

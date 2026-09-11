@@ -48,6 +48,7 @@ public sealed class DataGridViewPinningTests
 
         Assert.IsFalse(grid.CanPinRows);
         Assert.IsFalse(grid.CanPinColumns);
+        Assert.AreEqual(DataGridHeadersVisibility.Column, grid.HeadersVisibility);
         Assert.IsFalse(grid.PinRow(first));
         Assert.IsFalse(grid.PinColumn(firstColumn));
 
@@ -62,6 +63,11 @@ public sealed class DataGridViewPinningTests
 
         grid.CanPinRows = true;
         grid.CanPinColumns = true;
+        Assert.AreEqual(DataGridHeadersVisibility.All, grid.HeadersVisibility);
+        Assert.AreEqual(30d, grid.RowHeaderWidth);
+        grid.ShowRowPinButton = false;
+        Assert.AreEqual(DataGridHeadersVisibility.Column, grid.HeadersVisibility);
+        grid.ShowRowPinButton = true;
         Assert.IsTrue(grid.PinRow(first));
         Assert.IsFalse(grid.PinRow(first));
         Assert.IsFalse(grid.PinRow(second));
@@ -115,6 +121,13 @@ public sealed class DataGridViewPinningTests
             grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
             Assert.IsGreaterThanOrEqualTo(2, layer.Children.Count,
                 "A linha e a coluna devem ganhar representações aderentes depois de cruzarem as bordas.");
+            var overlays = layer.Children.Cast<UIElement>().ToArray();
+            viewer.ScrollToHorizontalOffset(300);
+            viewer.ScrollToVerticalOffset(650);
+            grid.UpdateLayout();
+            grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+            CollectionAssert.AreEqual(overlays, layer.Children.Cast<UIElement>().ToArray(),
+                "As camadas devem ser reutilizadas enquanto permanecerem na mesma borda.");
 
             viewer.ScrollToHorizontalOffset(0);
             viewer.ScrollToVerticalOffset(0);
@@ -122,6 +135,39 @@ public sealed class DataGridViewPinningTests
             grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
             Assert.IsEmpty(layer.Children.Cast<UIElement>(),
                 "As representações aderentes devem desaparecer ao reencontrar as posições naturais.");
+        }
+        finally { window.Close(); }
+    }
+
+    [STATestMethod]
+    public void PinnedItemsCanAdhereToTheBottomAndRightEdges()
+    {
+        var rows = new ObservableCollection<Row>(Enumerable.Range(1, 100).Select(index => new Row($"Linha {index}")));
+        var grid = new DataGridView { Width = 320, Height = 220, ItemsSource = rows, CanPinRows = true, CanPinColumns = true };
+        grid.Columns.Add(new DataGridTextColumn { Header = "Primeira", Binding = new System.Windows.Data.Binding(nameof(Row.Name)), Width = 220 });
+        var secondColumn = new DataGridTextColumn { Header = "Segunda", Binding = new System.Windows.Data.Binding(nameof(Row.Name)), Width = 420 };
+        grid.Columns.Add(secondColumn);
+        var window = new Window { Content = grid, Width = 340, Height = 260, WindowStyle = WindowStyle.None, ShowInTaskbar = false };
+        window.Show();
+        try
+        {
+            grid.UpdateLayout();
+            var viewer = (ScrollViewer)grid.Template.FindName("DG_ScrollViewer", grid)!;
+            viewer.ScrollToHorizontalOffset(280);
+            viewer.ScrollToVerticalOffset(500);
+            grid.UpdateLayout();
+            var visibleRowIndex = Enumerable.Range(1, rows.Count - 1)
+                .First(index => grid.ItemContainerGenerator.ContainerFromIndex(index) is DataGridRow);
+            Assert.IsTrue(grid.PinRow(rows[visibleRowIndex]));
+            Assert.IsTrue(grid.PinColumn(secondColumn));
+
+            viewer.ScrollToHorizontalOffset(0);
+            viewer.ScrollToVerticalOffset(0);
+            grid.UpdateLayout();
+            grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+            var layer = (Canvas)grid.Template.FindName("PART_PinningLayer", grid)!;
+            Assert.IsGreaterThanOrEqualTo(2, layer.Children.Count,
+                "Os itens devem permanecer visíveis ao cruzar as bordas inferior e direita.");
         }
         finally { window.Close(); }
     }

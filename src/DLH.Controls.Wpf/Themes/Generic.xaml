@@ -685,6 +685,33 @@
                 </Style>
             </Setter.Value>
         </Setter>
+        <Setter Property="RowHeaderStyle">
+            <Setter.Value>
+                <Style TargetType="DataGridRowHeader">
+                    <Setter Property="Width" Value="30" />
+                    <Setter Property="Background" Value="{DynamicResource DataGridView.Header}" />
+                    <Setter Property="BorderBrush" Value="{DynamicResource DataGridView.Edge}" />
+                    <Setter Property="BorderThickness" Value="0,0,1,1" />
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="DataGridRowHeader">
+                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}">
+                                    <Button Width="24" Height="24" Padding="5" Background="Transparent" BorderThickness="0"
+                                            ToolTip="Fixar ou desafixar linha"
+                                            Command="{x:Static local:DataGridView.ToggleRowPinCommand}"
+                                            CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType=DataGridRow}}"
+                                            CommandTarget="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}">
+                                        <Path Data="M 4,1 L 10,1 L 9,5 L 11,7 L 7.5,7 L 7.5,12 L 6.5,12 L 6.5,7 L 3,7 L 5,5 Z"
+                                              Stroke="{DynamicResource DataGridView.Muted}" StrokeThickness="1.4" Stretch="Uniform" />
+                                    </Button>
+                                </Border>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </Setter.Value>
+        </Setter>
         <Setter Property="RowStyle">
             <Setter.Value>
                 <Style TargetType="DataGridRow">

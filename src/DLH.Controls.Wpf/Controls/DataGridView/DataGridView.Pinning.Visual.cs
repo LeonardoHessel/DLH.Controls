@@ -4,6 +4,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Data;
 using System.Windows.Media;
 using System.Windows.Threading;
+using System.Runtime.CompilerServices;
 
 namespace DLH.Controls.Wpf;
 
@@ -15,6 +16,9 @@ public partial class DataGridView
     private readonly Dictionary<object, (double Offset, double Height)> pinnedRowMetrics = [];
     private readonly Dictionary<DataGridColumn, (double Offset, double Width)> pinnedColumnMetrics = [];
     private bool pinningUpdatePending;
+    private string pinningLayoutSignature = string.Empty;
+    private readonly List<DataGridView> pinnedRowOverlays = [];
+    private readonly List<DataGridView> pinnedColumnOverlays = [];
 
     private void InitializePinningVisuals()
     {
@@ -22,6 +26,7 @@ public partial class DataGridView
         pinningLayer = GetTemplateChild("PART_PinningLayer") as Canvas;
         pinningScrollViewer = GetTemplateChild("DG_ScrollViewer") as ScrollViewer;
         if (pinningScrollViewer is null || pinningLayer is null) return;
+        pinningLayoutSignature = string.Empty;
         pinningScrollViewer.ApplyTemplate();
         pinningViewport = pinningScrollViewer.Template.FindName("PART_ScrollContentPresenter", pinningScrollViewer) as FrameworkElement;
         pinningScrollViewer.ScrollChanged += OnPinningScrollChanged;
@@ -70,10 +75,47 @@ public partial class DataGridView
         if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null ||
             pinningViewport.ActualWidth <= 0 || pinningViewport.ActualHeight <= 0) return;
         CapturePinnedMetrics();
-        pinningLayer.Children.Clear();
         var origin = pinningViewport.TranslatePoint(new Point(), pinningLayer);
+        var signature = CreatePinningLayoutSignature(origin);
+        if (string.Equals(signature, pinningLayoutSignature, StringComparison.Ordinal))
+        {
+            SyncActiveOverlayScrolls();
+            return;
+        }
+        pinningLayoutSignature = signature;
+        pinningLayer.Children.Clear();
+        pinnedRowOverlays.Clear();
+        pinnedColumnOverlays.Clear();
         AddPinnedRows(origin);
         AddPinnedColumns(origin);
+    }
+
+    private string CreatePinningLayoutSignature(Point origin)
+    {
+        if (pinningScrollViewer is null || pinningViewport is null) return string.Empty;
+        var parts = new List<string> { $"V{pinningViewport.ActualWidth:F2},{pinningViewport.ActualHeight:F2}" };
+        foreach (var item in pinnedRows.Where(pinnedRowMetrics.ContainsKey))
+        {
+            var metric = pinnedRowMetrics[item];
+            var natural = origin.Y + metric.Offset - pinningScrollViewer.VerticalOffset;
+            var edge = natural < origin.Y ? 'S' : natural + metric.Height > origin.Y + pinningViewport.ActualHeight ? 'E' : 'N';
+            parts.Add($"R{RuntimeHelpers.GetHashCode(item)}{edge}{metric.Height:F2}");
+        }
+        foreach (var column in pinnedColumns.Where(pinnedColumnMetrics.ContainsKey))
+        {
+            var metric = pinnedColumnMetrics[column];
+            var natural = origin.X + metric.Offset - pinningScrollViewer.HorizontalOffset;
+            var edge = natural < origin.X ? 'S' : natural + metric.Width > origin.X + pinningViewport.ActualWidth ? 'E' : 'N';
+            parts.Add($"C{RuntimeHelpers.GetHashCode(column)}{edge}{metric.Width:F2}");
+        }
+        return string.Join('|', parts);
+    }
+
+    private void SyncActiveOverlayScrolls()
+    {
+        if (pinningScrollViewer is null) return;
+        foreach (var overlay in pinnedRowOverlays) SyncOverlayScrollNow(overlay, pinningScrollViewer.HorizontalOffset, 0);
+        foreach (var overlay in pinnedColumnOverlays) SyncOverlayScrollNow(overlay, 0, pinningScrollViewer.VerticalOffset);
     }
 
     private void AddPinnedRows(Point origin)
@@ -134,6 +176,7 @@ public partial class DataGridView
         foreach (var column in Columns.Where(column => column.Visibility == Visibility.Visible).OrderBy(column => column.DisplayIndex))
             overlay.Columns.Add(CloneColumn(column));
         PlaceOverlay(overlay, left, top, width, height);
+        pinnedRowOverlays.Add(overlay);
         SyncOverlayScroll(overlay, pinningScrollViewer.HorizontalOffset, 0);
     }
 
@@ -143,6 +186,7 @@ public partial class DataGridView
         var overlay = CreateOverlayGrid(DataGridHeadersVisibility.Column, ItemsSource ?? Items);
         overlay.Columns.Add(CloneColumn(column));
         PlaceOverlay(overlay, left, top, width, height);
+        pinnedColumnOverlays.Add(overlay);
         SyncOverlayScroll(overlay, 0, pinningScrollViewer.VerticalOffset);
     }
 
@@ -191,6 +235,13 @@ public partial class DataGridView
             viewer.ScrollToHorizontalOffset(horizontalOffset);
             viewer.ScrollToVerticalOffset(verticalOffset);
         };
+    }
+
+    private static void SyncOverlayScrollNow(DataGridView overlay, double horizontalOffset, double verticalOffset)
+    {
+        if (overlay.Template.FindName("DG_ScrollViewer", overlay) is not ScrollViewer viewer) return;
+        viewer.ScrollToHorizontalOffset(horizontalOffset);
+        viewer.ScrollToVerticalOffset(verticalOffset);
     }
 
     private static DataGridColumn CloneColumn(DataGridColumn source)

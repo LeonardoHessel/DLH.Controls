@@ -67,7 +67,7 @@ public partial class DataGridView
     private INotifyCollectionChanged? observedItemsSource;
 
     public static readonly DependencyProperty CanPinRowsProperty = DependencyProperty.Register(
-        nameof(CanPinRows), typeof(bool), typeof(DataGridView), new PropertyMetadata(false));
+        nameof(CanPinRows), typeof(bool), typeof(DataGridView), new PropertyMetadata(false, OnRowPinVisualOptionChanged));
     public bool CanPinRows { get => (bool)GetValue(CanPinRowsProperty); set => SetValue(CanPinRowsProperty, value); }
 
     public static readonly DependencyProperty CanPinColumnsProperty = DependencyProperty.Register(
@@ -75,7 +75,7 @@ public partial class DataGridView
     public bool CanPinColumns { get => (bool)GetValue(CanPinColumnsProperty); set => SetValue(CanPinColumnsProperty, value); }
 
     public static readonly DependencyProperty ShowRowPinButtonProperty = DependencyProperty.Register(
-        nameof(ShowRowPinButton), typeof(bool), typeof(DataGridView), new PropertyMetadata(true));
+        nameof(ShowRowPinButton), typeof(bool), typeof(DataGridView), new PropertyMetadata(true, OnRowPinVisualOptionChanged));
     public bool ShowRowPinButton { get => (bool)GetValue(ShowRowPinButtonProperty); set => SetValue(ShowRowPinButtonProperty, value); }
 
     public static readonly DependencyProperty ShowColumnPinButtonProperty = DependencyProperty.Register(
@@ -186,6 +186,16 @@ public partial class DataGridView
         {
             foreach (var column in pinnedColumns.Where(column => !Columns.Contains(column)).ToArray()) UnpinColumn(column);
         };
+    }
+
+    private static void OnRowPinVisualOptionChanged(DependencyObject owner, DependencyPropertyChangedEventArgs args) =>
+        ((DataGridView)owner).UpdateRowPinVisual();
+
+    private void UpdateRowPinVisual()
+    {
+        var visible = CanPinRows && ShowRowPinButton;
+        SetCurrentValue(HeadersVisibilityProperty, visible ? DataGridHeadersVisibility.All : DataGridHeadersVisibility.Column);
+        SetCurrentValue(RowHeaderWidthProperty, visible ? 30d : 0d);
     }
 
     private static Path CreatePinIcon(bool pinned) => new()

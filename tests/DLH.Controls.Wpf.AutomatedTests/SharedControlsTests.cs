@@ -51,6 +51,66 @@ public sealed class SharedControlsTests
     }
 
     [STATestMethod]
+    public void ChoiceMenuItemCyclesWrapsAndSkipsDisabledOptions()
+    {
+        var item = new ChoiceMenuItem { Header = "Tema", SelectedIndex = 0 };
+        item.Items.Add(new ChoiceMenuOption { Content = "Escuro", Value = "Dark", Icon = "☾" });
+        item.Items.Add(new ChoiceMenuOption { Content = "Indisponível", Value = "Disabled", IsEnabled = false });
+        item.Items.Add(new ChoiceMenuOption { Content = "Claro", Value = "Light", Icon = "☀" });
+
+        item.CycleSelection();
+        Assert.AreEqual(2, item.SelectedIndex);
+        Assert.AreEqual("Light", item.SelectedValue);
+        Assert.AreEqual("Claro", item.InputGestureText);
+        Assert.AreEqual("☀", item.Icon);
+
+        item.CycleSelection();
+        Assert.AreEqual(0, item.SelectedIndex);
+        item.CycleDirection = ChoiceCycleDirection.Backward;
+        item.CycleSelection();
+        Assert.AreEqual(2, item.SelectedIndex);
+    }
+
+    [STATestMethod]
+    public void ChoiceMenuItemSupportsObjectPathsAndTwoWaySelectionMetadata()
+    {
+        var first = new ChoiceTestOption("Escuro", "Dark", "☾");
+        var second = new ChoiceTestOption("Claro", "Light", "☀");
+        var item = new ChoiceMenuItem
+        {
+            DisplayMemberPath = nameof(ChoiceTestOption.Title),
+            SelectedValuePath = nameof(ChoiceTestOption.Code),
+            IconMemberPath = nameof(ChoiceTestOption.Symbol)
+        };
+        item.Items.Add(first);
+        item.Items.Add(second);
+        item.SelectedValue = "Light";
+
+        Assert.AreEqual(1, item.SelectedIndex);
+        Assert.AreSame(second, item.SelectedItem);
+        Assert.AreEqual("Claro", item.InputGestureText);
+        Assert.AreEqual("☀", item.Icon);
+        Assert.IsTrue(((FrameworkPropertyMetadata)ChoiceMenuItem.SelectedIndexProperty.GetMetadata(typeof(ChoiceMenuItem))).BindsTwoWayByDefault);
+        Assert.IsTrue(((FrameworkPropertyMetadata)ChoiceMenuItem.SelectedItemProperty.GetMetadata(typeof(ChoiceMenuItem))).BindsTwoWayByDefault);
+        Assert.IsTrue(((FrameworkPropertyMetadata)ChoiceMenuItem.SelectedValueProperty.GetMetadata(typeof(ChoiceMenuItem))).BindsTwoWayByDefault);
+    }
+
+    [STATestMethod]
+    public void ChoiceMenuItemCanStopAtEitherEnd()
+    {
+        var item = new ChoiceMenuItem { IsCycleWrappingEnabled = false, SelectedIndex = 1 };
+        item.Items.Add("Primeiro");
+        item.Items.Add("Último");
+        item.CycleSelection();
+        Assert.AreEqual(1, item.SelectedIndex);
+        item.CycleDirection = ChoiceCycleDirection.Backward;
+        item.CycleSelection();
+        Assert.AreEqual(0, item.SelectedIndex);
+        item.CycleSelection();
+        Assert.AreEqual(0, item.SelectedIndex);
+    }
+
+    [STATestMethod]
     public void ContextMenuTemplateSupportsItemsSeparatorsAndOptionalShadow()
     {
         var menu = new ControlsContextMenu { IsShadowEnabled = false };
@@ -237,5 +297,7 @@ public sealed class SharedControlsTests
             foreach (var descendant in VisualDescendants(child)) yield return descendant;
         }
     }
+
+    private sealed record ChoiceTestOption(string Title, string Code, string Symbol);
 }
 

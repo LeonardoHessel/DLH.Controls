@@ -365,9 +365,19 @@ O `ContextMenu` mantém os comandos, bindings, teclado, itens marcáveis e subme
                     <TextBlock Text="↻" />
                 </MenuItem.Icon>
             </MenuItem>
-            <MenuItem Header="Exibir detalhes"
-                      IsCheckable="True"
-                      IsChecked="True" />
+            <dlh:ToggleMenuItem Header="Exibir detalhes"
+                                IsChecked="{Binding ShowDetails, Mode=TwoWay}"
+                                CheckedIcon="●"
+                                UncheckedIcon="○" />
+            <dlh:ChoiceMenuItem Header="Tema"
+                                SelectedValue="{Binding Theme, Mode=TwoWay}"
+                                SelectedIndex="0"
+                                CycleDirection="Forward"
+                                IsCycleWrappingEnabled="True">
+                <dlh:ChoiceMenuOption Content="Escuro" Value="Dark" Icon="☾" />
+                <dlh:ChoiceMenuOption Content="Claro" Value="Light" Icon="☀" />
+                <dlh:ChoiceMenuOption Content="Sistema" Value="System" Icon="◐" />
+            </dlh:ChoiceMenuItem>
             <Separator />
             <MenuItem Header="Exportar">
                 <MenuItem Header="Arquivo CSV" />
@@ -379,6 +389,8 @@ O `ContextMenu` mantém os comandos, bindings, teclado, itens marcáveis e subme
 ```
 
 Use `Background`, `Foreground`, `BorderBrush`, `BorderThickness` e `Padding` para a superfície. `HoverBrush`, `CheckedBrush`, `SeparatorBrush`, `DisabledOpacity`, `ItemPadding`, `IconSize` e `IconColumnWidth` controlam os itens. A sombra utiliza `IsShadowEnabled`, `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`.
+
+`ToggleMenuItem` fornece um estado booleano bidirecional e aceita `CheckedIcon` e `UncheckedIcon`. `ChoiceMenuItem` exibe a escolha atual, percorre as opções pelo clique principal e abre a lista completa pela seta. A seleção pode ser ligada por `SelectedIndex`, `SelectedItem` ou `SelectedValue`; as três propriedades usam binding bidirecional por padrão. Para coleções de modelos, use `DisplayMemberPath`, `SelectedValuePath` e `IconMemberPath`. `CycleDirection`, `IsCycleWrappingEnabled` e `DropDownButtonWidth` personalizam a interação.
 
 O menu aberto com o botão direito nos cabeçalhos do `DataGridView` já é uma instância desse componente.
 

@@ -393,7 +393,13 @@ O `ContextMenu` aceita os mesmos `MenuItem`, comandos, bindings, atalhos, itens 
     <Button.ContextMenu>
         <dlh:ContextMenu CornerRadius="8" ItemPadding="12,8">
             <MenuItem Header="Atualizar" InputGestureText="F5" />
-            <MenuItem Header="Exibir detalhes" IsCheckable="True" IsChecked="True" />
+            <dlh:ToggleMenuItem Header="Exibir detalhes"
+                                IsChecked="{Binding ShowDetails}"
+                                CheckedIcon="●" UncheckedIcon="○" />
+            <dlh:ChoiceMenuItem Header="Tema" SelectedValue="{Binding Theme}" SelectedIndex="0">
+                <dlh:ChoiceMenuOption Content="Escuro" Value="Dark" Icon="☾" />
+                <dlh:ChoiceMenuOption Content="Claro" Value="Light" Icon="☀" />
+            </dlh:ChoiceMenuItem>
             <Separator />
             <MenuItem Header="Exportar">
                 <MenuItem Header="Arquivo CSV" />
@@ -404,6 +410,8 @@ O `ContextMenu` aceita os mesmos `MenuItem`, comandos, bindings, atalhos, itens 
 ```
 
 O `DataGridView` usa os dois componentes internamente. Eles também estão disponíveis para controles próprios e aplicações consumidoras.
+
+No `ToggleMenuItem`, `IsChecked` é bidirecional por padrão e os ícones podem variar entre `CheckedIcon` e `UncheckedIcon`. No `ChoiceMenuItem`, o clique sobre o item percorre as opções e a seta abre o submenu para seleção direta. Use `SelectedIndex`, `SelectedItem` ou `SelectedValue` para manter a escolha no view model.
 
 ## 6. Temas e personalização
 

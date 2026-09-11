@@ -84,6 +84,8 @@ Os nomes foram padronizados durante a fase de pré-lançamento: `TabControl` sub
 
 `ContextMenu` deriva de `System.Windows.Controls.ContextMenu` e preserva `Items`, `ItemContainerStyle`, comandos, bindings, atalhos, teclado, itens marcáveis e submenus nativos. `CornerRadius`, `Padding`, `ItemPadding`, `IconSize` e `IconColumnWidth` definem a geometria. `Background`, `Foreground`, `BorderBrush`, `HoverBrush`, `CheckedBrush` e `SeparatorBrush` definem as cores. `DisabledOpacity` controla itens indisponíveis. A sombra usa `IsShadowEnabled`, `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`.
 
+`ToggleMenuItem` especializa o item marcável com `IsChecked` bidirecional por padrão, `CheckedIcon` e `UncheckedIcon`. `ChoiceMenuItem` representa uma escolha entre vários valores. `SelectedIndex`, `SelectedItem` e `SelectedValue` são bidirecionais por padrão; `DisplayMemberPath`, `SelectedValuePath` e `IconMemberPath` adaptam modelos externos. `CycleDirection`, `IsCycleWrappingEnabled` e `DropDownButtonWidth` controlam o clique cíclico e a área que abre o submenu. `ChoiceMenuOption` é o modelo declarativo simples com `Content`, `Value`, `Icon` e `IsEnabled`.
+
 Em C#, quando `System.Windows.Controls` e `DLH.Controls.Wpf` estiverem importados simultaneamente, use um alias ou o nome qualificado para distinguir os dois tipos: `using ControlsContextMenu = DLH.Controls.Wpf.ContextMenu;`. Em XAML, o prefixo `dlh:` já elimina a ambiguidade.
 
 # Referência da API — DataGridView

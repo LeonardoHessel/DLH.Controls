@@ -52,6 +52,8 @@ public partial class SharedControlsDemoWindow : Window
         MenuBackground.Text = "#35373C"; MenuForeground.Text = "#F2F3F5"; MenuBorder.Text = "#4C5058";
         MenuHover.Text = "#454850"; MenuChecked.Text = "#9CC9FF"; MenuSeparator.Text = "#4C5058"; MenuShadowColor.Text = "#494949";
         MenuShadow.IsChecked = true; MenuShadowOpacity.Value = .5; MenuShadowBlur.Value = 10; MenuShadowDepth.Value = 0;
+        MenuDetailsValue.IsChecked = true; MenuChoiceDirection.SelectedIndex = 0; MenuChoiceWrap.IsChecked = true;
+        MenuChoiceArrowWidth.Value = 24; MenuChoiceIndex.Value = 0;
         ApplyOptions(includeTextFields: true);
     }
 
@@ -79,6 +81,11 @@ public partial class SharedControlsDemoWindow : Window
             DemoMenu.ShadowOpacity = MenuShadowOpacity.Value;
             DemoMenu.ShadowBlurRadius = MenuShadowBlur.Value;
             DemoMenu.ShadowDepth = MenuShadowDepth.Value;
+            DetailsToggleItem.IsChecked = MenuDetailsValue.IsChecked == true;
+            ThemeChoiceItem.CycleDirection = MenuChoiceDirection.SelectedIndex == 1 ? ChoiceCycleDirection.Backward : ChoiceCycleDirection.Forward;
+            ThemeChoiceItem.IsCycleWrappingEnabled = MenuChoiceWrap.IsChecked == true;
+            ThemeChoiceItem.DropDownButtonWidth = MenuChoiceArrowWidth.Value;
+            ThemeChoiceItem.SelectedIndex = (int)MenuChoiceIndex.Value;
 
             if (includeTextFields)
             {

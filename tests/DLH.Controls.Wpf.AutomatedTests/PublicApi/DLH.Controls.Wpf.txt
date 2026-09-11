@@ -1,6 +1,40 @@
 type DLH.Controls.Wpf.AddTabRequestedEventArgs
   ctor(System.Object)
   property System.Object Parameter { get;  }
+type DLH.Controls.Wpf.ChoiceCycleDirection
+  field DLH.Controls.Wpf.ChoiceCycleDirection Backward
+  field DLH.Controls.Wpf.ChoiceCycleDirection Forward
+  field System.Int32 value__
+type DLH.Controls.Wpf.ChoiceMenuItem
+  ctor()
+  field System.Windows.DependencyProperty CycleDirectionProperty
+  field System.Windows.DependencyProperty DropDownButtonWidthProperty
+  field System.Windows.DependencyProperty IconMemberPathProperty
+  field System.Windows.DependencyProperty IsCycleWrappingEnabledProperty
+  field System.Windows.DependencyProperty SelectedIndexProperty
+  field System.Windows.DependencyProperty SelectedItemProperty
+  field System.Windows.DependencyProperty SelectedValuePathProperty
+  field System.Windows.DependencyProperty SelectedValueProperty
+  method System.Void CycleSelection()
+  property DLH.Controls.Wpf.ChoiceCycleDirection CycleDirection { get; set;  }
+  property System.Boolean IsCycleWrappingEnabled { get; set;  }
+  property System.Double DropDownButtonWidth { get; set;  }
+  property System.Int32 SelectedIndex { get; set;  }
+  property System.Object SelectedItem { get; set;  }
+  property System.Object SelectedValue { get; set;  }
+  property System.String IconMemberPath { get; set;  }
+  property System.String SelectedValuePath { get; set;  }
+type DLH.Controls.Wpf.ChoiceMenuOption
+  ctor()
+  field System.Windows.DependencyProperty ContentProperty
+  field System.Windows.DependencyProperty IconProperty
+  field System.Windows.DependencyProperty IsEnabledProperty
+  field System.Windows.DependencyProperty ValueProperty
+  method System.String ToString()
+  property System.Boolean IsEnabled { get; set;  }
+  property System.Object Content { get; set;  }
+  property System.Object Icon { get; set;  }
+  property System.Object Value { get; set;  }
 type DLH.Controls.Wpf.ContextMenu
   ctor()
   field System.Windows.DependencyProperty CheckedBrushProperty

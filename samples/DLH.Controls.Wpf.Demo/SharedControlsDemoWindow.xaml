@@ -48,7 +48,11 @@
                                             <controls:ToggleMenuItem.CheckedIcon><TextBlock Text="●" Foreground="#7EDC9A"/></controls:ToggleMenuItem.CheckedIcon>
                                             <controls:ToggleMenuItem.UncheckedIcon><TextBlock Text="○" Foreground="#AEB3BD"/></controls:ToggleMenuItem.UncheckedIcon>
                                         </controls:ToggleMenuItem>
-                                        <MenuItem Header="Modo avançado" IsCheckable="True"/>
+                                        <controls:ChoiceMenuItem x:Name="ThemeChoiceItem" Header="Tema" SelectedIndex="0">
+                                            <controls:ChoiceMenuOption Content="Escuro" Value="Dark" Icon="☾"/>
+                                            <controls:ChoiceMenuOption Content="Claro" Value="Light" Icon="☀"/>
+                                            <controls:ChoiceMenuOption Content="Sistema" Value="System" Icon="◐"/>
+                                        </controls:ChoiceMenuItem>
                                         <Separator/>
                                         <MenuItem Header="Exportar">
                                             <MenuItem Header="Arquivo CSV"/>
@@ -105,6 +109,18 @@
                             <TextBlock Grid.Row="4" Text="Tamanho do ícone"/><Slider x:Name="MenuIconSize" Grid.Row="4" Grid.Column="1" Minimum="0" Maximum="32" Value="16" ValueChanged="OptionsChanged"/>
                             <TextBlock Grid.Row="5" Text="Largura da coluna do ícone"/><Slider x:Name="MenuIconColumn" Grid.Row="5" Grid.Column="1" Minimum="0" Maximum="50" Value="26" ValueChanged="OptionsChanged"/>
                             <TextBlock Grid.Row="6" Text="Opacidade desabilitado"/><Slider x:Name="MenuDisabledOpacity" Grid.Row="6" Grid.Column="1" Minimum="0" Maximum="1" Value="0.45" ValueChanged="OptionsChanged"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Header="ContextMenu — itens booleano e seletor">
+                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Grid.RowDefinitions>
+                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                        </Grid.RowDefinitions>
+                            <CheckBox x:Name="MenuDetailsValue" Grid.ColumnSpan="2" Content="Valor de Exibir detalhes" IsChecked="True" Checked="OptionsChanged" Unchecked="OptionsChanged"/>
+                            <TextBlock Grid.Row="1" Text="Direção do ciclo"/><ComboBox x:Name="MenuChoiceDirection" Grid.Row="1" Grid.Column="1" Margin="6,3" Padding="6" SelectedIndex="0" SelectionChanged="OptionsChanged"><ComboBoxItem Content="Avançar"/><ComboBoxItem Content="Retroceder"/></ComboBox>
+                            <CheckBox x:Name="MenuChoiceWrap" Grid.Row="2" Grid.ColumnSpan="2" Content="Reiniciar ao chegar ao fim" IsChecked="True" Checked="OptionsChanged" Unchecked="OptionsChanged"/>
+                            <TextBlock Grid.Row="3" Text="Largura da seta"/><Slider x:Name="MenuChoiceArrowWidth" Grid.Row="3" Grid.Column="1" Minimum="12" Maximum="60" Value="24" ValueChanged="OptionsChanged"/>
+                            <TextBlock Grid.Row="4" Text="Tema selecionado"/><Slider x:Name="MenuChoiceIndex" Grid.Row="4" Grid.Column="1" Minimum="0" Maximum="2" TickFrequency="1" IsSnapToTickEnabled="True" Value="0" ValueChanged="OptionsChanged"/>
                         </Grid>
                     </GroupBox>
 

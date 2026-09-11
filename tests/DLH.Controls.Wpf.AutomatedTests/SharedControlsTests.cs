@@ -135,6 +135,9 @@ public sealed class SharedControlsTests
             menu.IsOpen = true;
             menu.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Loaded);
             choice.ApplyTemplate();
+            choice.Measure(new Size(240, 40));
+            choice.Arrange(new Rect(0, 0, 240, 40));
+            choice.UpdateLayout();
             var popup = (System.Windows.Controls.Primitives.Popup)choice.Template.FindName("PART_Popup", choice)!;
             var generated = choice.CreatePreparedContainer(choice.Items[0]);
             generated.ApplyTemplate();
@@ -150,6 +153,15 @@ public sealed class SharedControlsTests
             Assert.AreEqual(FlowDirection.LeftToRight,
                 ((FrameworkElement)choice.Template.FindName("SubmenuArrow", choice)!).FlowDirection,
                 "O glifo da seta deve preservar a orientação definida pelo template.");
+            var dropDownHost = (FrameworkElement)choice.Template.FindName("DropDownHost", choice)!;
+            var dropDownCenter = dropDownHost.TranslatePoint(
+                new Point(dropDownHost.ActualWidth / 2, dropDownHost.ActualHeight / 2), choice);
+            var hitTest = typeof(ChoiceMenuItem).GetMethod("IsDropDownColumnHit",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            Assert.IsTrue((bool)hitTest.Invoke(choice, [dropDownCenter])!);
+            var oppositeSide = new Point(choice.ActualWidth - dropDownCenter.X, dropDownCenter.Y);
+            Assert.IsFalse((bool)hitTest.Invoke(choice, [oppositeSide])!,
+                "Somente a coluna renderizada da seta deve abrir o submenu.");
         }
         finally { menu.IsOpen = false; window.Close(); }
     }

@@ -155,13 +155,7 @@ public class ChoiceMenuItem : MenuItem
             return;
         }
 
-        var pointerX = e.GetPosition(this).X;
-        var dropDownAreaWidth = DropDownButtonWidth +
-            (FlowDirection == FlowDirection.LeftToRight ? Padding.Right : Padding.Left);
-        var isOverDropDownArea = FlowDirection == FlowDirection.LeftToRight
-            ? pointerX >= Math.Max(0, ActualWidth - dropDownAreaWidth)
-            : pointerX <= dropDownAreaWidth;
-        if (HasItems && isOverDropDownArea)
+        if (HasItems && IsDropDownColumnHit(e.GetPosition(this)))
             ToggleSubmenu();
         else
         {
@@ -169,6 +163,15 @@ public class ChoiceMenuItem : MenuItem
             OnClick();
         }
         e.Handled = true;
+    }
+
+    private bool IsDropDownColumnHit(Point pointerPosition)
+    {
+        if (Template.FindName("DropDownHost", this) is not FrameworkElement dropDownHost ||
+            dropDownHost.ActualWidth <= 0 || dropDownHost.ActualHeight <= 0)
+            return false;
+        var topLeft = dropDownHost.TranslatePoint(new Point(), this);
+        return new Rect(topLeft, dropDownHost.RenderSize).Contains(pointerPosition);
     }
 
     protected override void OnKeyDown(KeyEventArgs e)

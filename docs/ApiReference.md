@@ -100,7 +100,42 @@ Em C#, quando `System.Windows.Controls` e `DLH.Controls.Wpf` estiverem importado
 
 `ExportCsv(TextWriter, options)` e `ExportCsv(Stream, options, encoding)` exportam a visualização corrente. `DataGridViewCsvOptions` oferece `Delimiter`, `IncludeHeaders`, `Culture` e `ValueSelector`.
 
-`IsGroupingEnabled` aplica um `PropertyGroupDescription` para `GroupMemberPath`. `ShowRowDetailsOnSelection` controla os detalhes na seleção e `SetRowDetailsVisibility(item, visible)` atua em uma linha materializada.
+`IsGroupingEnabled` aplica um `PropertyGroupDescription` para `GroupMemberPath`. `ShowRowDetailsOnSelection` controla os detalhes embutidos na seleção e `SetRowDetailsVisibility(item, visible)` atua em uma linha materializada.
+
+## Detalhes flutuantes
+
+| Membro | Padrão | Contrato |
+|---|---:|---|
+| `ShowRowDetailsPopupOnClick` | `false` | Um clique abre o painel da linha; outro clique na mesma linha fecha; outra linha troca o conteúdo |
+| `RowDetailsPopupTemplate` | `null` | Template do item; quando ausente, reutiliza `RowDetailsTemplate` |
+| `RowDetailsPopupContentStyle` | `null` | Estilo do `ContentControl` que hospeda o template |
+| `RowDetailsPopupPlacement` | `Bottom` | Posicionamento WPF relativo à linha clicada |
+| `RowDetailsPopupHorizontalOffset` | `0` | Deslocamento horizontal finito |
+| `RowDetailsPopupVerticalOffset` | `4` | Deslocamento vertical finito |
+| `IsRowDetailsPopupOpen` | somente leitura | Informa se o painel está aberto |
+| `RowDetailsPopupItem` | somente leitura | Item atualmente apresentado |
+| `CloseRowDetailsPopup()` | — | Fecha o painel e limpa o item atual |
+
+O painel usa `StaysOpen=false`, portanto um clique fora dele fecha a apresentação. Mudanças na configuração também fecham o painel aberto para que a próxima abertura use o novo template, estilo ou posicionamento.
+
+## Fixação aderente de linhas e colunas
+
+| Membro | Padrão | Contrato |
+|---|---:|---|
+| `CanPinRows` | `false` | Autoriza fixação de registros e habilita sua ação no menu da linha |
+| `CanPinColumns` | `false` | Autoriza fixação de colunas e habilita sua ação no menu do cabeçalho |
+| `MaxPinnedRows` | `5` | Limite positivo de linhas fixadas |
+| `MaxPinnedColumns` | `4` | Limite positivo de colunas fixadas |
+| `ShowPinnedBoundarySeparator` | `true` | Exibe o limite entre conteúdo aderente e rolável |
+| `PinnedBoundarySeparatorBrush` | `#42A5E8` | Pincel do separador nas quatro bordas possíveis |
+| `PinnedBoundarySeparatorThickness` | `2` | Espessura finita e maior que zero |
+| `PinnedRows` | somente leitura | Coleção observável dos itens fixados |
+| `PinnedColumns` | somente leitura | Coleção observável das colunas fixadas |
+| `RowKeyMemberPath` | `null` | Caminho da chave textual usada para persistir linhas fixadas |
+
+`PinRow`, `UnpinRow`, `ToggleRowPin`, `PinColumn`, `UnpinColumn` e `ToggleColumnPin` retornam `true` quando alteram o estado. `UnpinAllRows()` e `UnpinAllColumns()` removem todas as fixações correspondentes. `RowPinned`, `RowUnpinned`, `ColumnPinned` e `ColumnUnpinned` informam o item ou a coluna alterada.
+
+Uma fixação preserva a posição natural até o item alcançar o limite visível. Depois disso, linhas aderem ao topo ou à parte inferior e colunas à esquerda ou à direita. Itens múltiplos se acumulam junto à borda. A camada de interseção mantém linhas e colunas fixadas sincronizadas, e o separador de limite acompanha a região aderente ativa.
 
 ## Persistência do layout
 
@@ -108,7 +143,7 @@ Em C#, quando `System.Windows.Controls` e `DLH.Controls.Wpf` estiverem importado
 
 | Tipo ou operação | Contrato |
 |---|---|
-| `DataGridViewState` | Formato versionado com colunas e ordenações |
+| `DataGridViewState` | Formato versionado com colunas, ordenações e chaves dos itens fixados |
 | `DataGridViewColumnState` | Chave, índice visual, largura, unidade e visibilidade |
 | `DataGridViewSortState` | Chave da coluna e direção da ordenação |
 | `CaptureState()` | Captura a configuração atual sem manter referências às colunas |
@@ -117,7 +152,7 @@ Em C#, quando `System.Windows.Controls` e `DLH.Controls.Wpf` estiverem importado
 | `ResetState()` | Restaura o estado inicial capturado no carregamento e informa se estava disponível |
 | `StateRestored` | Emitido uma vez depois de uma restauração concluída |
 
-O formato atual usa `Version=1`. Estados com versão desconhecida, chaves duplicadas, índices repetidos, larguras inválidas, enumerações inválidas ou nenhuma coluna visível são rejeitados antes da aplicação.
+O formato atual usa `Version=1`. Estados com versão desconhecida, chaves duplicadas, índices repetidos, larguras inválidas, enumerações inválidas ou nenhuma coluna visível são rejeitados antes da aplicação. Colunas fixadas usam `ColumnKey` ou `SortMemberPath`; linhas fixadas são salvas somente quando `RowKeyMemberPath` está configurado.
 
 ## Ordenação múltipla
 

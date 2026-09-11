@@ -600,7 +600,7 @@ grid.ExportCsv(file, new DataGridViewCsvOptions { Delimiter = ";" });
 
 ## Agrupamento e detalhes de linha
 
-Defina `GroupMemberPath` e ative `IsGroupingEnabled` para criar grupos sem substituir agrupamentos externos. `ShowRowDetailsOnSelection` apresenta o `RowDetailsTemplate` ao selecionar uma linha. Para controle direto sobre uma linha materializada, use `SetRowDetailsVisibility(item, visible)`.
+Defina `GroupMemberPath` e ative `IsGroupingEnabled` para criar grupos sem substituir agrupamentos externos. O modo embutido continua disponível: `ShowRowDetailsOnSelection` apresenta o `RowDetailsTemplate` dentro do grid ao selecionar uma linha, e `SetRowDetailsVisibility(item, visible)` controla uma linha materializada por código.
 
 ```xml
 <dlh:DataGridView IsGroupingEnabled="True"
@@ -613,6 +613,59 @@ Defina `GroupMemberPath` e ative `IsGroupingEnabled` para criar grupos sem subst
     </dlh:DataGridView.RowDetailsTemplate>
 </dlh:DataGridView>
 ```
+
+Para apresentar os detalhes sem alterar a altura das linhas, ative o painel flutuante. Um clique abre os detalhes da linha, um segundo clique na mesma linha fecha o painel e um clique em outra linha troca o conteúdo. Clicar fora do painel também o fecha.
+
+```xml
+<dlh:DataGridView ItemsSource="{Binding Shipments}"
+                  ShowRowDetailsPopupOnClick="True"
+                  RowDetailsPopupPlacement="Bottom"
+                  RowDetailsPopupVerticalOffset="4">
+    <dlh:DataGridView.RowDetailsPopupTemplate>
+        <DataTemplate>
+            <Border MaxWidth="520"
+                    Padding="16,12"
+                    Background="#292B2F"
+                    BorderBrush="#50545C"
+                    BorderThickness="1"
+                    CornerRadius="8">
+                <StackPanel>
+                    <TextBlock Text="{Binding ShipmentNumber}"
+                               FontWeight="SemiBold" />
+                    <TextBlock Margin="0,6,0,0"
+                               Text="{Binding Notes}"
+                               TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+    </dlh:DataGridView.RowDetailsPopupTemplate>
+</dlh:DataGridView>
+```
+
+`RowDetailsPopupContentStyle` personaliza o contêiner, e as propriedades `RowDetailsPopupPlacement`, `RowDetailsPopupHorizontalOffset` e `RowDetailsPopupVerticalOffset` controlam a posição. Consulte `IsRowDetailsPopupOpen` e `RowDetailsPopupItem` para conhecer o estado atual ou chame `CloseRowDetailsPopup()` para fechar o painel por código. Quando `RowDetailsPopupTemplate` não é informado, o controle reutiliza `RowDetailsTemplate`.
+
+## Fixação aderente de linhas e colunas
+
+A fixação é opcional e permanece desativada por padrão. Ative `CanPinRows` e `CanPinColumns` para disponibilizar a ação de fixar nos menus de contexto das linhas e dos cabeçalhos. O ícone de fixação aparece no menu de opções, sem ocupar espaço permanente nas células ou nos cabeçalhos.
+
+```xml
+<dlh:DataGridView ItemsSource="{Binding Shipments}"
+                  CanPinRows="True"
+                  CanPinColumns="True"
+                  MaxPinnedRows="5"
+                  MaxPinnedColumns="4"
+                  ShowPinnedBoundarySeparator="True"
+                  PinnedBoundarySeparatorBrush="#42A5E8"
+                  PinnedBoundarySeparatorThickness="2" />
+```
+
+Uma linha ou coluna fixada permanece em sua posição natural enquanto estiver visível. Durante a rolagem, ela adere à borda somente quando sair da área visível. Vários itens fixados se acumulam sem sobreposição: linhas aderem ao topo ou à parte inferior e colunas aderem à esquerda ou à direita, conforme o sentido da rolagem. As interseções entre linhas e colunas fixadas preservam o conteúdo, a altura e o alinhamento originais.
+
+`ShowPinnedBoundarySeparator` exibe a divisão entre a área fixa e a área rolável. `PinnedBoundarySeparatorBrush` define a cor e `PinnedBoundarySeparatorThickness` aceita valores finitos maiores que zero. A divisão acompanha qualquer uma das quatro bordas em que exista conteúdo aderente.
+
+Por código, use `PinRow`, `UnpinRow`, `ToggleRowPin`, `PinColumn`, `UnpinColumn` e `ToggleColumnPin`. `UnpinAllRows()` e `UnpinAllColumns()` limpam cada grupo. As coleções somente leitura `PinnedRows` e `PinnedColumns` representam o estado atual, e os eventos `RowPinned`, `RowUnpinned`, `ColumnPinned` e `ColumnUnpinned` notificam as alterações.
+
+O estado das colunas fixadas é salvo com as demais configurações do grid. Para também persistir linhas fixadas, defina `RowKeyMemberPath` com uma propriedade textual, única e estável de cada registro.
 
 ## Persistir o layout das colunas
 

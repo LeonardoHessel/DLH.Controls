@@ -14,6 +14,10 @@
 - Seletor visual de cores em todas as propriedades cromáticas do laboratório, preservando a entrada hexadecimal manual.
 - Correção da atualização de cores do `ContextMenu` após a primeira abertura, incluindo separadores, itens, estados e submenus.
 - Correção do template do separador para renderizar `SeparatorBrush` no lugar da linha nativa do WPF.
+- Detalhes de registro em painel flutuante opcional e completamente personalizável, com alternância por clique e fechamento externo ou programático.
+- Fixação aderente opcional de linhas e colunas nas quatro bordas, acionada pelos menus de opções e com persistência por chaves estáveis.
+- Separador configurável entre as regiões fixa e rolável, com cor, espessura e visibilidade próprias.
+- Correções de composição, fundo, alinhamento e continuidade visual quando múltiplas linhas e colunas fixadas se cruzam.
 
 - Persistência versionada do layout das colunas e da ordenação.
 - Ordenação por múltiplas colunas com prioridade visual.

@@ -360,7 +360,8 @@ O `ContextMenu` mantém os comandos, bindings, teclado, itens marcáveis e subme
                          ItemPadding="12,8"
                          IconColumnWidth="28"
                          IsShadowEnabled="True">
-            <MenuItem Header="Atualizar" InputGestureText="F5">
+            <MenuItem Header="Atualizar" InputGestureText="F5"
+                      dlh:MenuItemAssist.Value="Disponível">
                 <MenuItem.Icon>
                     <TextBlock Text="↻" />
                 </MenuItem.Icon>
@@ -390,7 +391,9 @@ O `ContextMenu` mantém os comandos, bindings, teclado, itens marcáveis e subme
 
 Use `Background`, `Foreground`, `BorderBrush`, `BorderThickness` e `Padding` para a superfície. `HoverBrush`, `CheckedBrush`, `SeparatorBrush`, `DisabledOpacity`, `ItemPadding`, `IconSize` e `IconColumnWidth` controlam os itens. A sombra utiliza `IsShadowEnabled`, `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`.
 
-`ToggleMenuItem` fornece um estado booleano bidirecional e aceita `CheckedIcon` e `UncheckedIcon`. `ChoiceMenuItem` exibe a escolha atual, percorre as opções pelo clique principal e abre a lista completa pela seta. A seleção pode ser ligada por `SelectedIndex`, `SelectedItem` ou `SelectedValue`; as três propriedades usam binding bidirecional por padrão. Para coleções de modelos, use `DisplayMemberPath`, `SelectedValuePath` e `IconMemberPath`. `CycleDirection`, `IsCycleWrappingEnabled` e `DropDownButtonWidth` personalizam a interação.
+Cada linha usa cinco colunas alinhadas: ícone, título, valor, atalho e seta. Use `MenuItemAssist.Value` e `MenuItemAssist.ValueTemplate` para preencher a coluna de valor em qualquer `MenuItem`; colunas sem conteúdo permanecem vazias. A mesma estrutura é aplicada recursivamente aos submenus.
+
+`ToggleMenuItem` fornece um estado booleano bidirecional e aceita `CheckedIcon` e `UncheckedIcon`. `ChoiceMenuItem` preenche automaticamente a coluna de valor com `SelectedContent`, percorre as opções pelo clique principal e abre a lista completa pela seta. A seleção pode ser ligada por `SelectedIndex`, `SelectedItem` ou `SelectedValue`; as três propriedades usam binding bidirecional por padrão. Para coleções de modelos, use `DisplayMemberPath`, `SelectedValuePath` e `IconMemberPath`. `CycleDirection`, `IsCycleWrappingEnabled` e `DropDownButtonWidth` personalizam a interação.
 
 O menu aberto com o botão direito nos cabeçalhos do `DataGridView` já é uma instância desse componente.
 

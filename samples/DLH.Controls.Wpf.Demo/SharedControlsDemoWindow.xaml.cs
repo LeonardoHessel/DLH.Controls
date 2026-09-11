@@ -76,6 +76,7 @@ public partial class SharedControlsDemoWindow : Window
 
             DemoMenu.IconSize = MenuIconSize.Value;
             DemoMenu.IconColumnWidth = MenuIconColumn.Value;
+            DemoMenu.ArrowColumnWidth = MenuChoiceArrowWidth.Value;
             DemoMenu.DisabledOpacity = MenuDisabledOpacity.Value;
             DemoMenu.IsShadowEnabled = MenuShadow.IsChecked == true;
             DemoMenu.ShadowOpacity = MenuShadowOpacity.Value;
@@ -146,6 +147,7 @@ public partial class SharedControlsDemoWindow : Window
         PersistentMenuSurface.Resources["ContextMenu.ItemPadding"] = DemoMenu.ItemPadding;
         PersistentMenuSurface.Resources["ContextMenu.IconSize"] = DemoMenu.IconSize;
         PersistentMenuSurface.Resources["ContextMenu.IconColumnWidth"] = new GridLength(DemoMenu.IconColumnWidth);
+        PersistentMenuSurface.Resources["ContextMenu.ArrowColumnWidth"] = new GridLength(DemoMenu.ArrowColumnWidth);
         PersistentMenuSurface.Resources["ContextMenu.CornerRadius"] = DemoMenu.CornerRadius;
         PersistentMenuSurface.Resources["ContextMenu.Padding"] = DemoMenu.Padding;
         PersistentMenuSurface.Resources["ContextMenu.BorderThickness"] = DemoMenu.BorderThickness;

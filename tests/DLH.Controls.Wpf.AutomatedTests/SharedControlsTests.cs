@@ -20,6 +20,7 @@ public sealed class SharedControlsTests
         Assert.AreEqual(new Thickness(10, 7, 10, 7), menu.ItemPadding);
         Assert.AreEqual(16d, menu.IconSize);
         Assert.AreEqual(26d, menu.IconColumnWidth);
+        Assert.AreEqual(24d, menu.ArrowColumnWidth);
         Assert.IsTrue(menu.IsShadowEnabled);
         Assert.AreEqual(.5d, menu.ShadowOpacity);
         Assert.ThrowsExactly<ArgumentException>(() => menu.IconSize = -1);
@@ -61,7 +62,9 @@ public sealed class SharedControlsTests
         item.CycleSelection();
         Assert.AreEqual(2, item.SelectedIndex);
         Assert.AreEqual("Light", item.SelectedValue);
-        Assert.AreEqual("Claro", item.InputGestureText);
+        Assert.AreEqual("Claro", item.SelectedContent);
+        Assert.AreEqual("Claro", MenuItemAssist.GetValue(item));
+        Assert.AreEqual(string.Empty, item.InputGestureText);
         Assert.AreEqual("☀", item.Icon);
 
         item.CycleSelection();
@@ -88,7 +91,8 @@ public sealed class SharedControlsTests
 
         Assert.AreEqual(1, item.SelectedIndex);
         Assert.AreSame(second, item.SelectedItem);
-        Assert.AreEqual("Claro", item.InputGestureText);
+        Assert.AreEqual("Claro", item.SelectedContent);
+        Assert.AreEqual("Claro", MenuItemAssist.GetValue(item));
         Assert.AreEqual("☀", item.Icon);
         Assert.IsTrue(((FrameworkPropertyMetadata)ChoiceMenuItem.SelectedIndexProperty.GetMetadata(typeof(ChoiceMenuItem))).BindsTwoWayByDefault);
         Assert.IsTrue(((FrameworkPropertyMetadata)ChoiceMenuItem.SelectedItemProperty.GetMetadata(typeof(ChoiceMenuItem))).BindsTwoWayByDefault);
@@ -114,7 +118,8 @@ public sealed class SharedControlsTests
     public void ContextMenuTemplateSupportsItemsSeparatorsAndOptionalShadow()
     {
         var menu = new ControlsContextMenu { IsShadowEnabled = false };
-        var item = new MenuItem { Header = "Opção", IsCheckable = true, IsChecked = true };
+        var item = new MenuItem { Header = "Opção", IsCheckable = true, IsChecked = true, InputGestureText = "Ctrl+O" };
+        MenuItemAssist.SetValue(item, "Ativo");
         var submenu = new MenuItem { Header = "Submenu" };
         var child = new MenuItem { Header = "Filho" };
         submenu.Items.Add(child);
@@ -145,6 +150,9 @@ public sealed class SharedControlsTests
             Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)item.Template.FindName("IconPresenter", item)!).HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)item.Template.FindName("CheckMark", item)!).HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)submenu.Template.FindName("SubmenuArrow", submenu)!).HorizontalAlignment);
+            Assert.HasCount(5, ((Grid)item.Template.FindName("ItemLayout", item)!).ColumnDefinitions);
+            Assert.AreEqual("Ativo", ((ContentPresenter)item.Template.FindName("ValuePresenter", item)!).Content);
+            Assert.AreEqual("Ctrl+O", ((TextBlock)item.Template.FindName("GesturePresenter", item)!).Text);
             Assert.AreEqual(Visibility.Visible, ((FrameworkElement)item.Template.FindName("CheckMark", item)!).Visibility);
             menu.IsShadowEnabled = true;
             menu.UpdateLayout();

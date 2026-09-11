@@ -28,6 +28,7 @@
     <sys:Double x:Key="ContextMenu.DisabledOpacity">0.45</sys:Double>
     <sys:Double x:Key="ContextMenu.IconSize">16</sys:Double>
     <GridLength x:Key="ContextMenu.IconColumnWidth">26</GridLength>
+    <GridLength x:Key="ContextMenu.ArrowColumnWidth">24</GridLength>
     <Thickness x:Key="ContextMenu.ItemPadding">10,7,10,7</Thickness>
     <Thickness x:Key="ContextMenu.Padding">4</Thickness>
     <Thickness x:Key="ContextMenu.BorderThickness">1</Thickness>
@@ -68,12 +69,13 @@
                 <ControlTemplate TargetType="{x:Type MenuItem}">
                     <Grid>
                         <Border x:Name="ItemSurface" Background="{TemplateBinding Background}" CornerRadius="4"/>
-                        <Grid Margin="{TemplateBinding Padding}">
+                        <Grid x:Name="ItemLayout" Margin="{TemplateBinding Padding}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="{DynamicResource ContextMenu.IconColumnWidth}"/>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="16"/>
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="ContextMenuValue"/>
+                                <ColumnDefinition Width="Auto" SharedSizeGroup="ContextMenuGesture"/>
+                                <ColumnDefinition Width="{DynamicResource ContextMenu.ArrowColumnWidth}"/>
                             </Grid.ColumnDefinitions>
                             <Grid x:Name="IconHost" Grid.Column="0"
                                   Width="{DynamicResource ContextMenu.IconSize}"
@@ -88,16 +90,20 @@
                                        VerticalAlignment="Center" Visibility="Collapsed"/>
                             <ContentPresenter Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True"
                                               VerticalAlignment="Center"/>
-                            <TextBlock Grid.Column="2" Margin="18,0,4,0" Text="{TemplateBinding InputGestureText}"
-                                       Opacity=".65" VerticalAlignment="Center"/>
-                            <TextBlock x:Name="SubmenuArrow" Grid.Column="3" Text="›" FontSize="16"
+                            <ContentPresenter x:Name="ValuePresenter" Grid.Column="2" Margin="18,0,4,0"
+                                              Content="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(local:MenuItemAssist.Value)}"
+                                              ContentTemplate="{Binding RelativeSource={RelativeSource TemplatedParent}, Path=(local:MenuItemAssist.ValueTemplate)}"
+                                              Opacity=".78" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="GesturePresenter" Grid.Column="3" Margin="14,0,4,0" Text="{TemplateBinding InputGestureText}"
+                                       Opacity=".65" HorizontalAlignment="Right" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="SubmenuArrow" Grid.Column="4" Text="›" FontSize="16"
                                        TextAlignment="Center" HorizontalAlignment="Center"
                                        VerticalAlignment="Center" Visibility="Collapsed"/>
                         </Grid>
                         <Popup x:Name="PART_Popup" AllowsTransparency="True" Focusable="False"
                                IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                Placement="Right" HorizontalOffset="-3">
-                            <Border Background="{DynamicResource ContextMenu.Surface}"
+                            <Border Background="{DynamicResource ContextMenu.Surface}" Grid.IsSharedSizeScope="True"
                                     BorderBrush="{DynamicResource ContextMenu.Edge}"
                                     BorderThickness="{DynamicResource ContextMenu.BorderThickness}"
                                     CornerRadius="{DynamicResource ContextMenu.CornerRadius}" Padding="{DynamicResource ContextMenu.Padding}">
@@ -121,6 +127,8 @@
                             <Setter TargetName="IconHost" Property="Visibility" Value="Collapsed"/>
                         </MultiTrigger>
                         <Trigger Property="HasItems" Value="True"><Setter TargetName="SubmenuArrow" Property="Visibility" Value="Visible"/></Trigger>
+                        <Trigger Property="InputGestureText" Value=""><Setter TargetName="GesturePresenter" Property="Visibility" Value="Collapsed"/></Trigger>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=(local:MenuItemAssist.Value)}" Value="{x:Null}"><Setter TargetName="ValuePresenter" Property="Visibility" Value="Collapsed"/></DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
@@ -146,7 +154,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:ContextMenu}">
-                    <Border x:Name="MenuSurface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                    <Border x:Name="MenuSurface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" Grid.IsSharedSizeScope="True"
                             BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
                             Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
                         <Border.Effect>

@@ -65,6 +65,8 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
             menuItem.Resources["ContextMenu.ItemPadding"] = ItemPadding;
             menuItem.Resources["ContextMenu.IconSize"] = IconSize;
             menuItem.Resources["ContextMenu.IconColumnWidth"] = new GridLength(IconColumnWidth);
+            menuItem.Resources["ContextMenu.ArrowColumnWidth"] = new GridLength(
+                menuItem is ChoiceMenuItem choice ? choice.DropDownButtonWidth : ArrowColumnWidth);
             menuItem.Resources["ContextMenu.CornerRadius"] = CornerRadius;
             menuItem.Resources["ContextMenu.Padding"] = Padding;
             menuItem.Resources["ContextMenu.BorderThickness"] = BorderThickness;
@@ -107,7 +109,7 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
     private static bool IsItemAppearanceProperty(DependencyProperty property) =>
         property == BackgroundProperty || property == ForegroundProperty || property == BorderBrushProperty ||
         property == BorderThicknessProperty || property == PaddingProperty || property == CornerRadiusProperty ||
-        property == ItemPaddingProperty || property == IconSizeProperty || property == IconColumnWidthProperty ||
+        property == ItemPaddingProperty || property == IconSizeProperty || property == IconColumnWidthProperty || property == ArrowColumnWidthProperty ||
         property == HoverBrushProperty || property == CheckedBrushProperty || property == SeparatorBrushProperty ||
         property == DisabledOpacityProperty;
 
@@ -147,6 +149,15 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
     {
         get => (double)GetValue(IconColumnWidthProperty);
         set => SetValue(IconColumnWidthProperty, value);
+    }
+
+    public static readonly DependencyProperty ArrowColumnWidthProperty = DependencyProperty.Register(
+        nameof(ArrowColumnWidth), typeof(double), typeof(ContextMenu), new PropertyMetadata(24d), IsFiniteNonNegative);
+
+    public double ArrowColumnWidth
+    {
+        get => (double)GetValue(ArrowColumnWidthProperty);
+        set => SetValue(ArrowColumnWidthProperty, value);
     }
 
     public static readonly DependencyProperty HoverBrushProperty = DependencyProperty.Register(

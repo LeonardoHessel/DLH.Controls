@@ -15,10 +15,13 @@ namespace DLH.Controls.Wpf;
 public class ChoiceMenuItem : MenuItem
 {
     private bool isSynchronizing;
+    private static readonly DependencyPropertyKey SelectedContentPropertyKey = DependencyProperty.RegisterReadOnly(
+        nameof(SelectedContent), typeof(object), typeof(ChoiceMenuItem), new PropertyMetadata(null));
 
     public ChoiceMenuItem()
     {
         SetCurrentValue(StaysOpenOnClickProperty, true);
+        Resources["ContextMenu.ArrowColumnWidth"] = new GridLength(DropDownButtonWidth);
         AddHandler(ClickEvent, new RoutedEventHandler(OnDescendantClick));
     }
 
@@ -52,6 +55,10 @@ public class ChoiceMenuItem : MenuItem
         get => GetValue(SelectedValueProperty);
         set => SetValue(SelectedValueProperty, value);
     }
+
+    public static readonly DependencyProperty SelectedContentProperty = SelectedContentPropertyKey.DependencyProperty;
+
+    public object? SelectedContent => GetValue(SelectedContentProperty);
 
     public static readonly DependencyProperty SelectedValuePathProperty = DependencyProperty.Register(
         nameof(SelectedValuePath), typeof(string), typeof(ChoiceMenuItem),
@@ -93,7 +100,7 @@ public class ChoiceMenuItem : MenuItem
     }
 
     public static readonly DependencyProperty DropDownButtonWidthProperty = DependencyProperty.Register(
-        nameof(DropDownButtonWidth), typeof(double), typeof(ChoiceMenuItem), new PropertyMetadata(24d),
+        nameof(DropDownButtonWidth), typeof(double), typeof(ChoiceMenuItem), new PropertyMetadata(24d, OnDropDownButtonWidthChanged),
         value => value is double width && double.IsFinite(width) && width >= 0);
 
     public double DropDownButtonWidth
@@ -101,6 +108,9 @@ public class ChoiceMenuItem : MenuItem
         get => GetValue(DropDownButtonWidthProperty) is double value ? value : 24d;
         set => SetValue(DropDownButtonWidthProperty, value);
     }
+
+    private static void OnDropDownButtonWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
+        ((ChoiceMenuItem)d).Resources["ContextMenu.ArrowColumnWidth"] = new GridLength((double)e.NewValue);
 
     protected override bool IsItemItsOwnContainerOverride(object item) => item is MenuItem;
 
@@ -227,7 +237,9 @@ public class ChoiceMenuItem : MenuItem
             var item = SelectedIndex >= 0 && SelectedIndex < Items.Count ? Items[SelectedIndex] : null;
             SetCurrentValue(SelectedItemProperty, item);
             SetCurrentValue(SelectedValueProperty, item is null ? null : ResolveValue(item));
-            SetCurrentValue(InputGestureTextProperty, item is null ? string.Empty : GetContent(item)?.ToString() ?? string.Empty);
+            var content = item is null ? null : GetContent(item);
+            SetValue(SelectedContentPropertyKey, content);
+            MenuItemAssist.SetValue(this, content);
             SetCurrentValue(IconProperty, item is null ? null : GetIcon(item));
         }
         finally { isSynchronizing = false; }

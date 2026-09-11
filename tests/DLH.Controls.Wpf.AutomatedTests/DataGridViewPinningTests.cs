@@ -139,6 +139,13 @@ public sealed class DataGridViewPinningTests
                 "A interseção deve usar a célula da coluna fixada.");
             Assert.IsGreaterThan(0d, intersection.RowBackground.Opacity,
                 "A interseção entre linha e coluna fixadas deve ser opaca.");
+            var backdrop = layer.Children.OfType<Border>()
+                .Single(element => Equals(element.Tag, "PinnedRowBackdrop:Start"));
+            Assert.IsInstanceOfType<SolidColorBrush>(backdrop.Background);
+            Assert.AreEqual(byte.MaxValue, ((SolidColorBrush)backdrop.Background).Color.A,
+                "O bloco de linhas fixadas deve ter uma superfície contínua e opaca atrás das linhas.");
+            Assert.IsGreaterThan(fixedRow.ActualHeight, backdrop.Height,
+                "A superfície deve avançar até a borda do conjunto para eliminar frestas.");
             var overlays = layer.Children.Cast<UIElement>().ToArray();
             viewer.ScrollToHorizontalOffset(300);
             viewer.ScrollToVerticalOffset(650);

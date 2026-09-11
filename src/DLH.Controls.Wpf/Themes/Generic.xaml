@@ -29,6 +29,10 @@
     <sys:Double x:Key="ContextMenu.IconSize">16</sys:Double>
     <GridLength x:Key="ContextMenu.IconColumnWidth">26</GridLength>
     <GridLength x:Key="ContextMenu.ArrowColumnWidth">24</GridLength>
+    <Color x:Key="ContextMenu.ShadowColor">#494949</Color>
+    <sys:Double x:Key="ContextMenu.ShadowOpacity">0.5</sys:Double>
+    <sys:Double x:Key="ContextMenu.ShadowBlurRadius">10</sys:Double>
+    <sys:Double x:Key="ContextMenu.ShadowDepth">0</sys:Double>
     <Thickness x:Key="ContextMenu.ItemPadding">10,7,10,7</Thickness>
     <Thickness x:Key="ContextMenu.Padding">4</Thickness>
     <Thickness x:Key="ContextMenu.BorderThickness">1</Thickness>
@@ -77,12 +81,24 @@
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="ContextMenuGesture"/>
                                 <ColumnDefinition Width="{DynamicResource ContextMenu.ArrowColumnWidth}"/>
                             </Grid.ColumnDefinitions>
-                            <Grid x:Name="IconHost" Grid.Column="0"
+                            <Grid x:Name="IconHost" Grid.Column="0" UseLayoutRounding="True" SnapsToDevicePixels="True"
                                   Width="{DynamicResource ContextMenu.IconSize}"
                                   Height="{DynamicResource ContextMenu.IconSize}"
                                   HorizontalAlignment="Center" VerticalAlignment="Center">
-                                <ContentPresenter x:Name="IconPresenter" ContentSource="Icon"
-                                                  HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                <Viewbox x:Name="IconPresenter" Stretch="Uniform" StretchDirection="Both"
+                                         HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <ContentPresenter ContentSource="Icon" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                        <ContentPresenter.Resources>
+                                            <DataTemplate DataType="{x:Type Geometry}">
+                                                <Path Data="{Binding}" Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type MenuItem}}}"
+                                                      StrokeThickness="1.5" Stretch="Uniform"/>
+                                            </DataTemplate>
+                                            <DataTemplate DataType="{x:Type ImageSource}">
+                                                <Image Source="{Binding}" Stretch="Uniform"/>
+                                            </DataTemplate>
+                                        </ContentPresenter.Resources>
+                                    </ContentPresenter>
+                                </Viewbox>
                             </Grid>
                             <TextBlock x:Name="CheckMark" Grid.Column="0" Text="✓" FontWeight="SemiBold"
                                        Foreground="{DynamicResource ContextMenu.Checked}"
@@ -107,6 +123,12 @@
                                     BorderBrush="{DynamicResource ContextMenu.Edge}"
                                     BorderThickness="{DynamicResource ContextMenu.BorderThickness}"
                                     CornerRadius="{DynamicResource ContextMenu.CornerRadius}" Padding="{DynamicResource ContextMenu.Padding}">
+                                <Border.Effect>
+                                    <DropShadowEffect Color="{DynamicResource ContextMenu.ShadowColor}"
+                                                      Opacity="{DynamicResource ContextMenu.ShadowOpacity}"
+                                                      BlurRadius="{DynamicResource ContextMenu.ShadowBlurRadius}"
+                                                      ShadowDepth="{DynamicResource ContextMenu.ShadowDepth}"/>
+                                </Border.Effect>
                                 <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
                             </Border>
                         </Popup>
@@ -129,11 +151,19 @@
                         <Trigger Property="HasItems" Value="True"><Setter TargetName="SubmenuArrow" Property="Visibility" Value="Visible"/></Trigger>
                         <Trigger Property="InputGestureText" Value=""><Setter TargetName="GesturePresenter" Property="Visibility" Value="Collapsed"/></Trigger>
                         <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Path=(local:MenuItemAssist.Value)}" Value="{x:Null}"><Setter TargetName="ValuePresenter" Property="Visibility" Value="Collapsed"/></DataTrigger>
+                        <Trigger Property="FlowDirection" Value="RightToLeft">
+                            <Setter TargetName="SubmenuArrow" Property="Text" Value="‹"/>
+                            <Setter TargetName="PART_Popup" Property="Placement" Value="Left"/>
+                            <Setter TargetName="PART_Popup" Property="HorizontalOffset" Value="3"/>
+                        </Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
+
+    <Style TargetType="{x:Type local:ToggleMenuItem}" BasedOn="{StaticResource ContextMenu.ItemStyle}"/>
+    <Style TargetType="{x:Type local:ChoiceMenuItem}" BasedOn="{StaticResource ContextMenu.ItemStyle}"/>
 
     <Style x:Key="ContextMenu.SeparatorStyle" TargetType="{x:Type Separator}">
         <Setter Property="Template">

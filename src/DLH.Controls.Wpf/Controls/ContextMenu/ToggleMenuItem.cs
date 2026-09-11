@@ -11,6 +11,8 @@ public class ToggleMenuItem : MenuItem
 {
     static ToggleMenuItem()
     {
+        DefaultStyleKeyProperty.OverrideMetadata(typeof(ToggleMenuItem),
+            new FrameworkPropertyMetadata(typeof(ToggleMenuItem)));
         IsCheckableProperty.OverrideMetadata(typeof(ToggleMenuItem),
             new FrameworkPropertyMetadata(true));
         IsCheckedProperty.OverrideMetadata(typeof(ToggleMenuItem),

@@ -70,7 +70,13 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
             menuItem.Resources["ContextMenu.CornerRadius"] = CornerRadius;
             menuItem.Resources["ContextMenu.Padding"] = Padding;
             menuItem.Resources["ContextMenu.BorderThickness"] = BorderThickness;
-            if (canApplyDefaultStyle && (ItemContainerStyle ?? FindSharedStyle(menuItem)) is { } menuItemStyle)
+            menuItem.Resources["ContextMenu.ShadowColor"] = ShadowColor;
+            menuItem.Resources["ContextMenu.ShadowOpacity"] = IsShadowEnabled ? ShadowOpacity : 0d;
+            menuItem.Resources["ContextMenu.ShadowBlurRadius"] = ShadowBlurRadius;
+            menuItem.Resources["ContextMenu.ShadowDepth"] = ShadowDepth;
+            var menuItemStyle = ItemContainerStyle ?? FindSharedStyle(menuItem);
+            if (menuItemStyle is not null) menuItem.Resources["ContextMenu.ItemStyle"] = menuItemStyle;
+            if (canApplyDefaultStyle && menuItemStyle is not null)
             {
                 sharedStyledElements.Add(menuItem);
                 menuItem.SetCurrentValue(StyleProperty, menuItemStyle);
@@ -111,7 +117,8 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
         property == BorderThicknessProperty || property == PaddingProperty || property == CornerRadiusProperty ||
         property == ItemPaddingProperty || property == IconSizeProperty || property == IconColumnWidthProperty || property == ArrowColumnWidthProperty ||
         property == HoverBrushProperty || property == CheckedBrushProperty || property == SeparatorBrushProperty ||
-        property == DisabledOpacityProperty;
+        property == DisabledOpacityProperty || property == IsShadowEnabledProperty || property == ShadowColorProperty ||
+        property == ShadowOpacityProperty || property == ShadowBlurRadiusProperty || property == ShadowDepthProperty;
 
     public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
         nameof(CornerRadius), typeof(CornerRadius), typeof(ContextMenu),

@@ -393,6 +393,8 @@ Use `Background`, `Foreground`, `BorderBrush`, `BorderThickness` e `Padding` par
 
 Cada linha usa cinco colunas alinhadas: ícone, título, valor, atalho e seta. Use `MenuItemAssist.Value` e `MenuItemAssist.ValueTemplate` para preencher a coluna de valor em qualquer `MenuItem`; colunas sem conteúdo permanecem vazias. A mesma estrutura é aplicada recursivamente aos submenus.
 
+Defina `FlowDirection="RightToLeft"` para inverter o sentido do menu. Nessa configuração, a coluna da seta passa para o lado esquerdo, o indicador aponta para a esquerda e o submenu abre desse lado. O padrão é `LeftToRight`.
+
 `ToggleMenuItem` fornece um estado booleano bidirecional e aceita `CheckedIcon` e `UncheckedIcon`. `ChoiceMenuItem` preenche automaticamente a coluna de valor com `SelectedContent`, percorre as opções pelo clique principal e abre a lista completa pela seta. A seleção pode ser ligada por `SelectedIndex`, `SelectedItem` ou `SelectedValue`; as três propriedades usam binding bidirecional por padrão. Para coleções de modelos, use `DisplayMemberPath`, `SelectedValuePath` e `IconMemberPath`. `CycleDirection`, `IsCycleWrappingEnabled` e `DropDownButtonWidth` personalizam a interação.
 
 O menu aberto com o botão direito nos cabeçalhos do `DataGridView` já é uma instância desse componente.

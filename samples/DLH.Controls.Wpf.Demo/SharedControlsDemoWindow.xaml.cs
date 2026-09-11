@@ -53,7 +53,7 @@ public partial class SharedControlsDemoWindow : Window
         MenuHover.Text = "#454850"; MenuChecked.Text = "#9CC9FF"; MenuSeparator.Text = "#4C5058"; MenuShadowColor.Text = "#494949";
         MenuShadow.IsChecked = true; MenuShadowOpacity.Value = .5; MenuShadowBlur.Value = 10; MenuShadowDepth.Value = 0;
         MenuDetailsValue.IsChecked = true; MenuChoiceDirection.SelectedIndex = 0; MenuChoiceWrap.IsChecked = true;
-        MenuChoiceArrowWidth.Value = 24; MenuChoiceIndex.Value = 0;
+        MenuChoiceArrowWidth.Value = 24; MenuChoiceIndex.Value = 0; MenuFlowDirection.SelectedIndex = 0;
         ApplyOptions(includeTextFields: true);
     }
 
@@ -82,6 +82,7 @@ public partial class SharedControlsDemoWindow : Window
             DemoMenu.ShadowOpacity = MenuShadowOpacity.Value;
             DemoMenu.ShadowBlurRadius = MenuShadowBlur.Value;
             DemoMenu.ShadowDepth = MenuShadowDepth.Value;
+            DemoMenu.FlowDirection = MenuFlowDirection.SelectedIndex == 1 ? FlowDirection.RightToLeft : FlowDirection.LeftToRight;
             DetailsToggleItem.IsChecked = MenuDetailsValue.IsChecked == true;
             ThemeChoiceItem.CycleDirection = MenuChoiceDirection.SelectedIndex == 1 ? ChoiceCycleDirection.Backward : ChoiceCycleDirection.Forward;
             ThemeChoiceItem.IsCycleWrappingEnabled = MenuChoiceWrap.IsChecked == true;
@@ -92,6 +93,7 @@ public partial class SharedControlsDemoWindow : Window
             PersistentThemeChoiceItem.IsCycleWrappingEnabled = ThemeChoiceItem.IsCycleWrappingEnabled;
             PersistentThemeChoiceItem.DropDownButtonWidth = ThemeChoiceItem.DropDownButtonWidth;
             PersistentThemeChoiceItem.SelectedIndex = ThemeChoiceItem.SelectedIndex;
+            PersistentMenuSurface.FlowDirection = DemoMenu.FlowDirection;
 
             if (includeTextFields)
             {
@@ -151,6 +153,10 @@ public partial class SharedControlsDemoWindow : Window
         PersistentMenuSurface.Resources["ContextMenu.CornerRadius"] = DemoMenu.CornerRadius;
         PersistentMenuSurface.Resources["ContextMenu.Padding"] = DemoMenu.Padding;
         PersistentMenuSurface.Resources["ContextMenu.BorderThickness"] = DemoMenu.BorderThickness;
+        PersistentMenuSurface.Resources["ContextMenu.ShadowColor"] = DemoMenu.ShadowColor;
+        PersistentMenuSurface.Resources["ContextMenu.ShadowOpacity"] = DemoMenu.IsShadowEnabled ? DemoMenu.ShadowOpacity : 0d;
+        PersistentMenuSurface.Resources["ContextMenu.ShadowBlurRadius"] = DemoMenu.ShadowBlurRadius;
+        PersistentMenuSurface.Resources["ContextMenu.ShadowDepth"] = DemoMenu.ShadowDepth;
         PersistentMenuSurface.Effect = DemoMenu.IsShadowEnabled
             ? new System.Windows.Media.Effects.DropShadowEffect
             {

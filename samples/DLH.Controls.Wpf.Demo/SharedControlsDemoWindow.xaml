@@ -16,6 +16,10 @@
             <Style TargetType="Slider"><Setter Property="Margin" Value="6,3"/><Setter Property="VerticalAlignment" Value="Center"/><Setter Property="AutoToolTipPlacement" Value="TopLeft"/><Setter Property="AutoToolTipPrecision" Value="2"/></Style>
             <Style TargetType="Button"><Setter Property="Margin" Value="6"/><Setter Property="Padding" Value="12,7"/><Setter Property="Background" Value="#34373D"/><Setter Property="Foreground" Value="#ECEEF2"/><Setter Property="BorderBrush" Value="#50545C"/></Style>
             <Style x:Key="ColorPickerButton" TargetType="Button"><Setter Property="Width" Value="34"/><Setter Property="Height" Value="28"/><Setter Property="Padding" Value="0"/><Setter Property="Margin" Value="4,3"/><Setter Property="Content" Value="●"/><Setter Property="ToolTip" Value="Escolher cor"/></Style>
+            <Geometry x:Key="RefreshIcon">M2,8 A6,6 0 1 0 4,3 M4,1 L4,4 L7,4</Geometry>
+            <Geometry x:Key="DarkThemeIcon">M11,2 A6,6 0 1 0 14,12 A5,5 0 0 1 11,2</Geometry>
+            <Geometry x:Key="LightThemeIcon">M8,3 A5,5 0 1 0 8.01,3 M8,0 L8,2 M8,14 L8,16 M0,8 L2,8 M14,8 L16,8</Geometry>
+            <Geometry x:Key="SystemThemeIcon">M8,2 A6,6 0 1 0 8,14 L8,2</Geometry>
         </ResourceDictionary>
     </Window.Resources>
 
@@ -43,15 +47,15 @@
                             <Button x:Name="OpenMenuButton" Content="Abrir ContextMenu" HorizontalAlignment="Left" Click="OpenMenu_Click">
                                 <Button.ContextMenu>
                                     <controls:ContextMenu x:Name="DemoMenu">
-                                        <MenuItem Header="Atualizar" InputGestureText="F5"><MenuItem.Icon><TextBlock Text="↻" Foreground="#42A5E8"/></MenuItem.Icon></MenuItem>
+                                        <MenuItem Header="Atualizar" InputGestureText="F5" Icon="{StaticResource RefreshIcon}"/>
                                         <controls:ToggleMenuItem x:Name="DetailsToggleItem" Header="Exibir detalhes" IsChecked="True">
-                                            <controls:ToggleMenuItem.CheckedIcon><TextBlock Text="●" Foreground="#7EDC9A"/></controls:ToggleMenuItem.CheckedIcon>
-                                            <controls:ToggleMenuItem.UncheckedIcon><TextBlock Text="○" Foreground="#AEB3BD"/></controls:ToggleMenuItem.UncheckedIcon>
+                                            <controls:ToggleMenuItem.CheckedIcon><Ellipse Width="8" Height="8" Fill="#7EDC9A"/></controls:ToggleMenuItem.CheckedIcon>
+                                            <controls:ToggleMenuItem.UncheckedIcon><Ellipse Width="8" Height="8" Stroke="#AEB3BD" StrokeThickness="1.5"/></controls:ToggleMenuItem.UncheckedIcon>
                                         </controls:ToggleMenuItem>
                                         <controls:ChoiceMenuItem x:Name="ThemeChoiceItem" Header="Tema" SelectedIndex="0">
-                                            <controls:ChoiceMenuOption Content="Escuro" Value="Dark" Icon="☾"/>
-                                            <controls:ChoiceMenuOption Content="Claro" Value="Light" Icon="☀"/>
-                                            <controls:ChoiceMenuOption Content="Sistema" Value="System" Icon="◐"/>
+                                            <controls:ChoiceMenuOption Content="Escuro" Value="Dark" Icon="{StaticResource DarkThemeIcon}"/>
+                                            <controls:ChoiceMenuOption Content="Claro" Value="Light" Icon="{StaticResource LightThemeIcon}"/>
+                                            <controls:ChoiceMenuOption Content="Sistema" Value="System" Icon="{StaticResource SystemThemeIcon}"/>
                                         </controls:ChoiceMenuItem>
                                         <Separator/>
                                         <MenuItem Header="Exportar">
@@ -77,21 +81,25 @@
                                     <sys:Double x:Key="ContextMenu.IconSize" xmlns:sys="clr-namespace:System;assembly=System.Runtime">16</sys:Double>
                                     <GridLength x:Key="ContextMenu.IconColumnWidth">26</GridLength>
                                     <GridLength x:Key="ContextMenu.ArrowColumnWidth">24</GridLength>
+                                    <Color x:Key="ContextMenu.ShadowColor">#494949</Color>
+                                    <sys:Double x:Key="ContextMenu.ShadowOpacity" xmlns:sys="clr-namespace:System;assembly=System.Runtime">0.5</sys:Double>
+                                    <sys:Double x:Key="ContextMenu.ShadowBlurRadius" xmlns:sys="clr-namespace:System;assembly=System.Runtime">10</sys:Double>
+                                    <sys:Double x:Key="ContextMenu.ShadowDepth" xmlns:sys="clr-namespace:System;assembly=System.Runtime">0</sys:Double>
                                     <Thickness x:Key="ContextMenu.ItemPadding">10,7,10,7</Thickness>
                                     <Thickness x:Key="ContextMenu.Padding">4</Thickness>
                                     <Thickness x:Key="ContextMenu.BorderThickness">1</Thickness>
                                     <CornerRadius x:Key="ContextMenu.CornerRadius">8</CornerRadius>
                                 </Border.Resources>
                                 <StackPanel>
-                                    <MenuItem Header="Atualizar" InputGestureText="F5" Style="{StaticResource ContextMenu.ItemStyle}"><MenuItem.Icon><TextBlock Text="↻" Foreground="#42A5E8"/></MenuItem.Icon></MenuItem>
+                                    <MenuItem Header="Atualizar" InputGestureText="F5" Icon="{StaticResource RefreshIcon}" Style="{StaticResource ContextMenu.ItemStyle}"/>
                                     <controls:ToggleMenuItem x:Name="PersistentDetailsToggleItem" Header="Exibir detalhes" IsChecked="True" Style="{StaticResource ContextMenu.ItemStyle}">
-                                        <controls:ToggleMenuItem.CheckedIcon><TextBlock Text="●" Foreground="#7EDC9A"/></controls:ToggleMenuItem.CheckedIcon>
-                                        <controls:ToggleMenuItem.UncheckedIcon><TextBlock Text="○" Foreground="#AEB3BD"/></controls:ToggleMenuItem.UncheckedIcon>
+                                        <controls:ToggleMenuItem.CheckedIcon><Ellipse Width="8" Height="8" Fill="#7EDC9A"/></controls:ToggleMenuItem.CheckedIcon>
+                                        <controls:ToggleMenuItem.UncheckedIcon><Ellipse Width="8" Height="8" Stroke="#AEB3BD" StrokeThickness="1.5"/></controls:ToggleMenuItem.UncheckedIcon>
                                     </controls:ToggleMenuItem>
                                     <controls:ChoiceMenuItem x:Name="PersistentThemeChoiceItem" Header="Tema" SelectedIndex="0" Style="{StaticResource ContextMenu.ItemStyle}">
-                                        <controls:ChoiceMenuOption Content="Escuro" Value="Dark" Icon="☾"/>
-                                        <controls:ChoiceMenuOption Content="Claro" Value="Light" Icon="☀"/>
-                                        <controls:ChoiceMenuOption Content="Sistema" Value="System" Icon="◐"/>
+                                        <controls:ChoiceMenuOption Content="Escuro" Value="Dark" Icon="{StaticResource DarkThemeIcon}"/>
+                                        <controls:ChoiceMenuOption Content="Claro" Value="Light" Icon="{StaticResource LightThemeIcon}"/>
+                                        <controls:ChoiceMenuOption Content="Sistema" Value="System" Icon="{StaticResource SystemThemeIcon}"/>
                                     </controls:ChoiceMenuItem>
                                     <Separator Style="{StaticResource ContextMenu.SeparatorStyle}"/>
                                     <MenuItem Header="Exportar" Style="{StaticResource ContextMenu.ItemStyle}">
@@ -152,13 +160,14 @@
 
                     <GroupBox Header="ContextMenu — itens booleano e seletor">
                         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Grid.RowDefinitions>
-                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
                         </Grid.RowDefinitions>
                             <CheckBox x:Name="MenuDetailsValue" Grid.ColumnSpan="2" Content="Valor de Exibir detalhes" IsChecked="True" Checked="OptionsChanged" Unchecked="OptionsChanged"/>
                             <TextBlock Grid.Row="1" Text="Direção do ciclo"/><ComboBox x:Name="MenuChoiceDirection" Grid.Row="1" Grid.Column="1" Margin="6,3" Padding="6" SelectedIndex="0" SelectionChanged="OptionsChanged"><ComboBoxItem Content="Avançar"/><ComboBoxItem Content="Retroceder"/></ComboBox>
                             <CheckBox x:Name="MenuChoiceWrap" Grid.Row="2" Grid.ColumnSpan="2" Content="Reiniciar ao chegar ao fim" IsChecked="True" Checked="OptionsChanged" Unchecked="OptionsChanged"/>
                             <TextBlock Grid.Row="3" Text="Largura da seta"/><Slider x:Name="MenuChoiceArrowWidth" Grid.Row="3" Grid.Column="1" Minimum="12" Maximum="60" Value="24" ValueChanged="OptionsChanged"/>
                             <TextBlock Grid.Row="4" Text="Tema selecionado"/><Slider x:Name="MenuChoiceIndex" Grid.Row="4" Grid.Column="1" Minimum="0" Maximum="2" TickFrequency="1" IsSnapToTickEnabled="True" Value="0" ValueChanged="OptionsChanged"/>
+                            <TextBlock Grid.Row="5" Text="Direção do menu"/><ComboBox x:Name="MenuFlowDirection" Grid.Row="5" Grid.Column="1" Margin="6,3" Padding="6" SelectedIndex="0" SelectionChanged="OptionsChanged"><ComboBoxItem Content="Esquerda → direita"/><ComboBoxItem Content="Direita → esquerda"/></ComboBox>
                         </Grid>
                     </GroupBox>
 

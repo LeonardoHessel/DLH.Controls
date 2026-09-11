@@ -115,6 +115,40 @@ public sealed class SharedControlsTests
     }
 
     [STATestMethod]
+    public void ChoiceSubmenuUsesTheSameFiveColumnTemplateAndCanOpenToTheLeft()
+    {
+        var choice = new TestableChoiceMenuItem
+        {
+            Header = "Tema",
+            SelectedIndex = 0,
+            FlowDirection = FlowDirection.RightToLeft
+        };
+        choice.Items.Add(new ChoiceMenuOption { Content = "Escuro", Value = "Dark" });
+        choice.Items.Add(new ChoiceMenuOption { Content = "Claro", Value = "Light" });
+        var menu = new ControlsContextMenu();
+        menu.Items.Add(choice);
+        var target = new Button { Content = "Abrir" };
+        var window = Arrange(target, 180, 80);
+        try
+        {
+            menu.PlacementTarget = target;
+            menu.IsOpen = true;
+            menu.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Loaded);
+            choice.ApplyTemplate();
+            var popup = (System.Windows.Controls.Primitives.Popup)choice.Template.FindName("PART_Popup", choice)!;
+            var generated = choice.CreatePreparedContainer(choice.Items[0]);
+            generated.ApplyTemplate();
+
+            Assert.AreSame(choice.Template, generated.Template);
+            Assert.HasCount(5, ((Grid)generated.Template.FindName("ItemLayout", generated)!).ColumnDefinitions);
+            Assert.AreEqual(System.Windows.Controls.Primitives.PlacementMode.Left,
+                popup.Placement);
+            Assert.AreEqual("‹", ((TextBlock)choice.Template.FindName("SubmenuArrow", choice)!).Text);
+        }
+        finally { menu.IsOpen = false; window.Close(); }
+    }
+
+    [STATestMethod]
     public void ContextMenuTemplateSupportsItemsSeparatorsAndOptionalShadow()
     {
         var menu = new ControlsContextMenu { IsShadowEnabled = false };
@@ -312,5 +346,15 @@ public sealed class SharedControlsTests
     }
 
     private sealed record ChoiceTestOption(string Title, string Code, string Symbol);
+
+    private sealed class TestableChoiceMenuItem : ChoiceMenuItem
+    {
+        public MenuItem CreatePreparedContainer(object item)
+        {
+            var container = (MenuItem)GetContainerForItemOverride();
+            PrepareContainerForItemOverride(container, item);
+            return container;
+        }
+    }
 }
 

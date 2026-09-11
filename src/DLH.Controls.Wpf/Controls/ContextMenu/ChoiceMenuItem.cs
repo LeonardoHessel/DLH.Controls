@@ -18,6 +18,12 @@ public class ChoiceMenuItem : MenuItem
     private static readonly DependencyPropertyKey SelectedContentPropertyKey = DependencyProperty.RegisterReadOnly(
         nameof(SelectedContent), typeof(object), typeof(ChoiceMenuItem), new PropertyMetadata(null));
 
+    static ChoiceMenuItem()
+    {
+        DefaultStyleKeyProperty.OverrideMetadata(typeof(ChoiceMenuItem),
+            new FrameworkPropertyMetadata(typeof(ChoiceMenuItem)));
+    }
+
     public ChoiceMenuItem()
     {
         SetCurrentValue(StaysOpenOnClickProperty, true);
@@ -123,6 +129,14 @@ public class ChoiceMenuItem : MenuItem
         container.Header = GetContent(item);
         container.Icon = GetIcon(item);
         if (item is ChoiceMenuOption option) container.IsEnabled = option.IsEnabled;
+        if (container.ReadLocalValue(StyleProperty) == DependencyProperty.UnsetValue)
+        {
+            var sharedStyle = TryFindResource("ContextMenu.ItemStyle") as Style ?? Style;
+            if (sharedStyle?.TargetType.IsAssignableFrom(typeof(MenuItem)) == true)
+                container.SetCurrentValue(StyleProperty, sharedStyle);
+            else if (Template is not null)
+                container.SetCurrentValue(TemplateProperty, Template);
+        }
     }
 
     protected override void OnItemsChanged(NotifyCollectionChangedEventArgs e)
@@ -241,8 +255,19 @@ public class ChoiceMenuItem : MenuItem
             SetValue(SelectedContentPropertyKey, content);
             MenuItemAssist.SetValue(this, content);
             SetCurrentValue(IconProperty, item is null ? null : GetIcon(item));
+            UpdateGeneratedSelection();
         }
         finally { isSynchronizing = false; }
+    }
+
+    private void UpdateGeneratedSelection()
+    {
+        for (var index = 0; index < Items.Count; index++)
+            if (ItemContainerGenerator.ContainerFromIndex(index) is MenuItem container)
+            {
+                container.SetCurrentValue(IsCheckableProperty, true);
+                container.SetCurrentValue(IsCheckedProperty, index == SelectedIndex);
+            }
     }
 
     private object? GetContent(object item) => item switch

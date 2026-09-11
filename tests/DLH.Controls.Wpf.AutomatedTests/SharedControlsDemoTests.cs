@@ -75,6 +75,7 @@ public sealed class SharedControlsDemoTests
             CheckBox("MenuChoiceWrap").IsChecked = false;
             Slider("MenuChoiceArrowWidth").Value = 32;
             Slider("MenuChoiceIndex").Value = 2;
+            ComboBox("MenuFlowDirection").SelectedIndex = 1;
 
             Assert.IsTrue(window.ApplyOptions(includeTextFields: true));
 
@@ -111,6 +112,8 @@ public sealed class SharedControlsDemoTests
             Assert.AreEqual(32d, fixedChoice.DropDownButtonWidth);
             Assert.AreEqual(2, fixedChoice.SelectedIndex);
             Assert.AreEqual("System", fixedChoice.SelectedValue);
+            Assert.AreEqual(FlowDirection.RightToLeft, fixedSurface.FlowDirection);
+            Assert.AreEqual(FlowDirection.RightToLeft, menu.FlowDirection);
         }
         finally { window.Close(); }
 

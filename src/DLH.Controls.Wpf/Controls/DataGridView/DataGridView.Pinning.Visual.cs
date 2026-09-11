@@ -58,7 +58,6 @@ public partial class DataGridView
     private void CapturePinnedMetrics()
     {
         if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null) return;
-        renderedRowHeights.Clear();
         foreach (var row in VisualChildren<DataGridRow>(this))
             if (ItemsControl.ItemsControlFromItemContainer(row) == this && row.Item is not null && row.ActualHeight > 0)
                 renderedRowHeights[row.Item] = row.ActualHeight;
@@ -192,13 +191,15 @@ public partial class DataGridView
         if (pinningScrollViewer is null) return;
         foreach (var overlay in pinnedRowOverlays)
         {
-            SyncOverlayScrollNow(overlay, pinningScrollViewer.HorizontalOffset, 0);
             SyncOverlayRowHeights(overlay);
+            SyncOverlayScrollNow(overlay, pinningScrollViewer.HorizontalOffset, 0);
         }
         foreach (var overlay in pinnedColumnOverlays)
         {
-            SyncOverlayScrollNow(overlay, 0, pinningScrollViewer.VerticalOffset);
             SyncOverlayRowHeights(overlay);
+            SyncOverlayScrollNow(overlay, 0, pinningScrollViewer.VerticalOffset);
+            overlay.UpdateLayout();
+            AlignPinnedColumnRows(overlay);
         }
     }
 
@@ -240,10 +241,10 @@ public partial class DataGridView
         if (pinningLayer is null || GridLinesVisibility is DataGridGridLinesVisibility.None or DataGridGridLinesVisibility.Vertical)
             return;
         var dpi = VisualTreeHelper.GetDpi(this);
-        var thickness = 1d / dpi.DpiScaleY;
+        var thickness = Math.Max(1d, 1d / dpi.DpiScaleY);
         var separator = new Border
         {
-            Background = HorizontalGridLinesBrush,
+            Background = ResolveOpaqueBrush(HorizontalGridLinesBrush),
             IsHitTestVisible = false,
             Tag = $"PinnedRowSeparator:{RuntimeHelpers.GetHashCode(item)}"
         };
@@ -386,6 +387,18 @@ public partial class DataGridView
             Blend(rowColor.Color.B, surfaceColor.Color.B)));
     }
 
+    private Brush ResolveOpaqueBrush(Brush? brush)
+    {
+        if (IsOpaqueBrush(brush)) return brush!;
+        return ResolvePinnedRowBackground(brush);
+    }
+
+    private double ResolveOverlayRowHeight()
+    {
+        if (double.IsFinite(RowHeight) && RowHeight > 0) return RowHeight;
+        return renderedRowHeights.Count > 0 ? renderedRowHeights.Values.Max() : double.NaN;
+    }
+
     private static Style CreateOpaqueStyle(Type targetType, Style? basedOn, Brush background)
     {
         var style = new Style(targetType, basedOn);
@@ -478,7 +491,7 @@ public partial class DataGridView
             CellPadding = CellPadding,
             Density = Density,
             ColumnHeaderHeight = headers.HasFlag(DataGridHeadersVisibility.Column) ? ColumnHeaderHeight : 0,
-            RowHeight = RowHeight,
+            RowHeight = ResolveOverlayRowHeight(),
             CanUserReorderColumns = false,
             CanUserResizeColumns = false,
             CanUserSortColumns = CanUserSortColumns,
@@ -508,6 +521,24 @@ public partial class DataGridView
                 row.Height = entry.Value;
     }
 
+    private void AlignPinnedColumnRows(DataGridView overlay)
+    {
+        if (pinningLayer is null || overlay.Template.FindName("DG_ScrollViewer", overlay) is not ScrollViewer viewer)
+            return;
+        foreach (var item in renderedRowHeights.Keys)
+        {
+            if (ItemContainerGenerator.ContainerFromItem(item) is not DataGridRow sourceRow ||
+                overlay.ItemContainerGenerator.ContainerFromItem(item) is not DataGridRow overlayRow) continue;
+            var sourceTop = sourceRow.TranslatePoint(new Point(), pinningLayer).Y;
+            var overlayTop = overlayRow.TranslatePoint(new Point(), pinningLayer).Y;
+            var correction = overlayTop - sourceTop;
+            if (Math.Abs(correction) <= 0.1) return;
+            viewer.ScrollToVerticalOffset(Math.Clamp(viewer.VerticalOffset + correction, 0, viewer.ScrollableHeight));
+            overlay.UpdateLayout();
+            return;
+        }
+    }
+
     private void PlaceOverlay(FrameworkElement overlay, double left, double top, double width, double height)
     {
         if (pinningLayer is null) return;
@@ -522,13 +553,18 @@ public partial class DataGridView
         pinningLayer.Children.Add(overlay);
     }
 
-    private static void SyncOverlayScroll(DataGridView overlay, double horizontalOffset, double verticalOffset)
+    private void SyncOverlayScroll(DataGridView overlay, double horizontalOffset, double verticalOffset)
     {
         overlay.Loaded += (_, _) =>
         {
             if (overlay.Template.FindName("DG_ScrollViewer", overlay) is not ScrollViewer viewer) return;
+            SyncOverlayRowHeights(overlay);
+            overlay.UpdateLayout();
             viewer.ScrollToHorizontalOffset(horizontalOffset);
             viewer.ScrollToVerticalOffset(verticalOffset);
+            overlay.UpdateLayout();
+            if (overlay.HeadersVisibility.HasFlag(DataGridHeadersVisibility.Column))
+                AlignPinnedColumnRows(overlay);
         };
     }
 

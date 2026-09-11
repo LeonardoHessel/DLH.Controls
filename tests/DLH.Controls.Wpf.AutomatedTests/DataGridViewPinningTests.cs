@@ -362,8 +362,26 @@ public sealed class DataGridViewPinningTests
                 .ToArray();
             Assert.HasCount(2, fullRows);
             Assert.HasCount(2, intersections);
-            Assert.HasCount(2, layer.Children.OfType<Border>()
-                .Where(element => element.Tag is string tag && tag.StartsWith("PinnedRowSeparator:", StringComparison.Ordinal)));
+            var columnOverlay = layer.Children.OfType<DataGridView>()
+                .Single(overlay => overlay.HeadersVisibility == DataGridHeadersVisibility.Column);
+            columnOverlay.UpdateLayout();
+            var movingItem = rows.Skip(2).First(item =>
+                grid.ItemContainerGenerator.ContainerFromItem(item) is DataGridRow &&
+                columnOverlay.ItemContainerGenerator.ContainerFromItem(item) is DataGridRow);
+            var movingSourceRow = (DataGridRow)grid.ItemContainerGenerator.ContainerFromItem(movingItem)!;
+            var movingFixedColumnRow = (DataGridRow)columnOverlay.ItemContainerGenerator.ContainerFromItem(movingItem)!;
+            Assert.AreEqual(
+                movingSourceRow.TranslatePoint(new Point(), layer).Y,
+                movingFixedColumnRow.TranslatePoint(new Point(), layer).Y,
+                0.6d,
+                "As linhas móveis das colunas fixadas devem permanecer alinhadas abaixo do conjunto aderente.");
+            var separators = layer.Children.OfType<Border>()
+                .Where(element => element.Tag is string tag && tag.StartsWith("PinnedRowSeparator:", StringComparison.Ordinal))
+                .ToArray();
+            Assert.HasCount(2, separators);
+            Assert.IsEmpty(separators.Where(separator => separator.Background is not SolidColorBrush brush ||
+                brush.Opacity < 1 || brush.Color.A != byte.MaxValue),
+                "Os separadores canônicos devem ser totalmente opacos.");
             foreach (var fullRow in fullRows)
             {
                 var item = fullRow.Items.Cast<Row>().Single();

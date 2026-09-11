@@ -61,7 +61,6 @@ public partial class DataGridViewDemoWindow : Window
         ShipmentsGrid.IsMiddleButtonPanningEnabled = MiddleButtonPanning.IsChecked == true;
         ShipmentsGrid.CanPinRows = PinRows.IsChecked == true;
         ShipmentsGrid.CanPinColumns = PinColumns.IsChecked == true;
-        ShipmentsGrid.ShowColumnPinButton = ShowColumnPins.IsChecked == true;
         ShipmentsGrid.AlternatingRowBackground = StripedRows.IsChecked == true
             ? (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#24373A40")!
             : System.Windows.Media.Brushes.Transparent;

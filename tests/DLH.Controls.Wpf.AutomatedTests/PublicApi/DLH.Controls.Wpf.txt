@@ -110,7 +110,6 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty IsLoadingProperty
   field System.Windows.DependencyProperty IsMiddleButtonPanningEnabledProperty
   field System.Windows.DependencyProperty IsMultiColumnSortEnabledProperty
-  field System.Windows.DependencyProperty IsPinnedProperty
   field System.Windows.DependencyProperty IsSmoothHorizontalScrollingEnabledProperty
   field System.Windows.DependencyProperty IsSmoothVerticalScrollingEnabledProperty
   field System.Windows.DependencyProperty LoadingMessageProperty
@@ -126,11 +125,9 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty SelectionBehaviorProperty
   field System.Windows.DependencyProperty SelectionChangedCommandProperty
   field System.Windows.DependencyProperty ShowClearSortMenuItemProperty
-  field System.Windows.DependencyProperty ShowColumnPinButtonProperty
   field System.Windows.DependencyProperty ShowFilterMenuItemsProperty
   field System.Windows.DependencyProperty ShowRestoreDefaultSortMenuItemProperty
   field System.Windows.DependencyProperty ShowRowDetailsOnSelectionProperty
-  field System.Windows.DependencyProperty ShowRowPinButtonProperty
   field System.Windows.DependencyProperty ShowRowSeparatorsProperty
   field System.Windows.DependencyProperty ShowSortIndicatorsProperty
   field System.Windows.DependencyProperty ShowValidationErrorsProperty
@@ -141,8 +138,6 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty ValidationErrorBrushProperty
   field System.Windows.DependencyProperty VerticalMouseWheelScrollAmountProperty
   field System.Windows.DependencyProperty VerticalScrollAnimationDurationProperty
-  field System.Windows.Input.RoutedUICommand ToggleColumnPinCommand
-  field System.Windows.Input.RoutedUICommand ToggleRowPinCommand
   method DLH.Controls.Wpf.DataGridViewBatchSelection GetBatchSelection()
   method DLH.Controls.Wpf.DataGridViewState CaptureState()
   method System.Boolean ApplyDefaultSort()
@@ -150,7 +145,6 @@ type DLH.Controls.Wpf.DataGridView
   method System.Boolean ClearFilter(System.Windows.Controls.DataGridColumn)
   method System.Boolean ExecuteBatchAction()
   method System.Boolean GetCanUserFilter(System.Windows.DependencyObject)
-  method System.Boolean GetIsPinned(System.Windows.DependencyObject)
   method System.Boolean PinColumn(System.Windows.Controls.DataGridColumn)
   method System.Boolean PinRow(System.Object)
   method System.Boolean RemoveSort(System.Windows.Controls.DataGridColumn)
@@ -192,11 +186,9 @@ type DLH.Controls.Wpf.DataGridView
   property System.Boolean IsSmoothHorizontalScrollingEnabled { get; set;  }
   property System.Boolean IsSmoothVerticalScrollingEnabled { get; set;  }
   property System.Boolean ShowClearSortMenuItem { get; set;  }
-  property System.Boolean ShowColumnPinButton { get; set;  }
   property System.Boolean ShowFilterMenuItems { get; set;  }
   property System.Boolean ShowRestoreDefaultSortMenuItem { get; set;  }
   property System.Boolean ShowRowDetailsOnSelection { get; set;  }
-  property System.Boolean ShowRowPinButton { get; set;  }
   property System.Boolean ShowRowSeparators { get; set;  }
   property System.Boolean ShowSortIndicators { get; set;  }
   property System.Boolean ShowValidationErrors { get; set;  }

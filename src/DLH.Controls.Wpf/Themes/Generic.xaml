@@ -590,35 +590,6 @@
                                             Padding="{TemplateBinding Padding}">
                                         <DockPanel LastChildFill="True">
                                             <StackPanel DockPanel.Dock="Right" Margin="8,0,0,0" Orientation="Horizontal" VerticalAlignment="Center">
-                                                <Button x:Name="ColumnPinButton" Width="22" Height="22" Margin="0,0,5,0" Padding="4"
-                                                        ToolTip="Fixar ou desafixar coluna"
-                                                        Command="{x:Static local:DataGridView.ToggleColumnPinCommand}"
-                                                        CommandParameter="{Binding Column, RelativeSource={RelativeSource TemplatedParent}}"
-                                                        CommandTarget="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}">
-                                                    <Button.Style>
-                                                        <Style TargetType="Button">
-                                                            <Setter Property="Visibility" Value="Collapsed" />
-                                                            <Setter Property="Background" Value="Transparent" />
-                                                            <Setter Property="BorderThickness" Value="0" />
-                                                            <Setter Property="Foreground" Value="{DynamicResource DataGridView.Muted}" />
-                                                            <Style.Triggers>
-                                                                <MultiDataTrigger>
-                                                                    <MultiDataTrigger.Conditions>
-                                                                        <Condition Binding="{Binding CanPinColumns, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" Value="True" />
-                                                                        <Condition Binding="{Binding ShowColumnPinButton, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" Value="True" />
-                                                                    </MultiDataTrigger.Conditions>
-                                                                    <Setter Property="Visibility" Value="Visible" />
-                                                                </MultiDataTrigger>
-                                                                <DataTrigger Binding="{Binding Column.(local:DataGridView.IsPinned), RelativeSource={RelativeSource TemplatedParent}}" Value="True">
-                                                                    <Setter Property="Foreground" Value="{DynamicResource DataGridView.Focus}" />
-                                                                </DataTrigger>
-                                                            </Style.Triggers>
-                                                        </Style>
-                                                    </Button.Style>
-                                                    <Path Data="M 4,1 L 10,1 L 9,5 L 11,7 L 7.5,7 L 7.5,12 L 6.5,12 L 6.5,7 L 3,7 L 5,5 Z"
-                                                          Stroke="{Binding Foreground, RelativeSource={RelativeSource AncestorType=Button}}"
-                                                          StrokeThickness="1.4" Stretch="Uniform" />
-                                                </Button>
                                                 <TextBlock x:Name="SortPriority" Margin="0,0,3,0" VerticalAlignment="Center"
                                                            Foreground="{Binding ActiveSortIconBrush, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}"
                                                            FontSize="10" FontWeight="Bold"
@@ -682,33 +653,6 @@
                             <Setter Property="Background" Value="{DynamicResource DataGridView.Selection}" />
                         </DataTrigger>
                     </Style.Triggers>
-                </Style>
-            </Setter.Value>
-        </Setter>
-        <Setter Property="RowHeaderStyle">
-            <Setter.Value>
-                <Style TargetType="DataGridRowHeader">
-                    <Setter Property="Width" Value="30" />
-                    <Setter Property="Background" Value="{DynamicResource DataGridView.Header}" />
-                    <Setter Property="BorderBrush" Value="{DynamicResource DataGridView.Edge}" />
-                    <Setter Property="BorderThickness" Value="0,0,1,1" />
-                    <Setter Property="Template">
-                        <Setter.Value>
-                            <ControlTemplate TargetType="DataGridRowHeader">
-                                <Border Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
-                                        BorderThickness="{TemplateBinding BorderThickness}">
-                                    <Button Width="24" Height="24" Padding="5" Background="Transparent" BorderThickness="0"
-                                            ToolTip="Fixar ou desafixar linha"
-                                            Command="{x:Static local:DataGridView.ToggleRowPinCommand}"
-                                            CommandParameter="{Binding DataContext, RelativeSource={RelativeSource AncestorType=DataGridRow}}"
-                                            CommandTarget="{Binding RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}">
-                                        <Path Data="M 4,1 L 10,1 L 9,5 L 11,7 L 7.5,7 L 7.5,12 L 6.5,12 L 6.5,7 L 3,7 L 5,5 Z"
-                                              Stroke="{DynamicResource DataGridView.Muted}" StrokeThickness="1.4" Stretch="Uniform" />
-                                    </Button>
-                                </Border>
-                            </ControlTemplate>
-                        </Setter.Value>
-                    </Setter>
                 </Style>
             </Setter.Value>
         </Setter>

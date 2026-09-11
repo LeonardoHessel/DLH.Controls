@@ -48,7 +48,6 @@ public sealed class DataGridViewPinningTests
 
         Assert.IsFalse(grid.CanPinRows);
         Assert.IsFalse(grid.CanPinColumns);
-        Assert.AreEqual(DataGridHeadersVisibility.Column, grid.HeadersVisibility);
         Assert.IsFalse(grid.PinRow(first));
         Assert.IsFalse(grid.PinColumn(firstColumn));
 
@@ -63,11 +62,6 @@ public sealed class DataGridViewPinningTests
 
         grid.CanPinRows = true;
         grid.CanPinColumns = true;
-        Assert.AreEqual(DataGridHeadersVisibility.All, grid.HeadersVisibility);
-        Assert.AreEqual(30d, grid.RowHeaderWidth);
-        grid.ShowRowPinButton = false;
-        Assert.AreEqual(DataGridHeadersVisibility.Column, grid.HeadersVisibility);
-        grid.ShowRowPinButton = true;
         Assert.IsTrue(grid.PinRow(first));
         Assert.IsFalse(grid.PinRow(first));
         Assert.IsFalse(grid.PinRow(second));

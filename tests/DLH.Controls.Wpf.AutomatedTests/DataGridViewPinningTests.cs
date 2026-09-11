@@ -236,6 +236,13 @@ public sealed class DataGridViewPinningTests
             var positions = layer.Children.OfType<DataGridView>().Select(Canvas.GetLeft).Order().ToArray();
             Assert.AreEqual(100d, positions[1] - positions[0], 1d,
                 "As colunas fixadas devem ficar lado a lado, sem sobreposição.");
+            var columnBackdrop = layer.Children.OfType<Border>()
+                .Single(element => Equals(element.Tag, "PinnedColumnBackdrop:Start"));
+            Assert.IsInstanceOfType<SolidColorBrush>(columnBackdrop.Background);
+            Assert.AreEqual(byte.MaxValue, ((SolidColorBrush)columnBackdrop.Background).Color.A,
+                "O bloco de colunas fixadas deve ocultar completamente o conteúdo horizontal ao fundo.");
+            Assert.IsGreaterThan(200d, columnBackdrop.Width,
+                "A superfície deve avançar até a borda do conjunto para eliminar frestas.");
             var firstOverlay = layer.Children.OfType<DataGridView>()
                 .Single(overlay => Math.Abs(Canvas.GetLeft(overlay) - positions[0]) < 1d);
             Assert.AreEqual(ListSortDirection.Descending, firstOverlay.Columns[0].SortDirection,

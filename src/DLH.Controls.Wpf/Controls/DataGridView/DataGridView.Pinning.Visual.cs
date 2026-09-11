@@ -235,6 +235,15 @@ public partial class DataGridView
         if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null) return;
         var (start, end) = ClassifyPinnedColumns(origin);
 
+        var startWidth = start.Sum(entry => entry.Metric.Width);
+        if (startWidth > 0)
+            AddPinnedColumnBackdrop(origin.X, 0, startWidth + 1,
+                origin.Y + pinningViewport.ActualHeight, "Start");
+        var endWidth = end.Sum(entry => entry.Metric.Width);
+        if (endWidth > 0)
+            AddPinnedColumnBackdrop(origin.X + pinningViewport.ActualWidth - endWidth - 1, 0,
+                endWidth + 1, origin.Y + pinningViewport.ActualHeight, "End");
+
         var occupied = 0d;
         foreach (var entry in start)
         {
@@ -249,6 +258,19 @@ public partial class DataGridView
             AddPinnedColumn(entry.Column, origin.X + pinningViewport.ActualWidth - occupied, 0,
                 entry.Metric.Width, origin.Y + pinningViewport.ActualHeight);
         }
+    }
+
+    private void AddPinnedColumnBackdrop(double left, double top, double width, double height, string edge)
+    {
+        if (pinningLayer is null) return;
+        var backdrop = new Border
+        {
+            Background = ResolvePinnedRowBackground(null),
+            IsHitTestVisible = false,
+            Tag = $"PinnedColumnBackdrop:{edge}"
+        };
+        PlaceOverlay(backdrop, left, top, width, height);
+        Panel.SetZIndex(backdrop, -1);
     }
 
     private void AddPinnedRow(object item, double left, double top, double width, double height)

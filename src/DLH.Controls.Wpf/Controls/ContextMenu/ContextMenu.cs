@@ -22,8 +22,16 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
 
     public ContextMenu()
     {
+        MenuInteraction.SetIsScopeRoot(this, true);
         Opened += (_, _) => ApplyItemStyles(Items);
+        Closed += (_, _) => MenuInteraction.CollapseAll(this);
     }
+
+    public void ActivatePath(MenuItem anchor) => MenuInteraction.ActivatePath(this, anchor);
+
+    public void CollapseAfter(MenuItem anchor) => MenuInteraction.CollapseAfter(this, anchor);
+
+    public void CollapseAll() => MenuInteraction.CollapseAll(this);
 
     protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
     {

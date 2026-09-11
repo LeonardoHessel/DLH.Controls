@@ -395,6 +395,16 @@ Cada linha usa cinco colunas alinhadas: ícone, título, valor, atalho e seta. U
 
 Defina `FlowDirection="RightToLeft"` para inverter o sentido do menu. Nessa configuração, a coluna da seta passa para o lado esquerdo, o indicador aponta para a esquerda e o submenu abre desse lado. O padrão é `LeftToRight`.
 
+O menu mantém somente um caminho ativo da árvore. Ao interagir com outro ramo, os submenus incompatíveis são fechados automaticamente. Outros componentes também podem controlar esse estado:
+
+```csharp
+menu.ActivatePath(item);  // mantém o item, seus pais e fecha os outros ramos
+menu.CollapseAfter(item); // mantém os pais e fecha o item e os níveis posteriores
+menu.CollapseAll();       // fecha toda a árvore
+```
+
+Para uma composição fixa que não use `ContextMenu`, marque o contêiner com `dlh:MenuInteraction.IsScopeRoot="True"` e use `MenuInteraction.ActivatePath`, `CollapseAfter` ou `CollapseAll`, passando esse contêiner como escopo. Escopos diferentes não interferem entre si.
+
 `ToggleMenuItem` fornece um estado booleano bidirecional e aceita `CheckedIcon` e `UncheckedIcon`. `ChoiceMenuItem` preenche automaticamente a coluna de valor com `SelectedContent`, percorre as opções pelo clique principal e abre a lista completa pela seta. A seleção pode ser ligada por `SelectedIndex`, `SelectedItem` ou `SelectedValue`; as três propriedades usam binding bidirecional por padrão. Para coleções de modelos, use `DisplayMemberPath`, `SelectedValuePath` e `IconMemberPath`. `CycleDirection`, `IsCycleWrappingEnabled` e `DropDownButtonWidth` personalizam a interação.
 
 O menu aberto com o botão direito nos cabeçalhos do `DataGridView` já é uma instância desse componente.

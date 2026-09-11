@@ -86,6 +86,8 @@ Os nomes foram padronizados durante a fase de pré-lançamento: `TabControl` sub
 
 Por ser herdada do WPF, `FlowDirection` também controla o sentido estrutural. Em `RightToLeft`, a seta ocupa a coluna mais à esquerda, aponta para esse lado e o submenu usa `PlacementMode.Left`. Cada submenu reutiliza o mesmo template, as mesmas cores, geometria e sombra do menu que o abriu.
 
+`ContextMenu.ActivatePath(MenuItem)` mantém o item e seus ancestrais e fecha os demais ramos. `CollapseAfter(MenuItem)` mantém apenas os ancestrais, enquanto `CollapseAll()` fecha toda a árvore. `MenuInteraction` oferece as mesmas operações para composições fixas e identifica cada raiz pela propriedade anexada `IsScopeRoot`. A coordenação é limitada ao escopo informado.
+
 `ToggleMenuItem` especializa o item marcável com `IsChecked` bidirecional por padrão, `CheckedIcon` e `UncheckedIcon`. `ChoiceMenuItem` representa uma escolha entre vários valores e expõe o texto apresentado em `SelectedContent`. `SelectedIndex`, `SelectedItem` e `SelectedValue` são bidirecionais por padrão; `DisplayMemberPath`, `SelectedValuePath` e `IconMemberPath` adaptam modelos externos. `CycleDirection`, `IsCycleWrappingEnabled` e `DropDownButtonWidth` controlam o clique cíclico e a área que abre o submenu. `ChoiceMenuOption` é o modelo declarativo simples com `Content`, `Value`, `Icon` e `IsEnabled`.
 
 Em C#, quando `System.Windows.Controls` e `DLH.Controls.Wpf` estiverem importados simultaneamente, use um alias ou o nome qualificado para distinguir os dois tipos: `using ControlsContextMenu = DLH.Controls.Wpf.ContextMenu;`. Em XAML, o prefixo `dlh:` já elimina a ambiguidade.

@@ -161,6 +161,7 @@ public sealed class SharedControlsTests
         choice.Items.Add(new ChoiceMenuOption { Content = "Escuro" });
         var other = new MenuItem { Header = "Atualizar" };
         var panel = new StackPanel();
+        MenuInteraction.SetIsScopeRoot(panel, true);
         panel.Children.Add(choice);
         panel.Children.Add(other);
         var window = Arrange(panel, 240, 120);
@@ -184,6 +185,47 @@ public sealed class SharedControlsTests
             };
             other.RaiseEvent(click);
             Assert.IsFalse(choice.IsSubmenuOpen);
+        }
+        finally { window.Close(); }
+    }
+
+    [STATestMethod]
+    public void MenuInteractionExposesScopedBranchControlToOtherComponents()
+    {
+        var first = new ChoiceMenuItem { Header = "Primeiro" };
+        first.Items.Add("A");
+        var second = new ChoiceMenuItem { Header = "Segundo" };
+        second.Items.Add("B");
+        var isolated = new ChoiceMenuItem { Header = "Outro menu" };
+        isolated.Items.Add("C");
+        var scope = new StackPanel();
+        var isolatedScope = new StackPanel();
+        MenuInteraction.SetIsScopeRoot(scope, true);
+        MenuInteraction.SetIsScopeRoot(isolatedScope, true);
+        scope.Children.Add(first);
+        scope.Children.Add(second);
+        isolatedScope.Children.Add(isolated);
+        var host = new StackPanel();
+        host.Children.Add(scope);
+        host.Children.Add(isolatedScope);
+        var window = Arrange(host, 300, 220);
+        try
+        {
+            window.Show();
+            window.UpdateLayout();
+            first.IsSubmenuOpen = true;
+            second.IsSubmenuOpen = true;
+            isolated.IsSubmenuOpen = true;
+
+            MenuInteraction.ActivatePath(scope, first);
+            Assert.IsTrue(first.IsSubmenuOpen);
+            Assert.IsFalse(second.IsSubmenuOpen);
+            Assert.IsTrue(isolated.IsSubmenuOpen, "Um escopo não deve interferir em outro menu.");
+
+            MenuInteraction.CollapseAfter(scope, first);
+            Assert.IsFalse(first.IsSubmenuOpen);
+            MenuInteraction.CollapseAll(isolatedScope);
+            Assert.IsFalse(isolated.IsSubmenuOpen);
         }
         finally { window.Close(); }
     }

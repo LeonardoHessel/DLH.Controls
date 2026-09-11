@@ -53,6 +53,9 @@ type DLH.Controls.Wpf.ContextMenu
   field System.Windows.DependencyProperty ShadowColorProperty
   field System.Windows.DependencyProperty ShadowDepthProperty
   field System.Windows.DependencyProperty ShadowOpacityProperty
+  method System.Void ActivatePath(System.Windows.Controls.MenuItem)
+  method System.Void CollapseAfter(System.Windows.Controls.MenuItem)
+  method System.Void CollapseAll()
   method System.Void OnApplyTemplate()
   property System.Boolean IsShadowEnabled { get; set;  }
   property System.Double ArrowColumnWidth { get; set;  }
@@ -257,6 +260,13 @@ type DLH.Controls.Wpf.DataGridViewState
 type DLH.Controls.Wpf.DataGridViewStateRestoredEventArgs
   ctor(DLH.Controls.Wpf.DataGridViewState)
   property DLH.Controls.Wpf.DataGridViewState State { get;  }
+type DLH.Controls.Wpf.MenuInteraction
+  field System.Windows.DependencyProperty IsScopeRootProperty
+  method System.Boolean GetIsScopeRoot(System.Windows.DependencyObject)
+  method System.Void ActivatePath(System.Windows.DependencyObject, System.Windows.Controls.MenuItem)
+  method System.Void CollapseAfter(System.Windows.DependencyObject, System.Windows.Controls.MenuItem)
+  method System.Void CollapseAll(System.Windows.DependencyObject)
+  method System.Void SetIsScopeRoot(System.Windows.DependencyObject, System.Boolean)
 type DLH.Controls.Wpf.MenuItemAssist
   field System.Windows.DependencyProperty ValueProperty
   field System.Windows.DependencyProperty ValueTemplateProperty

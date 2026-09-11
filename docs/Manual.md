@@ -415,6 +415,8 @@ Os itens são organizados em cinco colunas: ícone, título, valor, atalho e set
 
 `FlowDirection="RightToLeft"` espelha a estrutura, posiciona a seta na coluna mais à esquerda e faz o submenu abrir para a esquerda. `LeftToRight` mantém o comportamento padrão.
 
+Cada menu possui um caminho ativo. Clicar em outro ramo fecha os submenus que não pertencem ao novo caminho. Um componente externo pode chamar `ContextMenu.ActivatePath(item)`, `CollapseAfter(item)` ou `CollapseAll()`. Em menus fixos, marque a raiz com `MenuInteraction.IsScopeRoot="True"` e chame os métodos equivalentes de `MenuInteraction`, informando a raiz. Isso permite que um clique externo feche toda a árvore sem interferir em outros menus da janela.
+
 No `ToggleMenuItem`, `IsChecked` é bidirecional por padrão e os ícones podem variar entre `CheckedIcon` e `UncheckedIcon`. No `ChoiceMenuItem`, o clique sobre o item percorre as opções e a seta abre o submenu para seleção direta. `SelectedContent` ocupa a coluna de valor. Use `SelectedIndex`, `SelectedItem` ou `SelectedValue` para manter a escolha no view model.
 
 ## 6. Temas e personalização

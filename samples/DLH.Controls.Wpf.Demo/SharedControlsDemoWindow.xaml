@@ -68,6 +68,7 @@
                             </Button>
                             <TextBlock Text="MenuItem sempre visível" FontWeight="SemiBold" Margin="6,14,6,6"/>
                             <Border x:Name="PersistentMenuSurface" Width="300" HorizontalAlignment="Left" Grid.IsSharedSizeScope="True"
+                                    controls:MenuInteraction.IsScopeRoot="True"
                                     Background="#35373C" BorderBrush="#4C5058" BorderThickness="1"
                                     CornerRadius="8" Padding="4">
                                 <Border.Resources>

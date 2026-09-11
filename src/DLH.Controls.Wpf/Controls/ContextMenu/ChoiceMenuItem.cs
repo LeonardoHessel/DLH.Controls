@@ -14,7 +14,6 @@ namespace DLH.Controls.Wpf;
 /// </summary>
 public class ChoiceMenuItem : MenuItem
 {
-    private static readonly List<WeakReference<ChoiceMenuItem>> Instances = [];
     private bool isSynchronizing;
     private static readonly DependencyPropertyKey SelectedContentPropertyKey = DependencyProperty.RegisterReadOnly(
         nameof(SelectedContent), typeof(object), typeof(ChoiceMenuItem), new PropertyMetadata(null));
@@ -23,8 +22,6 @@ public class ChoiceMenuItem : MenuItem
     {
         DefaultStyleKeyProperty.OverrideMetadata(typeof(ChoiceMenuItem),
             new FrameworkPropertyMetadata(typeof(ChoiceMenuItem)));
-        EventManager.RegisterClassHandler(typeof(MenuItem), PreviewMouseLeftButtonDownEvent,
-            new MouseButtonEventHandler(OnAnyMenuItemPreviewMouseDown), true);
     }
 
     public ChoiceMenuItem()
@@ -32,7 +29,6 @@ public class ChoiceMenuItem : MenuItem
         SetCurrentValue(StaysOpenOnClickProperty, true);
         Resources["ContextMenu.ArrowAreaWidth"] = new GridLength(DropDownButtonWidth + Padding.Right);
         AddHandler(ClickEvent, new RoutedEventHandler(OnDescendantClick));
-        lock (Instances) Instances.Add(new WeakReference<ChoiceMenuItem>(this));
     }
 
     public static readonly DependencyProperty SelectedIndexProperty = DependencyProperty.Register(
@@ -235,43 +231,8 @@ public class ChoiceMenuItem : MenuItem
     private void ToggleSubmenu()
     {
         var shouldOpen = !IsSubmenuOpen;
-        CloseOtherChoices(this);
+        MenuInteraction.ActivatePathFor(this);
         SetCurrentValue(IsSubmenuOpenProperty, shouldOpen);
-    }
-
-    private static void OnAnyMenuItemPreviewMouseDown(object sender, MouseButtonEventArgs e)
-    {
-        if (e.ChangedButton != MouseButton.Left || sender is not MenuItem clickedItem) return;
-        CloseOtherChoices(clickedItem);
-    }
-
-    private static void CloseOtherChoices(MenuItem clickedItem)
-    {
-        lock (Instances)
-        {
-            for (var index = Instances.Count - 1; index >= 0; index--)
-            {
-                if (!Instances[index].TryGetTarget(out var choice))
-                {
-                    Instances.RemoveAt(index);
-                    continue;
-                }
-                if (choice.Dispatcher != clickedItem.Dispatcher) continue;
-                if (choice.IsSubmenuOpen && !BelongsToChoice(clickedItem, choice))
-                    choice.SetCurrentValue(IsSubmenuOpenProperty, false);
-            }
-        }
-    }
-
-    private static bool BelongsToChoice(MenuItem item, ChoiceMenuItem choice)
-    {
-        MenuItem? current = item;
-        while (current is not null)
-        {
-            if (ReferenceEquals(current, choice)) return true;
-            current = ItemsControl.ItemsControlFromItemContainer(current) as MenuItem;
-        }
-        return false;
     }
 
     private static void OnSelectionPropertyChanged(DependencyObject d, DependencyPropertyChangedEventArgs _) =>

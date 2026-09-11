@@ -6,15 +6,21 @@ namespace DLH.Controls.Wpf;
 
 public class ScrollBar : System.Windows.Controls.Primitives.ScrollBar
 {
-    static ScrollBar() => DefaultStyleKeyProperty.OverrideMetadata(typeof(ScrollBar),
-        new FrameworkPropertyMetadata(typeof(ScrollBar)));
-
-    public ScrollBar() => UpdateCrossAxis();
+    static ScrollBar()
+    {
+        DefaultStyleKeyProperty.OverrideMetadata(typeof(ScrollBar),
+            new FrameworkPropertyMetadata(typeof(ScrollBar)));
+        OrientationProperty.OverrideMetadata(typeof(ScrollBar),
+            new FrameworkPropertyMetadata(System.Windows.Controls.Orientation.Vertical, OnOrientationChanged));
+        WidthProperty.OverrideMetadata(typeof(ScrollBar),
+            new FrameworkPropertyMetadata(double.NaN, null, CoerceWidth));
+        HeightProperty.OverrideMetadata(typeof(ScrollBar),
+            new FrameworkPropertyMetadata(double.NaN, null, CoerceHeight));
+    }
 
     public static readonly DependencyProperty ThicknessProperty = DependencyProperty.Register(
         nameof(Thickness), typeof(double), typeof(ScrollBar),
-        new FrameworkPropertyMetadata(10d, FrameworkPropertyMetadataOptions.AffectsMeasure,
-            (owner, _) => ((ScrollBar)owner).UpdateCrossAxis()),
+        new FrameworkPropertyMetadata(10d, FrameworkPropertyMetadataOptions.AffectsMeasure, OnThicknessChanged),
         value => value is double number && double.IsFinite(number) && number > 0);
     public double Thickness { get => (double)GetValue(ThicknessProperty); set => SetValue(ThicknessProperty, value); }
 
@@ -82,19 +88,27 @@ public class ScrollBar : System.Windows.Controls.Primitives.ScrollBar
         value => value is double number && double.IsFinite(number));
     public double ShadowDepth { get => (double)GetValue(ShadowDepthProperty); set => SetValue(ShadowDepthProperty, value); }
 
-    protected override void OnInitialized(EventArgs e) { base.OnInitialized(e); UpdateCrossAxis(); }
-
-    protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+    private static void OnOrientationChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
     {
-        base.OnPropertyChanged(e);
-        if (e.Property == OrientationProperty) UpdateCrossAxis();
+        dependencyObject.CoerceValue(WidthProperty);
+        dependencyObject.CoerceValue(HeightProperty);
     }
 
-    private void UpdateCrossAxis()
+    private static void OnThicknessChanged(DependencyObject dependencyObject, DependencyPropertyChangedEventArgs args)
     {
-        if (Orientation == System.Windows.Controls.Orientation.Vertical) SetCurrentValue(WidthProperty, Thickness);
-        else SetCurrentValue(HeightProperty, Thickness);
+        dependencyObject.CoerceValue(WidthProperty);
+        dependencyObject.CoerceValue(HeightProperty);
     }
+
+    private static object CoerceWidth(DependencyObject dependencyObject, object baseValue) =>
+        ((ScrollBar)dependencyObject).Orientation == System.Windows.Controls.Orientation.Vertical
+            ? ((ScrollBar)dependencyObject).Thickness
+            : baseValue;
+
+    private static object CoerceHeight(DependencyObject dependencyObject, object baseValue) =>
+        ((ScrollBar)dependencyObject).Orientation == System.Windows.Controls.Orientation.Horizontal
+            ? ((ScrollBar)dependencyObject).Thickness
+            : baseValue;
 
     private static bool IsUniformNonNegative(CornerRadius radius) => radius.TopLeft >= 0 &&
         radius.TopLeft == radius.TopRight && radius.TopLeft == radius.BottomRight && radius.TopLeft == radius.BottomLeft;

@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using ControlsScrollBar = DLH.Controls.Wpf.ScrollBar;
@@ -389,6 +390,46 @@ public sealed class SharedControlsTests
             surface = (Border)bar.Template.FindName("TrackSurface", bar)!;
             Assert.AreEqual(12d, bar.ActualHeight);
             Assert.AreEqual(new CornerRadius(6), surface.CornerRadius);
+        }
+        finally { window.Close(); }
+    }
+
+    [STATestMethod]
+    public void ScrollBarFillsTheMainAxisAfterChangingOrientation()
+    {
+        var bar = new ControlsScrollBar
+        {
+            Orientation = Orientation.Vertical,
+            Thickness = 10,
+            Minimum = 0,
+            Maximum = 100,
+            Value = 35,
+            ViewportSize = 20,
+            HorizontalAlignment = HorizontalAlignment.Right,
+            VerticalAlignment = VerticalAlignment.Stretch
+        };
+        var host = new Grid { Width = 320, Height = 140 };
+        host.Children.Add(bar);
+        var window = Arrange(host, 320, 140);
+        try
+        {
+            Assert.AreEqual(10d, bar.ActualWidth);
+            Assert.AreEqual(140d, bar.ActualHeight);
+
+            bar.Orientation = Orientation.Horizontal;
+            bar.HorizontalAlignment = HorizontalAlignment.Stretch;
+            bar.VerticalAlignment = VerticalAlignment.Bottom;
+            host.UpdateLayout();
+
+            Assert.AreEqual(320d, bar.ActualWidth);
+            Assert.AreEqual(10d, bar.ActualHeight);
+            var track = (Track)bar.Template.FindName("PART_Track", bar)!;
+            Assert.IsGreaterThan(250d, track.ActualWidth,
+                "A pista horizontal deve ocupar a largura disponível.");
+            var previousValue = bar.Value;
+            System.Windows.Controls.Primitives.ScrollBar.PageRightCommand.Execute(null, bar);
+            Assert.IsGreaterThan(previousValue, bar.Value,
+                "A barra horizontal deve continuar respondendo aos comandos de rolagem.");
         }
         finally { window.Close(); }
     }

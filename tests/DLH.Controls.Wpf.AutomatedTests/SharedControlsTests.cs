@@ -99,7 +99,7 @@ public sealed class SharedControlsTests
         var edgeColor = Color.FromRgb(70, 80, 90);
         var hoverColor = Color.FromRgb(100, 110, 120);
         var checkedColor = Color.FromRgb(130, 140, 150);
-        var separatorColor = Color.FromRgb(160, 170, 180);
+        var separatorColor = Color.FromRgb(0x18, 0xA4, 0x00);
         menu.Background = new SolidColorBrush(surfaceColor);
         menu.Foreground = new SolidColorBrush(textColor);
         menu.BorderBrush = new SolidColorBrush(edgeColor);
@@ -114,6 +114,7 @@ public sealed class SharedControlsTests
         AssertBrush(item.Resources["ContextMenu.Checked"], checkedColor);
         AssertBrush(child.Resources["ContextMenu.Hover"], hoverColor);
         AssertBrush(separator.Resources["ContextMenu.Separator"], separatorColor);
+        Assert.AreEqual(typeof(Separator), separator.Style.TargetType);
         Assert.AreSame(menu.Background, ((Border)menu.Template.FindName("MenuSurface", menu)!).Background);
         var separatorLine = (Border)separator.Template.FindName("SeparatorLine", separator)!;
         Assert.AreEqual(separatorColor, Assert.IsInstanceOfType<SolidColorBrush>(separatorLine.Background).Color);

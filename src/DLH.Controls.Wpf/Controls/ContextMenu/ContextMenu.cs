@@ -10,6 +10,10 @@ namespace DLH.Controls.Wpf;
 /// </summary>
 public class ContextMenu : System.Windows.Controls.ContextMenu
 {
+    private readonly HashSet<DependencyObject> preparedElements = [];
+    private readonly HashSet<DependencyObject> consumerStyledElements = [];
+    private readonly HashSet<DependencyObject> sharedStyledElements = [];
+
     static ContextMenu()
     {
         DefaultStyleKeyProperty.OverrideMetadata(typeof(ContextMenu),
@@ -23,7 +27,9 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
 
     protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
     {
+        RememberConsumerStyle(element);
         base.PrepareContainerForItemOverride(element, item);
+        preparedElements.Add(element);
         ApplyItemStyle(element);
     }
 
@@ -46,7 +52,8 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
 
     private void ApplyItemStyle(DependencyObject element)
     {
-        var canApplyDefaultStyle = element.ReadLocalValue(StyleProperty) == DependencyProperty.UnsetValue;
+        if (!preparedElements.Contains(element)) RememberConsumerStyle(element);
+        var canApplyDefaultStyle = !consumerStyledElements.Contains(element);
         if (element is MenuItem menuItem)
         {
             menuItem.Resources["ContextMenu.Surface"] = Background;
@@ -61,15 +68,34 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
             menuItem.Resources["ContextMenu.CornerRadius"] = CornerRadius;
             menuItem.Resources["ContextMenu.Padding"] = Padding;
             menuItem.Resources["ContextMenu.BorderThickness"] = BorderThickness;
-            if (canApplyDefaultStyle && (ItemContainerStyle ?? TryFindResource("ContextMenu.ItemStyle") as Style) is { } menuItemStyle)
+            if (canApplyDefaultStyle && (ItemContainerStyle ?? FindSharedStyle(menuItem)) is { } menuItemStyle)
+            {
+                sharedStyledElements.Add(menuItem);
                 menuItem.SetCurrentValue(StyleProperty, menuItemStyle);
+            }
         }
         else if (element is Separator separator)
         {
             separator.Resources["ContextMenu.Separator"] = SeparatorBrush;
-            if (canApplyDefaultStyle && TryFindResource("ContextMenu.SeparatorStyle") is Style separatorStyle)
+            if (canApplyDefaultStyle && FindSharedStyle(separator) is { } separatorStyle)
+            {
+                sharedStyledElements.Add(separator);
                 separator.SetCurrentValue(StyleProperty, separatorStyle);
+            }
         }
+    }
+
+    private void RememberConsumerStyle(DependencyObject element)
+    {
+        if (element.ReadLocalValue(StyleProperty) == DependencyProperty.UnsetValue || sharedStyledElements.Contains(element)) return;
+        consumerStyledElements.Add(element);
+    }
+
+    private Style? FindSharedStyle(DependencyObject element)
+    {
+        var key = element is Separator ? "ContextMenu.SeparatorStyle" : "ContextMenu.ItemStyle";
+        var targetType = element is Separator ? typeof(Separator) : typeof(MenuItem);
+        return TryFindResource(key) as Style ?? Style?.Resources[targetType] as Style;
     }
 
     protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)

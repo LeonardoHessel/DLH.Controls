@@ -27,7 +27,7 @@ public class ChoiceMenuItem : MenuItem
     public ChoiceMenuItem()
     {
         SetCurrentValue(StaysOpenOnClickProperty, true);
-        Resources["ContextMenu.ArrowColumnWidth"] = new GridLength(DropDownButtonWidth);
+        Resources["ContextMenu.ArrowAreaWidth"] = new GridLength(DropDownButtonWidth + Padding.Right);
         AddHandler(ClickEvent, new RoutedEventHandler(OnDescendantClick));
     }
 
@@ -116,7 +116,8 @@ public class ChoiceMenuItem : MenuItem
     }
 
     private static void OnDropDownButtonWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e) =>
-        ((ChoiceMenuItem)d).Resources["ContextMenu.ArrowColumnWidth"] = new GridLength((double)e.NewValue);
+        ((ChoiceMenuItem)d).Resources["ContextMenu.ArrowAreaWidth"] =
+            new GridLength((double)e.NewValue + ((ChoiceMenuItem)d).Padding.Right);
 
     protected override bool IsItemItsOwnContainerOverride(object item) => item is MenuItem;
 
@@ -154,7 +155,13 @@ public class ChoiceMenuItem : MenuItem
             return;
         }
 
-        if (HasItems && e.GetPosition(this).X >= Math.Max(0, ActualWidth - DropDownButtonWidth))
+        var pointerX = e.GetPosition(this).X;
+        var dropDownAreaWidth = DropDownButtonWidth +
+            (FlowDirection == FlowDirection.LeftToRight ? Padding.Right : Padding.Left);
+        var isOverDropDownArea = FlowDirection == FlowDirection.LeftToRight
+            ? pointerX >= Math.Max(0, ActualWidth - dropDownAreaWidth)
+            : pointerX <= dropDownAreaWidth;
+        if (HasItems && isOverDropDownArea)
             SetCurrentValue(IsSubmenuOpenProperty, true);
         else
             OnClick();

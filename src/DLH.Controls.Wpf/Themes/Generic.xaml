@@ -29,6 +29,9 @@
     <sys:Double x:Key="ContextMenu.IconSize">16</sys:Double>
     <GridLength x:Key="ContextMenu.IconColumnWidth">26</GridLength>
     <GridLength x:Key="ContextMenu.ArrowColumnWidth">24</GridLength>
+    <GridLength x:Key="ContextMenu.IconAreaWidth">36</GridLength>
+    <GridLength x:Key="ContextMenu.ArrowAreaWidth">34</GridLength>
+    <Thickness x:Key="ContextMenu.ItemVerticalMargin">0,7</Thickness>
     <Color x:Key="ContextMenu.ShadowColor">#494949</Color>
     <sys:Double x:Key="ContextMenu.ShadowOpacity">0.5</sys:Double>
     <sys:Double x:Key="ContextMenu.ShadowBlurRadius">10</sys:Double>
@@ -73,13 +76,13 @@
                 <ControlTemplate TargetType="{x:Type MenuItem}">
                     <Grid>
                         <Border x:Name="ItemSurface" Background="{TemplateBinding Background}" CornerRadius="4"/>
-                        <Grid x:Name="ItemLayout" Margin="{TemplateBinding Padding}">
+                        <Grid x:Name="ItemLayout" Margin="{DynamicResource ContextMenu.ItemVerticalMargin}">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="{DynamicResource ContextMenu.IconColumnWidth}"/>
+                                <ColumnDefinition Width="{DynamicResource ContextMenu.IconAreaWidth}"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="ContextMenuValue"/>
                                 <ColumnDefinition Width="Auto" SharedSizeGroup="ContextMenuGesture"/>
-                                <ColumnDefinition Width="{DynamicResource ContextMenu.ArrowColumnWidth}"/>
+                                <ColumnDefinition Width="{DynamicResource ContextMenu.ArrowAreaWidth}"/>
                             </Grid.ColumnDefinitions>
                             <Grid x:Name="IconHost" Grid.Column="0" UseLayoutRounding="True" SnapsToDevicePixels="True"
                                   Width="{DynamicResource ContextMenu.IconSize}"

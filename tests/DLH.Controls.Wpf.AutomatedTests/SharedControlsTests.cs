@@ -184,7 +184,12 @@ public sealed class SharedControlsTests
             Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)item.Template.FindName("IconPresenter", item)!).HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)item.Template.FindName("CheckMark", item)!).HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)submenu.Template.FindName("SubmenuArrow", submenu)!).HorizontalAlignment);
-            Assert.HasCount(5, ((Grid)item.Template.FindName("ItemLayout", item)!).ColumnDefinitions);
+            var itemLayout = (Grid)item.Template.FindName("ItemLayout", item)!;
+            var iconHost = (FrameworkElement)item.Template.FindName("IconHost", item)!;
+            Assert.HasCount(5, itemLayout.ColumnDefinitions);
+            var iconCenter = iconHost.TranslatePoint(new Point(iconHost.ActualWidth / 2, 0), itemLayout).X;
+            Assert.AreEqual(itemLayout.ColumnDefinitions[0].ActualWidth / 2, iconCenter, .5,
+                "O centro do ícone deve coincidir com o centro da primeira coluna completa.");
             Assert.AreEqual("Ativo", ((ContentPresenter)item.Template.FindName("ValuePresenter", item)!).Content);
             Assert.AreEqual("Ctrl+O", ((TextBlock)item.Template.FindName("GesturePresenter", item)!).Text);
             Assert.AreEqual(Visibility.Visible, ((FrameworkElement)item.Template.FindName("CheckMark", item)!).Visibility);

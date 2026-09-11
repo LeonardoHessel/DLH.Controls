@@ -65,8 +65,10 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
             menuItem.Resources["ContextMenu.ItemPadding"] = ItemPadding;
             menuItem.Resources["ContextMenu.IconSize"] = IconSize;
             menuItem.Resources["ContextMenu.IconColumnWidth"] = new GridLength(IconColumnWidth);
-            menuItem.Resources["ContextMenu.ArrowColumnWidth"] = new GridLength(
-                menuItem is ChoiceMenuItem choice ? choice.DropDownButtonWidth : ArrowColumnWidth);
+            var arrowWidth = menuItem is ChoiceMenuItem choice ? choice.DropDownButtonWidth : ArrowColumnWidth;
+            menuItem.Resources["ContextMenu.IconAreaWidth"] = new GridLength(IconColumnWidth + ItemPadding.Left);
+            menuItem.Resources["ContextMenu.ArrowAreaWidth"] = new GridLength(arrowWidth + ItemPadding.Right);
+            menuItem.Resources["ContextMenu.ItemVerticalMargin"] = new Thickness(0, ItemPadding.Top, 0, ItemPadding.Bottom);
             menuItem.Resources["ContextMenu.CornerRadius"] = CornerRadius;
             menuItem.Resources["ContextMenu.Padding"] = Padding;
             menuItem.Resources["ContextMenu.BorderThickness"] = BorderThickness;

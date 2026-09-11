@@ -150,6 +150,9 @@ public partial class SharedControlsDemoWindow : Window
         PersistentMenuSurface.Resources["ContextMenu.IconSize"] = DemoMenu.IconSize;
         PersistentMenuSurface.Resources["ContextMenu.IconColumnWidth"] = new GridLength(DemoMenu.IconColumnWidth);
         PersistentMenuSurface.Resources["ContextMenu.ArrowColumnWidth"] = new GridLength(DemoMenu.ArrowColumnWidth);
+        PersistentMenuSurface.Resources["ContextMenu.IconAreaWidth"] = new GridLength(DemoMenu.IconColumnWidth + DemoMenu.ItemPadding.Left);
+        PersistentMenuSurface.Resources["ContextMenu.ArrowAreaWidth"] = new GridLength(DemoMenu.ArrowColumnWidth + DemoMenu.ItemPadding.Right);
+        PersistentMenuSurface.Resources["ContextMenu.ItemVerticalMargin"] = new Thickness(0, DemoMenu.ItemPadding.Top, 0, DemoMenu.ItemPadding.Bottom);
         PersistentMenuSurface.Resources["ContextMenu.CornerRadius"] = DemoMenu.CornerRadius;
         PersistentMenuSurface.Resources["ContextMenu.Padding"] = DemoMenu.Padding;
         PersistentMenuSurface.Resources["ContextMenu.BorderThickness"] = DemoMenu.BorderThickness;

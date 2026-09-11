@@ -81,6 +81,9 @@
                                     <sys:Double x:Key="ContextMenu.IconSize" xmlns:sys="clr-namespace:System;assembly=System.Runtime">16</sys:Double>
                                     <GridLength x:Key="ContextMenu.IconColumnWidth">26</GridLength>
                                     <GridLength x:Key="ContextMenu.ArrowColumnWidth">24</GridLength>
+                                    <GridLength x:Key="ContextMenu.IconAreaWidth">36</GridLength>
+                                    <GridLength x:Key="ContextMenu.ArrowAreaWidth">34</GridLength>
+                                    <Thickness x:Key="ContextMenu.ItemVerticalMargin">0,7</Thickness>
                                     <Color x:Key="ContextMenu.ShadowColor">#494949</Color>
                                     <sys:Double x:Key="ContextMenu.ShadowOpacity" xmlns:sys="clr-namespace:System;assembly=System.Runtime">0.5</sys:Double>
                                     <sys:Double x:Key="ContextMenu.ShadowBlurRadius" xmlns:sys="clr-namespace:System;assembly=System.Runtime">10</sys:Double>

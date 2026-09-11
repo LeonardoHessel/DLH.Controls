@@ -63,7 +63,7 @@ public partial class DataGridView
             if (ItemContainerGenerator.ContainerFromItem(item) is not DataGridRow row || row.ActualHeight <= 0) continue;
             var position = row.TranslatePoint(new Point(), pinningLayer);
             pinnedRowMetrics[item] = (position.Y - viewportOrigin.Y + pinningScrollViewer.VerticalOffset, row.ActualHeight);
-            pinnedRowBackgrounds[item] = IsVisibleBrush(row.Background) ? row.Background : Background;
+            pinnedRowBackgrounds[item] = ResolvePinnedRowBackground(row.Background);
         }
         foreach (var header in VisualChildren<DataGridColumnHeader>(this))
         {
@@ -288,16 +288,43 @@ public partial class DataGridView
 
     private void ApplyPinnedRowBackground(DataGridView overlay, object item)
     {
-        var brush = pinnedRowBackgrounds.TryGetValue(item, out var captured) && IsVisibleBrush(captured)
+        var brush = pinnedRowBackgrounds.TryGetValue(item, out var captured) && IsOpaqueBrush(captured)
             ? captured
-            : Background;
+            : ResolvePinnedRowBackground(null);
         overlay.Background = brush;
         overlay.RowBackground = brush;
         overlay.AlternatingRowBackground = brush;
+        overlay.RowStyle = CreateOpaqueStyle(typeof(DataGridRow), RowStyle, brush);
+        overlay.CellStyle = CreateOpaqueStyle(typeof(DataGridCell), CellStyle, brush);
     }
 
-    private static bool IsVisibleBrush(Brush? brush) => brush is not null && brush.Opacity > 0 &&
-        (brush is not SolidColorBrush solid || solid.Color.A > 0);
+    private Brush ResolvePinnedRowBackground(Brush? rowBrush)
+    {
+        var surface = IsOpaqueBrush(Background)
+            ? Background
+            : TryFindResource("DataGridView.Surface") as Brush ?? new SolidColorBrush(Color.FromRgb(0x35, 0x37, 0x3C));
+        if (rowBrush is not SolidColorBrush rowColor || rowColor.Opacity <= 0 || rowColor.Color.A == 0)
+            return surface;
+        if (IsOpaqueBrush(rowColor)) return rowColor;
+        if (surface is not SolidColorBrush surfaceColor) return surface;
+
+        var alpha = rowColor.Color.A / 255d * rowColor.Opacity;
+        byte Blend(byte foreground, byte background) => (byte)Math.Round(foreground * alpha + background * (1 - alpha));
+        return new SolidColorBrush(Color.FromRgb(
+            Blend(rowColor.Color.R, surfaceColor.Color.R),
+            Blend(rowColor.Color.G, surfaceColor.Color.G),
+            Blend(rowColor.Color.B, surfaceColor.Color.B)));
+    }
+
+    private static Style CreateOpaqueStyle(Type targetType, Style? basedOn, Brush background)
+    {
+        var style = new Style(targetType, basedOn);
+        style.Setters.Add(new Setter(Control.BackgroundProperty, background));
+        return style;
+    }
+
+    private static bool IsOpaqueBrush(Brush? brush) => brush is not null && brush.Opacity >= 1 &&
+        (brush is not SolidColorBrush solid || solid.Color.A == byte.MaxValue);
 
     private void AddPinnedColumn(DataGridColumn column, double left, double top, double width, double height)
     {

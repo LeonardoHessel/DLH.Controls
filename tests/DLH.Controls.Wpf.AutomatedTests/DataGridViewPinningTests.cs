@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using System.Windows.Media;
 using DLH.Controls.Wpf;
 
 namespace DLH.Controls.Wpf.AutomatedTests;
@@ -126,6 +127,10 @@ public sealed class DataGridViewPinningTests
                 "A célula da linha, e não o cabeçalho, deve ocupar a representação fixada.");
             Assert.IsGreaterThan(0d, rowOverlay.RowBackground.Opacity,
                 "A linha fixada deve ter fundo opaco para ocultar o conteúdo que passa por baixo.");
+            var fixedRow = (DataGridRow)rowOverlay.ItemContainerGenerator.ContainerFromIndex(0)!;
+            Assert.IsInstanceOfType<SolidColorBrush>(fixedRow.Background);
+            Assert.AreEqual(byte.MaxValue, ((SolidColorBrush)fixedRow.Background).Color.A,
+                "O fundo efetivamente renderizado pela linha fixada deve ser totalmente opaco.");
             var intersection = layer.Children.OfType<DataGridView>()
                 .Single(overlay => overlay.HeadersVisibility == DataGridHeadersVisibility.None && overlay.Columns.Count == 1);
             Assert.AreSame(rows[0], intersection.Items.Cast<Row>().Single(),

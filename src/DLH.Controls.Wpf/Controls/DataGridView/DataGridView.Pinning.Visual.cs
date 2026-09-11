@@ -219,15 +219,36 @@ public partial class DataGridView
         foreach (var entry in start)
         {
             AddPinnedRow(entry.Item, origin.X, origin.Y + occupied, pinningViewport.ActualWidth, entry.Metric.Height);
+            AddPinnedRowSeparator(origin.X, origin.Y + occupied + entry.Metric.Height,
+                pinningViewport.ActualWidth, entry.Item);
             occupied += entry.Metric.Height;
         }
         occupied = 0;
         foreach (var entry in end)
         {
             occupied += entry.Metric.Height;
-            AddPinnedRow(entry.Item, origin.X, origin.Y + pinningViewport.ActualHeight - occupied,
+            var top = origin.Y + pinningViewport.ActualHeight - occupied;
+            AddPinnedRow(entry.Item, origin.X, top,
                 pinningViewport.ActualWidth, entry.Metric.Height);
+            AddPinnedRowSeparator(origin.X, top + entry.Metric.Height,
+                pinningViewport.ActualWidth, entry.Item);
         }
+    }
+
+    private void AddPinnedRowSeparator(double left, double bottom, double width, object item)
+    {
+        if (pinningLayer is null || GridLinesVisibility is DataGridGridLinesVisibility.None or DataGridGridLinesVisibility.Vertical)
+            return;
+        var dpi = VisualTreeHelper.GetDpi(this);
+        var thickness = 1d / dpi.DpiScaleY;
+        var separator = new Border
+        {
+            Background = HorizontalGridLinesBrush,
+            IsHitTestVisible = false,
+            Tag = $"PinnedRowSeparator:{RuntimeHelpers.GetHashCode(item)}"
+        };
+        PlaceOverlay(separator, left, bottom - thickness, width, thickness);
+        Panel.SetZIndex(separator, 3);
     }
 
     private void AddPinnedRowBackdrop(double left, double top, double width, double height, string edge)
@@ -282,6 +303,7 @@ public partial class DataGridView
     {
         if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null) return;
         var overlay = CreateOverlayGrid(DataGridHeadersVisibility.None, new[] { item });
+        overlay.GridLinesVisibility = DataGridGridLinesVisibility.None;
         ApplyPinnedRowBackground(overlay, item);
         foreach (var column in Columns.Where(column => column.Visibility == Visibility.Visible).OrderBy(column => column.DisplayIndex))
             overlay.Columns.Add(CloneColumn(column));
@@ -327,6 +349,7 @@ public partial class DataGridView
         double left, double top, double width, double height)
     {
         var overlay = CreateOverlayGrid(DataGridHeadersVisibility.None, new[] { item });
+        overlay.GridLinesVisibility = DataGridGridLinesVisibility.None;
         ApplyPinnedRowBackground(overlay, item);
         foreach (var entry in columns) overlay.Columns.Add(CloneColumn(entry.Column));
         PlaceOverlay(overlay, left, top, width, height);

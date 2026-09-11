@@ -362,6 +362,8 @@ public sealed class DataGridViewPinningTests
                 .ToArray();
             Assert.HasCount(2, fullRows);
             Assert.HasCount(2, intersections);
+            Assert.HasCount(2, layer.Children.OfType<Border>()
+                .Where(element => element.Tag is string tag && tag.StartsWith("PinnedRowSeparator:", StringComparison.Ordinal)));
             foreach (var fullRow in fullRows)
             {
                 var item = fullRow.Items.Cast<Row>().Single();
@@ -369,6 +371,15 @@ public sealed class DataGridViewPinningTests
                 Assert.AreEqual(Canvas.GetTop(fullRow), Canvas.GetTop(intersection), 0.01d);
                 Assert.AreEqual(fullRow.Height, intersection.Height, 0.01d,
                     "A interseção deve usar exatamente os mesmos limites físicos da linha fixada.");
+                fullRow.UpdateLayout();
+                intersection.UpdateLayout();
+                var fullContainer = (DataGridRow)fullRow.ItemContainerGenerator.ContainerFromItem(item)!;
+                var intersectionContainer = (DataGridRow)intersection.ItemContainerGenerator.ContainerFromItem(item)!;
+                Assert.AreEqual(fullContainer.ActualHeight, intersectionContainer.ActualHeight, 0.01d,
+                    "A linha interna da interseção deve ter a mesma altura renderizada que a linha completa.");
+                Assert.AreEqual(DataGridGridLinesVisibility.None, fullRow.GridLinesVisibility);
+                Assert.AreEqual(DataGridGridLinesVisibility.None, intersection.GridLinesVisibility,
+                    "As camadas não devem desenhar separadores independentes em coordenadas diferentes.");
             }
         }
         finally { window.Close(); }

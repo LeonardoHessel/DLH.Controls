@@ -110,12 +110,14 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty IsLoadingProperty
   field System.Windows.DependencyProperty IsMiddleButtonPanningEnabledProperty
   field System.Windows.DependencyProperty IsMultiColumnSortEnabledProperty
+  field System.Windows.DependencyProperty IsPinnedProperty
   field System.Windows.DependencyProperty IsSmoothHorizontalScrollingEnabledProperty
   field System.Windows.DependencyProperty IsSmoothVerticalScrollingEnabledProperty
   field System.Windows.DependencyProperty LoadingMessageProperty
   field System.Windows.DependencyProperty MaxPinnedColumnsProperty
   field System.Windows.DependencyProperty MaxPinnedRowsProperty
   field System.Windows.DependencyProperty MousePanningSpeedProperty
+  field System.Windows.DependencyProperty RowKeyMemberPathProperty
   field System.Windows.DependencyProperty ScrollBarThicknessProperty
   field System.Windows.DependencyProperty ScrollBarThumbBrushProperty
   field System.Windows.DependencyProperty ScrollBarThumbHoverBrushProperty
@@ -139,6 +141,8 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty ValidationErrorBrushProperty
   field System.Windows.DependencyProperty VerticalMouseWheelScrollAmountProperty
   field System.Windows.DependencyProperty VerticalScrollAnimationDurationProperty
+  field System.Windows.Input.RoutedUICommand ToggleColumnPinCommand
+  field System.Windows.Input.RoutedUICommand ToggleRowPinCommand
   method DLH.Controls.Wpf.DataGridViewBatchSelection GetBatchSelection()
   method DLH.Controls.Wpf.DataGridViewState CaptureState()
   method System.Boolean ApplyDefaultSort()
@@ -146,6 +150,7 @@ type DLH.Controls.Wpf.DataGridView
   method System.Boolean ClearFilter(System.Windows.Controls.DataGridColumn)
   method System.Boolean ExecuteBatchAction()
   method System.Boolean GetCanUserFilter(System.Windows.DependencyObject)
+  method System.Boolean GetIsPinned(System.Windows.DependencyObject)
   method System.Boolean PinColumn(System.Windows.Controls.DataGridColumn)
   method System.Boolean PinRow(System.Object)
   method System.Boolean RemoveSort(System.Windows.Controls.DataGridColumn)
@@ -211,6 +216,7 @@ type DLH.Controls.Wpf.DataGridView
   property System.String ErrorMessage { get; set;  }
   property System.String GroupMemberPath { get; set;  }
   property System.String LoadingMessage { get; set;  }
+  property System.String RowKeyMemberPath { get; set;  }
   property System.TimeSpan HorizontalScrollAnimationDuration { get; set;  }
   property System.TimeSpan VerticalScrollAnimationDuration { get; set;  }
   property System.Windows.Controls.DataGridColumn SelectedColumn { get; set;  }
@@ -308,6 +314,8 @@ type DLH.Controls.Wpf.DataGridViewState
   ctor()
   property System.Collections.Generic.List<DLH.Controls.Wpf.DataGridViewColumnState> Columns { get; set;  }
   property System.Collections.Generic.List<DLH.Controls.Wpf.DataGridViewSortState> Sorting { get; set;  }
+  property System.Collections.Generic.List<System.String> PinnedColumnKeys { get; set;  }
+  property System.Collections.Generic.List<System.String> PinnedRowKeys { get; set;  }
   property System.Int32 Version { get; set;  }
 type DLH.Controls.Wpf.DataGridViewStateRestoredEventArgs
   ctor(DLH.Controls.Wpf.DataGridViewState)

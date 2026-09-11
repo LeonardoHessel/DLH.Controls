@@ -2,6 +2,9 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Shapes;
 
 namespace DLH.Controls.Wpf;
 
@@ -47,6 +50,16 @@ public sealed class DataGridViewColumnPinChangedEventArgs(DataGridColumn column)
 
 public partial class DataGridView
 {
+    private static readonly DependencyPropertyKey IsPinnedPropertyKey = DependencyProperty.RegisterAttachedReadOnly(
+        "IsPinned", typeof(bool), typeof(DataGridView), new PropertyMetadata(false));
+    public static readonly DependencyProperty IsPinnedProperty = IsPinnedPropertyKey.DependencyProperty;
+    public static bool GetIsPinned(DependencyObject element) => (bool)element.GetValue(IsPinnedProperty);
+
+    public static readonly RoutedUICommand ToggleColumnPinCommand = new(
+        "Fixar ou desafixar coluna", nameof(ToggleColumnPinCommand), typeof(DataGridView));
+    public static readonly RoutedUICommand ToggleRowPinCommand = new(
+        "Fixar ou desafixar linha", nameof(ToggleRowPinCommand), typeof(DataGridView));
+
     private readonly ObservableCollection<object> pinnedRows = [];
     private readonly ObservableCollection<DataGridColumn> pinnedColumns = [];
     private ReadOnlyObservableCollection<object>? readOnlyPinnedRows;
@@ -118,6 +131,7 @@ public partial class DataGridView
         if (!CanPinColumns || pinnedColumns.Contains(column) || !Columns.Contains(column) ||
             column.Visibility != Visibility.Visible || pinnedColumns.Count >= MaxPinnedColumns) return false;
         pinnedColumns.Add(column);
+        column.SetValue(IsPinnedPropertyKey, true);
         ColumnPinned?.Invoke(this, new DataGridViewColumnPinChangedEventArgs(column));
         OnPinnedItemsChanged();
         return true;
@@ -127,6 +141,7 @@ public partial class DataGridView
     {
         ArgumentNullException.ThrowIfNull(column);
         if (!pinnedColumns.Remove(column)) return false;
+        column.SetValue(IsPinnedPropertyKey, false);
         ColumnUnpinned?.Invoke(this, new DataGridViewColumnPinChangedEventArgs(column));
         OnPinnedItemsChanged();
         return true;
@@ -159,9 +174,28 @@ public partial class DataGridView
         foreach (var item in pinnedRows.Where(item => !Items.Contains(item)).ToArray()) UnpinRow(item);
     }
 
-    private void InitializePinning() => Columns.CollectionChanged += (_, _) =>
+    private void InitializePinning()
     {
-        foreach (var column in pinnedColumns.Where(column => !Columns.Contains(column)).ToArray()) UnpinColumn(column);
+        CommandBindings.Add(new CommandBinding(ToggleColumnPinCommand,
+            (_, args) => { if (args.Parameter is DataGridColumn column) ToggleColumnPin(column); },
+            (_, args) => args.CanExecute = args.Parameter is DataGridColumn column && CanPinColumns && Columns.Contains(column)));
+        CommandBindings.Add(new CommandBinding(ToggleRowPinCommand,
+            (_, args) => { if (args.Parameter is not null) ToggleRowPin(args.Parameter); },
+            (_, args) => args.CanExecute = args.Parameter is not null && CanPinRows && Items.Contains(args.Parameter)));
+        Columns.CollectionChanged += (_, _) =>
+        {
+            foreach (var column in pinnedColumns.Where(column => !Columns.Contains(column)).ToArray()) UnpinColumn(column);
+        };
+    }
+
+    private static Path CreatePinIcon(bool pinned) => new()
+    {
+        Width = 12,
+        Height = 12,
+        Stretch = Stretch.Uniform,
+        StrokeThickness = 1.4,
+        Stroke = new SolidColorBrush(pinned ? Color.FromRgb(66, 165, 232) : Color.FromRgb(174, 179, 189)),
+        Data = Geometry.Parse("M 4,1 L 10,1 L 9,5 L 11,7 L 7.5,7 L 7.5,12 L 6.5,12 L 6.5,7 L 3,7 L 5,5 Z")
     };
 
     partial void OnPinnedItemsChanged();

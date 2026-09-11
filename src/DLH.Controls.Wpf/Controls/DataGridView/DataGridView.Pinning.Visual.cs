@@ -1,0 +1,257 @@
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Controls.Primitives;
+using System.Windows.Data;
+using System.Windows.Media;
+using System.Windows.Threading;
+
+namespace DLH.Controls.Wpf;
+
+public partial class DataGridView
+{
+    private Canvas? pinningLayer;
+    private ScrollViewer? pinningScrollViewer;
+    private FrameworkElement? pinningViewport;
+    private readonly Dictionary<object, (double Offset, double Height)> pinnedRowMetrics = [];
+    private readonly Dictionary<DataGridColumn, (double Offset, double Width)> pinnedColumnMetrics = [];
+    private bool pinningUpdatePending;
+
+    private void InitializePinningVisuals()
+    {
+        if (pinningScrollViewer is not null) pinningScrollViewer.ScrollChanged -= OnPinningScrollChanged;
+        pinningLayer = GetTemplateChild("PART_PinningLayer") as Canvas;
+        pinningScrollViewer = GetTemplateChild("DG_ScrollViewer") as ScrollViewer;
+        if (pinningScrollViewer is null || pinningLayer is null) return;
+        pinningScrollViewer.ApplyTemplate();
+        pinningViewport = pinningScrollViewer.Template.FindName("PART_ScrollContentPresenter", pinningScrollViewer) as FrameworkElement;
+        pinningScrollViewer.ScrollChanged += OnPinningScrollChanged;
+        QueuePinningVisualUpdate();
+    }
+
+    private void OnPinningScrollChanged(object sender, ScrollChangedEventArgs e) => QueuePinningVisualUpdate();
+
+    partial void OnPinnedItemsChanged()
+    {
+        CapturePinnedMetrics();
+        QueuePinningVisualUpdate();
+    }
+
+    private void QueuePinningVisualUpdate()
+    {
+        if (pinningUpdatePending || pinningLayer is null) return;
+        pinningUpdatePending = true;
+        Dispatcher.BeginInvoke(() =>
+        {
+            pinningUpdatePending = false;
+            UpdatePinningVisuals();
+        }, DispatcherPriority.Render);
+    }
+
+    private void CapturePinnedMetrics()
+    {
+        if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null) return;
+        var viewportOrigin = pinningViewport.TranslatePoint(new Point(), pinningLayer);
+        foreach (var item in pinnedRows)
+        {
+            if (ItemContainerGenerator.ContainerFromItem(item) is not DataGridRow row || row.ActualHeight <= 0) continue;
+            var position = row.TranslatePoint(new Point(), pinningLayer);
+            pinnedRowMetrics[item] = (position.Y - viewportOrigin.Y + pinningScrollViewer.VerticalOffset, row.ActualHeight);
+        }
+        foreach (var header in VisualChildren<DataGridColumnHeader>(this))
+        {
+            if (!pinnedColumns.Contains(header.Column) || header.ActualWidth <= 0) continue;
+            var position = header.TranslatePoint(new Point(), pinningLayer);
+            pinnedColumnMetrics[header.Column] = (position.X - viewportOrigin.X + pinningScrollViewer.HorizontalOffset, header.ActualWidth);
+        }
+    }
+
+    private void UpdatePinningVisuals()
+    {
+        if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null ||
+            pinningViewport.ActualWidth <= 0 || pinningViewport.ActualHeight <= 0) return;
+        CapturePinnedMetrics();
+        pinningLayer.Children.Clear();
+        var origin = pinningViewport.TranslatePoint(new Point(), pinningLayer);
+        AddPinnedRows(origin);
+        AddPinnedColumns(origin);
+    }
+
+    private void AddPinnedRows(Point origin)
+    {
+        if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null) return;
+        var metrics = pinnedRows.Where(pinnedRowMetrics.ContainsKey)
+            .Select(item => (Item: item, Metric: pinnedRowMetrics[item]))
+            .OrderBy(entry => entry.Metric.Offset).ToList();
+        var start = metrics.Where(entry => origin.Y + entry.Metric.Offset - pinningScrollViewer.VerticalOffset < origin.Y).ToList();
+        var end = metrics.Where(entry => origin.Y + entry.Metric.Offset - pinningScrollViewer.VerticalOffset + entry.Metric.Height > origin.Y + pinningViewport.ActualHeight)
+            .OrderByDescending(entry => entry.Metric.Offset).ToList();
+
+        var occupied = 0d;
+        foreach (var entry in start)
+        {
+            AddPinnedRow(entry.Item, origin.X, origin.Y + occupied, pinningViewport.ActualWidth, entry.Metric.Height);
+            occupied += entry.Metric.Height;
+        }
+        occupied = 0;
+        foreach (var entry in end)
+        {
+            occupied += entry.Metric.Height;
+            AddPinnedRow(entry.Item, origin.X, origin.Y + pinningViewport.ActualHeight - occupied,
+                pinningViewport.ActualWidth, entry.Metric.Height);
+        }
+    }
+
+    private void AddPinnedColumns(Point origin)
+    {
+        if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null) return;
+        var metrics = pinnedColumns.Where(pinnedColumnMetrics.ContainsKey)
+            .Select(column => (Column: column, Metric: pinnedColumnMetrics[column]))
+            .OrderBy(entry => entry.Metric.Offset).ToList();
+        var start = metrics.Where(entry => origin.X + entry.Metric.Offset - pinningScrollViewer.HorizontalOffset < origin.X).ToList();
+        var end = metrics.Where(entry => origin.X + entry.Metric.Offset - pinningScrollViewer.HorizontalOffset + entry.Metric.Width > origin.X + pinningViewport.ActualWidth)
+            .OrderByDescending(entry => entry.Metric.Offset).ToList();
+
+        var occupied = 0d;
+        foreach (var entry in start)
+        {
+            AddPinnedColumn(entry.Column, origin.X + occupied, 0, entry.Metric.Width,
+                origin.Y + pinningViewport.ActualHeight);
+            occupied += entry.Metric.Width;
+        }
+        occupied = 0;
+        foreach (var entry in end)
+        {
+            occupied += entry.Metric.Width;
+            AddPinnedColumn(entry.Column, origin.X + pinningViewport.ActualWidth - occupied, 0,
+                entry.Metric.Width, origin.Y + pinningViewport.ActualHeight);
+        }
+    }
+
+    private void AddPinnedRow(object item, double left, double top, double width, double height)
+    {
+        if (pinningLayer is null || pinningScrollViewer is null) return;
+        var overlay = CreateOverlayGrid(DataGridHeadersVisibility.None, new[] { item });
+        foreach (var column in Columns.Where(column => column.Visibility == Visibility.Visible).OrderBy(column => column.DisplayIndex))
+            overlay.Columns.Add(CloneColumn(column));
+        PlaceOverlay(overlay, left, top, width, height);
+        SyncOverlayScroll(overlay, pinningScrollViewer.HorizontalOffset, 0);
+    }
+
+    private void AddPinnedColumn(DataGridColumn column, double left, double top, double width, double height)
+    {
+        if (pinningLayer is null || pinningScrollViewer is null) return;
+        var overlay = CreateOverlayGrid(DataGridHeadersVisibility.Column, ItemsSource ?? Items);
+        overlay.Columns.Add(CloneColumn(column));
+        PlaceOverlay(overlay, left, top, width, height);
+        SyncOverlayScroll(overlay, 0, pinningScrollViewer.VerticalOffset);
+    }
+
+    private DataGridView CreateOverlayGrid(DataGridHeadersVisibility headers, System.Collections.IEnumerable source) => new()
+    {
+        ItemsSource = source,
+        HeadersVisibility = headers,
+        IsReadOnly = IsReadOnly,
+        IsHitTestVisible = false,
+        Background = Background,
+        Foreground = Foreground,
+        BorderBrush = BorderBrush,
+        BorderThickness = new Thickness(0, 0, 1, 1),
+        RowBackground = RowBackground,
+        AlternatingRowBackground = AlternatingRowBackground,
+        AlternationCount = AlternationCount,
+        HorizontalGridLinesBrush = HorizontalGridLinesBrush,
+        GridLinesVisibility = GridLinesVisibility,
+        CellPadding = CellPadding,
+        Density = Density,
+        ColumnHeaderHeight = ColumnHeaderHeight,
+        RowHeight = RowHeight,
+        CanUserReorderColumns = false,
+        CanUserResizeColumns = false,
+        CanUserSortColumns = false,
+        HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden,
+        VerticalScrollBarVisibility = ScrollBarVisibility.Hidden,
+        CornerRadius = new CornerRadius(0)
+    };
+
+    private void PlaceOverlay(FrameworkElement overlay, double left, double top, double width, double height)
+    {
+        if (pinningLayer is null) return;
+        overlay.Width = Math.Max(0, width);
+        overlay.Height = Math.Max(0, height);
+        Canvas.SetLeft(overlay, left);
+        Canvas.SetTop(overlay, top);
+        pinningLayer.Children.Add(overlay);
+    }
+
+    private static void SyncOverlayScroll(DataGridView overlay, double horizontalOffset, double verticalOffset)
+    {
+        overlay.Loaded += (_, _) =>
+        {
+            if (overlay.Template.FindName("DG_ScrollViewer", overlay) is not ScrollViewer viewer) return;
+            viewer.ScrollToHorizontalOffset(horizontalOffset);
+            viewer.ScrollToVerticalOffset(verticalOffset);
+        };
+    }
+
+    private static DataGridColumn CloneColumn(DataGridColumn source)
+    {
+        DataGridColumn clone = source switch
+        {
+            DataGridTextColumn text => new DataGridTextColumn
+            {
+                Binding = text.Binding,
+                ElementStyle = text.ElementStyle,
+                EditingElementStyle = text.EditingElementStyle
+            },
+            DataGridCheckBoxColumn checkBox => new DataGridCheckBoxColumn
+            {
+                Binding = checkBox.Binding,
+                ElementStyle = checkBox.ElementStyle,
+                EditingElementStyle = checkBox.EditingElementStyle
+            },
+            DataGridComboBoxColumn comboBox => new DataGridComboBoxColumn
+            {
+                SelectedItemBinding = comboBox.SelectedItemBinding,
+                SelectedValueBinding = comboBox.SelectedValueBinding,
+                TextBinding = comboBox.TextBinding,
+                ItemsSource = comboBox.ItemsSource,
+                SelectedValuePath = comboBox.SelectedValuePath,
+                DisplayMemberPath = comboBox.DisplayMemberPath
+            },
+            DataGridTemplateColumn template => new DataGridTemplateColumn
+            {
+                CellTemplate = template.CellTemplate,
+                CellEditingTemplate = template.CellEditingTemplate,
+                CellTemplateSelector = template.CellTemplateSelector,
+                CellEditingTemplateSelector = template.CellEditingTemplateSelector
+            },
+            DataGridHyperlinkColumn hyperlink => new DataGridHyperlinkColumn
+            {
+                Binding = hyperlink.Binding,
+                ContentBinding = hyperlink.ContentBinding,
+                TargetName = hyperlink.TargetName
+            },
+            _ => new DataGridTextColumn { Binding = new Binding() }
+        };
+        clone.Header = source.Header;
+        clone.HeaderTemplate = source.HeaderTemplate;
+        clone.HeaderTemplateSelector = source.HeaderTemplateSelector;
+        clone.HeaderStyle = source.HeaderStyle;
+        clone.CellStyle = source.CellStyle;
+        clone.Width = new DataGridLength(Math.Max(1, source.ActualWidth));
+        clone.MinWidth = 0;
+        clone.MaxWidth = double.PositiveInfinity;
+        clone.IsReadOnly = source.IsReadOnly;
+        return clone;
+    }
+
+    private static IEnumerable<T> VisualChildren<T>(DependencyObject root) where T : DependencyObject
+    {
+        for (var index = 0; index < VisualTreeHelper.GetChildrenCount(root); index++)
+        {
+            var child = VisualTreeHelper.GetChild(root, index);
+            if (child is T match) yield return match;
+            foreach (var descendant in VisualChildren<T>(child)) yield return descendant;
+        }
+    }
+}

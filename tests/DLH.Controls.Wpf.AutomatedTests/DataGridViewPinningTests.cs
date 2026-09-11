@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.Windows;
 using System.Windows.Controls;
 using DLH.Controls.Wpf;
 
@@ -80,6 +81,107 @@ public sealed class DataGridViewPinningTests
         Assert.AreEqual(1, columnUnpinned);
         Assert.ThrowsExactly<ArgumentException>(() => grid.MaxPinnedRows = 0);
         Assert.ThrowsExactly<ArgumentException>(() => grid.MaxPinnedColumns = 0);
+    }
+
+    [STATestMethod]
+    public void PinnedRowAndColumnBecomeVisualOnlyAfterLeavingTheViewport()
+    {
+        var rows = new ObservableCollection<Row>(Enumerable.Range(1, 200).Select(index => new Row($"Linha {index}")));
+        var grid = new DataGridView
+        {
+            Width = 320,
+            Height = 220,
+            ItemsSource = rows,
+            CanPinRows = true,
+            CanPinColumns = true
+        };
+        var firstColumn = new DataGridTextColumn { Header = "Nome", Binding = new System.Windows.Data.Binding(nameof(Row.Name)), Width = 220 };
+        grid.Columns.Add(firstColumn);
+        grid.Columns.Add(new DataGridTextColumn { Header = "Complemento", Binding = new System.Windows.Data.Binding(nameof(Row.Name)), Width = 420 });
+        var window = new Window { Content = grid, Width = 340, Height = 260, WindowStyle = WindowStyle.None, ShowInTaskbar = false };
+        window.Show();
+        try
+        {
+            grid.UpdateLayout();
+            Assert.IsTrue(grid.PinRow(rows[0]));
+            Assert.IsTrue(grid.PinColumn(firstColumn));
+            var viewer = (ScrollViewer)grid.Template.FindName("DG_ScrollViewer", grid)!;
+            var layer = (Canvas)grid.Template.FindName("PART_PinningLayer", grid)!;
+            Assert.IsEmpty(layer.Children.Cast<UIElement>());
+
+            viewer.ScrollToHorizontalOffset(260);
+            viewer.ScrollToVerticalOffset(500);
+            grid.UpdateLayout();
+            grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+            Assert.IsGreaterThanOrEqualTo(2, layer.Children.Count,
+                "A linha e a coluna devem ganhar representações aderentes depois de cruzarem as bordas.");
+
+            viewer.ScrollToHorizontalOffset(0);
+            viewer.ScrollToVerticalOffset(0);
+            grid.UpdateLayout();
+            grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+            Assert.IsEmpty(layer.Children.Cast<UIElement>(),
+                "As representações aderentes devem desaparecer ao reencontrar as posições naturais.");
+        }
+        finally { window.Close(); }
+    }
+
+    [STATestMethod]
+    public void PinnedRowsAndColumnsRoundTripThroughGridState()
+    {
+        var rows = new ObservableCollection<Row> { new("Um"), new("Dois") };
+        var grid = new DataGridView
+        {
+            ItemsSource = rows,
+            CanPinRows = true,
+            CanPinColumns = true,
+            RowKeyMemberPath = nameof(Row.Name)
+        };
+        var column = new DataGridTextColumn
+        {
+            Header = "Nome",
+            Binding = new System.Windows.Data.Binding(nameof(Row.Name)),
+            SortMemberPath = nameof(Row.Name),
+            Width = 120
+        };
+        grid.Columns.Add(column);
+        column.DisplayIndex = 0;
+        Assert.IsTrue(grid.PinRow(rows[1]));
+        Assert.IsTrue(grid.PinColumn(column));
+
+        var state = grid.CaptureState();
+        Assert.HasCount(1, state.PinnedRowKeys);
+        Assert.HasCount(1, state.PinnedColumnKeys);
+        grid.UnpinAllRows();
+        grid.UnpinAllColumns();
+        grid.RestoreState(state);
+
+        Assert.HasCount(1, grid.PinnedRows);
+        Assert.HasCount(1, grid.PinnedColumns);
+        Assert.AreSame(rows[1], grid.PinnedRows[0]);
+        Assert.AreSame(column, grid.PinnedColumns[0]);
+    }
+
+    [STATestMethod]
+    public void PinningMenusToggleTheSelectedRowAndColumn()
+    {
+        var row = new Row("Registro");
+        var grid = new DataGridView { ItemsSource = new[] { row }, CanPinRows = true, CanPinColumns = true };
+        var column = new DataGridTextColumn { Header = "Nome", SortMemberPath = nameof(Row.Name) };
+        grid.Columns.Add(column);
+        var headerMenu = (ContextMenu)typeof(DataGridView).GetMethod("CreateColumnHeaderMenu",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(grid, [column])!;
+        var pinColumn = Assert.IsInstanceOfType<MenuItem>(headerMenu.Items[0]);
+        Assert.AreEqual("Fixar coluna", pinColumn.Header);
+        pinColumn.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        Assert.AreSame(column, grid.PinnedColumns.Single());
+
+        var rowMenu = (ContextMenu)typeof(DataGridView).GetMethod("CreateRowPinMenu",
+            System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!.Invoke(grid, [row, column])!;
+        var pinRow = Assert.IsInstanceOfType<MenuItem>(rowMenu.Items[0]);
+        Assert.AreEqual("Fixar linha", pinRow.Header);
+        pinRow.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
+        Assert.AreSame(row, grid.PinnedRows.Single());
     }
 
     private sealed record Row(string Name);

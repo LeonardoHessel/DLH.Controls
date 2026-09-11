@@ -13,6 +13,8 @@ public sealed class DataGridViewState
     public int Version { get; set; } = 1;
     public List<DataGridViewColumnState> Columns { get; set; } = new();
     public List<DataGridViewSortState> Sorting { get; set; } = new();
+    public List<string> PinnedColumnKeys { get; set; } = new();
+    public List<string> PinnedRowKeys { get; set; } = new();
 }
 
 public sealed class DataGridViewColumnState
@@ -47,6 +49,14 @@ public partial class DataGridView
     public static void SetColumnKey(DependencyObject column, string? value) => column.SetValue(ColumnKeyProperty, value);
 
     public event EventHandler<DataGridViewStateRestoredEventArgs>? StateRestored;
+
+    public static readonly DependencyProperty RowKeyMemberPathProperty = DependencyProperty.Register(
+        nameof(RowKeyMemberPath), typeof(string), typeof(DataGridView), new PropertyMetadata(null));
+    public string? RowKeyMemberPath
+    {
+        get => (string?)GetValue(RowKeyMemberPathProperty);
+        set => SetValue(RowKeyMemberPathProperty, value);
+    }
 
     public DataGridViewState CaptureState() => CaptureStateCore();
 
@@ -119,7 +129,12 @@ public partial class DataGridView
                 {
                     ColumnKey = byPath[sort.PropertyName],
                     Direction = sort.Direction
-                }).ToList() ?? new List<DataGridViewSortState>()
+                }).ToList() ?? new List<DataGridViewSortState>(),
+            PinnedColumnKeys = pinnedColumns.Select(GetStableColumnKey)
+                .Where(key => !string.IsNullOrWhiteSpace(key)).ToList(),
+            PinnedRowKeys = string.IsNullOrWhiteSpace(RowKeyMemberPath)
+                ? []
+                : pinnedRows.Select(GetRowKey).Where(key => key is not null).Cast<string>().ToList()
         };
     }
 
@@ -147,13 +162,18 @@ public partial class DataGridView
     private void ValidateState(DataGridViewState state, List<(string Key, DataGridColumn Column)> current)
     {
         if (state.Version != 1 || state.Columns is null || state.Sorting is null ||
+            state.PinnedColumnKeys is null || state.PinnedRowKeys is null ||
             state.Columns.Any(column => string.IsNullOrWhiteSpace(column.Key) || column.DisplayIndex < 0 ||
                 !double.IsFinite(column.WidthValue) || column.WidthValue <= 0 ||
                 !Enum.IsDefined(column.WidthUnitType) || !Enum.IsDefined(column.Visibility)) ||
             state.Columns.Select(column => column.Key).Distinct(StringComparer.Ordinal).Count() != state.Columns.Count ||
             state.Columns.Select(column => column.DisplayIndex).Distinct().Count() != state.Columns.Count ||
             state.Sorting.Any(sort => string.IsNullOrWhiteSpace(sort.ColumnKey) || !Enum.IsDefined(sort.Direction)) ||
-            state.Sorting.Select(sort => sort.ColumnKey).Distinct(StringComparer.Ordinal).Count() != state.Sorting.Count)
+            state.Sorting.Select(sort => sort.ColumnKey).Distinct(StringComparer.Ordinal).Count() != state.Sorting.Count ||
+            state.PinnedColumnKeys.Any(string.IsNullOrWhiteSpace) ||
+            state.PinnedColumnKeys.Distinct(StringComparer.Ordinal).Count() != state.PinnedColumnKeys.Count ||
+            state.PinnedRowKeys.Any(string.IsNullOrWhiteSpace) ||
+            state.PinnedRowKeys.Distinct(StringComparer.Ordinal).Count() != state.PinnedRowKeys.Count)
             throw new ArgumentException("Estado do DataGridView inválido ou versão não suportada.", nameof(state));
 
         var states = state.Columns.ToDictionary(column => column.Key, StringComparer.Ordinal);
@@ -193,6 +213,20 @@ public partial class DataGridView
             column.SortDirection = sort.Direction;
         }
         UpdateSortPriorities();
+
+        UnpinAllColumns();
+        if (CanPinColumns)
+            foreach (var key in state.PinnedColumnKeys.Where(byKey.ContainsKey)) PinColumn(byKey[key]);
+        UnpinAllRows();
+        if (CanPinRows && !string.IsNullOrWhiteSpace(RowKeyMemberPath))
+        {
+            var rowsByKey = Items.Cast<object>().Select(item => (Key: GetRowKey(item), Item: item))
+                .Where(pair => pair.Key is not null)
+                .GroupBy(pair => pair.Key!, StringComparer.Ordinal)
+                .Where(group => group.Count() == 1)
+                .ToDictionary(group => group.Key, group => group.Single().Item, StringComparer.Ordinal);
+            foreach (var key in state.PinnedRowKeys.Where(rowsByKey.ContainsKey)) PinRow(rowsByKey[key]);
+        }
     }
 
     private static DataGridViewState CloneState(DataGridViewState state) => new()
@@ -210,6 +244,15 @@ public partial class DataGridView
         {
             ColumnKey = sort.ColumnKey,
             Direction = sort.Direction
-        }).ToList()
+        }).ToList(),
+        PinnedColumnKeys = state.PinnedColumnKeys.ToList(),
+        PinnedRowKeys = state.PinnedRowKeys.ToList()
     };
+
+    private string? GetRowKey(object item)
+    {
+        if (string.IsNullOrWhiteSpace(RowKeyMemberPath)) return null;
+        var descriptor = TypeDescriptor.GetProperties(item).Find(RowKeyMemberPath, false);
+        return descriptor?.GetValue(item)?.ToString();
+    }
 }

@@ -10,7 +10,7 @@ namespace DLH.Controls.Wpf.Demo;
 
 public partial class DataGridViewDemoWindow : Window
 {
-    private int nextRow = 19;
+    private int nextRow = 201;
     private readonly List<ShipmentRow> emptyStateBackup = [];
     private DataGridViewState? savedLayout;
 
@@ -31,7 +31,7 @@ public partial class DataGridViewDemoWindow : Window
         SelectionCommand = new ParameterCommand(OnSelection, _ => true);
         InitializeComponent();
         var origins = new[] { "SP", "MG", "PR", "RJ", "BA", "SC" };
-        for (var number = 7; number <= 18; number++)
+        for (var number = 7; number <= 200; number++)
             Rows.Add(new($"EXP-2026-{number:000}", origins[number % origins.Length], $"Veículo {number:00}",
                 30 + number * 3, number % 3 == 0 ? 0 : 20 + number, number % 3 == 0 ? "Pendente" : "Em inspeção"));
         DataContext = this;
@@ -59,6 +59,9 @@ public partial class DataGridViewDemoWindow : Window
         ShipmentsGrid.ShowClearSortMenuItem = ShowClearSort.IsChecked == true;
         ShipmentsGrid.ShowRestoreDefaultSortMenuItem = ShowRestoreSort.IsChecked == true;
         ShipmentsGrid.IsMiddleButtonPanningEnabled = MiddleButtonPanning.IsChecked == true;
+        ShipmentsGrid.CanPinRows = PinRows.IsChecked == true;
+        ShipmentsGrid.CanPinColumns = PinColumns.IsChecked == true;
+        ShipmentsGrid.ShowColumnPinButton = ShowColumnPins.IsChecked == true;
         ShipmentsGrid.AlternatingRowBackground = StripedRows.IsChecked == true
             ? (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#24373A40")!
             : System.Windows.Media.Brushes.Transparent;
@@ -111,6 +114,20 @@ public partial class DataGridViewDemoWindow : Window
     private void RemoveSelected_Click(object sender, RoutedEventArgs e)
     {
         if (ShipmentsGrid.SelectedItem is ShipmentRow row) Rows.Remove(row);
+    }
+
+    private void PinComparisonRows_Click(object sender, RoutedEventArgs e)
+    {
+        foreach (var index in new[] { 2, 99, 149 })
+            if (index < Rows.Count) ShipmentsGrid.PinRow(Rows[index]);
+        StatusText.Text = "Linhas 3, 100 e 150 marcadas para fixação aderente.";
+    }
+
+    private void UnpinAll_Click(object sender, RoutedEventArgs e)
+    {
+        ShipmentsGrid.UnpinAllRows();
+        ShipmentsGrid.UnpinAllColumns();
+        StatusText.Text = "Todas as linhas e colunas foram desafixadas.";
     }
 
     private void ProcessSelected_Click(object sender, RoutedEventArgs e)

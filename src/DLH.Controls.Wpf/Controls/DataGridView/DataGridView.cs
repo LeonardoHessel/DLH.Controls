@@ -58,6 +58,7 @@ public partial class DataGridView : DataGrid
     {
         base.OnApplyTemplate();
         UpdateRoundedContentClip();
+        InitializePinningVisuals();
     }
 
     protected override void OnRenderSizeChanged(SizeChangedInfo sizeInfo)
@@ -797,6 +798,20 @@ public partial class DataGridView : DataGrid
             e.Handled = true;
             return;
         }
+        if (FindAncestor<DataGridRow>(e.OriginalSource as DependencyObject) is { Item: { } rowItem } row &&
+            (CanPinRows || CanPinColumns))
+        {
+            var cell = FindAncestor<DataGridCell>(e.OriginalSource as DependencyObject);
+            var menu = CreateRowPinMenu(rowItem, cell?.Column);
+            if (menu.Items.Count > 0)
+            {
+                menu.PlacementTarget = row;
+                menu.Placement = PlacementMode.MousePoint;
+                menu.IsOpen = true;
+                e.Handled = true;
+                return;
+            }
+        }
         base.OnPreviewMouseRightButtonDown(e);
     }
 
@@ -806,6 +821,25 @@ public partial class DataGridView : DataGrid
     internal ContextMenu CreateColumnHeaderMenu(DataGridColumn? contextColumn = null)
     {
         var menu = new ContextMenu();
+        if (CanPinColumns && contextColumn is not null)
+        {
+            var isPinned = pinnedColumns.Contains(contextColumn);
+            var pin = new MenuItem
+            {
+                Header = isPinned ? "Desafixar coluna" : "Fixar coluna",
+                Icon = CreatePinIcon(isPinned),
+                IsEnabled = isPinned || pinnedColumns.Count < MaxPinnedColumns
+            };
+            pin.Click += (_, _) => ToggleColumnPin(contextColumn);
+            menu.Items.Add(pin);
+            if (pinnedColumns.Count > 0)
+            {
+                var unpinAll = new MenuItem { Header = "Desafixar todas as colunas", Icon = CreatePinIcon(true) };
+                unpinAll.Click += (_, _) => UnpinAllColumns();
+                menu.Items.Add(unpinAll);
+            }
+            menu.Items.Add(new Separator());
+        }
         if (ShowClearSortMenuItem)
         {
             var clearSort = new MenuItem { Header = "Limpar ordenação", IsEnabled = HasActiveSorting() };
@@ -865,6 +899,43 @@ public partial class DataGridView : DataGrid
                 };
                 menu.Items.Add(item);
             }
+        }
+        return menu;
+    }
+
+    private ContextMenu CreateRowPinMenu(object rowItem, DataGridColumn? column)
+    {
+        var menu = new ContextMenu();
+        if (CanPinRows)
+        {
+            var isPinned = pinnedRows.Contains(rowItem);
+            var pinRow = new MenuItem
+            {
+                Header = isPinned ? "Desafixar linha" : "Fixar linha",
+                Icon = CreatePinIcon(isPinned),
+                IsEnabled = isPinned || pinnedRows.Count < MaxPinnedRows
+            };
+            pinRow.Click += (_, _) => ToggleRowPin(rowItem);
+            menu.Items.Add(pinRow);
+            if (pinnedRows.Count > 0)
+            {
+                var unpinRows = new MenuItem { Header = "Desafixar todas as linhas", Icon = CreatePinIcon(true) };
+                unpinRows.Click += (_, _) => UnpinAllRows();
+                menu.Items.Add(unpinRows);
+            }
+        }
+        if (CanPinColumns && column is not null)
+        {
+            if (menu.Items.Count > 0) menu.Items.Add(new Separator());
+            var isPinned = pinnedColumns.Contains(column);
+            var pinColumn = new MenuItem
+            {
+                Header = isPinned ? "Desafixar esta coluna" : "Fixar esta coluna",
+                Icon = CreatePinIcon(isPinned),
+                IsEnabled = isPinned || pinnedColumns.Count < MaxPinnedColumns
+            };
+            pinColumn.Click += (_, _) => ToggleColumnPin(column);
+            menu.Items.Add(pinColumn);
         }
         return menu;
     }

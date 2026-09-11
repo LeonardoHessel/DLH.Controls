@@ -128,6 +128,7 @@
                         </DockPanel>
                         <Popup x:Name="PART_Popup" AllowsTransparency="True" Focusable="False"
                                IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                               PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
                                Placement="Right" HorizontalOffset="-3">
                             <Border Background="{DynamicResource ContextMenu.Surface}" Grid.IsSharedSizeScope="True"
                                     BorderBrush="{DynamicResource ContextMenu.Edge}"

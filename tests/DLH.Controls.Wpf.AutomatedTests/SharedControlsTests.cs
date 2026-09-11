@@ -146,6 +146,8 @@ public sealed class SharedControlsTests
             Assert.HasCount(4, ((Grid)generated.Template.FindName("ContentLayout", generated)!).ColumnDefinitions);
             Assert.AreEqual(System.Windows.Controls.Primitives.PlacementMode.Left,
                 popup.Placement);
+            Assert.AreSame(choice, popup.PlacementTarget,
+                "O submenu deve ser posicionado pela área completa do item que o abriu.");
             Assert.AreEqual("‹", ((TextBlock)choice.Template.FindName("SubmenuArrow", choice)!).Text);
             Assert.AreEqual(FlowDirection.LeftToRight,
                 ((FrameworkElement)choice.Template.FindName("IconHost", choice)!).FlowDirection,

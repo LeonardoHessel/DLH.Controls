@@ -165,6 +165,11 @@ public sealed class DataGridViewPinningTests
                 "O bloco de linhas fixadas deve ter uma superfície contínua e opaca atrás das linhas.");
             Assert.IsGreaterThanOrEqualTo(fixedRow.ActualHeight, backdrop.Height,
                 "A superfície deve avançar até a borda do conjunto para eliminar frestas.");
+            var viewport = (FrameworkElement)((ScrollViewer)grid.Template.FindName("DG_ScrollViewer", grid)!).Template
+                .FindName("PART_ScrollContentPresenter", (ScrollViewer)grid.Template.FindName("DG_ScrollViewer", grid)!)!;
+            var viewportTop = viewport.TranslatePoint(new Point(), layer).Y;
+            Assert.IsLessThan(viewportTop, Canvas.GetTop(backdrop),
+                "O fundo fixado deve avançar sob o cabeçalho para vedar a junção fracionária.");
             var overlays = layer.Children.Cast<UIElement>().ToArray();
             viewer.ScrollToHorizontalOffset(300);
             viewer.ScrollToVerticalOffset(650);
@@ -262,6 +267,11 @@ public sealed class DataGridViewPinningTests
                 "O bloco de colunas fixadas deve ocultar completamente o conteúdo horizontal ao fundo.");
             Assert.IsGreaterThan(200d, columnBackdrop.Width,
                 "A superfície deve avançar até a borda do conjunto para eliminar frestas.");
+            var headerSeam = layer.Children.OfType<Border>()
+                .Single(element => Equals(element.Tag, "PinnedColumnHeaderSeam:Start"));
+            Assert.IsInstanceOfType<SolidColorBrush>(headerSeam.Background);
+            Assert.AreEqual(byte.MaxValue, ((SolidColorBrush)headerSeam.Background).Color.A,
+                "A junção entre o cabeçalho fixado e o primeiro registro deve ser opaca.");
             Assert.AreEqual(ListSortDirection.Descending, columnOverlay.Columns[0].SortDirection,
                 "O cabeçalho fixado deve preservar o indicador da ordenação existente.");
             Assert.AreEqual("Linha 9", columnOverlay.Items.Cast<Row>().First().Name,

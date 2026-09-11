@@ -210,7 +210,7 @@ public partial class DataGridView
 
         var startHeight = start.Sum(entry => entry.Metric.Height);
         if (startHeight > 0)
-            AddPinnedRowBackdrop(origin.X, origin.Y, pinningViewport.ActualWidth, startHeight + 1, "Start");
+            AddPinnedRowBackdrop(origin.X, origin.Y - 1, pinningViewport.ActualWidth, startHeight + 2, "Start");
         var endHeight = end.Sum(entry => entry.Metric.Height);
         if (endHeight > 0)
             AddPinnedRowBackdrop(origin.X, origin.Y + pinningViewport.ActualHeight - endHeight - 1,
@@ -286,17 +286,39 @@ public partial class DataGridView
                 endWidth + 1, origin.Y + pinningViewport.ActualHeight, "End");
 
         if (start.Count > 0)
+        {
             AddPinnedColumnGroup(start, origin.X, startWidth, origin.Y + pinningViewport.ActualHeight);
+            AddPinnedColumnHeaderSeam(origin.X, origin.Y, startWidth, "Start");
+        }
         if (end.Count > 0)
+        {
             AddPinnedColumnGroup(end.OrderBy(entry => entry.Metric.Offset).ToList(),
                 origin.X + pinningViewport.ActualWidth - endWidth, endWidth,
                 origin.Y + pinningViewport.ActualHeight);
+            AddPinnedColumnHeaderSeam(origin.X + pinningViewport.ActualWidth - endWidth,
+                origin.Y, endWidth, "End");
+        }
         if (ShowPinnedBoundarySeparator && startWidth > 0)
             AddPinnedBoundarySeparator(origin.X + startWidth - PinnedBoundarySeparatorThickness, 0,
                 PinnedBoundarySeparatorThickness, origin.Y + pinningViewport.ActualHeight, "ColumnStart");
         if (ShowPinnedBoundarySeparator && endWidth > 0)
             AddPinnedBoundarySeparator(origin.X + pinningViewport.ActualWidth - endWidth, 0,
                 PinnedBoundarySeparatorThickness, origin.Y + pinningViewport.ActualHeight, "ColumnEnd");
+    }
+
+    private void AddPinnedColumnHeaderSeam(double left, double contentTop, double width, string edge)
+    {
+        if (pinningLayer is null) return;
+        var dpi = VisualTreeHelper.GetDpi(this);
+        var thickness = Math.Max(1d, 1d / dpi.DpiScaleY);
+        var seam = new Border
+        {
+            Background = ResolveOpaqueBrush(HorizontalGridLinesBrush),
+            IsHitTestVisible = false,
+            Tag = $"PinnedColumnHeaderSeam:{edge}"
+        };
+        PlaceOverlay(seam, left, contentTop - thickness, width, thickness);
+        Panel.SetZIndex(seam, 3);
     }
 
     private void AddPinnedBoundarySeparator(double left, double top, double width, double height, string edge)

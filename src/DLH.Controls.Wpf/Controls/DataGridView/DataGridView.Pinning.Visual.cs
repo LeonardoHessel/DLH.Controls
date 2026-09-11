@@ -244,20 +244,12 @@ public partial class DataGridView
             AddPinnedColumnBackdrop(origin.X + pinningViewport.ActualWidth - endWidth - 1, 0,
                 endWidth + 1, origin.Y + pinningViewport.ActualHeight, "End");
 
-        var occupied = 0d;
-        foreach (var entry in start)
-        {
-            AddPinnedColumn(entry.Column, origin.X + occupied, 0, entry.Metric.Width,
+        if (start.Count > 0)
+            AddPinnedColumnGroup(start, origin.X, startWidth, origin.Y + pinningViewport.ActualHeight);
+        if (end.Count > 0)
+            AddPinnedColumnGroup(end.OrderBy(entry => entry.Metric.Offset).ToList(),
+                origin.X + pinningViewport.ActualWidth - endWidth, endWidth,
                 origin.Y + pinningViewport.ActualHeight);
-            occupied += entry.Metric.Width;
-        }
-        occupied = 0;
-        foreach (var entry in end)
-        {
-            occupied += entry.Metric.Width;
-            AddPinnedColumn(entry.Column, origin.X + pinningViewport.ActualWidth - occupied, 0,
-                entry.Metric.Width, origin.Y + pinningViewport.ActualHeight);
-        }
     }
 
     private void AddPinnedColumnBackdrop(double left, double top, double width, double height, string edge)
@@ -369,16 +361,23 @@ public partial class DataGridView
     private static bool IsOpaqueBrush(Brush? brush) => brush is not null && brush.Opacity >= 1 &&
         (brush is not SolidColorBrush solid || solid.Color.A == byte.MaxValue);
 
-    private void AddPinnedColumn(DataGridColumn column, double left, double top, double width, double height)
+    private void AddPinnedColumnGroup(
+        IReadOnlyList<(DataGridColumn Column, (double Offset, double Width) Metric)> columns,
+        double left, double width, double height)
     {
         if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null) return;
         var overlay = CreateOverlayGrid(DataGridHeadersVisibility.Column, ItemsSource ?? Items);
-        overlay.Columns.Add(CloneColumn(column));
-        PlaceOverlay(overlay, left, top, width, height);
+        foreach (var entry in columns) overlay.Columns.Add(CloneColumn(entry.Column));
+        PlaceOverlay(overlay, left, 0, width, height);
         pinnedColumnOverlays.Add(overlay);
         SyncOverlayScroll(overlay, 0, pinningScrollViewer.VerticalOffset);
-        AddPinnedColumnHeaderHitTarget(column, left, width,
-            Math.Max(0, pinningViewport.TranslatePoint(new Point(), pinningLayer).Y));
+        var headerHeight = Math.Max(0, pinningViewport.TranslatePoint(new Point(), pinningLayer).Y);
+        var occupied = 0d;
+        foreach (var entry in columns)
+        {
+            AddPinnedColumnHeaderHitTarget(entry.Column, left + occupied, entry.Metric.Width, headerHeight);
+            occupied += entry.Metric.Width;
+        }
     }
 
     private void AddPinnedColumnHeaderHitTarget(DataGridColumn column, double left, double width, double height)

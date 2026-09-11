@@ -231,11 +231,11 @@ public sealed class DataGridViewPinningTests
             grid.UpdateLayout();
             grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
 
-            Assert.HasCount(2, layer.Children.OfType<DataGridView>(),
-                "A segunda coluna deve aderir ao tocar a borda ocupada pela primeira coluna fixada.");
-            var positions = layer.Children.OfType<DataGridView>().Select(Canvas.GetLeft).Order().ToArray();
-            Assert.AreEqual(100d, positions[1] - positions[0], 1d,
-                "As colunas fixadas devem ficar lado a lado, sem sobreposição.");
+            var columnOverlay = layer.Children.OfType<DataGridView>().Single();
+            Assert.HasCount(2, columnOverlay.Columns,
+                "As colunas aderentes devem compartilhar um único bloco visual.");
+            Assert.AreEqual(200d, columnOverlay.ActualWidth, 1d,
+                "O bloco deve ocupar a soma exata das larguras das colunas fixadas.");
             var columnBackdrop = layer.Children.OfType<Border>()
                 .Single(element => Equals(element.Tag, "PinnedColumnBackdrop:Start"));
             Assert.IsInstanceOfType<SolidColorBrush>(columnBackdrop.Background);
@@ -243,11 +243,9 @@ public sealed class DataGridViewPinningTests
                 "O bloco de colunas fixadas deve ocultar completamente o conteúdo horizontal ao fundo.");
             Assert.IsGreaterThan(200d, columnBackdrop.Width,
                 "A superfície deve avançar até a borda do conjunto para eliminar frestas.");
-            var firstOverlay = layer.Children.OfType<DataGridView>()
-                .Single(overlay => Math.Abs(Canvas.GetLeft(overlay) - positions[0]) < 1d);
-            Assert.AreEqual(ListSortDirection.Descending, firstOverlay.Columns[0].SortDirection,
+            Assert.AreEqual(ListSortDirection.Descending, columnOverlay.Columns[0].SortDirection,
                 "O cabeçalho fixado deve preservar o indicador da ordenação existente.");
-            Assert.AreEqual("Linha 9", firstOverlay.Items.Cast<Row>().First().Name,
+            Assert.AreEqual("Linha 9", columnOverlay.Items.Cast<Row>().First().Name,
                 "A representação fixada deve compartilhar a ordem já aplicada ao grid principal.");
 
             typeof(DataGridView).GetMethod("OnGridSorting",
@@ -256,11 +254,10 @@ public sealed class DataGridViewPinningTests
             columns[0].SortDirection = ListSortDirection.Ascending;
             grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.ContextIdle);
             grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
-            firstOverlay = layer.Children.OfType<DataGridView>()
-                .Single(overlay => Math.Abs(Canvas.GetLeft(overlay) - positions[0]) < 1d);
-            Assert.AreEqual(ListSortDirection.Ascending, firstOverlay.Columns[0].SortDirection,
+            columnOverlay = layer.Children.OfType<DataGridView>().Single();
+            Assert.AreEqual(ListSortDirection.Ascending, columnOverlay.Columns[0].SortDirection,
                 "O indicador fixado deve ser atualizado depois do clique que altera a ordenação.");
-            Assert.HasCount(2, layer.Children.OfType<DataGridView>(),
+            Assert.HasCount(2, columnOverlay.Columns,
                 "Atualizar o indicador não pode remover a segunda coluna aderente.");
 
             var secondDirection = columns[1].SortDirection;
@@ -277,7 +274,7 @@ public sealed class DataGridViewPinningTests
             Assert.AreEqual(ListSortDirection.Descending, columns[0].SortDirection);
             Assert.AreEqual(secondDirection, columns[1].SortDirection,
                 "O clique não pode atravessar para o cabeçalho que está ao fundo.");
-            Assert.HasCount(2, layer.Children.OfType<DataGridView>(),
+            Assert.HasCount(2, layer.Children.OfType<DataGridView>().Single().Columns,
                 "Ordenar pelo cabeçalho fixado deve preservar o empilhamento das colunas.");
         }
         finally { window.Close(); }

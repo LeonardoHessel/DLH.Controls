@@ -149,6 +149,40 @@ public sealed class SharedControlsTests
     }
 
     [STATestMethod]
+    public void ChoiceSubmenuTogglesAndClosesWhenAnotherMenuItemIsClicked()
+    {
+        var choice = new ChoiceMenuItem { Header = "Tema" };
+        choice.Items.Add(new ChoiceMenuOption { Content = "Escuro" });
+        var other = new MenuItem { Header = "Atualizar" };
+        var panel = new StackPanel();
+        panel.Children.Add(choice);
+        panel.Children.Add(other);
+        var window = Arrange(panel, 240, 120);
+        try
+        {
+            window.Show();
+            window.UpdateLayout();
+            var toggleMethod = typeof(ChoiceMenuItem).GetMethod("ToggleSubmenu",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            toggleMethod.Invoke(choice, null);
+            Assert.IsTrue(choice.IsSubmenuOpen);
+            toggleMethod.Invoke(choice, null);
+            Assert.IsFalse(choice.IsSubmenuOpen);
+
+            choice.IsSubmenuOpen = true;
+            var click = new System.Windows.Input.MouseButtonEventArgs(
+                System.Windows.Input.Mouse.PrimaryDevice, Environment.TickCount, System.Windows.Input.MouseButton.Left)
+            {
+                RoutedEvent = UIElement.PreviewMouseLeftButtonDownEvent,
+                Source = other
+            };
+            other.RaiseEvent(click);
+            Assert.IsFalse(choice.IsSubmenuOpen);
+        }
+        finally { window.Close(); }
+    }
+
+    [STATestMethod]
     public void ContextMenuTemplateSupportsItemsSeparatorsAndOptionalShadow()
     {
         var menu = new ControlsContextMenu { IsShadowEnabled = false };

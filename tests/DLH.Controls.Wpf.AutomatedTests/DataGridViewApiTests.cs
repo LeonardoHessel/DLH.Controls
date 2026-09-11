@@ -25,6 +25,57 @@ public sealed class DataGridViewApiTests
     }
 
     [STATestMethod]
+    public void RowDetailsPopupTogglesByRowAndCanBeClosedProgrammatically()
+    {
+        var rows = new ObservableCollection<Row>
+        {
+            new("Primeira", 1, "Pendente"),
+            new("Segunda", 2, "Concluído")
+        };
+        var grid = new DataGridView
+        {
+            Width = 320,
+            Height = 180,
+            ItemsSource = rows,
+            ShowRowDetailsPopupOnClick = true,
+            RowDetailsPopupVerticalOffset = 6
+        };
+        grid.Columns.Add(new DataGridTextColumn { Header = "Nome", Binding = new Binding(nameof(Row.Name)) });
+        var window = new Window { Content = grid, Width = 340, Height = 220, WindowStyle = WindowStyle.None, ShowInTaskbar = false };
+        window.Show();
+        try
+        {
+            grid.UpdateLayout();
+            var firstRow = (DataGridRow)grid.ItemContainerGenerator.ContainerFromItem(rows[0])!;
+            Click(firstRow);
+            grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Input);
+            Assert.IsTrue(grid.IsRowDetailsPopupOpen);
+            Assert.AreSame(rows[0], grid.RowDetailsPopupItem);
+
+            Click(firstRow);
+            Assert.IsFalse(grid.IsRowDetailsPopupOpen, "Clicar novamente na mesma linha deve fechar os detalhes.");
+
+            var secondRow = (DataGridRow)grid.ItemContainerGenerator.ContainerFromItem(rows[1])!;
+            Click(secondRow);
+            grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Input);
+            Assert.AreSame(rows[1], grid.RowDetailsPopupItem);
+            grid.CloseRowDetailsPopup();
+            Assert.IsFalse(grid.IsRowDetailsPopupOpen);
+        }
+        finally { window.Close(); }
+
+        static void Click(DataGridRow row)
+        {
+            var args = new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton.Left)
+            {
+                RoutedEvent = Mouse.PreviewMouseDownEvent,
+                Source = row
+            };
+            row.RaiseEvent(args);
+        }
+    }
+
+    [STATestMethod]
     public void StateRoundTripRestoresLayoutAndSorting()
     {
         var (grid, _, name, quantity, _) = CreateGrid();

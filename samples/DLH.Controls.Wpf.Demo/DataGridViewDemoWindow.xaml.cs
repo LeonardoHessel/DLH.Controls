@@ -52,7 +52,8 @@ public partial class DataGridViewDemoWindow : Window
         ShipmentsGrid.IsCellEditingEnabled = EnableEditing.IsChecked == true;
         ShipmentsGrid.IsGroupingEnabled = GroupRows.IsChecked == true;
         ShipmentsGrid.GroupMemberPath = nameof(ShipmentRow.Status);
-        ShipmentsGrid.ShowRowDetailsOnSelection = ShowDetails.IsChecked == true;
+        ShipmentsGrid.ShowRowDetailsOnSelection = false;
+        ShipmentsGrid.ShowRowDetailsPopupOnClick = ShowDetails.IsChecked == true;
         ShipmentsGrid.IsMultiColumnSortEnabled = MultiColumnSort.IsChecked == true;
         ShipmentsGrid.CanUserReorderColumns = ReorderColumns.IsChecked == true;
         ShipmentsGrid.CanUserToggleColumnVisibility = ColumnMenu.IsChecked == true;

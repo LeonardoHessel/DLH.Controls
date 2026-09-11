@@ -116,6 +116,11 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty MaxPinnedColumnsProperty
   field System.Windows.DependencyProperty MaxPinnedRowsProperty
   field System.Windows.DependencyProperty MousePanningSpeedProperty
+  field System.Windows.DependencyProperty RowDetailsPopupContentStyleProperty
+  field System.Windows.DependencyProperty RowDetailsPopupHorizontalOffsetProperty
+  field System.Windows.DependencyProperty RowDetailsPopupPlacementProperty
+  field System.Windows.DependencyProperty RowDetailsPopupTemplateProperty
+  field System.Windows.DependencyProperty RowDetailsPopupVerticalOffsetProperty
   field System.Windows.DependencyProperty RowKeyMemberPathProperty
   field System.Windows.DependencyProperty ScrollBarThicknessProperty
   field System.Windows.DependencyProperty ScrollBarThumbBrushProperty
@@ -128,6 +133,7 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty ShowFilterMenuItemsProperty
   field System.Windows.DependencyProperty ShowRestoreDefaultSortMenuItemProperty
   field System.Windows.DependencyProperty ShowRowDetailsOnSelectionProperty
+  field System.Windows.DependencyProperty ShowRowDetailsPopupOnClickProperty
   field System.Windows.DependencyProperty ShowRowSeparatorsProperty
   field System.Windows.DependencyProperty ShowSortIndicatorsProperty
   field System.Windows.DependencyProperty ShowValidationErrorsProperty
@@ -160,6 +166,7 @@ type DLH.Controls.Wpf.DataGridView
   method System.String GetFilterMemberPath(System.Windows.DependencyObject)
   method System.Void ClearFilters()
   method System.Void ClearSorting()
+  method System.Void CloseRowDetailsPopup()
   method System.Void ExportCsv(System.IO.Stream, DLH.Controls.Wpf.DataGridViewCsvOptions, System.Text.Encoding)
   method System.Void ExportCsv(System.IO.TextWriter, DLH.Controls.Wpf.DataGridViewCsvOptions)
   method System.Void LoadState(System.IO.Stream)
@@ -183,12 +190,14 @@ type DLH.Controls.Wpf.DataGridView
   property System.Boolean IsLoading { get; set;  }
   property System.Boolean IsMiddleButtonPanningEnabled { get; set;  }
   property System.Boolean IsMultiColumnSortEnabled { get; set;  }
+  property System.Boolean IsRowDetailsPopupOpen { get;  }
   property System.Boolean IsSmoothHorizontalScrollingEnabled { get; set;  }
   property System.Boolean IsSmoothVerticalScrollingEnabled { get; set;  }
   property System.Boolean ShowClearSortMenuItem { get; set;  }
   property System.Boolean ShowFilterMenuItems { get; set;  }
   property System.Boolean ShowRestoreDefaultSortMenuItem { get; set;  }
   property System.Boolean ShowRowDetailsOnSelection { get; set;  }
+  property System.Boolean ShowRowDetailsPopupOnClick { get; set;  }
   property System.Boolean ShowRowSeparators { get; set;  }
   property System.Boolean ShowSortIndicators { get; set;  }
   property System.Boolean ShowValidationErrors { get; set;  }
@@ -198,11 +207,14 @@ type DLH.Controls.Wpf.DataGridView
   property System.ComponentModel.ListSortDirection DefaultSortDirection { get; set;  }
   property System.Double HorizontalMouseWheelScrollAmount { get; set;  }
   property System.Double MousePanningSpeed { get; set;  }
+  property System.Double RowDetailsPopupHorizontalOffset { get; set;  }
+  property System.Double RowDetailsPopupVerticalOffset { get; set;  }
   property System.Double ScrollBarThickness { get; set;  }
   property System.Double SortIconSize { get; set;  }
   property System.Double VerticalMouseWheelScrollAmount { get; set;  }
   property System.Int32 MaxPinnedColumns { get; set;  }
   property System.Int32 MaxPinnedRows { get; set;  }
+  property System.Object RowDetailsPopupItem { get;  }
   property System.String DefaultSortMemberPath { get; set;  }
   property System.String EmptyMessage { get; set;  }
   property System.String ErrorMessage { get; set;  }
@@ -212,7 +224,9 @@ type DLH.Controls.Wpf.DataGridView
   property System.TimeSpan HorizontalScrollAnimationDuration { get; set;  }
   property System.TimeSpan VerticalScrollAnimationDuration { get; set;  }
   property System.Windows.Controls.DataGridColumn SelectedColumn { get; set;  }
+  property System.Windows.Controls.Primitives.PlacementMode RowDetailsPopupPlacement { get; set;  }
   property System.Windows.CornerRadius CornerRadius { get; set;  }
+  property System.Windows.DataTemplate RowDetailsPopupTemplate { get; set;  }
   property System.Windows.Input.ICommand BatchActionCommand { get; set;  }
   property System.Windows.Input.ICommand BatchSelectionChangedCommand { get; set;  }
   property System.Windows.Input.ICommand CellEditEndingCommand { get; set;  }
@@ -226,6 +240,7 @@ type DLH.Controls.Wpf.DataGridView
   property System.Windows.Media.Geometry AscendingSortIcon { get; set;  }
   property System.Windows.Media.Geometry DescendingSortIcon { get; set;  }
   property System.Windows.Media.Geometry UnsortedIcon { get; set;  }
+  property System.Windows.Style RowDetailsPopupContentStyle { get; set;  }
   property System.Windows.Thickness CellPadding { get; set;  }
 type DLH.Controls.Wpf.DataGridViewBatchSelection
   ctor(System.Collections.Generic.IReadOnlyList<System.Object>, System.Collections.Generic.IReadOnlyList<System.Windows.Controls.DataGridCellInfo>, System.Windows.Controls.DataGridColumn)

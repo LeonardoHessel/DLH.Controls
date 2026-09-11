@@ -325,6 +325,7 @@ public partial class DataGridView : DataGrid
             StopHorizontalScrollAnimation();
             StopVerticalScrollAnimation();
             EndMousePanning();
+            CloseRowDetailsPopup();
         };
         ApplySelectionBehavior();
     }
@@ -722,6 +723,7 @@ public partial class DataGridView : DataGrid
 
     protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
     {
+        HandleRowDetailsPopupClick(e);
         if (e.ChangedButton == MouseButton.Middle && TryBeginMousePanning(e.GetPosition(this)))
         {
             e.Handled = true;

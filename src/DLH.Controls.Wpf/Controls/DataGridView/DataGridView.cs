@@ -41,6 +41,13 @@ public partial class DataGridView : DataGrid
     private double verticalAnimationTarget;
     private long verticalAnimationLastFrame;
     private bool isVerticalAnimationActive;
+    private ScrollViewer? mousePanningScrollViewer;
+    private Point mousePanningOrigin;
+    private double mousePanningHorizontalOrigin;
+    private double mousePanningVerticalOrigin;
+    private bool canMousePanHorizontally;
+    private bool canMousePanVertically;
+    private Cursor? cursorBeforeMousePanning;
 
     static DataGridView()
     {
@@ -69,6 +76,37 @@ public partial class DataGridView : DataGrid
         }
 
         base.OnPreviewMouseWheel(e);
+    }
+
+    protected override void OnMouseMove(MouseEventArgs e)
+    {
+        if (mousePanningScrollViewer is not null)
+        {
+            if (e.MiddleButton == MouseButtonState.Pressed)
+                UpdateMousePanning(e.GetPosition(this));
+            else
+                EndMousePanning();
+            e.Handled = true;
+            return;
+        }
+        base.OnMouseMove(e);
+    }
+
+    protected override void OnPreviewMouseUp(MouseButtonEventArgs e)
+    {
+        if (e.ChangedButton == MouseButton.Middle && mousePanningScrollViewer is not null)
+        {
+            EndMousePanning();
+            e.Handled = true;
+            return;
+        }
+        base.OnPreviewMouseUp(e);
+    }
+
+    protected override void OnLostMouseCapture(MouseEventArgs e)
+    {
+        EndMousePanning(false);
+        base.OnLostMouseCapture(e);
     }
 
     internal bool TryScrollHorizontally(int wheelDelta, ModifierKeys modifiers)
@@ -195,6 +233,59 @@ public partial class DataGridView : DataGrid
         return current + (target - current) * factor;
     }
 
+    internal bool TryBeginMousePanning(Point position, bool captureMouse = true)
+    {
+        if (!IsMiddleButtonPanningEnabled ||
+            GetTemplateChild("DG_ScrollViewer") is not ScrollViewer viewer) return false;
+
+        var horizontal = viewer.ScrollableWidth > 0;
+        var vertical = viewer.ScrollableHeight > 0;
+        if (!horizontal && !vertical) return false;
+        if (captureMouse && !CaptureMouse()) return false;
+
+        StopHorizontalScrollAnimation();
+        StopVerticalScrollAnimation();
+        mousePanningScrollViewer = viewer;
+        mousePanningOrigin = position;
+        mousePanningHorizontalOrigin = viewer.HorizontalOffset;
+        mousePanningVerticalOrigin = viewer.VerticalOffset;
+        canMousePanHorizontally = horizontal;
+        canMousePanVertically = vertical;
+        cursorBeforeMousePanning = Cursor;
+        Cursor = GetMousePanningCursor(horizontal, vertical);
+        return true;
+    }
+
+    internal void UpdateMousePanning(Point position)
+    {
+        if (mousePanningScrollViewer is null) return;
+        var movement = position - mousePanningOrigin;
+        if (canMousePanHorizontally)
+            mousePanningScrollViewer.ScrollToHorizontalOffset(
+                Math.Clamp(mousePanningHorizontalOrigin - movement.X * MousePanningSpeed, 0,
+                    mousePanningScrollViewer.ScrollableWidth));
+        if (canMousePanVertically)
+            mousePanningScrollViewer.ScrollToVerticalOffset(
+                Math.Clamp(mousePanningVerticalOrigin - movement.Y * MousePanningSpeed, 0,
+                    mousePanningScrollViewer.ScrollableHeight));
+    }
+
+    internal void EndMousePanning(bool releaseCapture = true)
+    {
+        if (mousePanningScrollViewer is null) return;
+        mousePanningScrollViewer = null;
+        canMousePanHorizontally = false;
+        canMousePanVertically = false;
+        Cursor = cursorBeforeMousePanning;
+        cursorBeforeMousePanning = null;
+        if (releaseCapture && IsMouseCaptured) ReleaseMouseCapture();
+    }
+
+    internal static Cursor GetMousePanningCursor(bool horizontal, bool vertical) =>
+        horizontal && vertical ? Cursors.ScrollAll :
+        horizontal ? Cursors.ScrollWE :
+        Cursors.ScrollNS;
+
     private void UpdateRoundedContentClip()
     {
         if (GetTemplateChild("PART_ClipRoot") is not FrameworkElement root ||
@@ -231,6 +322,7 @@ public partial class DataGridView : DataGrid
         {
             StopHorizontalScrollAnimation();
             StopVerticalScrollAnimation();
+            EndMousePanning();
         };
         ApplySelectionBehavior();
     }
@@ -285,6 +377,23 @@ public partial class DataGridView : DataGrid
     {
         get => (TimeSpan)GetValue(VerticalScrollAnimationDurationProperty);
         set => SetValue(VerticalScrollAnimationDurationProperty, value);
+    }
+
+    public static readonly DependencyProperty IsMiddleButtonPanningEnabledProperty = DependencyProperty.Register(
+        nameof(IsMiddleButtonPanningEnabled), typeof(bool), typeof(DataGridView), new PropertyMetadata(true));
+    public bool IsMiddleButtonPanningEnabled
+    {
+        get => (bool)GetValue(IsMiddleButtonPanningEnabledProperty);
+        set => SetValue(IsMiddleButtonPanningEnabledProperty, value);
+    }
+
+    public static readonly DependencyProperty MousePanningSpeedProperty = DependencyProperty.Register(
+        nameof(MousePanningSpeed), typeof(double), typeof(DataGridView), new PropertyMetadata(1d),
+        value => value is double speed && double.IsFinite(speed) && speed > 0);
+    public double MousePanningSpeed
+    {
+        get => (double)GetValue(MousePanningSpeedProperty);
+        set => SetValue(MousePanningSpeedProperty, value);
     }
 
     public static readonly DependencyProperty SelectionBehaviorProperty = DependencyProperty.Register(
@@ -610,6 +719,11 @@ public partial class DataGridView : DataGrid
 
     protected override void OnPreviewMouseDown(MouseButtonEventArgs e)
     {
+        if (e.ChangedButton == MouseButton.Middle && TryBeginMousePanning(e.GetPosition(this)))
+        {
+            e.Handled = true;
+            return;
+        }
         if (e.ChangedButton == MouseButton.Left && SelectionBehavior == DataGridViewSelectionBehavior.Column &&
             FindAncestor<DataGridColumnHeader>(e.OriginalSource as DependencyObject) is { Column: { } column })
         {

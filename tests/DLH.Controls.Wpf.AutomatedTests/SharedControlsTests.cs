@@ -530,6 +530,30 @@ public sealed class SharedControlsTests
             viewer.UpdateLayout();
             Assert.IsGreaterThan(0d, viewer.VerticalOffset,
                 "A roda deve rolar verticalmente com uma transição suave.");
+
+            var cursorSelector = typeof(ControlsDataGridView).GetMethod("GetMousePanningCursor",
+                System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic)!;
+            Assert.AreSame(Cursors.ScrollWE, cursorSelector.Invoke(null, [true, false]));
+            Assert.AreSame(Cursors.ScrollNS, cursorSelector.Invoke(null, [false, true]));
+            Assert.AreSame(Cursors.ScrollAll, cursorSelector.Invoke(null, [true, true]));
+
+            var beginPanning = typeof(ControlsDataGridView).GetMethod("TryBeginMousePanning",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            var updatePanning = typeof(ControlsDataGridView).GetMethod("UpdateMousePanning",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            var endPanning = typeof(ControlsDataGridView).GetMethod("EndMousePanning",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            var horizontalBeforePanning = viewer.HorizontalOffset;
+            var verticalBeforePanning = viewer.VerticalOffset;
+            Assert.IsTrue((bool)beginPanning.Invoke(grid, [new Point(100, 100), false])!);
+            Assert.AreSame(Cursors.ScrollAll, grid.Cursor);
+            updatePanning.Invoke(grid, [new Point(70, 60)]);
+            viewer.UpdateLayout();
+            Assert.IsGreaterThan(horizontalBeforePanning, viewer.HorizontalOffset);
+            Assert.IsGreaterThan(verticalBeforePanning, viewer.VerticalOffset);
+            endPanning.Invoke(grid, [false]);
+            Assert.IsNull(grid.Cursor);
+            Assert.ThrowsExactly<ArgumentException>(() => grid.MousePanningSpeed = 0);
         }
         finally { window.Close(); }
     }

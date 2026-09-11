@@ -58,6 +58,7 @@ public partial class DataGridViewDemoWindow : Window
         ShipmentsGrid.CanUserToggleColumnVisibility = ColumnMenu.IsChecked == true;
         ShipmentsGrid.ShowClearSortMenuItem = ShowClearSort.IsChecked == true;
         ShipmentsGrid.ShowRestoreDefaultSortMenuItem = ShowRestoreSort.IsChecked == true;
+        ShipmentsGrid.IsMiddleButtonPanningEnabled = MiddleButtonPanning.IsChecked == true;
         ShipmentsGrid.AlternatingRowBackground = StripedRows.IsChecked == true
             ? (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#24373A40")!
             : System.Windows.Media.Brushes.Transparent;
@@ -72,6 +73,11 @@ public partial class DataGridViewDemoWindow : Window
     private void ScrollBarThicknessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         if (ShipmentsGrid is not null) ShipmentsGrid.ScrollBarThickness = e.NewValue;
+    }
+
+    private void MousePanningSpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (ShipmentsGrid is not null) ShipmentsGrid.MousePanningSpeed = e.NewValue;
     }
 
     private void FilterText_Changed(object sender, TextChangedEventArgs e)

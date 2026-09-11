@@ -102,10 +102,12 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty IsCellEditingEnabledProperty
   field System.Windows.DependencyProperty IsGroupingEnabledProperty
   field System.Windows.DependencyProperty IsLoadingProperty
+  field System.Windows.DependencyProperty IsMiddleButtonPanningEnabledProperty
   field System.Windows.DependencyProperty IsMultiColumnSortEnabledProperty
   field System.Windows.DependencyProperty IsSmoothHorizontalScrollingEnabledProperty
   field System.Windows.DependencyProperty IsSmoothVerticalScrollingEnabledProperty
   field System.Windows.DependencyProperty LoadingMessageProperty
+  field System.Windows.DependencyProperty MousePanningSpeedProperty
   field System.Windows.DependencyProperty ScrollBarThicknessProperty
   field System.Windows.DependencyProperty ScrollBarThumbBrushProperty
   field System.Windows.DependencyProperty ScrollBarThumbHoverBrushProperty
@@ -160,6 +162,7 @@ type DLH.Controls.Wpf.DataGridView
   property System.Boolean IsCellEditingEnabled { get; set;  }
   property System.Boolean IsGroupingEnabled { get; set;  }
   property System.Boolean IsLoading { get; set;  }
+  property System.Boolean IsMiddleButtonPanningEnabled { get; set;  }
   property System.Boolean IsMultiColumnSortEnabled { get; set;  }
   property System.Boolean IsSmoothHorizontalScrollingEnabled { get; set;  }
   property System.Boolean IsSmoothVerticalScrollingEnabled { get; set;  }
@@ -173,6 +176,7 @@ type DLH.Controls.Wpf.DataGridView
   property System.Collections.ObjectModel.ObservableCollection<DLH.Controls.Wpf.DataGridViewFilter> Filters { get;  }
   property System.ComponentModel.ListSortDirection DefaultSortDirection { get; set;  }
   property System.Double HorizontalMouseWheelScrollAmount { get; set;  }
+  property System.Double MousePanningSpeed { get; set;  }
   property System.Double ScrollBarThickness { get; set;  }
   property System.Double SortIconSize { get; set;  }
   property System.Double VerticalMouseWheelScrollAmount { get; set;  }

@@ -70,6 +70,11 @@ public sealed class SharedControlsDemoTests
             Slider("MenuShadowOpacity").Value = .3;
             Slider("MenuShadowBlur").Value = 14;
             Slider("MenuShadowDepth").Value = 3;
+            CheckBox("MenuDetailsValue").IsChecked = false;
+            ComboBox("MenuChoiceDirection").SelectedIndex = 1;
+            CheckBox("MenuChoiceWrap").IsChecked = false;
+            Slider("MenuChoiceArrowWidth").Value = 32;
+            Slider("MenuChoiceIndex").Value = 2;
 
             Assert.IsTrue(window.ApplyOptions(includeTextFields: true));
 
@@ -92,6 +97,20 @@ public sealed class SharedControlsDemoTests
             Assert.IsFalse(menu.IsShadowEnabled);
             Assert.AreEqual(14d, menu.ShadowBlurRadius);
             Assert.AreEqual(Color.FromRgb(0x78, 0x78, 0x78), menu.ShadowColor);
+
+            var fixedSurface = Find<Border>("PersistentMenuSurface");
+            var fixedToggle = Find<DLH.Controls.Wpf.ToggleMenuItem>("PersistentDetailsToggleItem");
+            var fixedChoice = Find<DLH.Controls.Wpf.ChoiceMenuItem>("PersistentThemeChoiceItem");
+            Assert.AreEqual(new CornerRadius(9), fixedSurface.CornerRadius);
+            Assert.AreEqual(Color.FromRgb(0x12, 0x12, 0x12), Assert.IsInstanceOfType<SolidColorBrush>(fixedSurface.Background).Color);
+            Assert.AreEqual(Color.FromRgb(0x67, 0x67, 0x67), Assert.IsInstanceOfType<SolidColorBrush>(fixedSurface.Resources["ContextMenu.Separator"]).Color);
+            Assert.IsNull(fixedSurface.Effect);
+            Assert.IsFalse(fixedToggle.IsChecked);
+            Assert.AreEqual(DLH.Controls.Wpf.ChoiceCycleDirection.Backward, fixedChoice.CycleDirection);
+            Assert.IsFalse(fixedChoice.IsCycleWrappingEnabled);
+            Assert.AreEqual(32d, fixedChoice.DropDownButtonWidth);
+            Assert.AreEqual(2, fixedChoice.SelectedIndex);
+            Assert.AreEqual("System", fixedChoice.SelectedValue);
         }
         finally { window.Close(); }
 

@@ -62,6 +62,43 @@
                                     </controls:ContextMenu>
                                 </Button.ContextMenu>
                             </Button>
+                            <TextBlock Text="MenuItem sempre visível" FontWeight="SemiBold" Margin="6,14,6,6"/>
+                            <Border x:Name="PersistentMenuSurface" Width="300" HorizontalAlignment="Left"
+                                    Background="#35373C" BorderBrush="#4C5058" BorderThickness="1"
+                                    CornerRadius="8" Padding="4">
+                                <Border.Resources>
+                                    <SolidColorBrush x:Key="ContextMenu.Surface" Color="#35373C"/>
+                                    <SolidColorBrush x:Key="ContextMenu.Text" Color="#F2F3F5"/>
+                                    <SolidColorBrush x:Key="ContextMenu.Edge" Color="#4C5058"/>
+                                    <SolidColorBrush x:Key="ContextMenu.Hover" Color="#454850"/>
+                                    <SolidColorBrush x:Key="ContextMenu.Checked" Color="#9CC9FF"/>
+                                    <SolidColorBrush x:Key="ContextMenu.Separator" Color="#4C5058"/>
+                                    <sys:Double x:Key="ContextMenu.DisabledOpacity" xmlns:sys="clr-namespace:System;assembly=System.Runtime">0.45</sys:Double>
+                                    <sys:Double x:Key="ContextMenu.IconSize" xmlns:sys="clr-namespace:System;assembly=System.Runtime">16</sys:Double>
+                                    <GridLength x:Key="ContextMenu.IconColumnWidth">26</GridLength>
+                                    <Thickness x:Key="ContextMenu.ItemPadding">10,7,10,7</Thickness>
+                                    <Thickness x:Key="ContextMenu.Padding">4</Thickness>
+                                    <Thickness x:Key="ContextMenu.BorderThickness">1</Thickness>
+                                    <CornerRadius x:Key="ContextMenu.CornerRadius">8</CornerRadius>
+                                </Border.Resources>
+                                <StackPanel>
+                                    <MenuItem Header="Atualizar" InputGestureText="F5" Style="{StaticResource ContextMenu.ItemStyle}"><MenuItem.Icon><TextBlock Text="↻" Foreground="#42A5E8"/></MenuItem.Icon></MenuItem>
+                                    <controls:ToggleMenuItem x:Name="PersistentDetailsToggleItem" Header="Exibir detalhes" IsChecked="True" Style="{StaticResource ContextMenu.ItemStyle}">
+                                        <controls:ToggleMenuItem.CheckedIcon><TextBlock Text="●" Foreground="#7EDC9A"/></controls:ToggleMenuItem.CheckedIcon>
+                                        <controls:ToggleMenuItem.UncheckedIcon><TextBlock Text="○" Foreground="#AEB3BD"/></controls:ToggleMenuItem.UncheckedIcon>
+                                    </controls:ToggleMenuItem>
+                                    <controls:ChoiceMenuItem x:Name="PersistentThemeChoiceItem" Header="Tema" SelectedIndex="0" Style="{StaticResource ContextMenu.ItemStyle}">
+                                        <controls:ChoiceMenuOption Content="Escuro" Value="Dark" Icon="☾"/>
+                                        <controls:ChoiceMenuOption Content="Claro" Value="Light" Icon="☀"/>
+                                        <controls:ChoiceMenuOption Content="Sistema" Value="System" Icon="◐"/>
+                                    </controls:ChoiceMenuItem>
+                                    <Separator Style="{StaticResource ContextMenu.SeparatorStyle}"/>
+                                    <MenuItem Header="Exportar" Style="{StaticResource ContextMenu.ItemStyle}">
+                                        <MenuItem Header="Arquivo CSV" Style="{StaticResource ContextMenu.ItemStyle}"/>
+                                        <MenuItem Header="Planilha" IsEnabled="False" Style="{StaticResource ContextMenu.ItemStyle}"/>
+                                    </MenuItem>
+                                </StackPanel>
+                            </Border>
                         </StackPanel>
                     </Grid>
                     <TextBlock Grid.Row="2" x:Name="ValidationMessage" Foreground="#8DCAEF" Text="Configuração padrão aplicada." TextWrapping="Wrap"/>

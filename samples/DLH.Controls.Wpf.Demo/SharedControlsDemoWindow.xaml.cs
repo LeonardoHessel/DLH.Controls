@@ -86,6 +86,11 @@ public partial class SharedControlsDemoWindow : Window
             ThemeChoiceItem.IsCycleWrappingEnabled = MenuChoiceWrap.IsChecked == true;
             ThemeChoiceItem.DropDownButtonWidth = MenuChoiceArrowWidth.Value;
             ThemeChoiceItem.SelectedIndex = (int)MenuChoiceIndex.Value;
+            PersistentDetailsToggleItem.IsChecked = MenuDetailsValue.IsChecked == true;
+            PersistentThemeChoiceItem.CycleDirection = ThemeChoiceItem.CycleDirection;
+            PersistentThemeChoiceItem.IsCycleWrappingEnabled = ThemeChoiceItem.IsCycleWrappingEnabled;
+            PersistentThemeChoiceItem.DropDownButtonWidth = ThemeChoiceItem.DropDownButtonWidth;
+            PersistentThemeChoiceItem.SelectedIndex = ThemeChoiceItem.SelectedIndex;
 
             if (includeTextFields)
             {
@@ -110,6 +115,8 @@ public partial class SharedControlsDemoWindow : Window
                 DemoMenu.ShadowColor = ParseColor(MenuShadowColor.Text);
             }
 
+            ApplyPersistentMenuAppearance();
+
             ValidationMessage.Text = $"Aplicado: {DemoScrollBar.Orientation}, {DemoScrollBar.Thickness:0}px; menu com raio {DemoMenu.CornerRadius.TopLeft:0}.";
             ValidationMessage.Foreground = Brushes.LightSkyBlue;
             return true;
@@ -120,6 +127,37 @@ public partial class SharedControlsDemoWindow : Window
             ValidationMessage.Foreground = Brushes.LightCoral;
             return false;
         }
+    }
+
+    private void ApplyPersistentMenuAppearance()
+    {
+        PersistentMenuSurface.Background = DemoMenu.Background;
+        PersistentMenuSurface.BorderBrush = DemoMenu.BorderBrush;
+        PersistentMenuSurface.BorderThickness = DemoMenu.BorderThickness;
+        PersistentMenuSurface.CornerRadius = DemoMenu.CornerRadius;
+        PersistentMenuSurface.Padding = DemoMenu.Padding;
+        PersistentMenuSurface.Resources["ContextMenu.Surface"] = DemoMenu.Background;
+        PersistentMenuSurface.Resources["ContextMenu.Text"] = DemoMenu.Foreground;
+        PersistentMenuSurface.Resources["ContextMenu.Edge"] = DemoMenu.BorderBrush;
+        PersistentMenuSurface.Resources["ContextMenu.Hover"] = DemoMenu.HoverBrush;
+        PersistentMenuSurface.Resources["ContextMenu.Checked"] = DemoMenu.CheckedBrush;
+        PersistentMenuSurface.Resources["ContextMenu.Separator"] = DemoMenu.SeparatorBrush;
+        PersistentMenuSurface.Resources["ContextMenu.DisabledOpacity"] = DemoMenu.DisabledOpacity;
+        PersistentMenuSurface.Resources["ContextMenu.ItemPadding"] = DemoMenu.ItemPadding;
+        PersistentMenuSurface.Resources["ContextMenu.IconSize"] = DemoMenu.IconSize;
+        PersistentMenuSurface.Resources["ContextMenu.IconColumnWidth"] = new GridLength(DemoMenu.IconColumnWidth);
+        PersistentMenuSurface.Resources["ContextMenu.CornerRadius"] = DemoMenu.CornerRadius;
+        PersistentMenuSurface.Resources["ContextMenu.Padding"] = DemoMenu.Padding;
+        PersistentMenuSurface.Resources["ContextMenu.BorderThickness"] = DemoMenu.BorderThickness;
+        PersistentMenuSurface.Effect = DemoMenu.IsShadowEnabled
+            ? new System.Windows.Media.Effects.DropShadowEffect
+            {
+                Color = DemoMenu.ShadowColor,
+                Opacity = DemoMenu.ShadowOpacity,
+                BlurRadius = DemoMenu.ShadowBlurRadius,
+                ShadowDepth = DemoMenu.ShadowDepth
+            }
+            : null;
     }
 
     private static System.Windows.Media.Brush ParseBrush(string value) => (System.Windows.Media.Brush)new BrushConverter().ConvertFromString(value)!;

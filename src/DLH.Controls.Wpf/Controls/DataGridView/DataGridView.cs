@@ -34,14 +34,12 @@ public partial class DataGridView : DataGrid
     private DataGridColumn? lastNotifiedColumn;
     private bool applyingSelectionBehavior;
     private ScrollViewer? animatedScrollViewer;
-    private double horizontalAnimationFrom;
     private double horizontalAnimationTarget;
-    private long horizontalAnimationStarted;
+    private long horizontalAnimationLastFrame;
     private bool isHorizontalAnimationActive;
     private ScrollViewer? verticallyAnimatedScrollViewer;
-    private double verticalAnimationFrom;
     private double verticalAnimationTarget;
-    private long verticalAnimationStarted;
+    private long verticalAnimationLastFrame;
     private bool isVerticalAnimationActive;
 
     static DataGridView()
@@ -93,12 +91,11 @@ public partial class DataGridView : DataGrid
         }
 
         animatedScrollViewer = viewer;
-        horizontalAnimationFrom = viewer.HorizontalOffset;
         horizontalAnimationTarget = target;
-        horizontalAnimationStarted = Stopwatch.GetTimestamp();
         if (!isHorizontalAnimationActive)
         {
             isHorizontalAnimationActive = true;
+            horizontalAnimationLastFrame = Stopwatch.GetTimestamp();
             CompositionTarget.Rendering += OnHorizontalScrollAnimationFrame;
         }
         return true;
@@ -112,12 +109,17 @@ public partial class DataGridView : DataGrid
             return;
         }
 
-        var elapsed = Stopwatch.GetElapsedTime(horizontalAnimationStarted);
-        var progress = Math.Clamp(elapsed.TotalMilliseconds / HorizontalScrollAnimationDuration.TotalMilliseconds, 0, 1);
-        var easedProgress = (1 - Math.Cos(Math.PI * progress)) / 2;
-        animatedScrollViewer.ScrollToHorizontalOffset(
-            horizontalAnimationFrom + (horizontalAnimationTarget - horizontalAnimationFrom) * easedProgress);
-        if (progress >= 1) StopHorizontalScrollAnimation();
+        var now = Stopwatch.GetTimestamp();
+        var elapsed = Stopwatch.GetElapsedTime(horizontalAnimationLastFrame, now);
+        horizontalAnimationLastFrame = now;
+        var next = ApproachTarget(animatedScrollViewer.HorizontalOffset, horizontalAnimationTarget,
+            elapsed, HorizontalScrollAnimationDuration);
+        animatedScrollViewer.ScrollToHorizontalOffset(next);
+        if (Math.Abs(next - horizontalAnimationTarget) <= 0.25)
+        {
+            animatedScrollViewer.ScrollToHorizontalOffset(horizontalAnimationTarget);
+            StopHorizontalScrollAnimation();
+        }
     }
 
     private void StopHorizontalScrollAnimation()
@@ -147,12 +149,11 @@ public partial class DataGridView : DataGrid
         }
 
         verticallyAnimatedScrollViewer = viewer;
-        verticalAnimationFrom = viewer.VerticalOffset;
         verticalAnimationTarget = target;
-        verticalAnimationStarted = Stopwatch.GetTimestamp();
         if (!isVerticalAnimationActive)
         {
             isVerticalAnimationActive = true;
+            verticalAnimationLastFrame = Stopwatch.GetTimestamp();
             CompositionTarget.Rendering += OnVerticalScrollAnimationFrame;
         }
         return true;
@@ -166,12 +167,17 @@ public partial class DataGridView : DataGrid
             return;
         }
 
-        var elapsed = Stopwatch.GetElapsedTime(verticalAnimationStarted);
-        var progress = Math.Clamp(elapsed.TotalMilliseconds / VerticalScrollAnimationDuration.TotalMilliseconds, 0, 1);
-        var easedProgress = (1 - Math.Cos(Math.PI * progress)) / 2;
-        verticallyAnimatedScrollViewer.ScrollToVerticalOffset(
-            verticalAnimationFrom + (verticalAnimationTarget - verticalAnimationFrom) * easedProgress);
-        if (progress >= 1) StopVerticalScrollAnimation();
+        var now = Stopwatch.GetTimestamp();
+        var elapsed = Stopwatch.GetElapsedTime(verticalAnimationLastFrame, now);
+        verticalAnimationLastFrame = now;
+        var next = ApproachTarget(verticallyAnimatedScrollViewer.VerticalOffset, verticalAnimationTarget,
+            elapsed, VerticalScrollAnimationDuration);
+        verticallyAnimatedScrollViewer.ScrollToVerticalOffset(next);
+        if (Math.Abs(next - verticalAnimationTarget) <= 0.25)
+        {
+            verticallyAnimatedScrollViewer.ScrollToVerticalOffset(verticalAnimationTarget);
+            StopVerticalScrollAnimation();
+        }
     }
 
     private void StopVerticalScrollAnimation()
@@ -179,6 +185,14 @@ public partial class DataGridView : DataGrid
         if (isVerticalAnimationActive) CompositionTarget.Rendering -= OnVerticalScrollAnimationFrame;
         isVerticalAnimationActive = false;
         verticallyAnimatedScrollViewer = null;
+    }
+
+    private static double ApproachTarget(double current, double target, TimeSpan elapsed, TimeSpan duration)
+    {
+        if (duration <= TimeSpan.Zero) return target;
+        var progress = Math.Max(0, elapsed.TotalMilliseconds / duration.TotalMilliseconds);
+        var factor = 1 - Math.Pow(0.01, progress);
+        return current + (target - current) * factor;
     }
 
     private void UpdateRoundedContentClip()

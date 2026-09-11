@@ -505,6 +505,17 @@ public sealed class SharedControlsTests
             Assert.IsLessThan(offsetAfterShiftWheel, viewer.HorizontalOffset,
                 "Shift + roda para cima deve rolar o conteúdo para a esquerda.");
 
+            grid.HorizontalScrollAnimationDuration = TimeSpan.FromMilliseconds(200);
+            for (var index = 0; index < 10; index++)
+                Assert.IsTrue((bool)shiftWheel.Invoke(grid, [-120, ModifierKeys.Shift])!);
+            Thread.Sleep(10);
+            typeof(ControlsDataGridView).GetMethod("OnHorizontalScrollAnimationFrame",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+                .Invoke(grid, [null, EventArgs.Empty]);
+            viewer.UpdateLayout();
+            Assert.IsGreaterThan(15d, viewer.HorizontalOffset,
+                "Eventos rápidos devem acumular velocidade sem reiniciar o trecho lento da animação.");
+
             var verticalWheel = typeof(ControlsDataGridView).GetMethod("TryScrollVertically",
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
             Assert.IsGreaterThan(0d, viewer.ScrollableHeight);

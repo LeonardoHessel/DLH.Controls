@@ -167,6 +167,47 @@ public sealed class DataGridViewPinningTests
     }
 
     [STATestMethod]
+    public void PinnedColumnAdheresWhenItTouchesAnAlreadyPinnedColumn()
+    {
+        var rows = new ObservableCollection<Row>(Enumerable.Range(1, 20).Select(index => new Row($"Linha {index}")));
+        var grid = new DataGridView
+        {
+            Width = 300,
+            Height = 180,
+            ItemsSource = rows,
+            CanPinColumns = true
+        };
+        var columns = Enumerable.Range(1, 6).Select(index => new DataGridTextColumn
+        {
+            Header = $"Coluna {index}",
+            Binding = new System.Windows.Data.Binding(nameof(Row.Name)),
+            Width = 100
+        }).ToArray();
+        foreach (var column in columns) grid.Columns.Add(column);
+        var window = new Window { Content = grid, Width = 320, Height = 220, WindowStyle = WindowStyle.None, ShowInTaskbar = false };
+        window.Show();
+        try
+        {
+            grid.UpdateLayout();
+            Assert.IsTrue(grid.PinColumn(columns[0]));
+            Assert.IsTrue(grid.PinColumn(columns[2]));
+            var viewer = (ScrollViewer)grid.Template.FindName("DG_ScrollViewer", grid)!;
+            var layer = (Canvas)grid.Template.FindName("PART_PinningLayer", grid)!;
+
+            viewer.ScrollToHorizontalOffset(115);
+            grid.UpdateLayout();
+            grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
+
+            Assert.HasCount(2, layer.Children.Cast<UIElement>(),
+                "A segunda coluna deve aderir ao tocar a borda ocupada pela primeira coluna fixada.");
+            var positions = layer.Children.Cast<UIElement>().Select(Canvas.GetLeft).Order().ToArray();
+            Assert.AreEqual(100d, positions[1] - positions[0], 1d,
+                "As colunas fixadas devem ficar lado a lado, sem sobreposição.");
+        }
+        finally { window.Close(); }
+    }
+
+    [STATestMethod]
     public void PinnedRowsAndColumnsRoundTripThroughGridState()
     {
         var rows = new ObservableCollection<Row> { new("Um"), new("Dois") };

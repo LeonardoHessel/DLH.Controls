@@ -94,21 +94,87 @@ public partial class DataGridView
     {
         if (pinningScrollViewer is null || pinningViewport is null) return string.Empty;
         var parts = new List<string> { $"V{pinningViewport.ActualWidth:F2},{pinningViewport.ActualHeight:F2}" };
+        var (startRows, endRows) = ClassifyPinnedRows(origin);
+        var startRowItems = startRows.Select(entry => entry.Item).ToHashSet();
+        var endRowItems = endRows.Select(entry => entry.Item).ToHashSet();
         foreach (var item in pinnedRows.Where(pinnedRowMetrics.ContainsKey))
         {
             var metric = pinnedRowMetrics[item];
-            var natural = origin.Y + metric.Offset - pinningScrollViewer.VerticalOffset;
-            var edge = natural < origin.Y ? 'S' : natural + metric.Height > origin.Y + pinningViewport.ActualHeight ? 'E' : 'N';
+            var edge = startRowItems.Contains(item) ? 'S' : endRowItems.Contains(item) ? 'E' : 'N';
             parts.Add($"R{RuntimeHelpers.GetHashCode(item)}{edge}{metric.Height:F2}");
         }
+        var (startColumns, endColumns) = ClassifyPinnedColumns(origin);
+        var startColumnItems = startColumns.Select(entry => entry.Column).ToHashSet();
+        var endColumnItems = endColumns.Select(entry => entry.Column).ToHashSet();
         foreach (var column in pinnedColumns.Where(pinnedColumnMetrics.ContainsKey))
         {
             var metric = pinnedColumnMetrics[column];
-            var natural = origin.X + metric.Offset - pinningScrollViewer.HorizontalOffset;
-            var edge = natural < origin.X ? 'S' : natural + metric.Width > origin.X + pinningViewport.ActualWidth ? 'E' : 'N';
+            var edge = startColumnItems.Contains(column) ? 'S' : endColumnItems.Contains(column) ? 'E' : 'N';
             parts.Add($"C{RuntimeHelpers.GetHashCode(column)}{edge}{metric.Width:F2}");
         }
         return string.Join('|', parts);
+    }
+
+    private (List<(object Item, (double Offset, double Height) Metric)> Start,
+        List<(object Item, (double Offset, double Height) Metric)> End) ClassifyPinnedRows(Point origin)
+    {
+        if (pinningScrollViewer is null || pinningViewport is null) return ([], []);
+        var metrics = pinnedRows.Where(pinnedRowMetrics.ContainsKey)
+            .Select(item => (Item: item, Metric: pinnedRowMetrics[item]))
+            .OrderBy(entry => entry.Metric.Offset).ToList();
+        var start = new List<(object Item, (double Offset, double Height) Metric)>();
+        var occupiedStart = 0d;
+        foreach (var entry in metrics)
+        {
+            var naturalStart = origin.Y + entry.Metric.Offset - pinningScrollViewer.VerticalOffset;
+            if (naturalStart >= origin.Y + occupiedStart) continue;
+            start.Add(entry);
+            occupiedStart += entry.Metric.Height;
+        }
+
+        var startItems = start.Select(entry => entry.Item).ToHashSet();
+        var end = new List<(object Item, (double Offset, double Height) Metric)>();
+        var occupiedEnd = 0d;
+        foreach (var entry in metrics.AsEnumerable().Reverse())
+        {
+            if (startItems.Contains(entry.Item)) continue;
+            var naturalEnd = origin.Y + entry.Metric.Offset - pinningScrollViewer.VerticalOffset + entry.Metric.Height;
+            if (naturalEnd <= origin.Y + pinningViewport.ActualHeight - occupiedEnd) continue;
+            end.Add(entry);
+            occupiedEnd += entry.Metric.Height;
+        }
+        return (start, end);
+    }
+
+    private (List<(DataGridColumn Column, (double Offset, double Width) Metric)> Start,
+        List<(DataGridColumn Column, (double Offset, double Width) Metric)> End) ClassifyPinnedColumns(Point origin)
+    {
+        if (pinningScrollViewer is null || pinningViewport is null) return ([], []);
+        var metrics = pinnedColumns.Where(pinnedColumnMetrics.ContainsKey)
+            .Select(column => (Column: column, Metric: pinnedColumnMetrics[column]))
+            .OrderBy(entry => entry.Metric.Offset).ToList();
+        var start = new List<(DataGridColumn Column, (double Offset, double Width) Metric)>();
+        var occupiedStart = 0d;
+        foreach (var entry in metrics)
+        {
+            var naturalStart = origin.X + entry.Metric.Offset - pinningScrollViewer.HorizontalOffset;
+            if (naturalStart >= origin.X + occupiedStart) continue;
+            start.Add(entry);
+            occupiedStart += entry.Metric.Width;
+        }
+
+        var startItems = start.Select(entry => entry.Column).ToHashSet();
+        var end = new List<(DataGridColumn Column, (double Offset, double Width) Metric)>();
+        var occupiedEnd = 0d;
+        foreach (var entry in metrics.AsEnumerable().Reverse())
+        {
+            if (startItems.Contains(entry.Column)) continue;
+            var naturalEnd = origin.X + entry.Metric.Offset - pinningScrollViewer.HorizontalOffset + entry.Metric.Width;
+            if (naturalEnd <= origin.X + pinningViewport.ActualWidth - occupiedEnd) continue;
+            end.Add(entry);
+            occupiedEnd += entry.Metric.Width;
+        }
+        return (start, end);
     }
 
     private void SyncActiveOverlayScrolls()
@@ -121,12 +187,7 @@ public partial class DataGridView
     private void AddPinnedRows(Point origin)
     {
         if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null) return;
-        var metrics = pinnedRows.Where(pinnedRowMetrics.ContainsKey)
-            .Select(item => (Item: item, Metric: pinnedRowMetrics[item]))
-            .OrderBy(entry => entry.Metric.Offset).ToList();
-        var start = metrics.Where(entry => origin.Y + entry.Metric.Offset - pinningScrollViewer.VerticalOffset < origin.Y).ToList();
-        var end = metrics.Where(entry => origin.Y + entry.Metric.Offset - pinningScrollViewer.VerticalOffset + entry.Metric.Height > origin.Y + pinningViewport.ActualHeight)
-            .OrderByDescending(entry => entry.Metric.Offset).ToList();
+        var (start, end) = ClassifyPinnedRows(origin);
 
         var occupied = 0d;
         foreach (var entry in start)
@@ -146,12 +207,7 @@ public partial class DataGridView
     private void AddPinnedColumns(Point origin)
     {
         if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null) return;
-        var metrics = pinnedColumns.Where(pinnedColumnMetrics.ContainsKey)
-            .Select(column => (Column: column, Metric: pinnedColumnMetrics[column]))
-            .OrderBy(entry => entry.Metric.Offset).ToList();
-        var start = metrics.Where(entry => origin.X + entry.Metric.Offset - pinningScrollViewer.HorizontalOffset < origin.X).ToList();
-        var end = metrics.Where(entry => origin.X + entry.Metric.Offset - pinningScrollViewer.HorizontalOffset + entry.Metric.Width > origin.X + pinningViewport.ActualWidth)
-            .OrderByDescending(entry => entry.Metric.Offset).ToList();
+        var (start, end) = ClassifyPinnedColumns(origin);
 
         var occupied = 0d;
         foreach (var entry in start)

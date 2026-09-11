@@ -52,8 +52,8 @@ public sealed class SharedControlsTests
 
             var surface = (Border)menu.Template.FindName("MenuSurface", menu)!;
             Assert.IsNull(surface.Effect);
-            Assert.AreSame(menu.ItemContainerStyle, item.Style);
-            Assert.AreSame(menu.ItemContainerStyle, child.Style);
+            Assert.AreEqual(typeof(MenuItem), item.Style.TargetType);
+            Assert.AreSame(item.Style, child.Style);
             Assert.AreSame(customStyle, customItem.Style);
             Assert.IsNotNull(item.Template.FindName("ItemSurface", item));
             Assert.AreEqual(Visibility.Visible, ((FrameworkElement)item.Template.FindName("CheckMark", item)!).Visibility);

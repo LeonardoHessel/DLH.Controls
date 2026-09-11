@@ -13,6 +13,7 @@
   <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
    <StackPanel><TextBlock Text="Resumo de inspeções" FontSize="28" FontWeight="SemiBold" Foreground="#42A5E8"/><TextBlock Margin="0,4,0,0" Foreground="#AEB3BD" Text="Tabela compacta com ordenação, seleção, colunas configuráveis e estados de dados."/></StackPanel>
    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+    <Button Content="Configurar controles" Click="OpenSharedControlsDemo_Click"/>
     <Button Content="Menu de opções">
      <Button.ContextMenu>
       <controls:ContextMenu CornerRadius="8" ItemPadding="12,8" IconColumnWidth="28">

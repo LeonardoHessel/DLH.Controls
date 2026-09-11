@@ -1,5 +1,6 @@
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=System.Runtime"
                     xmlns:local="clr-namespace:DLH.Controls.Wpf">
     <SolidColorBrush x:Key="Tabs.Surface" Color="#35373C" />
     <SolidColorBrush x:Key="Tabs.Idle" Color="Transparent" />
@@ -21,16 +22,46 @@
     <SolidColorBrush x:Key="ContextMenu.Surface" Color="#35373C" />
     <SolidColorBrush x:Key="ContextMenu.Text" Color="#F2F3F5" />
     <SolidColorBrush x:Key="ContextMenu.Edge" Color="#4C5058" />
+    <SolidColorBrush x:Key="ContextMenu.Hover" Color="#454850" />
+    <SolidColorBrush x:Key="ContextMenu.Checked" Color="#9CC9FF" />
+    <SolidColorBrush x:Key="ContextMenu.Separator" Color="#4C5058" />
+    <sys:Double x:Key="ContextMenu.DisabledOpacity">0.45</sys:Double>
+    <sys:Double x:Key="ContextMenu.IconSize">16</sys:Double>
+    <GridLength x:Key="ContextMenu.IconColumnWidth">26</GridLength>
+    <Thickness x:Key="ContextMenu.ItemPadding">10,7,10,7</Thickness>
+    <Thickness x:Key="ContextMenu.Padding">4</Thickness>
+    <Thickness x:Key="ContextMenu.BorderThickness">1</Thickness>
+    <CornerRadius x:Key="ContextMenu.CornerRadius">8</CornerRadius>
     <local:TabCloseAutomationNameConverter x:Key="Tabs.CloseAutomationNameConverter" />
     <local:DataGridViewColumnSelectionConverter x:Key="DataGridView.ColumnSelectionConverter" />
     <local:HalfValueToCornerRadiusConverter x:Key="DataGridView.HalfCornerRadiusConverter" />
     <local:ScrollBarCornerRadiusConverter x:Key="ScrollBar.CornerRadiusConverter" />
     <Thickness x:Key="Tabs.HeaderPadding">22,13,22,13</Thickness>
 
-    <Style x:Key="ContextMenu.ItemStyle" TargetType="{x:Type MenuItem}">
-        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"/>
+    <Style x:Key="ScrollBar.LineButtonStyle" TargetType="{x:Type RepeatButton}">
+        <Setter Property="Foreground" Value="{Binding ThumbBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ScrollBar}}}"/>
         <Setter Property="Background" Value="Transparent"/>
-        <Setter Property="Padding" Value="{Binding ItemPadding, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Focusable" Value="False"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type RepeatButton}">
+                    <Border x:Name="ButtonSurface" Background="{TemplateBinding Background}" CornerRadius="3">
+                        <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True"><Setter TargetName="ButtonSurface" Property="Background" Value="{Binding TrackBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ScrollBar}}}"/></Trigger>
+                        <Trigger Property="IsPressed" Value="True"><Setter Property="Foreground" Value="{Binding ThumbPressedBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ScrollBar}}}"/></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ContextMenu.ItemStyle" TargetType="{x:Type MenuItem}">
+        <Setter Property="Foreground" Value="{DynamicResource ContextMenu.Text}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Padding" Value="{DynamicResource ContextMenu.ItemPadding}"/>
         <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
         <Setter Property="Template">
             <Setter.Value>
@@ -39,17 +70,17 @@
                         <Border x:Name="ItemSurface" Background="{TemplateBinding Background}" CornerRadius="4"/>
                         <Grid Margin="{TemplateBinding Padding}">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="{Binding IconColumnWidth, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"/>
+                                <ColumnDefinition Width="{DynamicResource ContextMenu.IconColumnWidth}"/>
                                 <ColumnDefinition Width="*"/>
                                 <ColumnDefinition Width="Auto"/>
                                 <ColumnDefinition Width="16"/>
                             </Grid.ColumnDefinitions>
                             <ContentPresenter x:Name="IconPresenter" Grid.Column="0" ContentSource="Icon"
-                                              Width="{Binding IconSize, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"
-                                              Height="{Binding IconSize, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"
+                                              Width="{DynamicResource ContextMenu.IconSize}"
+                                              Height="{DynamicResource ContextMenu.IconSize}"
                                               HorizontalAlignment="Left" VerticalAlignment="Center"/>
                             <TextBlock x:Name="CheckMark" Grid.Column="0" Text="✓" FontWeight="SemiBold"
-                                       Foreground="{Binding CheckedBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"
+                                       Foreground="{DynamicResource ContextMenu.Checked}"
                                        HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="Collapsed"/>
                             <ContentPresenter Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True"
                                               VerticalAlignment="Center"/>
@@ -63,17 +94,18 @@
                                Placement="Right" HorizontalOffset="-3">
                             <Border Background="{DynamicResource ContextMenu.Surface}"
                                     BorderBrush="{DynamicResource ContextMenu.Edge}"
-                                    BorderThickness="1" CornerRadius="8" Padding="4">
+                                    BorderThickness="{DynamicResource ContextMenu.BorderThickness}"
+                                    CornerRadius="{DynamicResource ContextMenu.CornerRadius}" Padding="{DynamicResource ContextMenu.Padding}">
                                 <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
                             </Border>
                         </Popup>
                     </Grid>
                     <ControlTemplate.Triggers>
                         <Trigger Property="IsHighlighted" Value="True">
-                            <Setter TargetName="ItemSurface" Property="Background" Value="{Binding HoverBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"/>
+                            <Setter TargetName="ItemSurface" Property="Background" Value="{DynamicResource ContextMenu.Hover}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
-                            <Setter Property="Opacity" Value="{Binding DisabledOpacity, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"/>
+                            <Setter Property="Opacity" Value="{DynamicResource ContextMenu.DisabledOpacity}"/>
                         </Trigger>
                         <Trigger Property="IsChecked" Value="True"><Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/><Setter TargetName="IconPresenter" Property="Visibility" Value="Collapsed"/></Trigger>
                         <Trigger Property="HasItems" Value="True"><Setter TargetName="SubmenuArrow" Property="Visibility" Value="Visible"/></Trigger>
@@ -87,7 +119,7 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type Separator}">
-                    <Border Height="1" Margin="8,4" Background="{Binding SeparatorBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"/>
+                    <Border Height="1" Margin="8,4" Background="{DynamicResource ContextMenu.Separator}"/>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
@@ -99,7 +131,6 @@
         <Setter Property="BorderBrush" Value="{DynamicResource ContextMenu.Edge}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Padding" Value="4"/>
-        <Setter Property="ItemContainerStyle" Value="{StaticResource ContextMenu.ItemStyle}"/>
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type local:ContextMenu}">
@@ -119,6 +150,7 @@
             </Setter.Value>
         </Setter>
         <Style.Resources>
+            <Style TargetType="{x:Type MenuItem}" BasedOn="{StaticResource ContextMenu.ItemStyle}"/>
             <Style TargetType="{x:Type Separator}" BasedOn="{StaticResource ContextMenu.SeparatorStyle}"/>
         </Style.Resources>
     </Style>
@@ -126,7 +158,7 @@
     <ControlTemplate x:Key="ScrollBar.VerticalTemplate" TargetType="{x:Type local:ScrollBar}">
         <Grid Width="{TemplateBinding Thickness}">
             <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-            <RepeatButton x:Name="DecreaseButton" Command="ScrollBar.LineUpCommand" Content="▲" FontSize="8" Focusable="False" />
+            <RepeatButton x:Name="DecreaseButton" Style="{StaticResource ScrollBar.LineButtonStyle}" Command="ScrollBar.LineUpCommand" Content="▲" FontSize="8" />
             <Border x:Name="TrackSurface" Grid.Row="1" Background="{TemplateBinding TrackBrush}" Padding="{TemplateBinding TrackPadding}">
                 <Border.CornerRadius><MultiBinding Converter="{StaticResource ScrollBar.CornerRadiusConverter}"><Binding Path="CornerRadius" RelativeSource="{RelativeSource TemplatedParent}"/><Binding Path="ActualWidth" RelativeSource="{RelativeSource Self}"/></MultiBinding></Border.CornerRadius>
                 <Border.Effect><DropShadowEffect Color="{Binding ShadowColor, RelativeSource={RelativeSource TemplatedParent}}" Opacity="{Binding ShadowOpacity, RelativeSource={RelativeSource TemplatedParent}}" BlurRadius="{Binding ShadowBlurRadius, RelativeSource={RelativeSource TemplatedParent}}" ShadowDepth="{Binding ShadowDepth, RelativeSource={RelativeSource TemplatedParent}}"/></Border.Effect>
@@ -136,7 +168,7 @@
                     <Track.IncreaseRepeatButton><RepeatButton Command="ScrollBar.PageDownCommand" Opacity="0" Focusable="False" /></Track.IncreaseRepeatButton>
                 </Track>
             </Border>
-            <RepeatButton x:Name="IncreaseButton" Grid.Row="2" Command="ScrollBar.LineDownCommand" Content="▼" FontSize="8" Focusable="False" />
+            <RepeatButton x:Name="IncreaseButton" Grid.Row="2" Style="{StaticResource ScrollBar.LineButtonStyle}" Command="ScrollBar.LineDownCommand" Content="▼" FontSize="8" />
         </Grid>
         <ControlTemplate.Triggers><Trigger Property="ShowButtons" Value="False"><Setter TargetName="DecreaseButton" Property="Visibility" Value="Collapsed"/><Setter TargetName="IncreaseButton" Property="Visibility" Value="Collapsed"/></Trigger><Trigger Property="IsShadowEnabled" Value="False"><Setter TargetName="TrackSurface" Property="Effect" Value="{x:Null}"/></Trigger></ControlTemplate.Triggers>
     </ControlTemplate>
@@ -144,7 +176,7 @@
     <ControlTemplate x:Key="ScrollBar.HorizontalTemplate" TargetType="{x:Type local:ScrollBar}">
         <Grid Height="{TemplateBinding Thickness}">
             <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-            <RepeatButton x:Name="DecreaseButton" Command="ScrollBar.LineLeftCommand" Content="◀" FontSize="8" Focusable="False" />
+            <RepeatButton x:Name="DecreaseButton" Style="{StaticResource ScrollBar.LineButtonStyle}" Command="ScrollBar.LineLeftCommand" Content="◀" FontSize="8" />
             <Border x:Name="TrackSurface" Grid.Column="1" Background="{TemplateBinding TrackBrush}" Padding="{TemplateBinding TrackPadding}">
                 <Border.CornerRadius><MultiBinding Converter="{StaticResource ScrollBar.CornerRadiusConverter}"><Binding Path="CornerRadius" RelativeSource="{RelativeSource TemplatedParent}"/><Binding Path="ActualHeight" RelativeSource="{RelativeSource Self}"/></MultiBinding></Border.CornerRadius>
                 <Border.Effect><DropShadowEffect Color="{Binding ShadowColor, RelativeSource={RelativeSource TemplatedParent}}" Opacity="{Binding ShadowOpacity, RelativeSource={RelativeSource TemplatedParent}}" BlurRadius="{Binding ShadowBlurRadius, RelativeSource={RelativeSource TemplatedParent}}" ShadowDepth="{Binding ShadowDepth, RelativeSource={RelativeSource TemplatedParent}}"/></Border.Effect>
@@ -154,7 +186,7 @@
                     <Track.IncreaseRepeatButton><RepeatButton Command="ScrollBar.PageRightCommand" Opacity="0" Focusable="False" /></Track.IncreaseRepeatButton>
                 </Track>
             </Border>
-            <RepeatButton x:Name="IncreaseButton" Grid.Column="2" Command="ScrollBar.LineRightCommand" Content="▶" FontSize="8" Focusable="False" />
+            <RepeatButton x:Name="IncreaseButton" Grid.Column="2" Style="{StaticResource ScrollBar.LineButtonStyle}" Command="ScrollBar.LineRightCommand" Content="▶" FontSize="8" />
         </Grid>
         <ControlTemplate.Triggers><Trigger Property="ShowButtons" Value="False"><Setter TargetName="DecreaseButton" Property="Visibility" Value="Collapsed"/><Setter TargetName="IncreaseButton" Property="Visibility" Value="Collapsed"/></Trigger><Trigger Property="IsShadowEnabled" Value="False"><Setter TargetName="TrackSurface" Property="Effect" Value="{x:Null}"/></Trigger></ControlTemplate.Triggers>
     </ControlTemplate>

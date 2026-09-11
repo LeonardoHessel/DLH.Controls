@@ -180,6 +180,7 @@ public partial class DataGridViewDemoWindow : Window
     }
 
     private void OpenTabsDemo_Click(object sender, RoutedEventArgs e) => new MainWindow { Owner = this }.Show();
+    private void OpenSharedControlsDemo_Click(object sender, RoutedEventArgs e) => new SharedControlsDemoWindow { Owner = this }.Show();
 }
 
 public sealed record ShipmentRow(string Shipment, string Origin, string Vehicle, int Quantity, int Inspected, string Status)

@@ -47,10 +47,29 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
     private void ApplyItemStyle(DependencyObject element)
     {
         if (element.ReadLocalValue(StyleProperty) != DependencyProperty.UnsetValue) return;
-        if (element is MenuItem && ItemContainerStyle is not null)
-            element.SetCurrentValue(StyleProperty, ItemContainerStyle);
-        else if (element is Separator && TryFindResource(typeof(Separator)) is Style separatorStyle)
-            element.SetCurrentValue(StyleProperty, separatorStyle);
+        if (element is MenuItem menuItem)
+        {
+            menuItem.Resources["ContextMenu.Surface"] = Background;
+            menuItem.Resources["ContextMenu.Text"] = Foreground;
+            menuItem.Resources["ContextMenu.Edge"] = BorderBrush;
+            menuItem.Resources["ContextMenu.Hover"] = HoverBrush;
+            menuItem.Resources["ContextMenu.Checked"] = CheckedBrush;
+            menuItem.Resources["ContextMenu.DisabledOpacity"] = DisabledOpacity;
+            menuItem.Resources["ContextMenu.ItemPadding"] = ItemPadding;
+            menuItem.Resources["ContextMenu.IconSize"] = IconSize;
+            menuItem.Resources["ContextMenu.IconColumnWidth"] = new GridLength(IconColumnWidth);
+            menuItem.Resources["ContextMenu.CornerRadius"] = CornerRadius;
+            menuItem.Resources["ContextMenu.Padding"] = Padding;
+            menuItem.Resources["ContextMenu.BorderThickness"] = BorderThickness;
+            if ((ItemContainerStyle ?? TryFindResource(typeof(MenuItem)) as Style) is { } menuItemStyle)
+                menuItem.SetCurrentValue(StyleProperty, menuItemStyle);
+        }
+        else if (element is Separator separator)
+        {
+            separator.Resources["ContextMenu.Separator"] = SeparatorBrush;
+            if (TryFindResource(typeof(Separator)) is Style separatorStyle)
+                separator.SetCurrentValue(StyleProperty, separatorStyle);
+        }
     }
 
     public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(

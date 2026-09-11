@@ -7,6 +7,10 @@
 - `DataGridView` migrado para a barra compartilhada, preservando suas propriedades de compatibilidade.
 - Novo `ContextMenu` reutilizável com superfície, espaçamento, ícones, itens marcáveis, submenus, separadores, estados e sombra configuráveis.
 - Menu de cabeçalho do `DataGridView` migrado para o `ContextMenu` compartilhado, preservando ordenação, filtros e visibilidade das colunas.
+- Laboratório visual para configurar todas as opções próprias de `ScrollBar` e `ContextMenu` durante a execução.
+- Snapshot visual dos controles compartilhados e testes da tela de configuração, incluindo tratamento de valores inválidos.
+- Correção da composição entre `MenuItem` e `Separator` e da propagação visual para itens e submenus.
+- Botões direcionais do `ScrollBar` agora seguem as cores e os estados do componente.
 
 - Persistência versionada do layout das colunas e da ordenação.
 - Ordenação por múltiplas colunas com prioridade visual.

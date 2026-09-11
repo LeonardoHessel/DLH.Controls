@@ -61,13 +61,13 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
             menuItem.Resources["ContextMenu.CornerRadius"] = CornerRadius;
             menuItem.Resources["ContextMenu.Padding"] = Padding;
             menuItem.Resources["ContextMenu.BorderThickness"] = BorderThickness;
-            if (canApplyDefaultStyle && (ItemContainerStyle ?? TryFindResource(typeof(MenuItem)) as Style) is { } menuItemStyle)
+            if (canApplyDefaultStyle && (ItemContainerStyle ?? TryFindResource("ContextMenu.ItemStyle") as Style) is { } menuItemStyle)
                 menuItem.SetCurrentValue(StyleProperty, menuItemStyle);
         }
         else if (element is Separator separator)
         {
             separator.Resources["ContextMenu.Separator"] = SeparatorBrush;
-            if (canApplyDefaultStyle && TryFindResource(typeof(Separator)) is Style separatorStyle)
+            if (canApplyDefaultStyle && TryFindResource("ContextMenu.SeparatorStyle") is Style separatorStyle)
                 separator.SetCurrentValue(StyleProperty, separatorStyle);
         }
     }

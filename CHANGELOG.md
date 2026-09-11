@@ -13,6 +13,7 @@
 - Botões direcionais do `ScrollBar` agora seguem as cores e os estados do componente.
 - Seletor visual de cores em todas as propriedades cromáticas do laboratório, preservando a entrada hexadecimal manual.
 - Correção da atualização de cores do `ContextMenu` após a primeira abertura, incluindo separadores, itens, estados e submenus.
+- Correção do template do separador para renderizar `SeparatorBrush` no lugar da linha nativa do WPF.
 
 - Persistência versionada do layout das colunas e da ordenação.
 - Ordenação por múltiplas colunas com prioridade visual.

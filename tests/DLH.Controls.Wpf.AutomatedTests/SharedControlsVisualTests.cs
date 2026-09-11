@@ -64,9 +64,14 @@ public sealed class SharedControlsVisualTests
         menu.Resources.MergedDictionaries.Add(new ResourceDictionary { Source = new Uri("/DLH.Controls.Wpf;component/Themes/Generic.xaml", UriKind.Relative) });
         menu.Foreground = Brushes.White;
         menu.Background = new SolidColorBrush(Color.FromRgb(53, 55, 60));
-        menu.Measure(new Size(270, 260));
-        menu.Arrange(new Rect(0, 0, 270, menu.DesiredSize.Height));
+        var placementTarget = new Button { Width = 1, Height = 1 };
+        var host = new Window { Content = placementTarget, Width = 1, Height = 1, Left = -10000, Top = -10000, ShowInTaskbar = false, ShowActivated = false, WindowStyle = WindowStyle.None };
+        host.Show();
+        menu.PlacementTarget = placementTarget;
+        menu.IsOpen = true;
+        menu.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Loaded);
         menu.ApplyTemplate();
+        foreach (var element in menu.Items.OfType<FrameworkElement>()) element.ApplyTemplate();
         menu.UpdateLayout();
         var menuBitmap = new RenderTargetBitmap(270, Math.Max(1, (int)Math.Ceiling(menu.ActualHeight)), 96, 96, PixelFormats.Pbgra32);
         menuBitmap.Render(menu);
@@ -79,6 +84,8 @@ public sealed class SharedControlsVisualTests
             drawing.DrawImage(menuBitmap, new Rect(390, 82, 270, menuBitmap.PixelHeight));
         }
         bitmap.Render(composite);
+        menu.IsOpen = false;
+        host.Close();
         Save(actualPath, bitmap);
 
         if (Environment.GetEnvironmentVariable("UPDATE_VISUAL_BASELINES") == "1")

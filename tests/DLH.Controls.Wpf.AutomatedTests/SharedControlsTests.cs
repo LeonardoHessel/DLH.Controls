@@ -86,7 +86,13 @@ public sealed class SharedControlsTests
         var menu = new ControlsContextMenu();
         menu.Items.Add(item);
         menu.Items.Add(separator);
+        var target = new Button { Content = "Abrir" };
+        var window = Arrange(target, 180, 80);
+        menu.PlacementTarget = target;
+        menu.IsOpen = true;
+        menu.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Loaded);
         menu.ApplyTemplate();
+        separator.ApplyTemplate();
 
         var surfaceColor = Color.FromRgb(10, 20, 30);
         var textColor = Color.FromRgb(40, 50, 60);
@@ -109,6 +115,12 @@ public sealed class SharedControlsTests
         AssertBrush(child.Resources["ContextMenu.Hover"], hoverColor);
         AssertBrush(separator.Resources["ContextMenu.Separator"], separatorColor);
         Assert.AreSame(menu.Background, ((Border)menu.Template.FindName("MenuSurface", menu)!).Background);
+        var separatorLine = (Border)separator.Template.FindName("SeparatorLine", separator)!;
+        Assert.AreEqual(separatorColor, Assert.IsInstanceOfType<SolidColorBrush>(separatorLine.Background).Color);
+        var renderedLine = VisualDescendants(separator).OfType<Border>().Single(border => border.Name == "SeparatorLine");
+        Assert.AreEqual(separatorColor, Assert.IsInstanceOfType<SolidColorBrush>(renderedLine.Background).Color);
+        menu.IsOpen = false;
+        window.Close();
     }
 
     [STATestMethod]
@@ -191,5 +203,15 @@ public sealed class SharedControlsTests
 
     private static void AssertBrush(object value, Color expected) =>
         Assert.AreEqual(expected, Assert.IsInstanceOfType<SolidColorBrush>(value).Color);
+
+    private static IEnumerable<DependencyObject> VisualDescendants(DependencyObject parent)
+    {
+        for (var index = 0; index < VisualTreeHelper.GetChildrenCount(parent); index++)
+        {
+            var child = VisualTreeHelper.GetChild(parent, index);
+            yield return child;
+            foreach (var descendant in VisualDescendants(child)) yield return descendant;
+        }
+    }
 }
 

@@ -3,6 +3,7 @@ using System.Windows.Controls;
 using System.Windows.Media.Effects;
 using ControlsScrollBar = DLH.Controls.Wpf.ScrollBar;
 using ControlsDataGridView = DLH.Controls.Wpf.DataGridView;
+using ControlsContextMenu = DLH.Controls.Wpf.ContextMenu;
 
 namespace DLH.Controls.Wpf.AutomatedTests;
 
@@ -10,6 +11,70 @@ namespace DLH.Controls.Wpf.AutomatedTests;
 [TestCategory("SharedControls")]
 public sealed class SharedControlsTests
 {
+    [STATestMethod]
+    public void ContextMenuDefaultsAndValidationAreStable()
+    {
+        var menu = new ControlsContextMenu();
+        Assert.AreEqual(new CornerRadius(8), menu.CornerRadius);
+        Assert.AreEqual(new Thickness(10, 7, 10, 7), menu.ItemPadding);
+        Assert.AreEqual(16d, menu.IconSize);
+        Assert.AreEqual(26d, menu.IconColumnWidth);
+        Assert.IsTrue(menu.IsShadowEnabled);
+        Assert.AreEqual(.5d, menu.ShadowOpacity);
+        Assert.ThrowsExactly<ArgumentException>(() => menu.IconSize = -1);
+        Assert.ThrowsExactly<ArgumentException>(() => menu.ItemPadding = new Thickness(-1));
+        Assert.ThrowsExactly<ArgumentException>(() => menu.ShadowOpacity = 2);
+    }
+
+    [STATestMethod]
+    public void ContextMenuTemplateSupportsItemsSeparatorsAndOptionalShadow()
+    {
+        var menu = new ControlsContextMenu { IsShadowEnabled = false };
+        var item = new MenuItem { Header = "Opção", IsCheckable = true, IsChecked = true };
+        var submenu = new MenuItem { Header = "Submenu" };
+        var child = new MenuItem { Header = "Filho" };
+        submenu.Items.Add(child);
+        var customStyle = new Style(typeof(MenuItem));
+        var customItem = new MenuItem { Header = "Personalizado", Style = customStyle };
+        menu.Items.Add(item);
+        menu.Items.Add(submenu);
+        menu.Items.Add(customItem);
+        menu.Items.Add(new Separator());
+        var target = new Button { Content = "Abrir" };
+        var window = Arrange(target, 180, 80);
+        try
+        {
+            menu.PlacementTarget = target;
+            menu.IsOpen = true;
+            menu.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Loaded);
+            menu.ApplyTemplate();
+            item.ApplyTemplate();
+
+            var surface = (Border)menu.Template.FindName("MenuSurface", menu)!;
+            Assert.IsNull(surface.Effect);
+            Assert.AreSame(menu.ItemContainerStyle, item.Style);
+            Assert.AreSame(menu.ItemContainerStyle, child.Style);
+            Assert.AreSame(customStyle, customItem.Style);
+            Assert.IsNotNull(item.Template.FindName("ItemSurface", item));
+            Assert.AreEqual(Visibility.Visible, ((FrameworkElement)item.Template.FindName("CheckMark", item)!).Visibility);
+            menu.IsShadowEnabled = true;
+            menu.UpdateLayout();
+            Assert.IsInstanceOfType<DropShadowEffect>(surface.Effect);
+        }
+        finally { menu.IsOpen = false; window.Close(); }
+    }
+
+    [STATestMethod]
+    public void DataGridViewCreatesTheSharedContextMenu()
+    {
+        var grid = new ControlsDataGridView();
+        grid.Columns.Add(new DataGridTextColumn { Header = "Valor" });
+        var method = typeof(ControlsDataGridView).GetMethod("CreateColumnHeaderMenu", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+        var menu = method.Invoke(grid, new object?[] { null });
+        Assert.IsInstanceOfType<ControlsContextMenu>(menu);
+        Assert.IsTrue(((ControlsContextMenu)menu!).Items.OfType<MenuItem>().Any());
+    }
+
     [STATestMethod]
     public void ScrollBarDefaultsAndValidationAreStable()
     {

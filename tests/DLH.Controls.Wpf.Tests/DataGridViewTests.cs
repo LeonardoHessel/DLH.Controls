@@ -8,6 +8,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Threading;
 using DLH.Controls.Wpf;
+using ControlsContextMenu = DLH.Controls.Wpf.ContextMenu;
 
 internal static class DataGridViewTests
 {
@@ -273,7 +274,7 @@ internal static class DataGridViewTests
                 DataGridView.SetFilterMemberPath(status, nameof(Row.Status));
                 grid.SetFilter(status, "Pendente");
                 var method = typeof(DataGridView).GetMethod("CreateColumnHeaderMenu", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
-                var menu = (ContextMenu)method.Invoke(grid, new object?[] { status })!;
+                var menu = (ControlsContextMenu)method.Invoke(grid, new object?[] { status })!;
                 Check(menu.Items.OfType<MenuItem>().Any(item => Equals(item.Header, "Limpar filtro desta coluna")) &&
                       menu.Items.OfType<MenuItem>().Any(item => Equals(item.Header, "Limpar todos os filtros")),
                     "Filter cleanup actions are missing");
@@ -339,12 +340,12 @@ internal static class DataGridViewTests
                 var method = typeof(DataGridView).GetMethod("CreateColumnHeaderMenu", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
                 grid.ShowClearSortMenuItem = false;
                 grid.ShowRestoreDefaultSortMenuItem = true;
-                var menu = (ContextMenu)method.Invoke(grid, new object?[] { null })!;
+                var menu = (ControlsContextMenu)method.Invoke(grid, new object?[] { null })!;
                 Check(menu.Items.OfType<MenuItem>().All(item => !Equals(item.Header, "Limpar ordenação")) &&
                       menu.Items.OfType<MenuItem>().Any(item => Equals(item.Header, "Restaurar ordenação padrão")),
                       "Clear action visibility was not respected");
                 grid.ShowRestoreDefaultSortMenuItem = false;
-                menu = (ContextMenu)method.Invoke(grid, new object?[] { null })!;
+                menu = (ControlsContextMenu)method.Invoke(grid, new object?[] { null })!;
                 Check(menu.Items.OfType<MenuItem>().All(item => !Equals(item.Header, "Restaurar ordenação padrão")),
                       "Restore action visibility was not respected");
                 grid.ShowClearSortMenuItem = true;
@@ -354,14 +355,14 @@ internal static class DataGridViewTests
             Test("datagrid/column visibility menu and last visible guard", () =>
             {
                 var method = typeof(DataGridView).GetMethod("CreateColumnVisibilityMenu", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
-                var menu = (ContextMenu)method.Invoke(grid, null)!;
+                var menu = (ControlsContextMenu)method.Invoke(grid, null)!;
                 var columnItems = menu.Items.OfType<MenuItem>().Where(item => item.Tag is DataGridColumn).ToList();
                 Check(columnItems.Count == 3 && columnItems.All(item => item.IsCheckable && item.IsChecked), "Visibility menu does not represent columns");
                 var statusItem = columnItems.Single(item => ReferenceEquals(item.Tag, status));
                 statusItem.IsChecked = false; statusItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
                 Check(status.Visibility == Visibility.Collapsed, "Menu did not hide column");
                 name.Visibility = Visibility.Collapsed;
-                menu = (ContextMenu)method.Invoke(grid, null)!;
+                menu = (ControlsContextMenu)method.Invoke(grid, null)!;
                 var onlyVisible = menu.Items.OfType<MenuItem>().Single(item => ReferenceEquals(item.Tag, quantity));
                 Check(onlyVisible.IsChecked && !onlyVisible.IsEnabled, "Last visible column can be hidden");
                 var hidden = menu.Items.OfType<MenuItem>().Single(item => ReferenceEquals(item.Tag, status));

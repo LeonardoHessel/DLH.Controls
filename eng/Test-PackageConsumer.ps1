@@ -35,6 +35,7 @@ using System.Windows.Data;
 using DLH.Controls.Wpf;
 using PackageTabControl = DLH.Controls.Wpf.TabControl;
 using PackageScrollBar = DLH.Controls.Wpf.ScrollBar;
+using PackageContextMenu = DLH.Controls.Wpf.ContextMenu;
 
 internal static class Program
 {
@@ -62,6 +63,9 @@ internal static class Program
         if (tabs.Items.Count != 2 || tabs.CornerRadius.TopLeft <= 0) return 11;
         var scrollBar = new PackageScrollBar { Thickness = 8, CornerRadius = new CornerRadius(20) };
         if (scrollBar.Thickness != 8 || scrollBar.CornerRadius.TopLeft != 20) return 12;
+        var menu = new PackageContextMenu { CornerRadius = new CornerRadius(7) };
+        menu.Items.Add(new MenuItem { Header = "Ação" });
+        if (menu.Items.Count != 1 || menu.CornerRadius.TopLeft != 7) return 13;
         app.Shutdown();
         return 0;
     }

@@ -4,8 +4,8 @@
     <PackageId>DLH.Controls.Wpf</PackageId>
     <Version>0.2.0-preview.4</Version>
     <Authors>Leonardo D. de L. Hessel</Authors>
-    <Description>Componentes WPF customizáveis, incluindo TabControl com superfície contínua e DataGridView com seleção, ordenação e colunas configuráveis.</Description>
-    <PackageTags>WPF;Controls;TabControl;DataGrid;DataGridView;Windows;Paket</PackageTags>
+    <Description>Controles reutilizáveis para WPF, incluindo TabControl, DataGridView, ScrollBar e ContextMenu personalizáveis.</Description>
+    <PackageTags>WPF;Controls;TabControl;DataGrid;DataGridView;ScrollBar;ContextMenu;Windows;Paket</PackageTags>
     <PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
     <Copyright>Copyright © 2026 Leonardo D. de L. Hessel</Copyright>
     <PackageReadmeFile>README.md</PackageReadmeFile>

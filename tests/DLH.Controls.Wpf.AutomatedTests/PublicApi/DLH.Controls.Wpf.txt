@@ -1,6 +1,35 @@
 type DLH.Controls.Wpf.AddTabRequestedEventArgs
   ctor(System.Object)
   property System.Object Parameter { get;  }
+type DLH.Controls.Wpf.ContextMenu
+  ctor()
+  field System.Windows.DependencyProperty CheckedBrushProperty
+  field System.Windows.DependencyProperty CornerRadiusProperty
+  field System.Windows.DependencyProperty DisabledOpacityProperty
+  field System.Windows.DependencyProperty HoverBrushProperty
+  field System.Windows.DependencyProperty IconColumnWidthProperty
+  field System.Windows.DependencyProperty IconSizeProperty
+  field System.Windows.DependencyProperty IsShadowEnabledProperty
+  field System.Windows.DependencyProperty ItemPaddingProperty
+  field System.Windows.DependencyProperty SeparatorBrushProperty
+  field System.Windows.DependencyProperty ShadowBlurRadiusProperty
+  field System.Windows.DependencyProperty ShadowColorProperty
+  field System.Windows.DependencyProperty ShadowDepthProperty
+  field System.Windows.DependencyProperty ShadowOpacityProperty
+  method System.Void OnApplyTemplate()
+  property System.Boolean IsShadowEnabled { get; set;  }
+  property System.Double DisabledOpacity { get; set;  }
+  property System.Double IconColumnWidth { get; set;  }
+  property System.Double IconSize { get; set;  }
+  property System.Double ShadowBlurRadius { get; set;  }
+  property System.Double ShadowDepth { get; set;  }
+  property System.Double ShadowOpacity { get; set;  }
+  property System.Windows.CornerRadius CornerRadius { get; set;  }
+  property System.Windows.Media.Brush CheckedBrush { get; set;  }
+  property System.Windows.Media.Brush HoverBrush { get; set;  }
+  property System.Windows.Media.Brush SeparatorBrush { get; set;  }
+  property System.Windows.Media.Color ShadowColor { get; set;  }
+  property System.Windows.Thickness ItemPadding { get; set;  }
 type DLH.Controls.Wpf.DataGridView
   ctor()
   event System.EventHandler<DLH.Controls.Wpf.DataGridViewStateRestoredEventArgs> StateRestored

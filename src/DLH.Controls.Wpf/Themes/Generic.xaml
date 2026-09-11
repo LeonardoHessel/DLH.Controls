@@ -18,11 +18,110 @@
     <SolidColorBrush x:Key="DataGridView.Muted" Color="#B7BBC4" />
     <SolidColorBrush x:Key="DataGridView.Stripe" Color="#24373A40" />
     <SolidColorBrush x:Key="DataGridView.Error" Color="#FF7777" />
+    <SolidColorBrush x:Key="ContextMenu.Surface" Color="#35373C" />
+    <SolidColorBrush x:Key="ContextMenu.Text" Color="#F2F3F5" />
+    <SolidColorBrush x:Key="ContextMenu.Edge" Color="#4C5058" />
     <local:TabCloseAutomationNameConverter x:Key="Tabs.CloseAutomationNameConverter" />
     <local:DataGridViewColumnSelectionConverter x:Key="DataGridView.ColumnSelectionConverter" />
     <local:HalfValueToCornerRadiusConverter x:Key="DataGridView.HalfCornerRadiusConverter" />
     <local:ScrollBarCornerRadiusConverter x:Key="ScrollBar.CornerRadiusConverter" />
     <Thickness x:Key="Tabs.HeaderPadding">22,13,22,13</Thickness>
+
+    <Style x:Key="ContextMenu.ItemStyle" TargetType="{x:Type MenuItem}">
+        <Setter Property="Foreground" Value="{Binding Foreground, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Padding" Value="{Binding ItemPadding, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"/>
+        <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type MenuItem}">
+                    <Grid>
+                        <Border x:Name="ItemSurface" Background="{TemplateBinding Background}" CornerRadius="4"/>
+                        <Grid Margin="{TemplateBinding Padding}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="{Binding IconColumnWidth, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="16"/>
+                            </Grid.ColumnDefinitions>
+                            <ContentPresenter x:Name="IconPresenter" Grid.Column="0" ContentSource="Icon"
+                                              Width="{Binding IconSize, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"
+                                              Height="{Binding IconSize, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"
+                                              HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="CheckMark" Grid.Column="0" Text="✓" FontWeight="SemiBold"
+                                       Foreground="{Binding CheckedBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"
+                                       HorizontalAlignment="Left" VerticalAlignment="Center" Visibility="Collapsed"/>
+                            <ContentPresenter Grid.Column="1" ContentSource="Header" RecognizesAccessKey="True"
+                                              VerticalAlignment="Center"/>
+                            <TextBlock Grid.Column="2" Margin="18,0,4,0" Text="{TemplateBinding InputGestureText}"
+                                       Opacity=".65" VerticalAlignment="Center"/>
+                            <TextBlock x:Name="SubmenuArrow" Grid.Column="3" Text="›" FontSize="16"
+                                       HorizontalAlignment="Right" VerticalAlignment="Center" Visibility="Collapsed"/>
+                        </Grid>
+                        <Popup x:Name="PART_Popup" AllowsTransparency="True" Focusable="False"
+                               IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
+                               Placement="Right" HorizontalOffset="-3">
+                            <Border Background="{DynamicResource ContextMenu.Surface}"
+                                    BorderBrush="{DynamicResource ContextMenu.Edge}"
+                                    BorderThickness="1" CornerRadius="8" Padding="4">
+                                <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                            </Border>
+                        </Popup>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsHighlighted" Value="True">
+                            <Setter TargetName="ItemSurface" Property="Background" Value="{Binding HoverBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"/>
+                        </Trigger>
+                        <Trigger Property="IsEnabled" Value="False">
+                            <Setter Property="Opacity" Value="{Binding DisabledOpacity, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"/>
+                        </Trigger>
+                        <Trigger Property="IsChecked" Value="True"><Setter TargetName="CheckMark" Property="Visibility" Value="Visible"/><Setter TargetName="IconPresenter" Property="Visibility" Value="Collapsed"/></Trigger>
+                        <Trigger Property="HasItems" Value="True"><Setter TargetName="SubmenuArrow" Property="Visibility" Value="Visible"/></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style x:Key="ContextMenu.SeparatorStyle" TargetType="{x:Type Separator}">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type Separator}">
+                    <Border Height="1" Margin="8,4" Background="{Binding SeparatorBrush, RelativeSource={RelativeSource AncestorType={x:Type local:ContextMenu}}}"/>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
+    <Style TargetType="{x:Type local:ContextMenu}">
+        <Setter Property="Background" Value="{DynamicResource ContextMenu.Surface}"/>
+        <Setter Property="Foreground" Value="{DynamicResource ContextMenu.Text}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource ContextMenu.Edge}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="ItemContainerStyle" Value="{StaticResource ContextMenu.ItemStyle}"/>
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="{x:Type local:ContextMenu}">
+                    <Border x:Name="MenuSurface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
+                            Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                        <Border.Effect>
+                            <DropShadowEffect Color="{TemplateBinding ShadowColor}" Opacity="{TemplateBinding ShadowOpacity}"
+                                              BlurRadius="{TemplateBinding ShadowBlurRadius}" ShadowDepth="{TemplateBinding ShadowDepth}"/>
+                        </Border.Effect>
+                        <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                    </Border>
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsShadowEnabled" Value="False"><Setter TargetName="MenuSurface" Property="Effect" Value="{x:Null}"/></Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+        <Style.Resources>
+            <Style TargetType="{x:Type Separator}" BasedOn="{StaticResource ContextMenu.SeparatorStyle}"/>
+        </Style.Resources>
+    </Style>
 
     <ControlTemplate x:Key="ScrollBar.VerticalTemplate" TargetType="{x:Type local:ScrollBar}">
         <Grid Width="{TemplateBinding Thickness}">

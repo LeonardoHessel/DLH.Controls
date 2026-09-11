@@ -8,7 +8,7 @@ O raio informado é uniforme e seu valor renderizado nunca supera metade do eixo
 
 ## ContextMenu
 
-O menu compartilhado deverá manter `ContextMenu`, `MenuItem`, comandos e MVVM nativos, padronizando superfície, borda, raio, sombra, espaçamento, ícones, itens marcáveis, submenus, separadores e estados de foco/seleção. O menu de cabeçalho do `DataGridView` será migrado sem alterar suas ações.
+O menu compartilhado mantém `ContextMenu`, `MenuItem`, comandos e MVVM nativos, padronizando superfície, borda, raio, sombra, espaçamento, ícones, itens marcáveis, submenus, separadores e estados de foco/seleção. O menu de cabeçalho do `DataGridView` usa o componente sem alterar suas ações.
 
 ## Validação
 

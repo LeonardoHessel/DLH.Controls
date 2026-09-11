@@ -80,6 +80,12 @@ Os nomes foram padronizados durante a fase de pré-lançamento: `TabControl` sub
 
 `ScrollBar` deriva de `System.Windows.Controls.Primitives.ScrollBar`. `Thickness` controla o eixo transversal conforme `Orientation`; `CornerRadius` deve ser uniforme e é limitado visualmente à metade da espessura. `TrackBrush`, `ThumbBrush`, `ThumbHoverBrush`, `ThumbPressedBrush`, `TrackPadding` e `ThumbOpacity` controlam o visual. `ShowButtons` exibe comandos direcionais. A sombra é opt-in por `IsShadowEnabled` e usa `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`.
 
+# Referência da API — ContextMenu
+
+`ContextMenu` deriva de `System.Windows.Controls.ContextMenu` e preserva `Items`, `ItemContainerStyle`, comandos, bindings, atalhos, teclado, itens marcáveis e submenus nativos. `CornerRadius`, `Padding`, `ItemPadding`, `IconSize` e `IconColumnWidth` definem a geometria. `Background`, `Foreground`, `BorderBrush`, `HoverBrush`, `CheckedBrush` e `SeparatorBrush` definem as cores. `DisabledOpacity` controla itens indisponíveis. A sombra usa `IsShadowEnabled`, `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`.
+
+Em C#, quando `System.Windows.Controls` e `DLH.Controls.Wpf` estiverem importados simultaneamente, use um alias ou o nome qualificado para distinguir os dois tipos: `using ControlsContextMenu = DLH.Controls.Wpf.ContextMenu;`. Em XAML, o prefixo `dlh:` já elimina a ambiguidade.
+
 # Referência da API — DataGridView
 
 `AllowMultipleSelection` alterna entre seleção simples e estendida. `GetBatchSelection()` retorna `DataGridViewBatchSelection`; `BatchSelectionChangedCommand` recebe mudanças e `BatchActionCommand` é executado por `ExecuteBatchAction()`.

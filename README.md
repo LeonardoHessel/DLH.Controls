@@ -16,6 +16,7 @@ O pacote contém atualmente:
 | `TabControl` | Organizar páginas e documentos em abas | superfície contínua, quatro posições, drag and drop animado, criação, renomeação, fechamento, persistência, sombra e temas |
 | `DataGridView` | Exibir coleções em uma tabela rica | seleção configurável, ordenação visual, colunas reordenáveis/ocultáveis, estados de dados, densidades, badges/templates e barras de rolagem customizadas |
 | `ScrollBar` | Padronizar a rolagem em qualquer conteúdo | orientação, espessura, cores, raio seguro, sombra e botões direcionais opcionais |
+| `ContextMenu` | Apresentar ações contextuais consistentes | ícones, itens marcáveis, atalhos, submenus, separadores, estados e sombra configurável |
 
 > Requer **Windows** e **.NET 10** com WPF. O pacote atual é uma versão de pré-lançamento.
 
@@ -42,20 +43,20 @@ O exemplo mostra ordenação com indicadores, status renderizado por template, m
 ### CLI do .NET
 
 ```powershell
-dotnet add package DLH.Controls.Wpf --version 0.2.0-preview.4
+dotnet add package DLH.Controls.Wpf --version 0.3.0-preview.2
 ```
 
 ### Package Manager do Visual Studio
 
 ```powershell
-Install-Package DLH.Controls.Wpf -Version 0.2.0-preview.4
+Install-Package DLH.Controls.Wpf -Version 0.3.0-preview.2
 ```
 
 ### PackageReference
 
 ```xml
 <ItemGroup>
-    <PackageReference Include="DLH.Controls.Wpf" Version="0.2.0-preview.4" />
+    <PackageReference Include="DLH.Controls.Wpf" Version="0.3.0-preview.2" />
 </ItemGroup>
 ```
 
@@ -64,14 +65,14 @@ Install-Package DLH.Controls.Wpf -Version 0.2.0-preview.4
 Informe o projeto que receberá a referência:
 
 ```powershell
-paket add DLH.Controls.Wpf --version 0.2.0-preview.4 --project caminho/SeuProjeto.csproj
+paket add DLH.Controls.Wpf --version 0.3.0-preview.2 --project caminho/SeuProjeto.csproj
 ```
 
 Ou declare o pacote no arquivo `paket.dependencies`:
 
 ```text
 source https://api.nuget.org/v3/index.json
-nuget DLH.Controls.Wpf 0.2.0-preview.4
+nuget DLH.Controls.Wpf 0.3.0-preview.2
 ```
 
 Adicione esta linha ao `paket.references` do projeto WPF:
@@ -347,6 +348,39 @@ Use `controls:ScrollBar` diretamente ou dentro do template de qualquer `ScrollVi
 `CornerRadius` aceita um valor uniforme; na renderização ele é limitado automaticamente à metade da espessura. A sombra é opcional por `IsShadowEnabled`, e seus parâmetros podem ser alterados com `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`.
 
 O `DataGridView` já utiliza esse componente internamente. Suas propriedades `ScrollBarThickness`, `ScrollBarTrackBrush`, `ScrollBarThumbBrush` e `ScrollBarThumbHoverBrush` foram preservadas.
+
+# ContextMenu
+
+O `ContextMenu` mantém os comandos, bindings, teclado, itens marcáveis e submenus do controle nativo do WPF, com o visual da biblioteca.
+
+```xml
+<Button Content="Opções">
+    <Button.ContextMenu>
+        <dlh:ContextMenu CornerRadius="8"
+                         ItemPadding="12,8"
+                         IconColumnWidth="28"
+                         IsShadowEnabled="True">
+            <MenuItem Header="Atualizar" InputGestureText="F5">
+                <MenuItem.Icon>
+                    <TextBlock Text="↻" />
+                </MenuItem.Icon>
+            </MenuItem>
+            <MenuItem Header="Exibir detalhes"
+                      IsCheckable="True"
+                      IsChecked="True" />
+            <Separator />
+            <MenuItem Header="Exportar">
+                <MenuItem Header="Arquivo CSV" />
+                <MenuItem Header="Planilha" IsEnabled="False" />
+            </MenuItem>
+        </dlh:ContextMenu>
+    </Button.ContextMenu>
+</Button>
+```
+
+Use `Background`, `Foreground`, `BorderBrush`, `BorderThickness` e `Padding` para a superfície. `HoverBrush`, `CheckedBrush`, `SeparatorBrush`, `DisabledOpacity`, `ItemPadding`, `IconSize` e `IconColumnWidth` controlam os itens. A sombra utiliza `IsShadowEnabled`, `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`.
+
+O menu aberto com o botão direito nos cabeçalhos do `DataGridView` já é uma instância desse componente.
 
 # DataGridView
 
@@ -765,10 +799,9 @@ O crédito pode aparecer em **Sobre**, **Créditos** ou **Licenças de terceiros
 # Pacote e autoria
 
 - Pacote: [DLH.Controls.Wpf no NuGet.org](https://www.nuget.org/packages/DLH.Controls.Wpf)
-- Versão publicada mais recente: `0.2.0-preview.4`
+- Versão publicada mais recente: `0.3.0-preview.2`
 - Autor: **Leonardo D. de L. Hessel**
 - Plataforma: Windows
 - Framework: .NET 10 / WPF
 
 Mudanças posteriores à versão indicada permanecem em desenvolvimento até uma nova release.
-

@@ -8,26 +8,27 @@ Este manual apresenta o uso da biblioteca **DLH Controls** pelo ponto de vista d
 2. [Preparação do XAML](#2-preparação-do-xaml)
 3. [TabControl](#3-tabcontrol)
 4. [DataGridView](#4-datagridview)
-5. [Temas e personalização](#5-temas-e-personalização)
-6. [Acessibilidade e teclado](#6-acessibilidade-e-teclado)
-7. [Desempenho](#7-desempenho)
-8. [Diagnóstico de problemas](#8-diagnóstico-de-problemas)
-9. [Aplicação de demonstração](#9-aplicação-de-demonstração)
-10. [Documentos de referência](#10-documentos-de-referência)
+5. [ScrollBar e ContextMenu](#5-scrollbar-e-contextmenu)
+6. [Temas e personalização](#6-temas-e-personalização)
+7. [Acessibilidade e teclado](#7-acessibilidade-e-teclado)
+8. [Desempenho](#8-desempenho)
+9. [Diagnóstico de problemas](#9-diagnóstico-de-problemas)
+10. [Aplicação de demonstração](#10-aplicação-de-demonstração)
+11. [Documentos de referência](#11-documentos-de-referência)
 
 ## 1. Instalação
 
 Instale o pacote no projeto WPF:
 
 ```powershell
-dotnet add package DLH.Controls.Wpf --version 0.2.0-preview.4
+dotnet add package DLH.Controls.Wpf --version 0.3.0-preview.2
 ```
 
 Ou adicione a referência diretamente ao arquivo do projeto:
 
 ```xml
 <ItemGroup>
-    <PackageReference Include="DLH.Controls.Wpf" Version="0.2.0-preview.4" />
+    <PackageReference Include="DLH.Controls.Wpf" Version="0.3.0-preview.2" />
 </ItemGroup>
 ```
 
@@ -374,7 +375,37 @@ A prioridade é: erro, carregamento, coleção vazia e, por fim, dados.
 
 As densidades disponíveis são `Compact`, `Default` e `Comfortable`. As barras reservam espaço próprio para não cobrir linhas, cabeçalhos ou o conteúdo da última coluna.
 
-## 5. Temas e personalização
+## 5. ScrollBar e ContextMenu
+
+O `ScrollBar` pode ser usado diretamente em qualquer conteúdo rolável. `Thickness` controla sua espessura e `CornerRadius` é limitado visualmente à metade dessa medida. Cores, opacidade, sombra e botões direcionais são opcionais.
+
+```xml
+<dlh:ScrollBar Orientation="Vertical"
+               Minimum="0" Maximum="100" Value="30"
+               Thickness="10" CornerRadius="5"
+               ShowButtons="False" />
+```
+
+O `ContextMenu` aceita os mesmos `MenuItem`, comandos, bindings, atalhos, itens marcáveis e submenus do WPF:
+
+```xml
+<Button Content="Opções">
+    <Button.ContextMenu>
+        <dlh:ContextMenu CornerRadius="8" ItemPadding="12,8">
+            <MenuItem Header="Atualizar" InputGestureText="F5" />
+            <MenuItem Header="Exibir detalhes" IsCheckable="True" IsChecked="True" />
+            <Separator />
+            <MenuItem Header="Exportar">
+                <MenuItem Header="Arquivo CSV" />
+            </MenuItem>
+        </dlh:ContextMenu>
+    </Button.ContextMenu>
+</Button>
+```
+
+O `DataGridView` usa os dois componentes internamente. Eles também estão disponíveis para controles próprios e aplicações consumidoras.
+
+## 6. Temas e personalização
 
 As propriedades WPF usuais, como `Background`, `Foreground`, `BorderBrush`, `BorderThickness`, `FontFamily` e `FontSize`, continuam disponíveis.
 
@@ -390,7 +421,7 @@ Para substituir recursos globais, declare chaves no dicionário da aplicação:
 
 Os recursos são dinâmicos e podem ser trocados durante a execução. Consulte o README para a lista completa das principais chaves.
 
-## 6. Acessibilidade e teclado
+## 7. Acessibilidade e teclado
 
 - Preserve contraste suficiente entre texto, fundo, foco e seleção.
 - Forneça textos acessíveis para cabeçalhos compostos apenas por ícones.
@@ -401,7 +432,7 @@ Os recursos são dinâmicos e podem ser trocados durante a execução. Consulte 
 
 Consulte a [lista de verificação de acessibilidade](AccessibilityChecklist.md) antes de publicar uma aplicação.
 
-## 7. Desempenho
+## 8. Desempenho
 
 O `DataGridView` mantém virtualização de linhas e colunas habilitada. Para preservar esse comportamento:
 
@@ -410,7 +441,7 @@ O `DataGridView` mantém virtualização de linhas e colunas habilitada. Para pr
 - mantenha templates de célula simples em tabelas muito grandes;
 - evite medir colunas extensas com `Width="Auto"` quando não for necessário.
 
-## 8. Diagnóstico de problemas
+## 9. Diagnóstico de problemas
 
 ### O estilo não foi aplicado
 
@@ -436,7 +467,7 @@ Confirme `CanUserSortColumns`, `CanUserSort` na coluna e um `SortMemberPath` cor
 
 Remova o `ScrollViewer` externo e confirme que `EnableRowVirtualization`, `EnableColumnVirtualization` e `ScrollViewer.CanContentScroll` continuam habilitados.
 
-## 9. Aplicação de demonstração
+## 10. Aplicação de demonstração
 
 Clone o repositório e execute:
 
@@ -446,7 +477,7 @@ dotnet run --project samples/DLH.Controls.Wpf.Demo -c Release
 
 A demonstração permite experimentar os controles, alterar configurações e observar diferentes posições, temas, densidades, modos de seleção e comportamentos.
 
-## 10. Documentos de referência
+## 11. Documentos de referência
 
 - [Referência da API](ApiReference.md)
 - [Guia detalhado do TabControl](TabControl.md)
@@ -455,4 +486,3 @@ A demonstração permite experimentar os controles, alterar configurações e ob
 - [Histórico de versões](../CHANGELOG.md)
 - [Como contribuir](../CONTRIBUTING.md)
 - [Política de segurança](../SECURITY.md)
-

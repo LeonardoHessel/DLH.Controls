@@ -12,7 +12,22 @@
  <Grid Margin="28,22,28,24"><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
   <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
    <StackPanel><TextBlock Text="Resumo de inspeções" FontSize="28" FontWeight="SemiBold" Foreground="#42A5E8"/><TextBlock Margin="0,4,0,0" Foreground="#AEB3BD" Text="Tabela compacta com ordenação, seleção, colunas configuráveis e estados de dados."/></StackPanel>
-   <Button Grid.Column="1" Content="Abrir exemplo de abas" Click="OpenTabsDemo_Click" VerticalAlignment="Center"/>
+   <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+    <Button Content="Menu de opções">
+     <Button.ContextMenu>
+      <controls:ContextMenu CornerRadius="8" ItemPadding="12,8" IconColumnWidth="28">
+       <MenuItem Header="Atualizar" InputGestureText="F5"><MenuItem.Icon><TextBlock Text="↻" Foreground="#42A5E8"/></MenuItem.Icon></MenuItem>
+       <MenuItem Header="Exibir detalhes" IsCheckable="True" IsChecked="True"/>
+       <Separator/>
+       <MenuItem Header="Exportar">
+        <MenuItem Header="Arquivo CSV"/>
+        <MenuItem Header="Planilha" IsEnabled="False"/>
+       </MenuItem>
+      </controls:ContextMenu>
+     </Button.ContextMenu>
+    </Button>
+    <Button Content="Abrir exemplo de abas" Click="OpenTabsDemo_Click"/>
+   </StackPanel>
   </Grid>
   <UniformGrid Grid.Row="1" Columns="3" Margin="0,20,0,18">
    <Border Style="{StaticResource SummaryCard}"><StackPanel><TextBlock Text="INSPECIONADOS" Foreground="#9DA3AE" FontSize="11" FontWeight="SemiBold"/><TextBlock Text="1174" FontSize="24" Margin="0,4,0,0"/></StackPanel></Border>

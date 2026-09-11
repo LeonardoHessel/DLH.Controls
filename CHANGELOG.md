@@ -5,6 +5,8 @@
 - Padronização dos nomes públicos para `TabControl`, `TabControlItem` e `ScrollBar`.
 - Novo `ScrollBar` reutilizável com orientação, espessura, cores, estados, raio limitado, sombra e botões opcionais.
 - `DataGridView` migrado para a barra compartilhada, preservando suas propriedades de compatibilidade.
+- Novo `ContextMenu` reutilizável com superfície, espaçamento, ícones, itens marcáveis, submenus, separadores, estados e sombra configuráveis.
+- Menu de cabeçalho do `DataGridView` migrado para o `ContextMenu` compartilhado, preservando ordenação, filtros e visibilidade das colunas.
 
 - Persistência versionada do layout das colunas e da ordenação.
 - Ordenação por múltiplas colunas com prioridade visual.

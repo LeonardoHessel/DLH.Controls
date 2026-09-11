@@ -406,5 +406,11 @@ type DLH.Controls.Wpf.TabSpacingConverter
   method System.Object ConvertBack(System.Object, System.Type, System.Object, System.Globalization.CultureInfo)
   method System.Object[] ConvertBack(System.Object, System.Type[], System.Object, System.Globalization.CultureInfo)
   property DLH.Controls.Wpf.TabSpacingConverter Instance { get;  }
+type DLH.Controls.Wpf.ToggleMenuItem
+  ctor()
+  field System.Windows.DependencyProperty CheckedIconProperty
+  field System.Windows.DependencyProperty UncheckedIconProperty
+  property System.Object CheckedIcon { get; set;  }
+  property System.Object UncheckedIcon { get; set;  }
 type XamlGeneratedNamespace.GeneratedInternalTypeHelper
   ctor()

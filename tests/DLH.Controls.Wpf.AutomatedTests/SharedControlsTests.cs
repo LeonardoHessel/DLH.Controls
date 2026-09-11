@@ -28,6 +28,29 @@ public sealed class SharedControlsTests
     }
 
     [STATestMethod]
+    public void ToggleMenuItemSynchronizesBooleanStateAndStateIcons()
+    {
+        var checkedIcon = new TextBlock { Text = "Ligado" };
+        var uncheckedIcon = new TextBlock { Text = "Desligado" };
+        var item = new ToggleMenuItem
+        {
+            Header = "Exibir detalhes",
+            CheckedIcon = checkedIcon,
+            UncheckedIcon = uncheckedIcon
+        };
+
+        Assert.IsTrue(item.IsCheckable);
+        Assert.IsFalse(item.IsChecked);
+        Assert.AreSame(uncheckedIcon, item.Icon);
+
+        item.IsChecked = true;
+
+        Assert.AreSame(checkedIcon, item.Icon);
+        var metadata = (FrameworkPropertyMetadata)ToggleMenuItem.IsCheckedProperty.GetMetadata(typeof(ToggleMenuItem));
+        Assert.IsTrue(metadata.BindsTwoWayByDefault);
+    }
+
+    [STATestMethod]
     public void ContextMenuTemplateSupportsItemsSeparatorsAndOptionalShadow()
     {
         var menu = new ControlsContextMenu { IsShadowEnabled = false };

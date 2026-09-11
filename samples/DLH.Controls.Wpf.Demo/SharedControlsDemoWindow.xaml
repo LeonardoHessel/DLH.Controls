@@ -44,7 +44,10 @@
                                 <Button.ContextMenu>
                                     <controls:ContextMenu x:Name="DemoMenu">
                                         <MenuItem Header="Atualizar" InputGestureText="F5"><MenuItem.Icon><TextBlock Text="↻" Foreground="#42A5E8"/></MenuItem.Icon></MenuItem>
-                                        <MenuItem Header="Exibir detalhes" IsCheckable="True" IsChecked="True"/>
+                                        <controls:ToggleMenuItem x:Name="DetailsToggleItem" Header="Exibir detalhes" IsChecked="True">
+                                            <controls:ToggleMenuItem.CheckedIcon><TextBlock Text="●" Foreground="#7EDC9A"/></controls:ToggleMenuItem.CheckedIcon>
+                                            <controls:ToggleMenuItem.UncheckedIcon><TextBlock Text="○" Foreground="#AEB3BD"/></controls:ToggleMenuItem.UncheckedIcon>
+                                        </controls:ToggleMenuItem>
                                         <MenuItem Header="Modo avançado" IsCheckable="True"/>
                                         <Separator/>
                                         <MenuItem Header="Exportar">

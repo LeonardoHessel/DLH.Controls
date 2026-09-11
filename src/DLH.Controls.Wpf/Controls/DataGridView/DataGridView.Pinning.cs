@@ -5,6 +5,36 @@ using System.Windows.Controls;
 
 namespace DLH.Controls.Wpf;
 
+internal enum DataGridViewStickyEdge
+{
+    Natural,
+    Start,
+    End
+}
+
+internal readonly record struct DataGridViewStickyPosition(DataGridViewStickyEdge Edge, double Position);
+
+internal static class DataGridViewStickyLayout
+{
+    internal static DataGridViewStickyPosition Calculate(double naturalStart, double size,
+        double viewportStart, double viewportEnd, double occupiedStart, double occupiedEnd)
+    {
+        if (!double.IsFinite(naturalStart) || !double.IsFinite(size) || size < 0 ||
+            !double.IsFinite(viewportStart) || !double.IsFinite(viewportEnd) || viewportEnd < viewportStart ||
+            !double.IsFinite(occupiedStart) || !double.IsFinite(occupiedEnd) || occupiedStart < 0 || occupiedEnd < 0)
+            throw new ArgumentOutOfRangeException(nameof(naturalStart), "As dimensões da fixação aderente precisam ser finitas e válidas.");
+
+        var startLimit = viewportStart + occupiedStart;
+        var endLimit = viewportEnd - occupiedEnd;
+        var naturalEnd = naturalStart + size;
+        if (naturalStart < startLimit)
+            return new DataGridViewStickyPosition(DataGridViewStickyEdge.Start, startLimit);
+        if (naturalEnd > endLimit)
+            return new DataGridViewStickyPosition(DataGridViewStickyEdge.End, endLimit - size);
+        return new DataGridViewStickyPosition(DataGridViewStickyEdge.Natural, naturalStart);
+    }
+}
+
 public sealed class DataGridViewRowPinChangedEventArgs(object item) : EventArgs
 {
     public object Item { get; } = item;

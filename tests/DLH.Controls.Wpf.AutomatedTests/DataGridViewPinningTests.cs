@@ -9,6 +9,30 @@ namespace DLH.Controls.Wpf.AutomatedTests;
 [TestCategory("Pinning")]
 public sealed class DataGridViewPinningTests
 {
+    [TestMethod]
+    public void StickyLayoutPinsOnlyAfterTouchingAViewportEdge()
+    {
+        var layoutType = typeof(DataGridView).Assembly.GetType("DLH.Controls.Wpf.DataGridViewStickyLayout")!;
+        var calculate = layoutType.GetMethod("Calculate", System.Reflection.BindingFlags.Static |
+            System.Reflection.BindingFlags.NonPublic)!;
+
+        static (string Edge, double Position) Result(System.Reflection.MethodInfo calculate, params object[] values)
+        {
+            var result = calculate.Invoke(null, values)!;
+            var type = result.GetType();
+            return (type.GetProperty("Edge")!.GetValue(result)!.ToString()!,
+                (double)type.GetProperty("Position")!.GetValue(result)!);
+        }
+
+        Assert.AreEqual(("Natural", 40d), Result(calculate, 40d, 20d, 0d, 100d, 0d, 0d));
+        Assert.AreEqual(("Start", 0d), Result(calculate, -1d, 20d, 0d, 100d, 0d, 0d));
+        Assert.AreEqual(("End", 80d), Result(calculate, 81d, 20d, 0d, 100d, 0d, 0d));
+        Assert.AreEqual(("Start", 20d), Result(calculate, 10d, 15d, 0d, 100d, 20d, 0d));
+        Assert.AreEqual(("End", 70d), Result(calculate, 80d, 15d, 0d, 100d, 0d, 15d));
+        Assert.ThrowsExactly<System.Reflection.TargetInvocationException>(() =>
+            calculate.Invoke(null, [double.NaN, 20d, 0d, 100d, 0d, 0d]));
+    }
+
     [STATestMethod]
     public void PinningIsOptionalLimitedAndObservable()
     {

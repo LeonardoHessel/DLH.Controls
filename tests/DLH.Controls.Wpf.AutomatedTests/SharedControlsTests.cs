@@ -1,6 +1,7 @@
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Effects;
 using ControlsScrollBar = DLH.Controls.Wpf.ScrollBar;
@@ -466,6 +467,24 @@ public sealed class SharedControlsTests
             Assert.AreEqual(9d, vertical.Thickness);
             Assert.AreEqual(9d, horizontal.Thickness);
             Assert.AreSame(grid.ScrollBarThumbBrush, vertical.ThumbBrush);
+
+            var shiftWheel = typeof(ControlsDataGridView).GetMethod("TryScrollHorizontally",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            Assert.IsGreaterThan(0d, viewer.ScrollableWidth);
+            Assert.IsTrue((bool)shiftWheel.Invoke(grid, [-120, ModifierKeys.Shift])!);
+            viewer.UpdateLayout();
+            Assert.IsGreaterThan(0d, viewer.HorizontalOffset,
+                "Shift + roda para baixo deve rolar o conteúdo para a direita.");
+
+            var offsetAfterShiftWheel = viewer.HorizontalOffset;
+            Assert.IsFalse((bool)shiftWheel.Invoke(grid, [-120, ModifierKeys.None])!);
+            Assert.AreEqual(offsetAfterShiftWheel, viewer.HorizontalOffset,
+                "A roda sem Shift deve permanecer disponível para a rolagem vertical.");
+
+            Assert.IsTrue((bool)shiftWheel.Invoke(grid, [120, ModifierKeys.Shift])!);
+            viewer.UpdateLayout();
+            Assert.IsLessThan(offsetAfterShiftWheel, viewer.HorizontalOffset,
+                "Shift + roda para cima deve rolar o conteúdo para a esquerda.");
         }
         finally { window.Close(); }
     }

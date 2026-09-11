@@ -50,6 +50,29 @@ public partial class DataGridView : DataGrid
         UpdateRoundedContentClip();
     }
 
+    protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
+    {
+        if (TryScrollHorizontally(e.Delta, Keyboard.Modifiers))
+        {
+            e.Handled = true;
+            return;
+        }
+
+        base.OnPreviewMouseWheel(e);
+    }
+
+    internal bool TryScrollHorizontally(int wheelDelta, ModifierKeys modifiers)
+    {
+        if ((modifiers & ModifierKeys.Shift) == 0 || wheelDelta == 0 ||
+            GetTemplateChild("DG_ScrollViewer") is not ScrollViewer viewer || viewer.ScrollableWidth <= 0)
+            return false;
+
+        var detents = wheelDelta / (double)Mouse.MouseWheelDeltaForOneLine;
+        var distance = Math.Max(1, SystemParameters.WheelScrollLines) * 16d * detents;
+        viewer.ScrollToHorizontalOffset(Math.Clamp(viewer.HorizontalOffset - distance, 0, viewer.ScrollableWidth));
+        return true;
+    }
+
     private void UpdateRoundedContentClip()
     {
         if (GetTemplateChild("PART_ClipRoot") is not FrameworkElement root ||

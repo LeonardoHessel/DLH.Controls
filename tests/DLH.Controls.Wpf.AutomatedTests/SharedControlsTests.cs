@@ -133,6 +133,7 @@ public sealed class SharedControlsTests
             menu.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Loaded);
             menu.ApplyTemplate();
             item.ApplyTemplate();
+            submenu.ApplyTemplate();
 
             var surface = (Border)menu.Template.FindName("MenuSurface", menu)!;
             Assert.IsNull(surface.Effect);
@@ -140,6 +141,10 @@ public sealed class SharedControlsTests
             Assert.AreSame(item.Style, child.Style);
             Assert.AreSame(customStyle, customItem.Style);
             Assert.IsNotNull(item.Template.FindName("ItemSurface", item));
+            Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)item.Template.FindName("IconHost", item)!).HorizontalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)item.Template.FindName("IconPresenter", item)!).HorizontalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)item.Template.FindName("CheckMark", item)!).HorizontalAlignment);
+            Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)submenu.Template.FindName("SubmenuArrow", submenu)!).HorizontalAlignment);
             Assert.AreEqual(Visibility.Visible, ((FrameworkElement)item.Template.FindName("CheckMark", item)!).Visibility);
             menu.IsShadowEnabled = true;
             menu.UpdateLayout();

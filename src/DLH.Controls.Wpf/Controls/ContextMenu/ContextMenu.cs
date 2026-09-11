@@ -46,7 +46,7 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
 
     private void ApplyItemStyle(DependencyObject element)
     {
-        if (element.ReadLocalValue(StyleProperty) != DependencyProperty.UnsetValue) return;
+        var canApplyDefaultStyle = element.ReadLocalValue(StyleProperty) == DependencyProperty.UnsetValue;
         if (element is MenuItem menuItem)
         {
             menuItem.Resources["ContextMenu.Surface"] = Background;
@@ -61,16 +61,29 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
             menuItem.Resources["ContextMenu.CornerRadius"] = CornerRadius;
             menuItem.Resources["ContextMenu.Padding"] = Padding;
             menuItem.Resources["ContextMenu.BorderThickness"] = BorderThickness;
-            if ((ItemContainerStyle ?? TryFindResource(typeof(MenuItem)) as Style) is { } menuItemStyle)
+            if (canApplyDefaultStyle && (ItemContainerStyle ?? TryFindResource(typeof(MenuItem)) as Style) is { } menuItemStyle)
                 menuItem.SetCurrentValue(StyleProperty, menuItemStyle);
         }
         else if (element is Separator separator)
         {
             separator.Resources["ContextMenu.Separator"] = SeparatorBrush;
-            if (TryFindResource(typeof(Separator)) is Style separatorStyle)
+            if (canApplyDefaultStyle && TryFindResource(typeof(Separator)) is Style separatorStyle)
                 separator.SetCurrentValue(StyleProperty, separatorStyle);
         }
     }
+
+    protected override void OnPropertyChanged(DependencyPropertyChangedEventArgs e)
+    {
+        base.OnPropertyChanged(e);
+        if (Items.Count > 0 && IsItemAppearanceProperty(e.Property)) ApplyItemStyles(Items);
+    }
+
+    private static bool IsItemAppearanceProperty(DependencyProperty property) =>
+        property == BackgroundProperty || property == ForegroundProperty || property == BorderBrushProperty ||
+        property == BorderThicknessProperty || property == PaddingProperty || property == CornerRadiusProperty ||
+        property == ItemPaddingProperty || property == IconSizeProperty || property == IconColumnWidthProperty ||
+        property == HoverBrushProperty || property == CheckedBrushProperty || property == SeparatorBrushProperty ||
+        property == DisabledOpacityProperty;
 
     public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
         nameof(CornerRadius), typeof(CornerRadius), typeof(ContextMenu),

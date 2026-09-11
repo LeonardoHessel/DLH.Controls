@@ -12,6 +12,7 @@
 - Correção da composição entre `MenuItem` e `Separator` e da propagação visual para itens e submenus.
 - Botões direcionais do `ScrollBar` agora seguem as cores e os estados do componente.
 - Seletor visual de cores em todas as propriedades cromáticas do laboratório, preservando a entrada hexadecimal manual.
+- Correção da atualização de cores do `ContextMenu` após a primeira abertura, incluindo separadores, itens, estados e submenus.
 
 - Persistência versionada do layout das colunas e da ordenação.
 - Ordenação por múltiplas colunas com prioridade visual.

@@ -1,5 +1,6 @@
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Media.Effects;
 using ControlsScrollBar = DLH.Controls.Wpf.ScrollBar;
 using ControlsDataGridView = DLH.Controls.Wpf.DataGridView;
@@ -73,6 +74,41 @@ public sealed class SharedControlsTests
         var menu = method.Invoke(grid, new object?[] { null });
         Assert.IsInstanceOfType<ControlsContextMenu>(menu);
         Assert.IsTrue(((ControlsContextMenu)menu!).Items.OfType<MenuItem>().Any());
+    }
+
+    [STATestMethod]
+    public void ContextMenuRefreshesEveryColorAfterItsFirstApplication()
+    {
+        var item = new MenuItem { Header = "Item" };
+        var separator = new Separator();
+        var child = new MenuItem { Header = "Filho" };
+        item.Items.Add(child);
+        var menu = new ControlsContextMenu();
+        menu.Items.Add(item);
+        menu.Items.Add(separator);
+        menu.ApplyTemplate();
+
+        var surfaceColor = Color.FromRgb(10, 20, 30);
+        var textColor = Color.FromRgb(40, 50, 60);
+        var edgeColor = Color.FromRgb(70, 80, 90);
+        var hoverColor = Color.FromRgb(100, 110, 120);
+        var checkedColor = Color.FromRgb(130, 140, 150);
+        var separatorColor = Color.FromRgb(160, 170, 180);
+        menu.Background = new SolidColorBrush(surfaceColor);
+        menu.Foreground = new SolidColorBrush(textColor);
+        menu.BorderBrush = new SolidColorBrush(edgeColor);
+        menu.HoverBrush = new SolidColorBrush(hoverColor);
+        menu.CheckedBrush = new SolidColorBrush(checkedColor);
+        menu.SeparatorBrush = new SolidColorBrush(separatorColor);
+
+        AssertBrush(item.Resources["ContextMenu.Surface"], surfaceColor);
+        AssertBrush(item.Resources["ContextMenu.Text"], textColor);
+        AssertBrush(item.Resources["ContextMenu.Edge"], edgeColor);
+        AssertBrush(item.Resources["ContextMenu.Hover"], hoverColor);
+        AssertBrush(item.Resources["ContextMenu.Checked"], checkedColor);
+        AssertBrush(child.Resources["ContextMenu.Hover"], hoverColor);
+        AssertBrush(separator.Resources["ContextMenu.Separator"], separatorColor);
+        Assert.AreSame(menu.Background, ((Border)menu.Template.FindName("MenuSurface", menu)!).Background);
     }
 
     [STATestMethod]
@@ -152,5 +188,8 @@ public sealed class SharedControlsTests
         element.ApplyTemplate(); element.UpdateLayout();
         return window;
     }
+
+    private static void AssertBrush(object value, Color expected) =>
+        Assert.AreEqual(expected, Assert.IsInstanceOfType<SolidColorBrush>(value).Color);
 }
 

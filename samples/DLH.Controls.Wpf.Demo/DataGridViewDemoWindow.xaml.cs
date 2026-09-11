@@ -62,6 +62,8 @@ public partial class DataGridViewDemoWindow : Window
         ShipmentsGrid.IsMiddleButtonPanningEnabled = MiddleButtonPanning.IsChecked == true;
         ShipmentsGrid.CanPinRows = PinRows.IsChecked == true;
         ShipmentsGrid.CanPinColumns = PinColumns.IsChecked == true;
+        ShipmentsGrid.ShowPinnedBoundarySeparator = ShowPinnedBoundary.IsChecked == true;
+        ApplyPinnedBoundaryColor();
         ShipmentsGrid.AlternatingRowBackground = StripedRows.IsChecked == true
             ? (System.Windows.Media.Brush)new System.Windows.Media.BrushConverter().ConvertFrom("#24373A40")!
             : System.Windows.Media.Brushes.Transparent;
@@ -76,6 +78,42 @@ public partial class DataGridViewDemoWindow : Window
     private void ScrollBarThicknessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         if (ShipmentsGrid is not null) ShipmentsGrid.ScrollBarThickness = e.NewValue;
+    }
+
+    private void PinnedBoundaryThicknessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+    {
+        if (ShipmentsGrid is not null) ShipmentsGrid.PinnedBoundarySeparatorThickness = e.NewValue;
+    }
+
+    private void PinnedBoundaryColor_LostKeyboardFocus(object sender, KeyboardFocusChangedEventArgs e) =>
+        ApplyPinnedBoundaryColor();
+
+    private void ApplyPinnedBoundaryColor()
+    {
+        if (ShipmentsGrid is null || PinnedBoundaryColor is null) return;
+        try
+        {
+            if (new System.Windows.Media.BrushConverter().ConvertFromString(PinnedBoundaryColor.Text) is System.Windows.Media.Brush brush)
+                ShipmentsGrid.PinnedBoundarySeparatorBrush = brush;
+        }
+        catch (FormatException) { }
+        catch (NotSupportedException) { }
+    }
+
+    private void PickPinnedBoundaryColor_Click(object sender, RoutedEventArgs e)
+    {
+        if (sender is not Button { Tag: TextBox target }) return;
+        using var dialog = new System.Windows.Forms.ColorDialog { FullOpen = true, AnyColor = true };
+        try
+        {
+            var current = (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(target.Text);
+            dialog.Color = System.Drawing.Color.FromArgb(current.A, current.R, current.G, current.B);
+        }
+        catch (FormatException) { }
+        if (dialog.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
+        target.Text = $"#{dialog.Color.A:X2}{dialog.Color.R:X2}{dialog.Color.G:X2}{dialog.Color.B:X2}";
+        ShipmentsGrid.PinnedBoundarySeparatorBrush = new System.Windows.Media.SolidColorBrush(
+            System.Windows.Media.Color.FromArgb(dialog.Color.A, dialog.Color.R, dialog.Color.G, dialog.Color.B));
     }
 
     private void MousePanningSpeedSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)

@@ -116,6 +116,8 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty MaxPinnedColumnsProperty
   field System.Windows.DependencyProperty MaxPinnedRowsProperty
   field System.Windows.DependencyProperty MousePanningSpeedProperty
+  field System.Windows.DependencyProperty PinnedBoundarySeparatorBrushProperty
+  field System.Windows.DependencyProperty PinnedBoundarySeparatorThicknessProperty
   field System.Windows.DependencyProperty RowDetailsPopupContentStyleProperty
   field System.Windows.DependencyProperty RowDetailsPopupHorizontalOffsetProperty
   field System.Windows.DependencyProperty RowDetailsPopupPlacementProperty
@@ -131,6 +133,7 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty SelectionChangedCommandProperty
   field System.Windows.DependencyProperty ShowClearSortMenuItemProperty
   field System.Windows.DependencyProperty ShowFilterMenuItemsProperty
+  field System.Windows.DependencyProperty ShowPinnedBoundarySeparatorProperty
   field System.Windows.DependencyProperty ShowRestoreDefaultSortMenuItemProperty
   field System.Windows.DependencyProperty ShowRowDetailsOnSelectionProperty
   field System.Windows.DependencyProperty ShowRowDetailsPopupOnClickProperty
@@ -195,6 +198,7 @@ type DLH.Controls.Wpf.DataGridView
   property System.Boolean IsSmoothVerticalScrollingEnabled { get; set;  }
   property System.Boolean ShowClearSortMenuItem { get; set;  }
   property System.Boolean ShowFilterMenuItems { get; set;  }
+  property System.Boolean ShowPinnedBoundarySeparator { get; set;  }
   property System.Boolean ShowRestoreDefaultSortMenuItem { get; set;  }
   property System.Boolean ShowRowDetailsOnSelection { get; set;  }
   property System.Boolean ShowRowDetailsPopupOnClick { get; set;  }
@@ -207,6 +211,7 @@ type DLH.Controls.Wpf.DataGridView
   property System.ComponentModel.ListSortDirection DefaultSortDirection { get; set;  }
   property System.Double HorizontalMouseWheelScrollAmount { get; set;  }
   property System.Double MousePanningSpeed { get; set;  }
+  property System.Double PinnedBoundarySeparatorThickness { get; set;  }
   property System.Double RowDetailsPopupHorizontalOffset { get; set;  }
   property System.Double RowDetailsPopupVerticalOffset { get; set;  }
   property System.Double ScrollBarThickness { get; set;  }
@@ -232,6 +237,7 @@ type DLH.Controls.Wpf.DataGridView
   property System.Windows.Input.ICommand CellEditEndingCommand { get; set;  }
   property System.Windows.Input.ICommand SelectionChangedCommand { get; set;  }
   property System.Windows.Media.Brush ActiveSortIconBrush { get; set;  }
+  property System.Windows.Media.Brush PinnedBoundarySeparatorBrush { get; set;  }
   property System.Windows.Media.Brush ScrollBarThumbBrush { get; set;  }
   property System.Windows.Media.Brush ScrollBarThumbHoverBrush { get; set;  }
   property System.Windows.Media.Brush ScrollBarTrackBrush { get; set;  }

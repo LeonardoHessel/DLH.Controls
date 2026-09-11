@@ -73,6 +73,41 @@ public partial class DataGridView
         value => value is int count && count > 0);
     public int MaxPinnedColumns { get => (int)GetValue(MaxPinnedColumnsProperty); set => SetValue(MaxPinnedColumnsProperty, value); }
 
+    public static readonly DependencyProperty ShowPinnedBoundarySeparatorProperty = DependencyProperty.Register(
+        nameof(ShowPinnedBoundarySeparator), typeof(bool), typeof(DataGridView),
+        new FrameworkPropertyMetadata(true, OnPinnedBoundaryAppearanceChanged));
+    public bool ShowPinnedBoundarySeparator
+    {
+        get => (bool)GetValue(ShowPinnedBoundarySeparatorProperty);
+        set => SetValue(ShowPinnedBoundarySeparatorProperty, value);
+    }
+
+    public static readonly DependencyProperty PinnedBoundarySeparatorBrushProperty = DependencyProperty.Register(
+        nameof(PinnedBoundarySeparatorBrush), typeof(Brush), typeof(DataGridView),
+        new FrameworkPropertyMetadata(new SolidColorBrush(Color.FromRgb(0x42, 0xA5, 0xE8)), OnPinnedBoundaryAppearanceChanged));
+    public Brush PinnedBoundarySeparatorBrush
+    {
+        get => (Brush)GetValue(PinnedBoundarySeparatorBrushProperty);
+        set => SetValue(PinnedBoundarySeparatorBrushProperty, value);
+    }
+
+    public static readonly DependencyProperty PinnedBoundarySeparatorThicknessProperty = DependencyProperty.Register(
+        nameof(PinnedBoundarySeparatorThickness), typeof(double), typeof(DataGridView),
+        new FrameworkPropertyMetadata(2d, OnPinnedBoundaryAppearanceChanged),
+        value => value is double thickness && double.IsFinite(thickness) && thickness > 0);
+    public double PinnedBoundarySeparatorThickness
+    {
+        get => (double)GetValue(PinnedBoundarySeparatorThicknessProperty);
+        set => SetValue(PinnedBoundarySeparatorThicknessProperty, value);
+    }
+
+    private static void OnPinnedBoundaryAppearanceChanged(DependencyObject owner, DependencyPropertyChangedEventArgs args)
+    {
+        var grid = (DataGridView)owner;
+        grid.pinningLayoutSignature = string.Empty;
+        grid.QueuePinningVisualUpdate();
+    }
+
     public ReadOnlyObservableCollection<object> PinnedRows =>
         readOnlyPinnedRows ??= new ReadOnlyObservableCollection<object>(pinnedRows);
 

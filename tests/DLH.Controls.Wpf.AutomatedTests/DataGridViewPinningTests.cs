@@ -119,6 +119,14 @@ public sealed class DataGridViewPinningTests
             grid.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Render);
             Assert.IsGreaterThanOrEqualTo(2, layer.Children.Count,
                 "A linha e a coluna devem ganhar representações aderentes depois de cruzarem as bordas.");
+            var rowBoundary = layer.Children.OfType<Border>()
+                .Single(element => Equals(element.Tag, "PinnedBoundarySeparator:RowStart"));
+            var columnBoundary = layer.Children.OfType<Border>()
+                .Single(element => Equals(element.Tag, "PinnedBoundarySeparator:ColumnStart"));
+            Assert.AreEqual(grid.PinnedBoundarySeparatorThickness, rowBoundary.Height, 0.1d);
+            Assert.AreEqual(grid.PinnedBoundarySeparatorThickness, columnBoundary.Width, 0.1d);
+            Assert.AreSame(grid.PinnedBoundarySeparatorBrush, rowBoundary.Background);
+            Assert.AreSame(grid.PinnedBoundarySeparatorBrush, columnBoundary.Background);
             var rowOverlay = layer.Children.OfType<DataGridView>()
                 .Single(overlay => overlay.HeadersVisibility == DataGridHeadersVisibility.None && overlay.Columns.Count > 1);
             rowOverlay.UpdateLayout();

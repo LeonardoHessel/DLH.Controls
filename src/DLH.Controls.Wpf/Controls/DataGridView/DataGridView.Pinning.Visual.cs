@@ -234,6 +234,12 @@ public partial class DataGridView
             AddPinnedRowSeparator(origin.X, top + entry.Metric.Height,
                 pinningViewport.ActualWidth, entry.Item);
         }
+        if (ShowPinnedBoundarySeparator && startHeight > 0)
+            AddPinnedBoundarySeparator(origin.X, origin.Y + startHeight - PinnedBoundarySeparatorThickness,
+                pinningViewport.ActualWidth, PinnedBoundarySeparatorThickness, "RowStart");
+        if (ShowPinnedBoundarySeparator && endHeight > 0)
+            AddPinnedBoundarySeparator(origin.X, origin.Y + pinningViewport.ActualHeight - endHeight,
+                pinningViewport.ActualWidth, PinnedBoundarySeparatorThickness, "RowEnd");
     }
 
     private void AddPinnedRowSeparator(double left, double bottom, double width, object item)
@@ -285,6 +291,25 @@ public partial class DataGridView
             AddPinnedColumnGroup(end.OrderBy(entry => entry.Metric.Offset).ToList(),
                 origin.X + pinningViewport.ActualWidth - endWidth, endWidth,
                 origin.Y + pinningViewport.ActualHeight);
+        if (ShowPinnedBoundarySeparator && startWidth > 0)
+            AddPinnedBoundarySeparator(origin.X + startWidth - PinnedBoundarySeparatorThickness, 0,
+                PinnedBoundarySeparatorThickness, origin.Y + pinningViewport.ActualHeight, "ColumnStart");
+        if (ShowPinnedBoundarySeparator && endWidth > 0)
+            AddPinnedBoundarySeparator(origin.X + pinningViewport.ActualWidth - endWidth, 0,
+                PinnedBoundarySeparatorThickness, origin.Y + pinningViewport.ActualHeight, "ColumnEnd");
+    }
+
+    private void AddPinnedBoundarySeparator(double left, double top, double width, double height, string edge)
+    {
+        if (pinningLayer is null) return;
+        var separator = new Border
+        {
+            Background = PinnedBoundarySeparatorBrush,
+            IsHitTestVisible = false,
+            Tag = $"PinnedBoundarySeparator:{edge}"
+        };
+        PlaceOverlay(separator, left, top, width, height);
+        Panel.SetZIndex(separator, 4);
     }
 
     private void AddPinnedColumnBackdrop(double left, double top, double width, double height, string edge)

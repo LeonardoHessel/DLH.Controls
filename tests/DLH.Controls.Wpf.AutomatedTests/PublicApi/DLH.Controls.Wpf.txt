@@ -104,6 +104,7 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty IsLoadingProperty
   field System.Windows.DependencyProperty IsMultiColumnSortEnabledProperty
   field System.Windows.DependencyProperty IsSmoothHorizontalScrollingEnabledProperty
+  field System.Windows.DependencyProperty IsSmoothVerticalScrollingEnabledProperty
   field System.Windows.DependencyProperty LoadingMessageProperty
   field System.Windows.DependencyProperty ScrollBarThicknessProperty
   field System.Windows.DependencyProperty ScrollBarThumbBrushProperty
@@ -124,6 +125,8 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty SortPriorityProperty
   field System.Windows.DependencyProperty UnsortedIconProperty
   field System.Windows.DependencyProperty ValidationErrorBrushProperty
+  field System.Windows.DependencyProperty VerticalMouseWheelScrollAmountProperty
+  field System.Windows.DependencyProperty VerticalScrollAnimationDurationProperty
   method DLH.Controls.Wpf.DataGridViewBatchSelection GetBatchSelection()
   method DLH.Controls.Wpf.DataGridViewState CaptureState()
   method System.Boolean ApplyDefaultSort()
@@ -159,6 +162,7 @@ type DLH.Controls.Wpf.DataGridView
   property System.Boolean IsLoading { get; set;  }
   property System.Boolean IsMultiColumnSortEnabled { get; set;  }
   property System.Boolean IsSmoothHorizontalScrollingEnabled { get; set;  }
+  property System.Boolean IsSmoothVerticalScrollingEnabled { get; set;  }
   property System.Boolean ShowClearSortMenuItem { get; set;  }
   property System.Boolean ShowFilterMenuItems { get; set;  }
   property System.Boolean ShowRestoreDefaultSortMenuItem { get; set;  }
@@ -171,12 +175,14 @@ type DLH.Controls.Wpf.DataGridView
   property System.Double HorizontalMouseWheelScrollAmount { get; set;  }
   property System.Double ScrollBarThickness { get; set;  }
   property System.Double SortIconSize { get; set;  }
+  property System.Double VerticalMouseWheelScrollAmount { get; set;  }
   property System.String DefaultSortMemberPath { get; set;  }
   property System.String EmptyMessage { get; set;  }
   property System.String ErrorMessage { get; set;  }
   property System.String GroupMemberPath { get; set;  }
   property System.String LoadingMessage { get; set;  }
   property System.TimeSpan HorizontalScrollAnimationDuration { get; set;  }
+  property System.TimeSpan VerticalScrollAnimationDuration { get; set;  }
   property System.Windows.Controls.DataGridColumn SelectedColumn { get; set;  }
   property System.Windows.CornerRadius CornerRadius { get; set;  }
   property System.Windows.Input.ICommand BatchActionCommand { get; set;  }

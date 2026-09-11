@@ -460,7 +460,9 @@ public sealed class SharedControlsTests
             Height = 180,
             ScrollBarThickness = 9,
             HorizontalMouseWheelScrollAmount = 64,
-            HorizontalScrollAnimationDuration = TimeSpan.FromMilliseconds(10)
+            HorizontalScrollAnimationDuration = TimeSpan.FromMilliseconds(10),
+            VerticalMouseWheelScrollAmount = 80,
+            VerticalScrollAnimationDuration = TimeSpan.FromMilliseconds(10)
         };
         grid.Columns.Add(new DataGridTextColumn { Header = "Valor", Width = 500 });
         grid.ItemsSource = Enumerable.Range(1, 30).Select(number => new { Valor = number });
@@ -502,6 +504,21 @@ public sealed class SharedControlsTests
             viewer.UpdateLayout();
             Assert.IsLessThan(offsetAfterShiftWheel, viewer.HorizontalOffset,
                 "Shift + roda para cima deve rolar o conteúdo para a esquerda.");
+
+            var verticalWheel = typeof(ControlsDataGridView).GetMethod("TryScrollVertically",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
+            Assert.IsGreaterThan(0d, viewer.ScrollableHeight);
+            Assert.IsFalse((bool)verticalWheel.Invoke(grid, [-120, ModifierKeys.Shift])!);
+            Assert.IsTrue((bool)verticalWheel.Invoke(grid, [-120, ModifierKeys.None])!);
+            Assert.AreEqual(0d, viewer.VerticalOffset,
+                "A rolagem vertical suave não deve saltar para a posição final.");
+            Thread.Sleep(20);
+            typeof(ControlsDataGridView).GetMethod("OnVerticalScrollAnimationFrame",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+                .Invoke(grid, [null, EventArgs.Empty]);
+            viewer.UpdateLayout();
+            Assert.IsGreaterThan(0d, viewer.VerticalOffset,
+                "A roda deve rolar verticalmente com uma transição suave.");
         }
         finally { window.Close(); }
     }

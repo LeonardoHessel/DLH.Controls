@@ -38,6 +38,11 @@ public partial class DataGridView : DataGrid
     private double horizontalAnimationTarget;
     private long horizontalAnimationStarted;
     private bool isHorizontalAnimationActive;
+    private ScrollViewer? verticallyAnimatedScrollViewer;
+    private double verticalAnimationFrom;
+    private double verticalAnimationTarget;
+    private long verticalAnimationStarted;
+    private bool isVerticalAnimationActive;
 
     static DataGridView()
     {
@@ -58,7 +63,8 @@ public partial class DataGridView : DataGrid
 
     protected override void OnPreviewMouseWheel(MouseWheelEventArgs e)
     {
-        if (TryScrollHorizontally(e.Delta, Keyboard.Modifiers))
+        if (TryScrollHorizontally(e.Delta, Keyboard.Modifiers) ||
+            TryScrollVertically(e.Delta, Keyboard.Modifiers))
         {
             e.Handled = true;
             return;
@@ -108,7 +114,7 @@ public partial class DataGridView : DataGrid
 
         var elapsed = Stopwatch.GetElapsedTime(horizontalAnimationStarted);
         var progress = Math.Clamp(elapsed.TotalMilliseconds / HorizontalScrollAnimationDuration.TotalMilliseconds, 0, 1);
-        var easedProgress = 1 - Math.Pow(1 - progress, 3);
+        var easedProgress = (1 - Math.Cos(Math.PI * progress)) / 2;
         animatedScrollViewer.ScrollToHorizontalOffset(
             horizontalAnimationFrom + (horizontalAnimationTarget - horizontalAnimationFrom) * easedProgress);
         if (progress >= 1) StopHorizontalScrollAnimation();
@@ -119,6 +125,60 @@ public partial class DataGridView : DataGrid
         if (isHorizontalAnimationActive) CompositionTarget.Rendering -= OnHorizontalScrollAnimationFrame;
         isHorizontalAnimationActive = false;
         animatedScrollViewer = null;
+    }
+
+    internal bool TryScrollVertically(int wheelDelta, ModifierKeys modifiers)
+    {
+        if ((modifiers & ModifierKeys.Shift) != 0 || wheelDelta == 0 ||
+            GetTemplateChild("DG_ScrollViewer") is not ScrollViewer viewer || viewer.ScrollableHeight <= 0)
+            return false;
+
+        var detents = wheelDelta / (double)Mouse.MouseWheelDeltaForOneLine;
+        var currentTarget = isVerticalAnimationActive && ReferenceEquals(verticallyAnimatedScrollViewer, viewer)
+            ? verticalAnimationTarget
+            : viewer.VerticalOffset;
+        var target = Math.Clamp(currentTarget - VerticalMouseWheelScrollAmount * detents, 0, viewer.ScrollableHeight);
+
+        if (!IsSmoothVerticalScrollingEnabled || VerticalScrollAnimationDuration <= TimeSpan.Zero)
+        {
+            StopVerticalScrollAnimation();
+            viewer.ScrollToVerticalOffset(target);
+            return true;
+        }
+
+        verticallyAnimatedScrollViewer = viewer;
+        verticalAnimationFrom = viewer.VerticalOffset;
+        verticalAnimationTarget = target;
+        verticalAnimationStarted = Stopwatch.GetTimestamp();
+        if (!isVerticalAnimationActive)
+        {
+            isVerticalAnimationActive = true;
+            CompositionTarget.Rendering += OnVerticalScrollAnimationFrame;
+        }
+        return true;
+    }
+
+    private void OnVerticalScrollAnimationFrame(object? sender, EventArgs args)
+    {
+        if (verticallyAnimatedScrollViewer is null)
+        {
+            StopVerticalScrollAnimation();
+            return;
+        }
+
+        var elapsed = Stopwatch.GetElapsedTime(verticalAnimationStarted);
+        var progress = Math.Clamp(elapsed.TotalMilliseconds / VerticalScrollAnimationDuration.TotalMilliseconds, 0, 1);
+        var easedProgress = (1 - Math.Cos(Math.PI * progress)) / 2;
+        verticallyAnimatedScrollViewer.ScrollToVerticalOffset(
+            verticalAnimationFrom + (verticalAnimationTarget - verticalAnimationFrom) * easedProgress);
+        if (progress >= 1) StopVerticalScrollAnimation();
+    }
+
+    private void StopVerticalScrollAnimation()
+    {
+        if (isVerticalAnimationActive) CompositionTarget.Rendering -= OnVerticalScrollAnimationFrame;
+        isVerticalAnimationActive = false;
+        verticallyAnimatedScrollViewer = null;
     }
 
     private void UpdateRoundedContentClip()
@@ -142,6 +202,7 @@ public partial class DataGridView : DataGrid
         SetCurrentValue(HeadersVisibilityProperty, DataGridHeadersVisibility.Column);
         SetCurrentValue(EnableRowVirtualizationProperty, true);
         SetCurrentValue(EnableColumnVirtualizationProperty, true);
+        SetCurrentValue(VirtualizingPanel.ScrollUnitProperty, ScrollUnit.Pixel);
         SetCurrentValue(CanUserReorderColumnsProperty, true);
         Sorting += OnGridSorting;
         InitializeFiltering();
@@ -152,7 +213,11 @@ public partial class DataGridView : DataGrid
                 Columns.All(column => column.SortDirection is null)) ApplyDefaultSort();
             CaptureInitialState();
         };
-        Unloaded += (_, _) => StopHorizontalScrollAnimation();
+        Unloaded += (_, _) =>
+        {
+            StopHorizontalScrollAnimation();
+            StopVerticalScrollAnimation();
+        };
         ApplySelectionBehavior();
     }
 
@@ -174,12 +239,38 @@ public partial class DataGridView : DataGrid
     }
 
     public static readonly DependencyProperty HorizontalScrollAnimationDurationProperty = DependencyProperty.Register(
-        nameof(HorizontalScrollAnimationDuration), typeof(TimeSpan), typeof(DataGridView), new PropertyMetadata(TimeSpan.FromMilliseconds(180)),
+        nameof(HorizontalScrollAnimationDuration), typeof(TimeSpan), typeof(DataGridView), new PropertyMetadata(TimeSpan.FromMilliseconds(260)),
         value => value is TimeSpan duration && duration >= TimeSpan.Zero);
     public TimeSpan HorizontalScrollAnimationDuration
     {
         get => (TimeSpan)GetValue(HorizontalScrollAnimationDurationProperty);
         set => SetValue(HorizontalScrollAnimationDurationProperty, value);
+    }
+
+    public static readonly DependencyProperty IsSmoothVerticalScrollingEnabledProperty = DependencyProperty.Register(
+        nameof(IsSmoothVerticalScrollingEnabled), typeof(bool), typeof(DataGridView), new PropertyMetadata(true));
+    public bool IsSmoothVerticalScrollingEnabled
+    {
+        get => (bool)GetValue(IsSmoothVerticalScrollingEnabledProperty);
+        set => SetValue(IsSmoothVerticalScrollingEnabledProperty, value);
+    }
+
+    public static readonly DependencyProperty VerticalMouseWheelScrollAmountProperty = DependencyProperty.Register(
+        nameof(VerticalMouseWheelScrollAmount), typeof(double), typeof(DataGridView), new PropertyMetadata(72d),
+        value => value is double amount && double.IsFinite(amount) && amount > 0);
+    public double VerticalMouseWheelScrollAmount
+    {
+        get => (double)GetValue(VerticalMouseWheelScrollAmountProperty);
+        set => SetValue(VerticalMouseWheelScrollAmountProperty, value);
+    }
+
+    public static readonly DependencyProperty VerticalScrollAnimationDurationProperty = DependencyProperty.Register(
+        nameof(VerticalScrollAnimationDuration), typeof(TimeSpan), typeof(DataGridView), new PropertyMetadata(TimeSpan.FromMilliseconds(260)),
+        value => value is TimeSpan duration && duration >= TimeSpan.Zero);
+    public TimeSpan VerticalScrollAnimationDuration
+    {
+        get => (TimeSpan)GetValue(VerticalScrollAnimationDurationProperty);
+        set => SetValue(VerticalScrollAnimationDurationProperty, value);
     }
 
     public static readonly DependencyProperty SelectionBehaviorProperty = DependencyProperty.Register(

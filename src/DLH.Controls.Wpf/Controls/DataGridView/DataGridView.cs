@@ -651,6 +651,7 @@ public partial class DataGridView : DataGrid
         if (view?.CanSort == true) view.SortDescriptions.Clear();
         foreach (var column in Columns) column.SortDirection = null;
         UpdateSortPriorities();
+        QueuePinningVisualUpdate();
     }
 
     public bool ApplyDefaultSort()

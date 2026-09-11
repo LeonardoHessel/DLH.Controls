@@ -110,7 +110,8 @@ public partial class DataGridView
         {
             var metric = pinnedColumnMetrics[column];
             var edge = startColumnItems.Contains(column) ? 'S' : endColumnItems.Contains(column) ? 'E' : 'N';
-            parts.Add($"C{RuntimeHelpers.GetHashCode(column)}{edge}{metric.Width:F2}");
+            parts.Add($"C{RuntimeHelpers.GetHashCode(column)}{edge}{metric.Width:F2}" +
+                $"{column.SortDirection?.ToString() ?? "None"}P{GetSortPriority(column)}");
         }
         return string.Join('|', parts);
     }
@@ -267,7 +268,14 @@ public partial class DataGridView
         RowHeight = RowHeight,
         CanUserReorderColumns = false,
         CanUserResizeColumns = false,
-        CanUserSortColumns = false,
+        CanUserSortColumns = CanUserSortColumns,
+        ShowSortIndicators = ShowSortIndicators,
+        SortIconSize = SortIconSize,
+        SortIconBrush = SortIconBrush,
+        ActiveSortIconBrush = ActiveSortIconBrush,
+        UnsortedIcon = UnsortedIcon,
+        AscendingSortIcon = AscendingSortIcon,
+        DescendingSortIcon = DescendingSortIcon,
         HorizontalScrollBarVisibility = ScrollBarVisibility.Hidden,
         VerticalScrollBarVisibility = ScrollBarVisibility.Hidden,
         CornerRadius = new CornerRadius(0)
@@ -349,6 +357,10 @@ public partial class DataGridView
         clone.MinWidth = 0;
         clone.MaxWidth = double.PositiveInfinity;
         clone.IsReadOnly = source.IsReadOnly;
+        clone.CanUserSort = source.CanUserSort;
+        clone.SortMemberPath = source.SortMemberPath;
+        clone.SortDirection = source.SortDirection;
+        clone.SetValue(SortPriorityPropertyKey, GetSortPriority(source));
         return clone;
     }
 

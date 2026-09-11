@@ -62,6 +62,7 @@ public partial class DataGridView
         view.SortDescriptions.Add(new SortDescription(column.SortMemberPath, direction));
         column.SortDirection = direction;
         UpdateSortPriorities();
+        QueuePinningVisualUpdate();
         return true;
     }
 
@@ -80,6 +81,7 @@ public partial class DataGridView
         }
         column.SortDirection = null;
         UpdateSortPriorities();
+        QueuePinningVisualUpdate();
         return removed;
     }
 

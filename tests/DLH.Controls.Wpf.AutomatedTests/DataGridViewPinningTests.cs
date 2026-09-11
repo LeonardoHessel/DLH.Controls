@@ -1,4 +1,5 @@
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using DLH.Controls.Wpf;
@@ -189,6 +190,8 @@ public sealed class DataGridViewPinningTests
         try
         {
             grid.UpdateLayout();
+            columns[0].SortMemberPath = nameof(Row.Name);
+            Assert.IsTrue(grid.ApplySort(columns[0], ListSortDirection.Descending));
             Assert.IsTrue(grid.PinColumn(columns[0]));
             Assert.IsTrue(grid.PinColumn(columns[2]));
             var viewer = (ScrollViewer)grid.Template.FindName("DG_ScrollViewer", grid)!;
@@ -203,6 +206,12 @@ public sealed class DataGridViewPinningTests
             var positions = layer.Children.Cast<UIElement>().Select(Canvas.GetLeft).Order().ToArray();
             Assert.AreEqual(100d, positions[1] - positions[0], 1d,
                 "As colunas fixadas devem ficar lado a lado, sem sobreposição.");
+            var firstOverlay = layer.Children.Cast<DataGridView>()
+                .Single(overlay => Math.Abs(Canvas.GetLeft(overlay) - positions[0]) < 1d);
+            Assert.AreEqual(ListSortDirection.Descending, firstOverlay.Columns[0].SortDirection,
+                "O cabeçalho fixado deve preservar o indicador da ordenação existente.");
+            Assert.AreEqual("Linha 9", firstOverlay.Items.Cast<Row>().First().Name,
+                "A representação fixada deve compartilhar a ordem já aplicada ao grid principal.");
         }
         finally { window.Close(); }
     }

@@ -454,7 +454,14 @@ public sealed class SharedControlsTests
     [STATestMethod]
     public void DataGridViewUsesTheSharedScrollBars()
     {
-        var grid = new ControlsDataGridView { Width = 300, Height = 180, ScrollBarThickness = 9 };
+        var grid = new ControlsDataGridView
+        {
+            Width = 300,
+            Height = 180,
+            ScrollBarThickness = 9,
+            HorizontalMouseWheelScrollAmount = 64,
+            HorizontalScrollAnimationDuration = TimeSpan.FromMilliseconds(10)
+        };
         grid.Columns.Add(new DataGridTextColumn { Header = "Valor", Width = 500 });
         grid.ItemsSource = Enumerable.Range(1, 30).Select(number => new { Valor = number });
         var window = Arrange(grid, 300, 180);
@@ -472,6 +479,12 @@ public sealed class SharedControlsTests
                 System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
             Assert.IsGreaterThan(0d, viewer.ScrollableWidth);
             Assert.IsTrue((bool)shiftWheel.Invoke(grid, [-120, ModifierKeys.Shift])!);
+            Assert.AreEqual(0d, viewer.HorizontalOffset,
+                "A suavização não deve saltar imediatamente para a posição final.");
+            Thread.Sleep(20);
+            typeof(ControlsDataGridView).GetMethod("OnHorizontalScrollAnimationFrame",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+                .Invoke(grid, [null, EventArgs.Empty]);
             viewer.UpdateLayout();
             Assert.IsGreaterThan(0d, viewer.HorizontalOffset,
                 "Shift + roda para baixo deve rolar o conteúdo para a direita.");
@@ -482,6 +495,10 @@ public sealed class SharedControlsTests
                 "A roda sem Shift deve permanecer disponível para a rolagem vertical.");
 
             Assert.IsTrue((bool)shiftWheel.Invoke(grid, [120, ModifierKeys.Shift])!);
+            Thread.Sleep(20);
+            typeof(ControlsDataGridView).GetMethod("OnHorizontalScrollAnimationFrame",
+                System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!
+                .Invoke(grid, [null, EventArgs.Empty]);
             viewer.UpdateLayout();
             Assert.IsLessThan(offsetAfterShiftWheel, viewer.HorizontalOffset,
                 "Shift + roda para cima deve rolar o conteúdo para a esquerda.");

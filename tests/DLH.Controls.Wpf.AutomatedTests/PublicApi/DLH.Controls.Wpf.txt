@@ -97,10 +97,13 @@ type DLH.Controls.Wpf.DataGridView
   field System.Windows.DependencyProperty ErrorMessageProperty
   field System.Windows.DependencyProperty FilterMemberPathProperty
   field System.Windows.DependencyProperty GroupMemberPathProperty
+  field System.Windows.DependencyProperty HorizontalMouseWheelScrollAmountProperty
+  field System.Windows.DependencyProperty HorizontalScrollAnimationDurationProperty
   field System.Windows.DependencyProperty IsCellEditingEnabledProperty
   field System.Windows.DependencyProperty IsGroupingEnabledProperty
   field System.Windows.DependencyProperty IsLoadingProperty
   field System.Windows.DependencyProperty IsMultiColumnSortEnabledProperty
+  field System.Windows.DependencyProperty IsSmoothHorizontalScrollingEnabledProperty
   field System.Windows.DependencyProperty LoadingMessageProperty
   field System.Windows.DependencyProperty ScrollBarThicknessProperty
   field System.Windows.DependencyProperty ScrollBarThumbBrushProperty
@@ -155,6 +158,7 @@ type DLH.Controls.Wpf.DataGridView
   property System.Boolean IsGroupingEnabled { get; set;  }
   property System.Boolean IsLoading { get; set;  }
   property System.Boolean IsMultiColumnSortEnabled { get; set;  }
+  property System.Boolean IsSmoothHorizontalScrollingEnabled { get; set;  }
   property System.Boolean ShowClearSortMenuItem { get; set;  }
   property System.Boolean ShowFilterMenuItems { get; set;  }
   property System.Boolean ShowRestoreDefaultSortMenuItem { get; set;  }
@@ -164,6 +168,7 @@ type DLH.Controls.Wpf.DataGridView
   property System.Boolean ShowValidationErrors { get; set;  }
   property System.Collections.ObjectModel.ObservableCollection<DLH.Controls.Wpf.DataGridViewFilter> Filters { get;  }
   property System.ComponentModel.ListSortDirection DefaultSortDirection { get; set;  }
+  property System.Double HorizontalMouseWheelScrollAmount { get; set;  }
   property System.Double ScrollBarThickness { get; set;  }
   property System.Double SortIconSize { get; set;  }
   property System.String DefaultSortMemberPath { get; set;  }
@@ -171,6 +176,7 @@ type DLH.Controls.Wpf.DataGridView
   property System.String ErrorMessage { get; set;  }
   property System.String GroupMemberPath { get; set;  }
   property System.String LoadingMessage { get; set;  }
+  property System.TimeSpan HorizontalScrollAnimationDuration { get; set;  }
   property System.Windows.Controls.DataGridColumn SelectedColumn { get; set;  }
   property System.Windows.CornerRadius CornerRadius { get; set;  }
   property System.Windows.Input.ICommand BatchActionCommand { get; set;  }

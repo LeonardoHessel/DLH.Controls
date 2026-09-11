@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Diagnostics;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -32,6 +33,11 @@ public partial class DataGridView : DataGrid
     private object? lastNotifiedItem;
     private DataGridColumn? lastNotifiedColumn;
     private bool applyingSelectionBehavior;
+    private ScrollViewer? animatedScrollViewer;
+    private double horizontalAnimationFrom;
+    private double horizontalAnimationTarget;
+    private long horizontalAnimationStarted;
+    private bool isHorizontalAnimationActive;
 
     static DataGridView()
     {
@@ -68,9 +74,51 @@ public partial class DataGridView : DataGrid
             return false;
 
         var detents = wheelDelta / (double)Mouse.MouseWheelDeltaForOneLine;
-        var distance = Math.Max(1, SystemParameters.WheelScrollLines) * 16d * detents;
-        viewer.ScrollToHorizontalOffset(Math.Clamp(viewer.HorizontalOffset - distance, 0, viewer.ScrollableWidth));
+        var currentTarget = isHorizontalAnimationActive && ReferenceEquals(animatedScrollViewer, viewer)
+            ? horizontalAnimationTarget
+            : viewer.HorizontalOffset;
+        var target = Math.Clamp(currentTarget - HorizontalMouseWheelScrollAmount * detents, 0, viewer.ScrollableWidth);
+
+        if (!IsSmoothHorizontalScrollingEnabled || HorizontalScrollAnimationDuration <= TimeSpan.Zero)
+        {
+            StopHorizontalScrollAnimation();
+            viewer.ScrollToHorizontalOffset(target);
+            return true;
+        }
+
+        animatedScrollViewer = viewer;
+        horizontalAnimationFrom = viewer.HorizontalOffset;
+        horizontalAnimationTarget = target;
+        horizontalAnimationStarted = Stopwatch.GetTimestamp();
+        if (!isHorizontalAnimationActive)
+        {
+            isHorizontalAnimationActive = true;
+            CompositionTarget.Rendering += OnHorizontalScrollAnimationFrame;
+        }
         return true;
+    }
+
+    private void OnHorizontalScrollAnimationFrame(object? sender, EventArgs args)
+    {
+        if (animatedScrollViewer is null)
+        {
+            StopHorizontalScrollAnimation();
+            return;
+        }
+
+        var elapsed = Stopwatch.GetElapsedTime(horizontalAnimationStarted);
+        var progress = Math.Clamp(elapsed.TotalMilliseconds / HorizontalScrollAnimationDuration.TotalMilliseconds, 0, 1);
+        var easedProgress = 1 - Math.Pow(1 - progress, 3);
+        animatedScrollViewer.ScrollToHorizontalOffset(
+            horizontalAnimationFrom + (horizontalAnimationTarget - horizontalAnimationFrom) * easedProgress);
+        if (progress >= 1) StopHorizontalScrollAnimation();
+    }
+
+    private void StopHorizontalScrollAnimation()
+    {
+        if (isHorizontalAnimationActive) CompositionTarget.Rendering -= OnHorizontalScrollAnimationFrame;
+        isHorizontalAnimationActive = false;
+        animatedScrollViewer = null;
     }
 
     private void UpdateRoundedContentClip()
@@ -104,7 +152,34 @@ public partial class DataGridView : DataGrid
                 Columns.All(column => column.SortDirection is null)) ApplyDefaultSort();
             CaptureInitialState();
         };
+        Unloaded += (_, _) => StopHorizontalScrollAnimation();
         ApplySelectionBehavior();
+    }
+
+    public static readonly DependencyProperty IsSmoothHorizontalScrollingEnabledProperty = DependencyProperty.Register(
+        nameof(IsSmoothHorizontalScrollingEnabled), typeof(bool), typeof(DataGridView), new PropertyMetadata(true));
+    public bool IsSmoothHorizontalScrollingEnabled
+    {
+        get => (bool)GetValue(IsSmoothHorizontalScrollingEnabledProperty);
+        set => SetValue(IsSmoothHorizontalScrollingEnabledProperty, value);
+    }
+
+    public static readonly DependencyProperty HorizontalMouseWheelScrollAmountProperty = DependencyProperty.Register(
+        nameof(HorizontalMouseWheelScrollAmount), typeof(double), typeof(DataGridView), new PropertyMetadata(48d),
+        value => value is double amount && double.IsFinite(amount) && amount > 0);
+    public double HorizontalMouseWheelScrollAmount
+    {
+        get => (double)GetValue(HorizontalMouseWheelScrollAmountProperty);
+        set => SetValue(HorizontalMouseWheelScrollAmountProperty, value);
+    }
+
+    public static readonly DependencyProperty HorizontalScrollAnimationDurationProperty = DependencyProperty.Register(
+        nameof(HorizontalScrollAnimationDuration), typeof(TimeSpan), typeof(DataGridView), new PropertyMetadata(TimeSpan.FromMilliseconds(180)),
+        value => value is TimeSpan duration && duration >= TimeSpan.Zero);
+    public TimeSpan HorizontalScrollAnimationDuration
+    {
+        get => (TimeSpan)GetValue(HorizontalScrollAnimationDurationProperty);
+        set => SetValue(HorizontalScrollAnimationDurationProperty, value);
     }
 
     public static readonly DependencyProperty SelectionBehaviorProperty = DependencyProperty.Register(

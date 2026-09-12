@@ -20,8 +20,16 @@ public partial class DataGridView
     private readonly Dictionary<DataGridColumn, (double Offset, double Width)> pinnedColumnMetrics = [];
     private bool pinningUpdatePending;
     private string pinningLayoutSignature = string.Empty;
+    private readonly List<(DataGridColumn Column, Visibility Visibility, double Width, int DisplayIndex)> pinningColumnLayout = [];
+    private static readonly DependencyProperty OriginalPinnedColumnProperty = DependencyProperty.RegisterAttached(
+        "OriginalPinnedColumn", typeof(DataGridColumn), typeof(DataGridView));
     private readonly List<DataGridView> pinnedRowOverlays = [];
     private readonly List<DataGridView> pinnedColumnOverlays = [];
+    private double lastOverlayVerticalOffset = double.NaN;
+    private bool overlayNeedsAlignment;
+    private (object? Item, double Top, double Height) pinningLayoutAnchor;
+    private double? pinningUniformRowHeight;
+    private bool pinningHasVariableRowHeights;
 
     private void InitializePinningVisuals()
     {
@@ -37,6 +45,40 @@ public partial class DataGridView
     }
 
     private void OnPinningScrollChanged(object sender, ScrollChangedEventArgs e) => QueuePinningVisualUpdate();
+
+    private void OnPinningLayoutUpdated(object? sender, EventArgs args)
+    {
+        if (pinnedColumns.Count == 0 && pinnedRows.Count == 0) return;
+        // Variable-height virtualization can adjust the visual anchor without
+        // changing ScrollViewer offsets. Uniform rows need no extra layout probe.
+        if (pinningHasVariableRowHeights && pinnedColumnOverlays.Count > 0 && pinningViewport is not null)
+        {
+            foreach (var row in VisualChildren<DataGridRow>(pinningViewport))
+            {
+                var top = row.TranslatePoint(new Point(), pinningViewport).Y;
+                if (top + row.ActualHeight <= 0 || top >= pinningViewport.ActualHeight) continue;
+                var anchor = (row.Item, top, row.ActualHeight);
+                if (pinningLayoutAnchor != anchor)
+                {
+                    pinningLayoutAnchor = anchor;
+                    QueuePinningVisualUpdate();
+                }
+                break;
+            }
+        }
+        var changed = pinningColumnLayout.Count != Columns.Count;
+        for (var index = 0; !changed && index < Columns.Count; index++)
+        {
+            var column = Columns[index];
+            changed = pinningColumnLayout[index] != (column, column.Visibility, column.ActualWidth, column.DisplayIndex);
+        }
+        if (!changed) return;
+        pinningColumnLayout.Clear();
+        foreach (var column in Columns)
+            pinningColumnLayout.Add((column, column.Visibility, column.ActualWidth, column.DisplayIndex));
+        pinningLayoutSignature = string.Empty;
+        QueuePinningVisualUpdate();
+    }
 
     partial void OnPinnedItemsChanged()
     {
@@ -57,10 +99,15 @@ public partial class DataGridView
 
     private void CapturePinnedMetrics()
     {
-        if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null) return;
-        foreach (var row in VisualChildren<DataGridRow>(this))
+        if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null ||
+            (pinnedRows.Count == 0 && pinnedColumns.Count == 0)) return;
+        foreach (var row in VisualChildren<DataGridRow>(pinningViewport))
             if (ItemsControl.ItemsControlFromItemContainer(row) == this && row.Item is not null && row.ActualHeight > 0)
+            {
                 renderedRowHeights[row.Item] = row.ActualHeight;
+                pinningUniformRowHeight ??= row.ActualHeight;
+                pinningHasVariableRowHeights |= Math.Abs(row.ActualHeight - pinningUniformRowHeight.Value) > 0.1;
+            }
         var viewportOrigin = pinningViewport.TranslatePoint(new Point(), pinningLayer);
         foreach (var item in pinnedRows)
         {
@@ -69,9 +116,11 @@ public partial class DataGridView
             pinnedRowMetrics[item] = (position.Y - viewportOrigin.Y + pinningScrollViewer.VerticalOffset, row.ActualHeight);
             pinnedRowBackgrounds[item] = ResolvePinnedRowBackground(row.Background);
         }
-        foreach (var header in VisualChildren<DataGridColumnHeader>(this))
+        if (pinnedColumns.Count == 0 ||
+            pinningScrollViewer.Template.FindName("PART_ColumnHeadersPresenter", pinningScrollViewer) is not DependencyObject headers) return;
+        foreach (var header in VisualChildren<DataGridColumnHeader>(headers))
         {
-            if (!pinnedColumns.Contains(header.Column) || header.ActualWidth <= 0) continue;
+            if (!pinnedColumns.Contains(header.Column) || header.Column.Visibility != Visibility.Visible || header.ActualWidth <= 0) continue;
             var position = header.TranslatePoint(new Point(), pinningLayer);
             pinnedColumnMetrics[header.Column] = (position.X - viewportOrigin.X + pinningScrollViewer.HorizontalOffset, header.ActualWidth);
         }
@@ -79,6 +128,8 @@ public partial class DataGridView
 
     private void UpdatePinningVisuals()
     {
+        if (pinnedRows.Count == 0 && pinnedColumns.Count == 0 &&
+            (pinningLayer is null || pinningLayer.Children.Count == 0)) return;
         if (pinningLayer is null || pinningScrollViewer is null || pinningViewport is null ||
             pinningViewport.ActualWidth <= 0 || pinningViewport.ActualHeight <= 0) return;
         CapturePinnedMetrics();
@@ -114,7 +165,7 @@ public partial class DataGridView
         var (startColumns, endColumns) = ClassifyPinnedColumns(origin);
         var startColumnItems = startColumns.Select(entry => entry.Column).ToHashSet();
         var endColumnItems = endColumns.Select(entry => entry.Column).ToHashSet();
-        foreach (var column in pinnedColumns.Where(pinnedColumnMetrics.ContainsKey))
+        foreach (var column in pinnedColumns.Where(column => column.Visibility == Visibility.Visible && pinnedColumnMetrics.ContainsKey(column)))
         {
             var metric = pinnedColumnMetrics[column];
             var edge = startColumnItems.Contains(column) ? 'S' : endColumnItems.Contains(column) ? 'E' : 'N';
@@ -159,7 +210,7 @@ public partial class DataGridView
         List<(DataGridColumn Column, (double Offset, double Width) Metric)> End) ClassifyPinnedColumns(Point origin)
     {
         if (pinningScrollViewer is null || pinningViewport is null) return ([], []);
-        var metrics = pinnedColumns.Where(pinnedColumnMetrics.ContainsKey)
+        var metrics = pinnedColumns.Where(column => column.Visibility == Visibility.Visible && pinnedColumnMetrics.ContainsKey(column))
             .Select(column => (Column: column, Metric: pinnedColumnMetrics[column]))
             .OrderBy(entry => entry.Metric.Offset).ToList();
         var start = new List<(DataGridColumn Column, (double Offset, double Width) Metric)>();
@@ -196,11 +247,16 @@ public partial class DataGridView
         }
         foreach (var overlay in pinnedColumnOverlays)
         {
-            SyncOverlayRowHeights(overlay);
-            SyncOverlayScrollNow(overlay, 0, pinningScrollViewer.VerticalOffset);
-            overlay.UpdateLayout();
-            AlignPinnedColumnRows(overlay);
+            var heightsChanged = SyncOverlayRowHeights(overlay);
+            overlay.overlayNeedsAlignment = SyncOverlayScrollNow(overlay, 0, pinningScrollViewer.VerticalOffset) || heightsChanged;
         }
+        // Settle all moving overlays together, rather than forcing a layout for each
+        // column group and again for every individual alignment correction.
+        if (pinnedColumnOverlays.Any(overlay => overlay.overlayNeedsAlignment)) UpdateLayout();
+        var corrected = false;
+        foreach (var overlay in pinnedColumnOverlays)
+            corrected |= AlignPinnedColumnRows(overlay);
+        if (corrected) UpdateLayout();
     }
 
     private void AddPinnedRows(Point origin)
@@ -210,7 +266,20 @@ public partial class DataGridView
 
         var startHeight = start.Sum(entry => entry.Metric.Height);
         if (startHeight > 0)
-            AddPinnedRowBackdrop(origin.X, origin.Y - 1, pinningViewport.ActualWidth, startHeight + 2, "Start");
+        {
+            var pixel = 1d / VisualTreeHelper.GetDpi(this).DpiScaleY;
+            var boundaryTop = Math.Floor(origin.Y / pixel) * pixel - pixel;
+            AddPinnedRowBackdrop(origin.X, boundaryTop, pinningViewport.ActualWidth,
+                origin.Y + startHeight - boundaryTop + pixel, "Start");
+            var boundary = new Border
+            {
+                Background = ResolveOpaqueBrush(HorizontalGridLinesBrush),
+                IsHitTestVisible = false,
+                Tag = "PinnedHeaderBoundary"
+            };
+            PlaceOverlay(boundary, origin.X, boundaryTop, pinningViewport.ActualWidth, pixel);
+            Panel.SetZIndex(boundary, 3);
+        }
         var endHeight = end.Sum(entry => entry.Metric.Height);
         if (endHeight > 0)
             AddPinnedRowBackdrop(origin.X, origin.Y + pinningViewport.ActualHeight - endHeight - 1,
@@ -268,7 +337,9 @@ public partial class DataGridView
             Tag = $"PinnedRowBackdrop:{edge}"
         };
         PlaceOverlay(backdrop, left, top, width, height);
-        Panel.SetZIndex(backdrop, -1);
+        // Cover moving column cells as well as the source rows. Fixed rows are
+        // drawn above this surface, so antialiasing cannot expose moving text.
+        Panel.SetZIndex(backdrop, 1);
     }
 
     private void AddPinnedColumns(Point origin)
@@ -288,15 +359,12 @@ public partial class DataGridView
         if (start.Count > 0)
         {
             AddPinnedColumnGroup(start, origin.X, startWidth, origin.Y + pinningViewport.ActualHeight);
-            AddPinnedColumnHeaderSeam(origin.X, origin.Y, startWidth, "Start");
         }
         if (end.Count > 0)
         {
             AddPinnedColumnGroup(end.OrderBy(entry => entry.Metric.Offset).ToList(),
                 origin.X + pinningViewport.ActualWidth - endWidth, endWidth,
                 origin.Y + pinningViewport.ActualHeight);
-            AddPinnedColumnHeaderSeam(origin.X + pinningViewport.ActualWidth - endWidth,
-                origin.Y, endWidth, "End");
         }
         if (ShowPinnedBoundarySeparator && startWidth > 0)
             AddPinnedBoundarySeparator(origin.X + startWidth - PinnedBoundarySeparatorThickness, 0,
@@ -304,21 +372,6 @@ public partial class DataGridView
         if (ShowPinnedBoundarySeparator && endWidth > 0)
             AddPinnedBoundarySeparator(origin.X + pinningViewport.ActualWidth - endWidth, 0,
                 PinnedBoundarySeparatorThickness, origin.Y + pinningViewport.ActualHeight, "ColumnEnd");
-    }
-
-    private void AddPinnedColumnHeaderSeam(double left, double contentTop, double width, string edge)
-    {
-        if (pinningLayer is null) return;
-        var dpi = VisualTreeHelper.GetDpi(this);
-        var thickness = Math.Max(1d, 1d / dpi.DpiScaleY);
-        var seam = new Border
-        {
-            Background = ResolveOpaqueBrush(HorizontalGridLinesBrush),
-            IsHitTestVisible = false,
-            Tag = $"PinnedColumnHeaderSeam:{edge}"
-        };
-        PlaceOverlay(seam, left, contentTop - thickness, width, thickness);
-        Panel.SetZIndex(seam, 3);
     }
 
     private void AddPinnedBoundarySeparator(double left, double top, double width, double height, string edge)
@@ -356,6 +409,7 @@ public partial class DataGridView
         foreach (var column in Columns.Where(column => column.Visibility == Visibility.Visible).OrderBy(column => column.DisplayIndex))
             overlay.Columns.Add(CloneColumn(column));
         PlaceOverlay(overlay, left, top, width, height);
+        Panel.SetZIndex(overlay, 2);
         pinnedRowOverlays.Add(overlay);
         SyncOverlayScroll(overlay, pinningScrollViewer.HorizontalOffset, 0);
     }
@@ -525,7 +579,7 @@ public partial class DataGridView
             ItemsSource = source,
             HeadersVisibility = headers,
             IsReadOnly = IsReadOnly,
-            IsHitTestVisible = false,
+            IsHitTestVisible = true,
             Background = Background,
             Foreground = Foreground,
             BorderBrush = BorderBrush,
@@ -561,29 +615,38 @@ public partial class DataGridView
         return overlay;
     }
 
-    private void SyncOverlayRowHeights(DataGridView overlay)
+    private bool SyncOverlayRowHeights(DataGridView overlay)
     {
-        foreach (var entry in renderedRowHeights)
-            if (overlay.ItemContainerGenerator.ContainerFromItem(entry.Key) is DataGridRow row)
-                row.Height = entry.Value;
+        var changed = false;
+        foreach (var row in VisualChildren<DataGridRow>(overlay))
+            if (row.Item is not null && renderedRowHeights.TryGetValue(row.Item, out var height) && row.Height != height)
+            {
+                row.Height = height;
+                changed = true;
+            }
+        return changed;
     }
 
-    private void AlignPinnedColumnRows(DataGridView overlay)
+    private bool AlignPinnedColumnRows(DataGridView overlay)
     {
         if (pinningLayer is null || overlay.Template.FindName("DG_ScrollViewer", overlay) is not ScrollViewer viewer)
-            return;
-        foreach (var item in renderedRowHeights.Keys)
+            return false;
+        if (pinningViewport is null) return false;
+        var viewportTop = pinningViewport.TranslatePoint(new Point(), pinningLayer).Y;
+        foreach (var sourceRow in VisualChildren<DataGridRow>(pinningViewport))
         {
-            if (ItemContainerGenerator.ContainerFromItem(item) is not DataGridRow sourceRow ||
-                overlay.ItemContainerGenerator.ContainerFromItem(item) is not DataGridRow overlayRow) continue;
             var sourceTop = sourceRow.TranslatePoint(new Point(), pinningLayer).Y;
+            if (sourceTop + sourceRow.ActualHeight <= viewportTop ||
+                sourceTop >= viewportTop + pinningViewport.ActualHeight) continue;
+            if (overlay.ItemContainerGenerator.ContainerFromItem(sourceRow.Item) is not DataGridRow overlayRow) continue;
             var overlayTop = overlayRow.TranslatePoint(new Point(), pinningLayer).Y;
             var correction = overlayTop - sourceTop;
-            if (Math.Abs(correction) <= 0.1) return;
-            viewer.ScrollToVerticalOffset(Math.Clamp(viewer.VerticalOffset + correction, 0, viewer.ScrollableHeight));
-            overlay.UpdateLayout();
-            return;
+            var target = Math.Clamp(viewer.VerticalOffset + correction, 0, viewer.ScrollableHeight);
+            if (Math.Abs(target - viewer.VerticalOffset) <= 0.5 / VisualTreeHelper.GetDpi(overlay).DpiScaleY) return false;
+            viewer.ScrollToVerticalOffset(target);
+            return true;
         }
+        return false;
     }
 
     private void PlaceOverlay(FrameworkElement overlay, double left, double top, double width, double height)
@@ -591,12 +654,16 @@ public partial class DataGridView
         if (pinningLayer is null) return;
         var dpi = VisualTreeHelper.GetDpi(this);
         static double Round(double value, double scale) => Math.Round(value * scale) / scale;
-        overlay.UseLayoutRounding = true;
-        overlay.SnapsToDevicePixels = true;
-        overlay.Width = Math.Max(0, Round(width, dpi.DpiScaleX));
-        overlay.Height = Math.Max(0, Round(height, dpi.DpiScaleY));
-        Canvas.SetLeft(overlay, Round(left, dpi.DpiScaleX));
-        Canvas.SetTop(overlay, Round(top, dpi.DpiScaleY));
+        // Keep cell layout consistent with the source grid. Rounding only the
+        // copied rows changes fractional heights and accumulates vertical drift.
+        // Backdrops and boundary separators still use physical pixel rounding.
+        overlay.UseLayoutRounding = overlay is DataGridView ? UseLayoutRounding : true;
+        overlay.SnapsToDevicePixels = overlay is DataGridView ? SnapsToDevicePixels : true;
+        var preserveBounds = overlay is DataGridView && !UseLayoutRounding;
+        overlay.Width = Math.Max(0, preserveBounds ? width : Round(width, dpi.DpiScaleX));
+        overlay.Height = Math.Max(0, preserveBounds ? height : Round(height, dpi.DpiScaleY));
+        Canvas.SetLeft(overlay, preserveBounds ? left : Round(left, dpi.DpiScaleX));
+        Canvas.SetTop(overlay, preserveBounds ? top : Round(top, dpi.DpiScaleY));
         pinningLayer.Children.Add(overlay);
     }
 
@@ -607,19 +674,38 @@ public partial class DataGridView
             if (overlay.Template.FindName("DG_ScrollViewer", overlay) is not ScrollViewer viewer) return;
             SyncOverlayRowHeights(overlay);
             overlay.UpdateLayout();
-            viewer.ScrollToHorizontalOffset(horizontalOffset);
-            viewer.ScrollToVerticalOffset(verticalOffset);
+            SyncOverlayScrollNow(overlay, horizontalOffset, verticalOffset);
             overlay.UpdateLayout();
-            if (overlay.HeadersVisibility.HasFlag(DataGridHeadersVisibility.Column))
-                AlignPinnedColumnRows(overlay);
+            if (overlay.HeadersVisibility.HasFlag(DataGridHeadersVisibility.Column) && AlignPinnedColumnRows(overlay))
+                overlay.UpdateLayout();
         };
     }
 
-    private static void SyncOverlayScrollNow(DataGridView overlay, double horizontalOffset, double verticalOffset)
+    private static bool SyncOverlayScrollNow(DataGridView overlay, double horizontalOffset, double verticalOffset)
     {
-        if (overlay.Template.FindName("DG_ScrollViewer", overlay) is not ScrollViewer viewer) return;
-        viewer.ScrollToHorizontalOffset(horizontalOffset);
-        viewer.ScrollToVerticalOffset(verticalOffset);
+        if (overlay.Template.FindName("DG_ScrollViewer", overlay) is not ScrollViewer viewer) return false;
+        var changed = false;
+        if (viewer.HorizontalOffset != horizontalOffset)
+        {
+            viewer.ScrollToHorizontalOffset(horizontalOffset);
+            changed = true;
+        }
+        // Preserve the alignment offset already established for variable-height
+        // rows; resetting to the source's absolute offset would undo it each frame.
+        if (overlay.lastOverlayVerticalOffset != verticalOffset)
+        {
+            var target = double.IsNaN(overlay.lastOverlayVerticalOffset)
+                ? verticalOffset
+                : viewer.VerticalOffset + verticalOffset - overlay.lastOverlayVerticalOffset;
+            overlay.lastOverlayVerticalOffset = verticalOffset;
+            target = Math.Clamp(target, 0, viewer.ScrollableHeight);
+            if (viewer.VerticalOffset != target)
+            {
+                viewer.ScrollToVerticalOffset(target);
+                changed = true;
+            }
+        }
+        return changed;
     }
 
     private static DataGridColumn CloneColumn(DataGridColumn source)
@@ -675,7 +761,49 @@ public partial class DataGridView
         clone.SortMemberPath = source.SortMemberPath;
         clone.SortDirection = source.SortDirection;
         clone.SetValue(SortPriorityPropertyKey, GetSortPriority(source));
+        clone.SetValue(OriginalPinnedColumnProperty, source);
         return clone;
+    }
+
+    // Bring the real cell into view before dispatching input so selection, editing,
+    // validation and keyboard navigation continue to be owned by the original grid.
+    private bool HandlePinnedCellMouseDown(MouseButtonEventArgs args)
+    {
+        var cell = FindAncestor<DataGridCell>(args.OriginalSource as DependencyObject);
+        if (cell?.Column.GetValue(OriginalPinnedColumnProperty) is not DataGridColumn column ||
+            !Columns.Contains(column)) return false;
+        var row = FindAncestor<DataGridRow>(cell);
+        if (row is null || !Items.Contains(row.Item)) return false;
+        args.Handled = true;
+        if (args.ChangedButton == MouseButton.Right)
+        {
+            var menu = CreateRowPinMenu(row.Item, column);
+            if (menu.Items.Count > 0)
+            {
+                menu.PlacementTarget = cell;
+                menu.Placement = PlacementMode.MousePoint;
+                cell.ContextMenu = menu;
+                menu.IsOpen = true;
+            }
+            return true;
+        }
+        if (args.ChangedButton != MouseButton.Left) return true;
+        if (SelectionBehavior == DataGridViewSelectionBehavior.None)
+        {
+            Focus();
+            return true;
+        }
+        ScrollIntoView(row.Item, column);
+        UpdateLayout();
+        if (column.GetCellContent(row.Item)?.Parent is not DataGridCell originalCell) return true;
+        originalCell.RaiseEvent(new MouseButtonEventArgs(args.MouseDevice, args.Timestamp, args.ChangedButton)
+        {
+            RoutedEvent = Mouse.MouseDownEvent,
+            Source = originalCell
+        });
+        if (args.ClickCount == 2 && !IsReadOnly && !column.IsReadOnly) BeginEdit(args);
+        QueuePinningVisualUpdate();
+        return true;
     }
 
     private static IEnumerable<T> VisualChildren<T>(DependencyObject root) where T : DependencyObject
@@ -683,8 +811,11 @@ public partial class DataGridView
         for (var index = 0; index < VisualTreeHelper.GetChildrenCount(root); index++)
         {
             var child = VisualTreeHelper.GetChild(root, index);
+            // Containers are leaves for this search: their cell templates can contain
+            // arbitrarily large visual trees, including other grids.
             if (child is T match) yield return match;
-            foreach (var descendant in VisualChildren<T>(child)) yield return descendant;
+            else if (child is not DataGridView)
+                foreach (var descendant in VisualChildren<T>(child)) yield return descendant;
         }
     }
 }

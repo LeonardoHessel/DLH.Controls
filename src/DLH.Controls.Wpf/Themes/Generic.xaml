@@ -502,14 +502,28 @@
                                                 <RowDefinition Height="*" />
                                                 <RowDefinition Height="Auto" />
                                             </Grid.RowDefinitions>
-                                            <Border Grid.Row="0" Grid.ColumnSpan="2"
+                                            <Border Grid.Row="0" Grid.ColumnSpan="2" Panel.ZIndex="1"
                                                     Background="{DynamicResource DataGridView.Header}"
                                                     BorderBrush="{DynamicResource DataGridView.Edge}"
-                                                    BorderThickness="0,0,0,1" />
+                                                    BorderThickness="0,0,0,1">
+                                                <Border.Style>
+                                                    <Style TargetType="Border">
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding HeadersVisibility, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" Value="None">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                            <DataTrigger Binding="{Binding HeadersVisibility, RelativeSource={RelativeSource AncestorType={x:Type local:DataGridView}}}" Value="Row">
+                                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </Border.Style>
+                                            </Border>
                                             <DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter"
-                                                Grid.Row="0" Grid.ColumnSpan="2" />
+                                                Grid.Row="0" Grid.ColumnSpan="2" Panel.ZIndex="1" />
                                             <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
                                                 Grid.Row="1" Grid.Column="0"
+                                                ClipToBounds="True"
                                                 CanContentScroll="{TemplateBinding CanContentScroll}" />
                                             <local:ScrollBar x:Name="PART_VerticalScrollBar" Grid.Row="1" Grid.Column="1" Panel.ZIndex="5"
                                                 Margin="0,6,6,6" Orientation="Vertical" Maximum="{TemplateBinding ScrollableHeight}"

@@ -179,6 +179,13 @@ public partial class DataGridView
         observedItemsSource = newValue as INotifyCollectionChanged;
         if (observedItemsSource is not null) observedItemsSource.CollectionChanged += OnItemsSourceCollectionChanged;
         RemoveUnavailablePinnedRows();
+        pinnedRowMetrics.Clear();
+        pinnedRowBackgrounds.Clear();
+        renderedRowHeights.Clear();
+        pinningUniformRowHeight = null;
+        pinningHasVariableRowHeights = false;
+        pinningLayoutSignature = string.Empty;
+        QueuePinningVisualUpdate();
     }
 
     private void OnItemsSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs args) => RemoveUnavailablePinnedRows();
@@ -190,6 +197,12 @@ public partial class DataGridView
 
     private void InitializePinning()
     {
+        Loaded += (_, _) =>
+        {
+            LayoutUpdated -= OnPinningLayoutUpdated;
+            LayoutUpdated += OnPinningLayoutUpdated;
+        };
+        Unloaded += (_, _) => LayoutUpdated -= OnPinningLayoutUpdated;
         Columns.CollectionChanged += (_, _) =>
         {
             foreach (var column in pinnedColumns.Where(column => !Columns.Contains(column)).ToArray()) UnpinColumn(column);

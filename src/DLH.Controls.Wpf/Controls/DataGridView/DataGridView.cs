@@ -729,6 +729,7 @@ public partial class DataGridView : DataGrid
             e.Handled = true;
             return;
         }
+        if (HandlePinnedCellMouseDown(e)) return;
         if (e.ChangedButton == MouseButton.Left && SelectionBehavior == DataGridViewSelectionBehavior.Column &&
             FindAncestor<DataGridColumnHeader>(e.OriginalSource as DependencyObject) is { Column: { } column })
         {

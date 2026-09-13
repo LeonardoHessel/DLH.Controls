@@ -1,5 +1,7 @@
 # Referência da API — TabControl
 
+**🇧🇷 Português (padrão)** · [🇺🇸 English](ApiReference.en.md)
+
 Revisão para estabilização, baseada na implementação atual. Namespace: `DLH.Controls.Wpf`. Usar no thread de interface WPF. Os membros herdados de TabControl mantêm seus contratos WPF.
 
 ## Propriedades próprias

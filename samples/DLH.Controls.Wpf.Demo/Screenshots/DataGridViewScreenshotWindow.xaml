@@ -1,0 +1,46 @@
+<Window x:Class="DLH.Controls.Wpf.Demo.Screenshots.DataGridViewScreenshotWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:controls="clr-namespace:DLH.Controls.Wpf;assembly=DLH.Controls.Wpf"
+        Title="DataGridView" Width="1320" Height="820" ResizeMode="NoResize"
+        WindowStartupLocation="CenterScreen" Background="#1C1D20" Foreground="#ECEEF2"
+        FontFamily="Segoe UI" FontSize="14">
+    <Grid Margin="24">
+        <controls:DataGridView x:Name="Grid" ItemsSource="{Binding Rows}" RowKeyMemberPath="Shipment"
+                                SelectionBehavior="Row" Density="Compact" CornerRadius="10"
+                                CanUserReorderColumns="True" CanUserToggleColumnVisibility="True"
+                                CanPinRows="True" CanPinColumns="True" ShowRowSeparators="True"
+                                DefaultSortMemberPath="Status" DefaultSortDirection="Ascending">
+            <DataGridTextColumn Header="Nº Embarque" Binding="{Binding Shipment}" SortMemberPath="Shipment" MinWidth="150" Width="160"/>
+            <DataGridTextColumn Header="Origem" Binding="{Binding Origin}" SortMemberPath="Origin" MinWidth="110" Width="130"/>
+            <DataGridTemplateColumn Header="Status" SortMemberPath="Status" MinWidth="135" Width="140">
+                <DataGridTemplateColumn.CellTemplate>
+                    <DataTemplate>
+                        <Border x:Name="Badge" HorizontalAlignment="Left" Padding="8,3" CornerRadius="8" Background="#253E566B" BorderBrush="#536B7F" BorderThickness="1">
+                            <TextBlock x:Name="BadgeText" Text="{Binding Status}" Foreground="#8DCAEF" FontSize="12" FontWeight="SemiBold"/>
+                        </Border>
+                        <DataTemplate.Triggers>
+                            <DataTrigger Binding="{Binding Status}" Value="Pendente">
+                                <Setter TargetName="Badge" Property="Background" Value="#35A93D4A"/>
+                                <Setter TargetName="Badge" Property="BorderBrush" Value="#8C4C55"/>
+                                <Setter TargetName="BadgeText" Property="Foreground" Value="#FF929A"/>
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding Status}" Value="Concluído">
+                                <Setter TargetName="Badge" Property="Background" Value="#294A4034"/>
+                                <Setter TargetName="Badge" Property="BorderBrush" Value="#4B725A"/>
+                                <Setter TargetName="BadgeText" Property="Foreground" Value="#8DD5A1"/>
+                            </DataTrigger>
+                        </DataTemplate.Triggers>
+                    </DataTemplate>
+                </DataGridTemplateColumn.CellTemplate>
+            </DataGridTemplateColumn>
+            <DataGridTextColumn Header="Veículo" Binding="{Binding Vehicle}" SortMemberPath="Vehicle" MinWidth="120" Width="130"/>
+            <DataGridTextColumn Header="Quantidade" Binding="{Binding Quantity}" SortMemberPath="Quantity" MinWidth="100" Width="110"/>
+            <DataGridTextColumn Header="Destino" Binding="{Binding Destination}" SortMemberPath="Destination" MinWidth="150" Width="170"/>
+            <DataGridTextColumn Header="Doca" Binding="{Binding Dock}" SortMemberPath="Dock" MinWidth="80" Width="90"/>
+            <DataGridTextColumn Header="Inspetor" Binding="{Binding Inspector}" SortMemberPath="Inspector" MinWidth="150" Width="170"/>
+            <DataGridTextColumn Header="Última atualização" Binding="{Binding UpdatedAt, StringFormat={}{0:dd/MM/yyyy HH:mm}}" SortMemberPath="UpdatedAt" MinWidth="170" Width="180"/>
+            <DataGridTextColumn Header="Observação" Binding="{Binding Notes}" SortMemberPath="Notes" MinWidth="260" Width="320"/>
+        </controls:DataGridView>
+    </Grid>
+</Window>

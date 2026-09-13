@@ -1,5 +1,7 @@
 # DLH Controls
 
+**🇧🇷 Português (padrão)** · [🇺🇸 English](README.en.md)
+
 [![NuGet](https://img.shields.io/nuget/vpre/DLH.Controls.Wpf?label=NuGet)](https://www.nuget.org/packages/DLH.Controls.Wpf)
 [![Downloads](https://img.shields.io/nuget/dt/DLH.Controls.Wpf?label=Downloads)](https://www.nuget.org/packages/DLH.Controls.Wpf)
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)

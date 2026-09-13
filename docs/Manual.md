@@ -1,5 +1,7 @@
 # Manual do DLH Controls
 
+**🇧🇷 Português (padrão)** · [🇺🇸 English](Manual.en.md)
+
 Este manual apresenta o uso da biblioteca **DLH Controls** pelo ponto de vista de quem desenvolve uma aplicação. A implementação disponível atualmente está no pacote `DLH.Controls.Wpf`, para Windows com .NET 10 e WPF.
 
 ## Sumário

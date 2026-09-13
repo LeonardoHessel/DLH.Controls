@@ -10,6 +10,7 @@
 - Novas capturas dos quatro controles principais: `TabControl`, `DataGridView`, `ScrollBar` e `ContextMenu`.
 - README, manual e referência da API consolidados em português-BR, com exemplos de instalação atualizados.
 - Validação do pacote atualizada para conferir todas as imagens exibidas no README do NuGet.
+- Tolerância da captura dos controles compartilhados calibrada para diferenças de renderização entre o ambiente local e o GitHub Actions, mantendo o limite de diferença média.
 
 ## 0.4.0-preview.2 — 12 de setembro de 2026
 

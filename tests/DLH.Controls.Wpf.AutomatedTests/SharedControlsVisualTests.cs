@@ -133,7 +133,7 @@ public sealed class SharedControlsVisualTests
         var pixels = actual.Width * actual.Height;
         var changedRatio = (double)changed / pixels;
         var meanDifference = (double)totalDifference / (pixels * 3);
-        Assert.IsTrue(changedRatio <= .02 && meanDifference <= 3,
+        Assert.IsTrue(changedRatio <= .025 && meanDifference <= 3,
             $"Regressão visual nos controles compartilhados: {changedRatio:P3} pixels e média {meanDifference:F3}.");
     }
 

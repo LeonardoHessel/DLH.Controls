@@ -214,10 +214,16 @@ public partial class DataGridView
         }
         UpdateSortPriorities();
 
-        UnpinAllColumns();
-        if (CanPinColumns)
-            foreach (var key in state.PinnedColumnKeys.Where(byKey.ContainsKey)) PinColumn(byKey[key]);
-        UnpinAllRows();
+        var targetColumns = CanPinColumns
+            ? state.PinnedColumnKeys.Where(byKey.ContainsKey).Select(key => byKey[key])
+                .Where(column => column.Visibility == Visibility.Visible).Take(MaxPinnedColumns).ToList()
+            : [];
+        foreach (var column in pinnedColumns.Where(column => !targetColumns.Contains(column)).ToArray())
+            UnpinColumn(column);
+        foreach (var column in targetColumns.Where(column => !pinnedColumns.Contains(column)))
+            PinColumn(column);
+
+        var targetRows = new List<object>();
         if (CanPinRows && !string.IsNullOrWhiteSpace(RowKeyMemberPath))
         {
             var rowsByKey = Items.Cast<object>().Select(item => (Key: GetRowKey(item), Item: item))
@@ -225,8 +231,13 @@ public partial class DataGridView
                 .GroupBy(pair => pair.Key!, StringComparer.Ordinal)
                 .Where(group => group.Count() == 1)
                 .ToDictionary(group => group.Key, group => group.Single().Item, StringComparer.Ordinal);
-            foreach (var key in state.PinnedRowKeys.Where(rowsByKey.ContainsKey)) PinRow(rowsByKey[key]);
+            targetRows.AddRange(state.PinnedRowKeys.Where(rowsByKey.ContainsKey).Select(key => rowsByKey[key])
+                .Take(MaxPinnedRows));
         }
+        foreach (var item in pinnedRows.Where(item => !targetRows.Contains(item)).ToArray())
+            UnpinRow(item);
+        foreach (var item in targetRows.Where(item => !pinnedRows.Contains(item)))
+            PinRow(item);
     }
 
     private static DataGridViewState CloneState(DataGridViewState state) => new()
@@ -252,7 +263,6 @@ public partial class DataGridView
     private string? GetRowKey(object item)
     {
         if (string.IsNullOrWhiteSpace(RowKeyMemberPath)) return null;
-        var descriptor = TypeDescriptor.GetProperties(item).Find(RowKeyMemberPath, false);
-        return descriptor?.GetValue(item)?.ToString();
+        return ReadMemberPath(item, RowKeyMemberPath)?.ToString();
     }
 }

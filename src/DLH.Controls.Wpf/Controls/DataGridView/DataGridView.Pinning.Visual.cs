@@ -16,6 +16,7 @@ public partial class DataGridView
     private FrameworkElement? pinningViewport;
     private readonly Dictionary<object, (double Offset, double Height)> pinnedRowMetrics = [];
     private readonly Dictionary<object, Brush> pinnedRowBackgrounds = [];
+    private readonly Dictionary<object, int> pinnedRowIndices = [];
     private readonly Dictionary<object, double> renderedRowHeights = [];
     private readonly Dictionary<DataGridColumn, (double Offset, double Width)> pinnedColumnMetrics = [];
     private bool pinningUpdatePending;
@@ -34,6 +35,7 @@ public partial class DataGridView
     private void InitializePinningVisuals()
     {
         if (pinningScrollViewer is not null) pinningScrollViewer.ScrollChanged -= OnPinningScrollChanged;
+        if (pinningLayer is not null) DetachDiscardedPinningOverlays(pinningLayer);
         pinningLayer = GetTemplateChild("PART_PinningLayer") as Canvas;
         pinningScrollViewer = GetTemplateChild("DG_ScrollViewer") as ScrollViewer;
         if (pinningScrollViewer is null || pinningLayer is null) return;
@@ -111,10 +113,22 @@ public partial class DataGridView
         var viewportOrigin = pinningViewport.TranslatePoint(new Point(), pinningLayer);
         foreach (var item in pinnedRows)
         {
-            if (ItemContainerGenerator.ContainerFromItem(item) is not DataGridRow row || row.ActualHeight <= 0) continue;
+            if (ItemContainerGenerator.ContainerFromItem(item) is not DataGridRow row || row.ActualHeight <= 0)
+            {
+                var currentIndex = Items.IndexOf(item);
+                if (currentIndex < 0 || !pinnedRowIndices.TryGetValue(item, out var capturedIndex) ||
+                    currentIndex != capturedIndex)
+                {
+                    pinnedRowMetrics.Remove(item);
+                    pinnedRowBackgrounds.Remove(item);
+                    pinnedRowIndices.Remove(item);
+                }
+                continue;
+            }
             var position = row.TranslatePoint(new Point(), pinningLayer);
             pinnedRowMetrics[item] = (position.Y - viewportOrigin.Y + pinningScrollViewer.VerticalOffset, row.ActualHeight);
             pinnedRowBackgrounds[item] = ResolvePinnedRowBackground(row.Background);
+            pinnedRowIndices[item] = Items.IndexOf(item);
         }
         if (pinnedColumns.Count == 0 ||
             pinningScrollViewer.Template.FindName("PART_ColumnHeadersPresenter", pinningScrollViewer) is not DependencyObject headers) return;
@@ -141,12 +155,19 @@ public partial class DataGridView
             return;
         }
         pinningLayoutSignature = signature;
+        DetachDiscardedPinningOverlays(pinningLayer);
         pinningLayer.Children.Clear();
         pinnedRowOverlays.Clear();
         pinnedColumnOverlays.Clear();
         AddPinnedRows(origin);
         AddPinnedColumns(origin);
         AddPinnedIntersections(origin);
+    }
+
+    private static void DetachDiscardedPinningOverlays(Canvas layer)
+    {
+        foreach (var overlay in layer.Children.OfType<DataGridView>())
+            overlay.DetachItemsSourceObserverForPinning();
     }
 
     private string CreatePinningLayoutSignature(Point origin)
@@ -578,7 +599,7 @@ public partial class DataGridView
         {
             ItemsSource = source,
             HeadersVisibility = headers,
-            IsReadOnly = IsReadOnly,
+            IsReadOnly = true,
             IsHitTestVisible = true,
             Background = Background,
             Foreground = Foreground,

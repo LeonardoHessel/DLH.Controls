@@ -405,7 +405,7 @@ O item fixado acompanha a rolagem enquanto sua posição natural estiver visíve
 
 As operações `PinRow`, `UnpinRow`, `ToggleRowPin`, `PinColumn`, `UnpinColumn` e `ToggleColumnPin` retornam `True` somente quando alteram o estado. Use `UnpinAllRows()` e `UnpinAllColumns()` para limpar os grupos. `PinnedRows` e `PinnedColumns` são coleções somente leitura; os eventos `RowPinned`, `RowUnpinned`, `ColumnPinned` e `ColumnUnpinned` informam cada alteração.
 
-As colunas fixadas participam de `CaptureState`, `RestoreState`, `SaveState` e `LoadState` por suas chaves estáveis. Para persistir linhas fixadas, configure `RowKeyMemberPath` com uma propriedade de texto única e estável. Linhas sem chave configurada continuam fixáveis durante a execução, mas não são incluídas no estado salvo.
+As colunas fixadas participam de `CaptureState`, `RestoreState`, `SaveState` e `LoadState` por suas chaves estáveis. Para persistir linhas fixadas, configure `RowKeyMemberPath` com uma propriedade de texto única e estável. Caminhos aninhados usam segmentos separados por ponto, como `Identity.Key`. Linhas sem chave configurada continuam fixáveis durante a execução, mas não são incluídas no estado salvo.
 
 ### 4.12 Estados da coleção
 

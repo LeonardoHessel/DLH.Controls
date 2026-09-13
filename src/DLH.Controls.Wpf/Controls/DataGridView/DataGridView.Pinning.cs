@@ -1,5 +1,6 @@
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
@@ -49,6 +50,9 @@ public sealed class DataGridViewColumnPinChangedEventArgs(DataGridColumn column)
 
 public partial class DataGridView
 {
+    private static readonly DependencyPropertyDescriptor ColumnVisibilityDescriptor =
+        DependencyPropertyDescriptor.FromProperty(DataGridColumn.VisibilityProperty, typeof(DataGridColumn))
+        ?? throw new InvalidOperationException("Não foi possível observar a visibilidade das colunas.");
     private readonly ObservableCollection<object> pinnedRows = [];
     private readonly ObservableCollection<DataGridColumn> pinnedColumns = [];
     private ReadOnlyObservableCollection<object>? readOnlyPinnedRows;
@@ -64,12 +68,12 @@ public partial class DataGridView
     public bool CanPinColumns { get => (bool)GetValue(CanPinColumnsProperty); set => SetValue(CanPinColumnsProperty, value); }
 
     public static readonly DependencyProperty MaxPinnedRowsProperty = DependencyProperty.Register(
-        nameof(MaxPinnedRows), typeof(int), typeof(DataGridView), new PropertyMetadata(5),
+        nameof(MaxPinnedRows), typeof(int), typeof(DataGridView), new PropertyMetadata(5, OnMaxPinnedRowsChanged),
         value => value is int count && count > 0);
     public int MaxPinnedRows { get => (int)GetValue(MaxPinnedRowsProperty); set => SetValue(MaxPinnedRowsProperty, value); }
 
     public static readonly DependencyProperty MaxPinnedColumnsProperty = DependencyProperty.Register(
-        nameof(MaxPinnedColumns), typeof(int), typeof(DataGridView), new PropertyMetadata(4),
+        nameof(MaxPinnedColumns), typeof(int), typeof(DataGridView), new PropertyMetadata(4, OnMaxPinnedColumnsChanged),
         value => value is int count && count > 0);
     public int MaxPinnedColumns { get => (int)GetValue(MaxPinnedColumnsProperty); set => SetValue(MaxPinnedColumnsProperty, value); }
 
@@ -99,6 +103,20 @@ public partial class DataGridView
     {
         get => (double)GetValue(PinnedBoundarySeparatorThicknessProperty);
         set => SetValue(PinnedBoundarySeparatorThicknessProperty, value);
+    }
+
+    private static void OnMaxPinnedRowsChanged(DependencyObject owner, DependencyPropertyChangedEventArgs args)
+    {
+        var grid = (DataGridView)owner;
+        while (grid.pinnedRows.Count > (int)args.NewValue)
+            grid.UnpinRow(grid.pinnedRows[^1]);
+    }
+
+    private static void OnMaxPinnedColumnsChanged(DependencyObject owner, DependencyPropertyChangedEventArgs args)
+    {
+        var grid = (DataGridView)owner;
+        while (grid.pinnedColumns.Count > (int)args.NewValue)
+            grid.UnpinColumn(grid.pinnedColumns[^1]);
     }
 
     private static void OnPinnedBoundaryAppearanceChanged(DependencyObject owner, DependencyPropertyChangedEventArgs args)
@@ -134,6 +152,9 @@ public partial class DataGridView
     {
         ArgumentNullException.ThrowIfNull(item);
         if (!pinnedRows.Remove(item)) return false;
+        pinnedRowMetrics.Remove(item);
+        pinnedRowBackgrounds.Remove(item);
+        pinnedRowIndices.Remove(item);
         RowUnpinned?.Invoke(this, new DataGridViewRowPinChangedEventArgs(item));
         OnPinnedItemsChanged();
         return true;
@@ -147,6 +168,7 @@ public partial class DataGridView
         if (!CanPinColumns || pinnedColumns.Contains(column) || !Columns.Contains(column) ||
             column.Visibility != Visibility.Visible || pinnedColumns.Count >= MaxPinnedColumns) return false;
         pinnedColumns.Add(column);
+        ColumnVisibilityDescriptor.AddValueChanged(column, OnPinnedColumnVisibilityChanged);
         ColumnPinned?.Invoke(this, new DataGridViewColumnPinChangedEventArgs(column));
         OnPinnedItemsChanged();
         return true;
@@ -156,6 +178,7 @@ public partial class DataGridView
     {
         ArgumentNullException.ThrowIfNull(column);
         if (!pinnedColumns.Remove(column)) return false;
+        ColumnVisibilityDescriptor.RemoveValueChanged(column, OnPinnedColumnVisibilityChanged);
         ColumnUnpinned?.Invoke(this, new DataGridViewColumnPinChangedEventArgs(column));
         OnPinnedItemsChanged();
         return true;
@@ -173,6 +196,12 @@ public partial class DataGridView
         foreach (var column in pinnedColumns.ToArray()) UnpinColumn(column);
     }
 
+    private void OnPinnedColumnVisibilityChanged(object? sender, EventArgs args)
+    {
+        if (sender is DataGridColumn { Visibility: not Visibility.Visible } column)
+            UnpinColumn(column);
+    }
+
     private void OnItemsSourceChangedForPinning(System.Collections.IEnumerable newValue)
     {
         if (observedItemsSource is not null) observedItemsSource.CollectionChanged -= OnItemsSourceCollectionChanged;
@@ -181,11 +210,19 @@ public partial class DataGridView
         RemoveUnavailablePinnedRows();
         pinnedRowMetrics.Clear();
         pinnedRowBackgrounds.Clear();
+        pinnedRowIndices.Clear();
         renderedRowHeights.Clear();
         pinningUniformRowHeight = null;
         pinningHasVariableRowHeights = false;
         pinningLayoutSignature = string.Empty;
         QueuePinningVisualUpdate();
+    }
+
+    private void DetachItemsSourceObserverForPinning()
+    {
+        if (observedItemsSource is not null)
+            observedItemsSource.CollectionChanged -= OnItemsSourceCollectionChanged;
+        observedItemsSource = null;
     }
 
     private void OnItemsSourceCollectionChanged(object? sender, NotifyCollectionChangedEventArgs args) => RemoveUnavailablePinnedRows();

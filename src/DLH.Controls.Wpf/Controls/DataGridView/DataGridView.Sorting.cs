@@ -24,9 +24,10 @@ public partial class DataGridView
 
     private void OnGridSorting(object sender, DataGridSortingEventArgs e)
     {
-        RefreshPinnedSortIndicatorsAfterSorting();
-        if (!IsMultiColumnSortEnabled || !CanUserSortColumns || !e.Column.CanUserSort ||
+        if (!CanUserSortColumns || !e.Column.CanUserSort ||
             string.IsNullOrWhiteSpace(e.Column.SortMemberPath)) return;
+        RefreshPinnedSortIndicatorsAfterSorting();
+        if (!IsMultiColumnSortEnabled) return;
 
         e.Handled = true;
         if (Keyboard.Modifiers.HasFlag(ModifierKeys.Control))

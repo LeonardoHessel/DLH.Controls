@@ -87,6 +87,37 @@ public sealed class DataGridViewPinningTests
     }
 
     [STATestMethod]
+    public void ReducingPinLimitsUnpinsNewestItemsAndRaisesEvents()
+    {
+        var rows = new[] { new Row("Primeira"), new Row("Segunda"), new Row("Terceira") };
+        var grid = new DataGridView
+        {
+            ItemsSource = rows,
+            CanPinRows = true,
+            CanPinColumns = true,
+            MaxPinnedRows = 3,
+            MaxPinnedColumns = 3
+        };
+        var columns = Enumerable.Range(1, 3).Select(index => new DataGridTextColumn { Header = $"Coluna {index}" }).ToArray();
+        foreach (var column in columns) grid.Columns.Add(column);
+        foreach (var row in rows) Assert.IsTrue(grid.PinRow(row));
+        foreach (var column in columns) Assert.IsTrue(grid.PinColumn(column));
+
+        var unpinnedRows = new List<object>();
+        var unpinnedColumns = new List<DataGridColumn>();
+        grid.RowUnpinned += (_, args) => unpinnedRows.Add(args.Item);
+        grid.ColumnUnpinned += (_, args) => unpinnedColumns.Add(args.Column);
+
+        grid.MaxPinnedRows = 1;
+        grid.MaxPinnedColumns = 1;
+
+        CollectionAssert.AreEqual(new object[] { rows[0] }, grid.PinnedRows.ToArray());
+        CollectionAssert.AreEqual(new[] { columns[0] }, grid.PinnedColumns.ToArray());
+        CollectionAssert.AreEquivalent(new object[] { rows[1], rows[2] }, unpinnedRows);
+        CollectionAssert.AreEquivalent(new[] { columns[1], columns[2] }, unpinnedColumns);
+    }
+
+    [STATestMethod]
     public void PinnedRowAndColumnBecomeVisualOnlyAfterLeavingTheViewport()
     {
         var rows = new ObservableCollection<Row>(Enumerable.Range(1, 200).Select(index => new Row($"Linha {index}")));
@@ -344,6 +375,38 @@ public sealed class DataGridViewPinningTests
     }
 
     [STATestMethod]
+    public void NestedRowKeyMemberPathRoundTripsPinnedRows()
+    {
+        var rows = new[]
+        {
+            new NestedRow(new RowIdentity("row-1"), "Primeira"),
+            new NestedRow(new RowIdentity("row-2"), "Segunda")
+        };
+        var grid = new DataGridView
+        {
+            ItemsSource = rows,
+            CanPinRows = true,
+            RowKeyMemberPath = "Identity.Key"
+        };
+        var column = new DataGridTextColumn
+        {
+            Header = "Nome",
+            Binding = new System.Windows.Data.Binding(nameof(NestedRow.Name)),
+            SortMemberPath = nameof(NestedRow.Name)
+        };
+        grid.Columns.Add(column);
+        column.DisplayIndex = 0;
+        Assert.IsTrue(grid.PinRow(rows[1]));
+
+        var state = grid.CaptureState();
+        CollectionAssert.AreEqual(new[] { "row-2" }, state.PinnedRowKeys);
+        grid.UnpinAllRows();
+        grid.RestoreState(state);
+
+        Assert.AreSame(rows[1], grid.PinnedRows.Single());
+    }
+
+    [STATestMethod]
     public void MultiplePinnedRowIntersectionsMatchTheFullRowBounds()
     {
         var rows = new ObservableCollection<Row>(Enumerable.Range(1, 30).Select(index => new Row($"Linha {index}")));
@@ -442,4 +505,6 @@ public sealed class DataGridViewPinningTests
     }
 
     private sealed record Row(string Name);
+    private sealed record RowIdentity(string Key);
+    private sealed record NestedRow(RowIdentity Identity, string Name);
 }

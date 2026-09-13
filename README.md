@@ -669,7 +669,7 @@ Ao clicar em uma célula aderente para selecioná-la ou editá-la, o grid rola a
 
 Por código, use `PinRow`, `UnpinRow`, `ToggleRowPin`, `PinColumn`, `UnpinColumn` e `ToggleColumnPin`. `UnpinAllRows()` e `UnpinAllColumns()` limpam cada grupo. As coleções somente leitura `PinnedRows` e `PinnedColumns` representam o estado atual, e os eventos `RowPinned`, `RowUnpinned`, `ColumnPinned` e `ColumnUnpinned` notificam as alterações.
 
-O estado das colunas fixadas é salvo com as demais configurações do grid. Para também persistir linhas fixadas, defina `RowKeyMemberPath` com uma propriedade textual, única e estável de cada registro.
+O estado das colunas fixadas é salvo com as demais configurações do grid. Para também persistir linhas fixadas, defina `RowKeyMemberPath` com uma propriedade textual, única e estável de cada registro. Caminhos aninhados são aceitos com segmentos separados por ponto, como `Identity.Key`.
 
 ## Persistir o layout das colunas
 

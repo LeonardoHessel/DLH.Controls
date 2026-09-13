@@ -131,7 +131,7 @@ O painel usa `StaysOpen=false`, portanto um clique fora dele fecha a apresentaç
 | `PinnedBoundarySeparatorThickness` | `2` | Espessura finita e maior que zero |
 | `PinnedRows` | somente leitura | Coleção observável dos itens fixados |
 | `PinnedColumns` | somente leitura | Coleção observável das colunas fixadas |
-| `RowKeyMemberPath` | `null` | Caminho da chave textual usada para persistir linhas fixadas |
+| `RowKeyMemberPath` | `null` | Caminho simples ou aninhado da chave textual; segmentos aninhados são separados por ponto, como `Identity.Key` |
 
 `PinRow`, `UnpinRow`, `ToggleRowPin`, `PinColumn`, `UnpinColumn` e `ToggleColumnPin` retornam `true` quando alteram o estado. `UnpinAllRows()` e `UnpinAllColumns()` removem todas as fixações correspondentes. `RowPinned`, `RowUnpinned`, `ColumnPinned` e `ColumnUnpinned` informam o item ou a coluna alterada.
 

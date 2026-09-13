@@ -663,7 +663,9 @@ A fixação é opcional e permanece desativada por padrão. Ative `CanPinRows` e
 
 Uma linha ou coluna fixada permanece em sua posição natural enquanto estiver visível. Durante a rolagem, ela adere à borda somente quando sair da área visível. Vários itens fixados se acumulam sem sobreposição: linhas aderem ao topo ou à parte inferior e colunas aderem à esquerda ou à direita, conforme o sentido da rolagem. As interseções entre linhas e colunas fixadas preservam o conteúdo, a altura e o alinhamento originais.
 
-Ao clicar em uma célula aderente para selecioná-la ou editá-la, o grid rola até a célula original, preservando os comportamentos de seleção, edição e validação. O menu de contexto da célula aderente atua sobre a coluna original. Ocultar uma coluna remove sua representação aderente, mas preserva a preferência de fixação para quando ela voltar a ser exibida. Substituir `ItemsSource` também atualiza o conteúdo das colunas aderentes.
+Ao clicar em uma célula aderente para selecioná-la ou editá-la, o grid rola até a célula original, preservando os comportamentos de seleção, edição e validação. O menu de contexto da célula aderente atua sobre a coluna original. Ocultar uma coluna fixada a desfixa automaticamente e libera seu lugar em `MaxPinnedColumns`; para fixá-la de novo depois de reexibida, chame `PinColumn` explicitamente. Substituir `ItemsSource` também atualiza o conteúdo das colunas aderentes.
+
+Reduzir `MaxPinnedRows` ou `MaxPinnedColumns` em tempo de execução desfixa automaticamente os itens fixados mais recentes até respeitar o novo limite, disparando `RowUnpinned`/`ColumnUnpinned` para cada um.
 
 `ShowPinnedBoundarySeparator` exibe a divisão entre a área fixa e a área rolável. `PinnedBoundarySeparatorBrush` define a cor e `PinnedBoundarySeparatorThickness` aceita valores finitos maiores que zero. A divisão acompanha qualquer uma das quatro bordas em que exista conteúdo aderente.
 

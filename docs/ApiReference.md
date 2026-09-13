@@ -124,8 +124,8 @@ O painel usa `StaysOpen=false`, portanto um clique fora dele fecha a apresentaç
 |---|---:|---|
 | `CanPinRows` | `false` | Autoriza fixação de registros e habilita sua ação no menu da linha |
 | `CanPinColumns` | `false` | Autoriza fixação de colunas e habilita sua ação no menu do cabeçalho |
-| `MaxPinnedRows` | `5` | Limite positivo de linhas fixadas |
-| `MaxPinnedColumns` | `4` | Limite positivo de colunas fixadas |
+| `MaxPinnedRows` | `5` | Limite positivo de linhas fixadas; reduzi-lo em tempo de execução desfixa os itens mais recentes em excesso |
+| `MaxPinnedColumns` | `4` | Limite positivo de colunas fixadas; reduzi-lo em tempo de execução desfixa os itens mais recentes em excesso |
 | `ShowPinnedBoundarySeparator` | `true` | Exibe o limite entre conteúdo aderente e rolável |
 | `PinnedBoundarySeparatorBrush` | `#42A5E8` | Pincel do separador nas quatro bordas possíveis |
 | `PinnedBoundarySeparatorThickness` | `2` | Espessura finita e maior que zero |
@@ -133,7 +133,7 @@ O painel usa `StaysOpen=false`, portanto um clique fora dele fecha a apresentaç
 | `PinnedColumns` | somente leitura | Coleção observável das colunas fixadas |
 | `RowKeyMemberPath` | `null` | Caminho simples ou aninhado da chave textual; segmentos aninhados são separados por ponto, como `Identity.Key` |
 
-`PinRow`, `UnpinRow`, `ToggleRowPin`, `PinColumn`, `UnpinColumn` e `ToggleColumnPin` retornam `true` quando alteram o estado. `UnpinAllRows()` e `UnpinAllColumns()` removem todas as fixações correspondentes. `RowPinned`, `RowUnpinned`, `ColumnPinned` e `ColumnUnpinned` informam o item ou a coluna alterada.
+`PinRow`, `UnpinRow`, `ToggleRowPin`, `PinColumn`, `UnpinColumn` e `ToggleColumnPin` retornam `true` quando alteram o estado. `UnpinAllRows()` e `UnpinAllColumns()` removem todas as fixações correspondentes. `RowPinned`, `RowUnpinned`, `ColumnPinned` e `ColumnUnpinned` informam o item ou a coluna alterada. Ocultar uma coluna fixada (`Visibility` diferente de `Visible`) a desfixa automaticamente e libera seu lugar em `MaxPinnedColumns`; ela não é refixada sozinha quando volta a ficar visível.
 
 Uma fixação preserva a posição natural até o item alcançar o limite visível. Depois disso, linhas aderem ao topo ou à parte inferior e colunas à esquerda ou à direita. Itens múltiplos se acumulam junto à borda. A camada de interseção mantém linhas e colunas fixadas sincronizadas, e o separador de limite acompanha a região aderente ativa.
 

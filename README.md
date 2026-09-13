@@ -409,6 +409,8 @@ Para uma composição fixa que não use `ContextMenu`, marque o contêiner com `
 
 O menu aberto com o botão direito nos cabeçalhos do `DataGridView` já é uma instância desse componente.
 
+No `DataGridView`, o menu do cabeçalho agrupa primeiro as ações da coluna, depois os submenus `Ordenação` e `Colunas visíveis`, e por último as ações gerais. O menu das linhas mostra a fixação da linha e da coluna clicada, identificada pelo nome. Ações de limpeza aparecem quando aplicáveis, e `Desafixar todas...` aparece a partir de duas fixações. Ao atingir um limite de fixação, a ação permanece desabilitada com uma explicação no tooltip. Os mesmos menus são usados nas áreas fixas e móveis.
+
 # DataGridView
 
 ## Exemplo mínimo

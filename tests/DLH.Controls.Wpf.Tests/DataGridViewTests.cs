@@ -341,12 +341,12 @@ internal static class DataGridViewTests
                 grid.ShowClearSortMenuItem = false;
                 grid.ShowRestoreDefaultSortMenuItem = true;
                 var menu = (ControlsContextMenu)method.Invoke(grid, new object?[] { null })!;
-                Check(menu.Items.OfType<MenuItem>().All(item => !Equals(item.Header, "Limpar ordenação")) &&
-                      menu.Items.OfType<MenuItem>().Any(item => Equals(item.Header, "Restaurar ordenação padrão")),
+                Check(menu.Items.OfType<MenuItem>().SelectMany(item => item.Items.OfType<MenuItem>()).All(item => !Equals(item.Header, "Limpar ordenação")) &&
+                      menu.Items.OfType<MenuItem>().SelectMany(item => item.Items.OfType<MenuItem>()).Any(item => Equals(item.Header, "Restaurar ordenação padrão")),
                       "Clear action visibility was not respected");
                 grid.ShowRestoreDefaultSortMenuItem = false;
                 menu = (ControlsContextMenu)method.Invoke(grid, new object?[] { null })!;
-                Check(menu.Items.OfType<MenuItem>().All(item => !Equals(item.Header, "Restaurar ordenação padrão")),
+                Check(menu.Items.OfType<MenuItem>().SelectMany(item => item.Items.OfType<MenuItem>()).All(item => !Equals(item.Header, "Restaurar ordenação padrão")),
                       "Restore action visibility was not respected");
                 grid.ShowClearSortMenuItem = true;
                 grid.ShowRestoreDefaultSortMenuItem = true;
@@ -356,16 +356,17 @@ internal static class DataGridViewTests
             {
                 var method = typeof(DataGridView).GetMethod("CreateColumnVisibilityMenu", System.Reflection.BindingFlags.Instance | System.Reflection.BindingFlags.NonPublic)!;
                 var menu = (ControlsContextMenu)method.Invoke(grid, null)!;
-                var columnItems = menu.Items.OfType<MenuItem>().Where(item => item.Tag is DataGridColumn).ToList();
+                var columnItems = menu.Items.OfType<MenuItem>().Single(item => Equals(item.Header, "Colunas visíveis"))
+                    .Items.OfType<MenuItem>().ToList();
                 Check(columnItems.Count == 3 && columnItems.All(item => item.IsCheckable && item.IsChecked), "Visibility menu does not represent columns");
                 var statusItem = columnItems.Single(item => ReferenceEquals(item.Tag, status));
                 statusItem.IsChecked = false; statusItem.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
                 Check(status.Visibility == Visibility.Collapsed, "Menu did not hide column");
                 name.Visibility = Visibility.Collapsed;
                 menu = (ControlsContextMenu)method.Invoke(grid, null)!;
-                var onlyVisible = menu.Items.OfType<MenuItem>().Single(item => ReferenceEquals(item.Tag, quantity));
+                var onlyVisible = menu.Items.OfType<MenuItem>().SelectMany(item => item.Items.OfType<MenuItem>()).Single(item => ReferenceEquals(item.Tag, quantity));
                 Check(onlyVisible.IsChecked && !onlyVisible.IsEnabled, "Last visible column can be hidden");
-                var hidden = menu.Items.OfType<MenuItem>().Single(item => ReferenceEquals(item.Tag, status));
+                var hidden = menu.Items.OfType<MenuItem>().SelectMany(item => item.Items.OfType<MenuItem>()).Single(item => ReferenceEquals(item.Tag, status));
                 Check(!hidden.IsChecked && hidden.IsEnabled, "Hidden column cannot be restored");
                 hidden.IsChecked = true; hidden.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
                 Check(status.Visibility == Visibility.Visible, "Menu did not restore column");

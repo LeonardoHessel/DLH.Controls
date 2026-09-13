@@ -153,7 +153,7 @@ public sealed class DataGridViewPinningRegressionTests
             DrainLayout(grid);
             Assert.IsNotNull(cell.ContextMenu);
             Assert.IsTrue(cell.ContextMenu.IsOpen);
-            var unpin = cell.ContextMenu.Items.OfType<MenuItem>().Single(item => Equals(item.Header, "Desafixar esta coluna"));
+            var unpin = cell.ContextMenu.Items.OfType<MenuItem>().Single(item => Equals(item.Header, "Desafixar coluna “A”"));
             unpin.RaiseEvent(new RoutedEventArgs(MenuItem.ClickEvent));
             Assert.IsEmpty(grid.PinnedColumns);
         }

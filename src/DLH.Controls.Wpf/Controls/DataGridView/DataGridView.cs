@@ -825,70 +825,43 @@ public partial class DataGridView : DataGrid
     internal ContextMenu CreateColumnHeaderMenu(DataGridColumn? contextColumn = null)
     {
         var menu = new ContextMenu();
+        var local = new List<MenuItem>();
+        var options = new List<MenuItem>();
+        var global = new List<MenuItem>();
         if (CanPinColumns && contextColumn is not null)
+            local.Add(CreateColumnPinMenuItem(contextColumn, includeName: false));
+        if (ShowFilterMenuItems && contextColumn is not null &&
+            Filters.Any(filter => string.Equals(filter.ColumnKey, GetStableColumnKey(contextColumn), StringComparison.Ordinal)))
         {
-            var isPinned = pinnedColumns.Contains(contextColumn);
-            var pin = new MenuItem
-            {
-                Header = isPinned ? "Desafixar coluna" : "Fixar coluna",
-                Icon = CreatePinIcon(isPinned),
-                IsEnabled = isPinned || pinnedColumns.Count < MaxPinnedColumns
-            };
-            pin.Click += (_, _) => ToggleColumnPin(contextColumn);
-            menu.Items.Add(pin);
-            if (pinnedColumns.Count > 0)
-            {
-                var unpinAll = new MenuItem { Header = "Desafixar todas as colunas", Icon = CreatePinIcon(true) };
-                unpinAll.Click += (_, _) => UnpinAllColumns();
-                menu.Items.Add(unpinAll);
-            }
-            menu.Items.Add(new Separator());
+            var clearColumnFilter = new MenuItem { Header = "Limpar filtro desta coluna" };
+            clearColumnFilter.Click += (_, _) => ClearFilter(contextColumn);
+            local.Add(clearColumnFilter);
         }
-        if (ShowClearSortMenuItem)
+
+        var sorting = new MenuItem { Header = "Ordenação" };
+        if (CanUserSortColumns && ShowClearSortMenuItem && HasActiveSorting())
         {
-            var clearSort = new MenuItem { Header = "Limpar ordenação", IsEnabled = HasActiveSorting() };
+            var clearSort = new MenuItem { Header = "Limpar ordenação" };
             clearSort.Click += (_, _) => ClearSorting();
-            menu.Items.Add(clearSort);
+            sorting.Items.Add(clearSort);
         }
-
-        if (ShowRestoreDefaultSortMenuItem)
+        if (CanUserSortColumns && ShowRestoreDefaultSortMenuItem && !string.IsNullOrWhiteSpace(DefaultSortMemberPath))
         {
-            var restoreDefault = new MenuItem
-            {
-                Header = "Restaurar ordenação padrão",
-                IsEnabled = !string.IsNullOrWhiteSpace(DefaultSortMemberPath)
-            };
+            var restoreDefault = new MenuItem { Header = "Restaurar ordenação padrão" };
             restoreDefault.Click += (_, _) => ApplyDefaultSort();
-            menu.Items.Add(restoreDefault);
+            sorting.Items.Add(restoreDefault);
         }
+        if (sorting.HasItems) options.Add(sorting);
 
-        if (ShowFilterMenuItems && Filters.Count > 0)
+        if (CanUserToggleColumnVisibility && Columns.Count > 0)
         {
-            if (menu.Items.Count > 0) menu.Items.Add(new Separator());
-            if (contextColumn is not null)
-            {
-                var clearColumnFilter = new MenuItem
-                {
-                    Header = "Limpar filtro desta coluna",
-                    IsEnabled = Filters.Any(filter => string.Equals(filter.ColumnKey, GetStableColumnKey(contextColumn), StringComparison.Ordinal))
-                };
-                clearColumnFilter.Click += (_, _) => ClearFilter(contextColumn);
-                menu.Items.Add(clearColumnFilter);
-            }
-            var clearFilters = new MenuItem { Header = "Limpar todos os filtros" };
-            clearFilters.Click += (_, _) => ClearFilters();
-            menu.Items.Add(clearFilters);
-        }
-
-        if (CanUserToggleColumnVisibility)
-        {
-            if (menu.Items.Count > 0) menu.Items.Add(new Separator());
+            var visibility = new MenuItem { Header = "Colunas visíveis" };
             var visibleCount = Columns.Count(column => column.Visibility == Visibility.Visible);
             foreach (var column in Columns.OrderBy(column => column.DisplayIndex))
             {
                 var item = new MenuItem
                 {
-                    Header = column.Header?.ToString() ?? $"Coluna {column.DisplayIndex + 1}",
+                    Header = GetColumnMenuName(column),
                     IsCheckable = true,
                     IsChecked = column.Visibility == Visibility.Visible,
                     IsEnabled = column.Visibility != Visibility.Visible || visibleCount > 1,
@@ -901,15 +874,29 @@ public partial class DataGridView : DataGrid
                     if (ReferenceEquals(SelectedColumn, target) && target.Visibility != Visibility.Visible)
                         SetCurrentValue(SelectedColumnProperty, null);
                 };
-                menu.Items.Add(item);
+                visibility.Items.Add(item);
             }
+            options.Add(visibility);
         }
+        if (ShowFilterMenuItems && Filters.Count > 0)
+        {
+            var clearFilters = new MenuItem { Header = "Limpar todos os filtros" };
+            clearFilters.Click += (_, _) => ClearFilters();
+            global.Add(clearFilters);
+        }
+        if (CanPinColumns && pinnedColumns.Count > 1)
+            global.Add(CreateUnpinAllColumnsMenuItem());
+        AddContextMenuGroup(menu, local);
+        AddContextMenuGroup(menu, options);
+        AddContextMenuGroup(menu, global);
         return menu;
     }
 
     private ContextMenu CreateRowPinMenu(object rowItem, DataGridColumn? column)
     {
         var menu = new ContextMenu();
+        var local = new List<MenuItem>();
+        var global = new List<MenuItem>();
         if (CanPinRows)
         {
             var isPinned = pinnedRows.Contains(rowItem);
@@ -919,31 +906,63 @@ public partial class DataGridView : DataGrid
                 Icon = CreatePinIcon(isPinned),
                 IsEnabled = isPinned || pinnedRows.Count < MaxPinnedRows
             };
+            SetPinLimitToolTip(pinRow, $"Limite de linhas fixadas atingido ({MaxPinnedRows}). Desafixe uma linha para fixar outra.");
             pinRow.Click += (_, _) => ToggleRowPin(rowItem);
-            menu.Items.Add(pinRow);
-            if (pinnedRows.Count > 0)
+            local.Add(pinRow);
+            if (pinnedRows.Count > 1)
             {
                 var unpinRows = new MenuItem { Header = "Desafixar todas as linhas", Icon = CreatePinIcon(true) };
                 unpinRows.Click += (_, _) => UnpinAllRows();
-                menu.Items.Add(unpinRows);
+                global.Add(unpinRows);
             }
         }
         if (CanPinColumns && column is not null)
-        {
-            if (menu.Items.Count > 0) menu.Items.Add(new Separator());
-            var isPinned = pinnedColumns.Contains(column);
-            var pinColumn = new MenuItem
-            {
-                Header = isPinned ? "Desafixar esta coluna" : "Fixar esta coluna",
-                Icon = CreatePinIcon(isPinned),
-                IsEnabled = isPinned || pinnedColumns.Count < MaxPinnedColumns
-            };
-            pinColumn.Click += (_, _) => ToggleColumnPin(column);
-            menu.Items.Add(pinColumn);
-        }
+            local.Add(CreateColumnPinMenuItem(column, includeName: true));
+        if (CanPinColumns && pinnedColumns.Count > 1)
+            global.Add(CreateUnpinAllColumnsMenuItem());
+        AddContextMenuGroup(menu, local);
+        AddContextMenuGroup(menu, global);
         return menu;
     }
 
+    private MenuItem CreateColumnPinMenuItem(DataGridColumn column, bool includeName)
+    {
+        var isPinned = pinnedColumns.Contains(column);
+        var label = isPinned ? "Desafixar coluna" : "Fixar coluna";
+        var item = new MenuItem
+        {
+            Header = includeName ? $"{label} “{GetColumnMenuName(column)}”" : label,
+            Icon = CreatePinIcon(isPinned),
+            IsEnabled = isPinned || pinnedColumns.Count < MaxPinnedColumns
+        };
+        SetPinLimitToolTip(item, $"Limite de colunas fixadas atingido ({MaxPinnedColumns}). Desafixe uma coluna para fixar outra.");
+        item.Click += (_, _) => ToggleColumnPin(column);
+        return item;
+    }
+
+    private MenuItem CreateUnpinAllColumnsMenuItem()
+    {
+        var item = new MenuItem { Header = "Desafixar todas as colunas", Icon = CreatePinIcon(true) };
+        item.Click += (_, _) => UnpinAllColumns();
+        return item;
+    }
+
+    private static string GetColumnMenuName(DataGridColumn column) =>
+        string.IsNullOrWhiteSpace(column.Header?.ToString()) ? $"Coluna {column.DisplayIndex + 1}" : column.Header.ToString()!;
+
+    private static void SetPinLimitToolTip(MenuItem item, string message)
+    {
+        if (item.IsEnabled) return;
+        item.ToolTip = message;
+        ToolTipService.SetShowOnDisabled(item, true);
+    }
+
+    private static void AddContextMenuGroup(ContextMenu menu, List<MenuItem> items)
+    {
+        if (items.Count == 0) return;
+        if (menu.Items.Count > 0) menu.Items.Add(new Separator());
+        foreach (var item in items) menu.Items.Add(item);
+    }
     private bool HasActiveSorting() =>
         Columns.Any(column => column.SortDirection is not null) ||
         CollectionViewSource.GetDefaultView(ItemsSource)?.SortDescriptions.Count > 0;

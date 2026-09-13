@@ -2,6 +2,11 @@
 
 ## Não publicado
 
+## 0.4.0-preview.1 — 12 de setembro de 2026
+
+> Inclui também o conteúdo abaixo já publicado em `0.3.0-preview.2` sem uma seção própria no histórico.
+
+- **Alteração incompatível:** `CustomTabControl` foi renomeado para `TabControl` (e seus itens para `TabControlItem`); atualize referências de tipo e recursos de estilo existentes.
 - Padronização dos nomes públicos para `TabControl`, `TabControlItem` e `ScrollBar`.
 - Novo `ScrollBar` reutilizável com orientação, espessura, cores, estados, raio limitado, sombra e botões opcionais.
 - `DataGridView` migrado para a barra compartilhada, preservando suas propriedades de compatibilidade.
@@ -18,6 +23,15 @@
 - Fixação aderente opcional de linhas e colunas nas quatro bordas, acionada pelos menus de opções e com persistência por chaves estáveis.
 - Separador configurável entre as regiões fixa e rolável, com cor, espessura e visibilidade próprias.
 - Correções de composição, fundo, alinhamento e continuidade visual quando múltiplas linhas e colunas fixadas se cruzam.
+- Menus de contexto do `DataGridView` reorganizados por escopo de ação (coluna, linha, fixação).
+- Correção de vazamento de memória nos overlays de coluna fixada ao reconstruir a visualização.
+- Correção de métricas obsoletas em linhas fixadas filtradas ou reordenadas.
+- Overlays de fixação passam a ser estritamente visuais: seleção e edição permanecem sob controle do grid original, incluindo colunas de caixa de seleção.
+- Reduzir `MaxPinnedRows`/`MaxPinnedColumns` em tempo de execução agora desfixa automaticamente os itens mais recentes em excesso.
+- Ocultar uma coluna fixada agora a desfixa e libera seu lugar em `MaxPinnedColumns`.
+- `RestoreState` não republica mais eventos de fixação para itens cujo estado não mudou, incluindo no rollback de uma restauração com falha.
+- `RowKeyMemberPath` passa a aceitar caminhos aninhados (ex.: `Identity.Key`).
+- Indicadores de ordenação fixados só são atualizados quando a ordenação de fato é aceita pela coluna.
 
 - Persistência versionada do layout das colunas e da ordenação.
 - Ordenação por múltiplas colunas com prioridade visual.

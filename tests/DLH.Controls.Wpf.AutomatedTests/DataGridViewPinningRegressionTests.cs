@@ -60,6 +60,13 @@ public sealed class DataGridViewPinningRegressionTests
         grid.UpdateLayout();
     }
 
+    // MouseButtonEventArgs.ClickCount has no public setter; WPF only assigns it while
+    // routing a real physical click. Tests simulating a double click need to poke the
+    // private backing field directly.
+    private static void SetClickCount(MouseButtonEventArgs args, int clickCount) =>
+        typeof(MouseButtonEventArgs).GetField("_count", System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)!
+            .SetValue(args, clickCount);
+
     [STATestMethod]
     public void HidingPinnedColumnReleasesItsSlotAndRaisesUnpinned() => WithPinnedColumn((grid, layer, column) =>
     {
@@ -206,6 +213,28 @@ public sealed class DataGridViewPinningRegressionTests
         Assert.AreEqual(1, beginningEdit);
         Assert.AreEqual(1, cellEditEnding);
         Assert.AreEqual(1, rowEditEnding);
+    });
+
+    [STATestMethod]
+    public void DoubleClickingPinnedCellBeginsEditOnOriginalColumn() => WithPinnedColumn((grid, layer, column) =>
+    {
+        var overlay = layer.Children.OfType<DataGridView>().Single();
+        var item = grid.Items[0];
+        var overlayCell = (DataGridCell)overlay.Columns[0].GetCellContent(item).Parent;
+        var beginningEdit = 0;
+        grid.BeginningEdit += (_, _) => beginningEdit++;
+        var doubleClick = new MouseButtonEventArgs(Mouse.PrimaryDevice, Environment.TickCount, MouseButton.Left)
+        {
+            RoutedEvent = Mouse.PreviewMouseDownEvent, Source = overlayCell
+        };
+        SetClickCount(doubleClick, 2);
+        overlayCell.RaiseEvent(doubleClick);
+        DrainLayout(grid);
+        Assert.AreEqual(1, beginningEdit, "O duplo clique na célula fixada deve iniciar a edição no grid original.");
+        var editor = Assert.IsInstanceOfType<TextBox>(column.GetCellContent(item), "A edição deve abrir no grid original, não no overlay.");
+        editor.Text = "Editado";
+        Assert.IsTrue(grid.CommitEdit(DataGridEditingUnit.Row, true));
+        Assert.AreEqual("Editado", ((EditableRow)item).Name);
     });
 
     [STATestMethod]

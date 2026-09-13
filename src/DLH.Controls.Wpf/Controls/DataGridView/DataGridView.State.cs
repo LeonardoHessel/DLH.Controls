@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Text.Json;
@@ -188,6 +189,19 @@ public partial class DataGridView
 
     private void ApplyState(DataGridViewState state, List<(string Key, DataGridColumn Column)> current)
     {
+        applyingPinnedState = true;
+        try
+        {
+            ApplyStateCore(state, current);
+        }
+        finally
+        {
+            applyingPinnedState = false;
+        }
+    }
+
+    private void ApplyStateCore(DataGridViewState state, List<(string Key, DataGridColumn Column)> current)
+    {
         var byKey = current.ToDictionary(pair => pair.Key, pair => pair.Column, StringComparer.Ordinal);
         var savedByKey = state.Columns.ToDictionary(column => column.Key, StringComparer.Ordinal);
         var ordered = state.Columns.Where(saved => byKey.ContainsKey(saved.Key)).OrderBy(saved => saved.DisplayIndex)
@@ -218,10 +232,7 @@ public partial class DataGridView
             ? state.PinnedColumnKeys.Where(byKey.ContainsKey).Select(key => byKey[key])
                 .Where(column => column.Visibility == Visibility.Visible).Take(MaxPinnedColumns).ToList()
             : [];
-        foreach (var column in pinnedColumns.Where(column => !targetColumns.Contains(column)).ToArray())
-            UnpinColumn(column);
-        foreach (var column in targetColumns.Where(column => !pinnedColumns.Contains(column)))
-            PinColumn(column);
+        ReconcilePins(pinnedColumns, targetColumns, UnpinColumn, PinColumn);
 
         var targetRows = new List<object>();
         if (CanPinRows && !string.IsNullOrWhiteSpace(RowKeyMemberPath))
@@ -234,10 +245,30 @@ public partial class DataGridView
             targetRows.AddRange(state.PinnedRowKeys.Where(rowsByKey.ContainsKey).Select(key => rowsByKey[key])
                 .Take(MaxPinnedRows));
         }
-        foreach (var item in pinnedRows.Where(item => !targetRows.Contains(item)).ToArray())
-            UnpinRow(item);
-        foreach (var item in targetRows.Where(item => !pinnedRows.Contains(item)))
-            PinRow(item);
+        ReconcilePins(pinnedRows, targetRows, UnpinRow, PinRow);
+    }
+
+    /// <summary>
+    /// Makes <paramref name="pinned"/> hold exactly <paramref name="target"/>, by reference identity
+    /// (not <see cref="object.Equals(object)"/>, which record-typed row models override), then reorders
+    /// it to match <paramref name="target"/> exactly — without unpinning/re-pinning (and so without
+    /// firing pin-changed events for) items whose pinned status didn't actually change.
+    /// </summary>
+    private static void ReconcilePins<T>(ObservableCollection<T> pinned, List<T> target, Func<T, bool> unpin, Func<T, bool> pin)
+        where T : class
+    {
+        var referenceComparer = (IEqualityComparer<T>)(object)ReferenceEqualityComparer.Instance;
+        var targetSet = new HashSet<T>(target, referenceComparer);
+        var pinnedSet = new HashSet<T>(pinned, referenceComparer);
+        foreach (var item in pinned.Where(item => !targetSet.Contains(item)).ToArray()) unpin(item);
+        foreach (var item in target.Where(item => !pinnedSet.Contains(item))) pin(item);
+        for (var index = 0; index < target.Count; index++)
+        {
+            var currentIndex = -1;
+            for (var search = index; search < pinned.Count; search++)
+                if (ReferenceEquals(pinned[search], target[index])) { currentIndex = search; break; }
+            if (currentIndex >= 0 && currentIndex != index) pinned.Move(currentIndex, index);
+        }
     }
 
     private static DataGridViewState CloneState(DataGridViewState state) => new()

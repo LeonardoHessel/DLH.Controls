@@ -115,6 +115,12 @@ public partial class DataGridView
         {
             if (ItemContainerGenerator.ContainerFromItem(item) is not DataGridRow row || row.ActualHeight <= 0)
             {
+                // No realized container: could be virtualized off-screen (still at the same
+                // Items position, cached metrics stay valid) or genuinely filtered/reordered
+                // away (Items position changed or gone, cached metrics are stale). Only
+                // Items.IndexOf — not this dictionary alone — reflects filtering/sorting, so
+                // it has to be checked here; this branch only runs for pinned rows without a
+                // realized container, not on every capture for every visible pinned row.
                 var currentIndex = Items.IndexOf(item);
                 if (currentIndex < 0 || !pinnedRowIndices.TryGetValue(item, out var capturedIndex) ||
                     currentIndex != capturedIndex)
@@ -599,6 +605,14 @@ public partial class DataGridView
         {
             ItemsSource = source,
             HeadersVisibility = headers,
+            // Read-only at the grid level so the overlay can never start its own edit
+            // (defense in depth for any input path, e.g. keyboard, that isn't a pointer
+            // press). CloneColumn separately keeps checkbox/combo columns' own IsReadOnly
+            // false so they don't render as visually disabled — HandlePinnedCellMouseDown
+            // intercepts every pointer press on a pinned cell during the tunneling
+            // PreviewMouseDown pass (fired on the real grid, an ancestor of this overlay)
+            // and marks it Handled before it can ever reach those elements' own click
+            // handling, regardless of their own IsReadOnly/IsEnabled state.
             IsReadOnly = true,
             IsHitTestVisible = true,
             Background = Background,
@@ -777,7 +791,16 @@ public partial class DataGridView
         clone.Width = new DataGridLength(Math.Max(1, source.ActualWidth));
         clone.MinWidth = 0;
         clone.MaxWidth = double.PositiveInfinity;
-        clone.IsReadOnly = source.IsReadOnly;
+        // DataGridCheckBoxColumn/DataGridComboBoxColumn tie their display element's
+        // IsEnabled directly to the column's own IsReadOnly, unlike text/template columns
+        // which just stop offering double-click-to-edit when read-only. Give those two an
+        // explicit IsReadOnly matching the real column, so they look exactly as
+        // enabled/disabled as the real column instead of always inheriting the overlay
+        // grid's IsReadOnly=true and rendering visually disabled. Every other column type
+        // is left unset, so it inherits the overlay grid's IsReadOnly=true as before.
+        // HandlePinnedCellMouseDown's click interception blocks direct interaction on any
+        // pinned cell regardless of IsReadOnly, so this stays safe either way.
+        if (clone is DataGridCheckBoxColumn or DataGridComboBoxColumn) clone.IsReadOnly = source.IsReadOnly;
         clone.CanUserSort = source.CanUserSort;
         clone.SortMemberPath = source.SortMemberPath;
         clone.SortDirection = source.SortDirection;

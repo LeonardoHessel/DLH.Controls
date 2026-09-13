@@ -58,6 +58,8 @@ public partial class DataGridView
     private ReadOnlyObservableCollection<object>? readOnlyPinnedRows;
     private ReadOnlyObservableCollection<DataGridColumn>? readOnlyPinnedColumns;
     private INotifyCollectionChanged? observedItemsSource;
+    private bool trimmingExcessPins;
+    private bool applyingPinnedState;
 
     public static readonly DependencyProperty CanPinRowsProperty = DependencyProperty.Register(
         nameof(CanPinRows), typeof(bool), typeof(DataGridView), new PropertyMetadata(false));
@@ -105,18 +107,25 @@ public partial class DataGridView
         set => SetValue(PinnedBoundarySeparatorThicknessProperty, value);
     }
 
-    private static void OnMaxPinnedRowsChanged(DependencyObject owner, DependencyPropertyChangedEventArgs args)
-    {
-        var grid = (DataGridView)owner;
-        while (grid.pinnedRows.Count > (int)args.NewValue)
-            grid.UnpinRow(grid.pinnedRows[^1]);
-    }
+    private static void OnMaxPinnedRowsChanged(DependencyObject owner, DependencyPropertyChangedEventArgs args) =>
+        TrimExcessPins((DataGridView)owner, ((DataGridView)owner).pinnedRows, (int)args.NewValue, static (grid, item) => grid.UnpinRow(item));
 
-    private static void OnMaxPinnedColumnsChanged(DependencyObject owner, DependencyPropertyChangedEventArgs args)
+    private static void OnMaxPinnedColumnsChanged(DependencyObject owner, DependencyPropertyChangedEventArgs args) =>
+        TrimExcessPins((DataGridView)owner, ((DataGridView)owner).pinnedColumns, (int)args.NewValue, static (grid, column) => grid.UnpinColumn(column));
+
+    private static void TrimExcessPins<T>(DataGridView grid, ObservableCollection<T> pinned, int max, Action<DataGridView, T> unpin)
     {
-        var grid = (DataGridView)owner;
-        while (grid.pinnedColumns.Count > (int)args.NewValue)
-            grid.UnpinColumn(grid.pinnedColumns[^1]);
+        if (grid.trimmingExcessPins) return;
+        grid.trimmingExcessPins = true;
+        try
+        {
+            while (pinned.Count > max)
+                unpin(grid, pinned[^1]);
+        }
+        finally
+        {
+            grid.trimmingExcessPins = false;
+        }
     }
 
     private static void OnPinnedBoundaryAppearanceChanged(DependencyObject owner, DependencyPropertyChangedEventArgs args)
@@ -198,7 +207,11 @@ public partial class DataGridView
 
     private void OnPinnedColumnVisibilityChanged(object? sender, EventArgs args)
     {
-        if (sender is DataGridColumn { Visibility: not Visibility.Visible } column)
+        // While a saved state is being applied, the deliberate pin/unpin diff in
+        // ApplyState is the sole source of truth for pin changes and their events;
+        // it already accounts for each column's saved Visibility, so this live-user
+        // watcher (meant for ad hoc hide/show outside of state restore) stays quiet.
+        if (!applyingPinnedState && sender is DataGridColumn { Visibility: not Visibility.Visible } column)
             UnpinColumn(column);
     }
 

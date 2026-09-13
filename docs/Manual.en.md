@@ -54,7 +54,7 @@ Default styles are loaded automatically. The application only needs to merge `Th
 
 `TabControl` organizes content into tabs and draws the selected tab and its body as a single surface. The control accepts both `TabControlItem` and the native `System.Windows.Controls.TabItem`.
 
-![TabControl in different positions](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/custom-tab-control.png)
+![TabControl in different positions](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/tab-control.png)
 
 ### 3.1 Basic usage
 
@@ -436,6 +436,8 @@ The available densities are `Compact`, `Default` and `Comfortable`. The scrollba
 
 ## 5. ScrollBar and ContextMenu
 
+![ScrollBar in three color, thickness and corner-radius combinations](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/scroll-bar.png)
+
 `ScrollBar` can be used directly on any scrollable content. `Thickness` controls its thickness, and `CornerRadius` is visually clamped to half that measurement. Colors, opacity, shadow and directional buttons are optional.
 
 ```xml
@@ -444,6 +446,8 @@ The available densities are `Compact`, `Default` and `Comfortable`. The scrollba
                Thickness="10" CornerRadius="5"
                ShowButtons="False" />
 ```
+
+![ContextMenu open with its export submenu open](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/context-menu.png)
 
 `ContextMenu` accepts the same `MenuItem`, commands, bindings, shortcuts, checkable items and submenus as WPF:
 

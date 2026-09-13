@@ -11,6 +11,7 @@
             <Setter Property="Background" Value="#1C1D20"/>
             <Setter Property="CornerRadius" Value="14"/>
             <Setter Property="Padding" Value="18"/>
+            <Setter Property="Margin" Value="10"/>
         </Style>
         <DataTemplate x:Key="PageContent">
             <StackPanel Margin="20">
@@ -21,7 +22,7 @@
     </Window.Resources>
     <UniformGrid Columns="2" Rows="2" Margin="24">
         <Border Style="{StaticResource Card}">
-            <dlh:TabControl TabStripPlacement="Top" CornerRadius="12" SelectedIndex="0">
+            <dlh:TabControl TabStripPlacement="Top" CornerRadius="12" TabSpacing="16" HeaderIndent="16" SelectedIndex="0">
                 <dlh:TabControlItem>
                     <dlh:TabControlItem.Header>
                         <StackPanel Orientation="Horizontal"><TextBlock Text="◈" Margin="0,0,8,0" Foreground="#42A5E8"/><TextBlock Text="Visão geral"/></StackPanel>
@@ -33,7 +34,7 @@
             </dlh:TabControl>
         </Border>
         <Border Style="{StaticResource Card}">
-            <dlh:TabControl TabStripPlacement="Bottom" CornerRadius="12" SelectedIndex="1">
+            <dlh:TabControl TabStripPlacement="Bottom" CornerRadius="12" TabSpacing="16" HeaderIndent="16" SelectedIndex="1">
                 <dlh:TabControlItem Header="Visão geral"/>
                 <dlh:TabControlItem>
                     <dlh:TabControlItem.Header>
@@ -45,7 +46,7 @@
             </dlh:TabControl>
         </Border>
         <Border Style="{StaticResource Card}">
-            <dlh:TabControl TabStripPlacement="Left" CornerRadius="12" SelectedIndex="0">
+            <dlh:TabControl TabStripPlacement="Left" CornerRadius="12" TabSpacing="8" SelectedIndex="0">
                 <dlh:TabControlItem Header="Visão geral">
                     <ContentControl Content="{Binding}" ContentTemplate="{StaticResource PageContent}" DataContext="{x:Static local:Pages.Overview}"/>
                 </dlh:TabControlItem>
@@ -54,7 +55,7 @@
             </dlh:TabControl>
         </Border>
         <Border Style="{StaticResource Card}">
-            <dlh:TabControl TabStripPlacement="Right" CornerRadius="12" SelectedIndex="2">
+            <dlh:TabControl TabStripPlacement="Right" CornerRadius="12" TabSpacing="8" SelectedIndex="2">
                 <dlh:TabControlItem Header="Visão geral"/>
                 <dlh:TabControlItem Header="Editor"/>
                 <dlh:TabControlItem Header="Config.">

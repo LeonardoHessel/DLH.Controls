@@ -54,7 +54,7 @@ Os estilos padrão são carregados automaticamente. A aplicação só precisa me
 
 O `TabControl` organiza conteúdos em abas e desenha a aba selecionada e seu corpo como uma única superfície. O controle aceita tanto `TabControlItem` quanto `System.Windows.Controls.TabItem` nativo.
 
-![TabControl em diferentes posições](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/custom-tab-control.png)
+![TabControl em diferentes posições](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/tab-control.png)
 
 ### 3.1 Uso básico
 
@@ -436,6 +436,8 @@ As densidades disponíveis são `Compact`, `Default` e `Comfortable`. As barras 
 
 ## 5. ScrollBar e ContextMenu
 
+![ScrollBar em três combinações de cor, espessura e raio](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/scroll-bar.png)
+
 O `ScrollBar` pode ser usado diretamente em qualquer conteúdo rolável. `Thickness` controla sua espessura e `CornerRadius` é limitado visualmente à metade dessa medida. Cores, opacidade, sombra e botões direcionais são opcionais.
 
 ```xml
@@ -444,6 +446,8 @@ O `ScrollBar` pode ser usado diretamente em qualquer conteúdo rolável. `Thickn
                Thickness="10" CornerRadius="5"
                ShowButtons="False" />
 ```
+
+![ContextMenu aberto com submenu de exportação](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/context-menu.png)
 
 O `ContextMenu` aceita os mesmos `MenuItem`, comandos, bindings, atalhos, itens marcáveis e submenus do WPF:
 

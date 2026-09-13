@@ -5,6 +5,13 @@
         Title="DataGridView" Width="1320" Height="820" ResizeMode="NoResize"
         WindowStartupLocation="CenterScreen" Background="#1C1D20" Foreground="#ECEEF2"
         FontFamily="Segoe UI" FontSize="14">
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DLH.Controls.Wpf;component/Themes/Generic.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+        </ResourceDictionary>
+    </Window.Resources>
     <Grid Margin="24">
         <controls:DataGridView x:Name="Grid" ItemsSource="{Binding Rows}" RowKeyMemberPath="Shipment"
                                 SelectionBehavior="Row" Density="Compact" CornerRadius="10"

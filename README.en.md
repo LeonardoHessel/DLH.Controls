@@ -28,7 +28,7 @@ The package currently contains:
 
 `TabControl` draws the selected tab and the body as a single surface. The same corner radius is used on the outer edges and on the joins between the tab and the content.
 
-![TabControl with top, bottom and side tabs](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/custom-tab-control.png)
+![TabControl with top, bottom and side tabs](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/tab-control.png)
 
 It can be used with tabs declared directly in XAML or with a collection bound to `ItemsSource`. Creation, renaming, removal and reordering are optional and come disabled or protected by their own settings.
 
@@ -39,6 +39,18 @@ It can be used with tabs declared directly in XAML or with a collection bound to
 ![DataGridView with sorting, status, multiple columns and custom scrollbars](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/data-grid-view.png)
 
 The example shows sorting with indicators, status rendered by template, column menu, compact density and scrolling on both axes.
+
+### ScrollBar
+
+A standalone scrollbar, used internally by `DataGridView` and available for any scrollable content, with configurable orientation, thickness, colors, corner radius and shadow.
+
+![ScrollBar in three color, thickness and corner-radius combinations](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/scroll-bar.png)
+
+### ContextMenu
+
+A context menu with icons, checkable items, shortcuts, submenus and shadow, organized into five aligned columns.
+
+![ContextMenu open with its export submenu open](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/context-menu.png)
 
 ## Installation
 

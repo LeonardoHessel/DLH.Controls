@@ -6,6 +6,10 @@
         WindowStartupLocation="CenterScreen" Background="#1C1D20" Foreground="#ECEEF2"
         FontFamily="Segoe UI" FontSize="14">
     <Window.Resources>
+        <ResourceDictionary>
+        <ResourceDictionary.MergedDictionaries>
+            <ResourceDictionary Source="/DLH.Controls.Wpf;component/Themes/Generic.xaml"/>
+        </ResourceDictionary.MergedDictionaries>
         <Style x:Key="Card" TargetType="Border">
             <Setter Property="Background" Value="#292B2F"/>
             <Setter Property="BorderBrush" Value="#45484F"/>
@@ -17,6 +21,7 @@
             <Setter Property="Foreground" Value="#AEB3BD"/>
             <Setter Property="Margin" Value="0,0,0,14"/>
         </Style>
+        </ResourceDictionary>
     </Window.Resources>
     <Grid Margin="32">
         <Grid.ColumnDefinitions>

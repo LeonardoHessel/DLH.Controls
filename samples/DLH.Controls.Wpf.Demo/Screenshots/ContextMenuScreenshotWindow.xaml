@@ -6,10 +6,15 @@
         WindowStartupLocation="CenterScreen" Background="#1C1D20" Foreground="#ECEEF2"
         FontFamily="Segoe UI" FontSize="14">
     <Window.Resources>
-        <Geometry x:Key="RefreshIcon">M2,8 A6,6 0 1 0 4,3 M4,1 L4,4 L7,4</Geometry>
-        <Geometry x:Key="DarkThemeIcon">M11,2 A6,6 0 1 0 14,12 A5,5 0 0 1 11,2</Geometry>
-        <Geometry x:Key="LightThemeIcon">M8,3 A5,5 0 1 0 8.01,3 M8,0 L8,2 M8,14 L8,16 M0,8 L2,8 M14,8 L16,8</Geometry>
-        <Geometry x:Key="SystemThemeIcon">M8,2 A6,6 0 1 0 8,14 L8,2</Geometry>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="/DLH.Controls.Wpf;component/Themes/Generic.xaml"/>
+            </ResourceDictionary.MergedDictionaries>
+            <Geometry x:Key="RefreshIcon">M2,8 A6,6 0 1 0 4,3 M4,1 L4,4 L7,4</Geometry>
+            <Geometry x:Key="DarkThemeIcon">M11,2 A6,6 0 1 0 14,12 A5,5 0 0 1 11,2</Geometry>
+            <Geometry x:Key="LightThemeIcon">M8,3 A5,5 0 1 0 8.01,3 M8,0 L8,2 M8,14 L8,16 M0,8 L2,8 M14,8 L16,8</Geometry>
+            <Geometry x:Key="SystemThemeIcon">M8,2 A6,6 0 1 0 8,14 L8,2</Geometry>
+        </ResourceDictionary>
     </Window.Resources>
     <Grid>
         <TextBlock Text="Registro selecionado" Margin="60,90,0,0" FontSize="20" FontWeight="SemiBold" Foreground="#ECEEF2" HorizontalAlignment="Left" VerticalAlignment="Top"/>

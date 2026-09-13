@@ -41,10 +41,11 @@ public partial class DataGridViewScreenshotWindow : Window
         {
             Grid.PinColumn(Grid.Columns[0]);
             Grid.PinColumn(Grid.Columns[1]);
+            Grid.PinColumn(Grid.Columns[2]);
             Grid.PinRow(Rows[0]);
             var scrollViewer = (System.Windows.Controls.ScrollViewer)Grid.Template.FindName("DG_ScrollViewer", Grid)!;
-            scrollViewer.ScrollToHorizontalOffset(220);
-            scrollViewer.ScrollToVerticalOffset(90);
+            scrollViewer.ScrollToHorizontalOffset(280);
+            scrollViewer.ScrollToVerticalOffset(260);
         }, DispatcherPriority.Loaded);
     }
 }

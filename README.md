@@ -28,7 +28,7 @@ O pacote contém atualmente:
 
 O `TabControl` desenha a aba selecionada e o corpo como uma única superfície. O mesmo raio é usado nas bordas externas e nas ligações entre a aba e o conteúdo.
 
-![TabControl com abas superiores, inferiores e laterais](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/custom-tab-control.png)
+![TabControl com abas superiores, inferiores e laterais](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/tab-control.png)
 
 Ele pode ser usado com abas declaradas diretamente no XAML ou com uma coleção em `ItemsSource`. A criação, renomeação, remoção e reordenação são opcionais e vêm desativadas ou protegidas por configurações próprias.
 
@@ -39,6 +39,18 @@ O `DataGridView` especializa o `DataGrid` nativo do WPF. Ele preserva virtualiza
 ![DataGridView com ordenação, status, múltiplas colunas e barras customizadas](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/data-grid-view.png)
 
 O exemplo mostra ordenação com indicadores, status renderizado por template, menu de colunas, densidade compacta e rolagem nos dois eixos.
+
+### ScrollBar
+
+Barra de rolagem independente, usada internamente pelo `DataGridView` e disponível para qualquer conteúdo rolável, com orientação, espessura, cores, raio e sombra configuráveis.
+
+![ScrollBar em três combinações de cor, espessura e raio](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/scroll-bar.png)
+
+### ContextMenu
+
+Menu de contexto com ícones, itens marcáveis, atalhos, submenus e sombra, organizados em cinco colunas alinhadas.
+
+![ContextMenu aberto com submenu de exportação](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/context-menu.png)
 
 ## Instalação
 

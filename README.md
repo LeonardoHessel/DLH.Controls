@@ -1,7 +1,5 @@
 # DLH Controls
 
-**🇧🇷 Português (padrão)** · [🇺🇸 English](README.en.md)
-
 [![NuGet](https://img.shields.io/nuget/vpre/DLH.Controls.Wpf?label=NuGet)](https://www.nuget.org/packages/DLH.Controls.Wpf)
 [![Downloads](https://img.shields.io/nuget/dt/DLH.Controls.Wpf?label=Downloads)](https://www.nuget.org/packages/DLH.Controls.Wpf)
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)
@@ -44,7 +42,7 @@ O exemplo mostra ordenação com indicadores, status renderizado por template, m
 
 Barra de rolagem independente, usada internamente pelo `DataGridView` e disponível para qualquer conteúdo rolável, com orientação, espessura, cores, raio e sombra configuráveis.
 
-![ScrollBar em três combinações de cor, espessura e raio](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/scroll-bar.png)
+![ScrollBar horizontal e vertical controlando uma área de conteúdo nos dois eixos](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/scroll-bar.png)
 
 ### ContextMenu
 
@@ -57,20 +55,20 @@ Menu de contexto com ícones, itens marcáveis, atalhos, submenus e sombra, orga
 ### CLI do .NET
 
 ```powershell
-dotnet add package DLH.Controls.Wpf --version 0.4.0-preview.2
+dotnet add package DLH.Controls.Wpf --version 0.4.0-preview.3
 ```
 
 ### Package Manager do Visual Studio
 
 ```powershell
-Install-Package DLH.Controls.Wpf -Version 0.4.0-preview.2
+Install-Package DLH.Controls.Wpf -Version 0.4.0-preview.3
 ```
 
 ### PackageReference
 
 ```xml
 <ItemGroup>
-    <PackageReference Include="DLH.Controls.Wpf" Version="0.4.0-preview.2" />
+    <PackageReference Include="DLH.Controls.Wpf" Version="0.4.0-preview.3" />
 </ItemGroup>
 ```
 
@@ -79,14 +77,14 @@ Install-Package DLH.Controls.Wpf -Version 0.4.0-preview.2
 Informe o projeto que receberá a referência:
 
 ```powershell
-paket add DLH.Controls.Wpf --version 0.4.0-preview.2 --project caminho/SeuProjeto.csproj
+paket add DLH.Controls.Wpf --version 0.4.0-preview.3 --project caminho/SeuProjeto.csproj
 ```
 
 Ou declare o pacote no arquivo `paket.dependencies`:
 
 ```text
 source https://api.nuget.org/v3/index.json
-nuget DLH.Controls.Wpf 0.4.0-preview.2
+nuget DLH.Controls.Wpf 0.4.0-preview.3
 ```
 
 Adicione esta linha ao `paket.references` do projeto WPF:
@@ -827,6 +825,7 @@ Como são `DynamicResource`, esses valores podem ser substituídos durante a exe
 - `src/DLH.Controls.Wpf/Controls`: implementação dos componentes.
 - `src/DLH.Controls.Wpf/Themes`: templates e recursos visuais.
 - `samples/DLH.Controls.Wpf.Demo`: visualizador interativo.
+- `samples/DLH.Controls.Wpf.Screenshots`: composições isoladas para as imagens da documentação.
 - `tests/DLH.Controls.Wpf.Tests`: testes de integração WPF.
 - `docs`: documentação detalhada e planos técnicos.
 - `eng`: validação e preparação do pacote.
@@ -837,6 +836,7 @@ Como são `DynamicResource`, esses valores podem ser substituídos durante a exe
 dotnet restore DLH.Controls.sln
 dotnet build DLH.Controls.sln -c Release
 dotnet run --project samples/DLH.Controls.Wpf.Demo -c Release
+dotnet run --project samples/DLH.Controls.Wpf.Screenshots -c Release
 dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release
 dotnet pack src/DLH.Controls.Wpf -c Release -o artifacts/packages
 ```
@@ -899,7 +899,7 @@ O crédito pode aparecer em **Sobre**, **Créditos** ou **Licenças de terceiros
 # Pacote e autoria
 
 - Pacote: [DLH.Controls.Wpf no NuGet.org](https://www.nuget.org/packages/DLH.Controls.Wpf)
-- Versão publicada mais recente: `0.4.0-preview.2`
+- Versão publicada mais recente: `0.4.0-preview.3`
 - Autor: **Leonardo D. de L. Hessel**
 - Plataforma: Windows
 - Framework: .NET 10 / WPF

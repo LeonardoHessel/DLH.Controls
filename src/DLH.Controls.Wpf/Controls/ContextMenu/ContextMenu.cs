@@ -94,6 +94,7 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
             menuItem.Resources["ContextMenu.ShadowOpacity"] = IsShadowEnabled ? ShadowOpacity : 0d;
             menuItem.Resources["ContextMenu.ShadowBlurRadius"] = ShadowBlurRadius;
             menuItem.Resources["ContextMenu.ShadowDepth"] = ShadowDepth;
+            menuItem.Resources["ContextMenu.ShadowMargin"] = IsShadowEnabled ? new Thickness(6) : new Thickness(0);
             var menuItemStyle = ItemContainerStyle ?? FindSharedStyle(menuItem);
             if (menuItemStyle is not null) menuItem.Resources["ContextMenu.ItemStyle"] = menuItemStyle;
             if (canApplyDefaultStyle && menuItemStyle is not null)

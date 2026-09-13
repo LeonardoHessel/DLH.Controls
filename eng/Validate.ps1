@@ -35,7 +35,7 @@ try {
                     throw "Package README missing Paket instruction: $instruction"
                 }
             }
-            foreach ($image in @('custom-tab-control.png','data-grid-view.png')) {
+            foreach ($image in @('tab-control.png','data-grid-view.png','scroll-bar.png','context-menu.png')) {
                 if (!$packageReadme.Contains("https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/$image", [StringComparison]::Ordinal)) {
                     throw "Package README missing NuGet-compatible image URL: $image"
                 }

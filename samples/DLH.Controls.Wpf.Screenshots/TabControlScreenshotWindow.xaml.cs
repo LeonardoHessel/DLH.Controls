@@ -1,6 +1,6 @@
 using System.Windows;
 
-namespace DLH.Controls.Wpf.Demo.Screenshots;
+namespace DLH.Controls.Wpf.Screenshots;
 
 public partial class TabControlScreenshotWindow : Window
 {
@@ -21,5 +21,6 @@ public static class Pages
 
     public static readonly PageContentModel Settings = new(
         "Preferências da aplicação",
-        "Abas podem ser criadas, renomeadas e fechadas em tempo de execução, com persistência de ordem e seleção.");
+        "Criação, renomeação, fechamento e persistência podem ser habilitados conforme a necessidade.");
 }
+

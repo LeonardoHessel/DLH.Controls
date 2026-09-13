@@ -1,7 +1,5 @@
 # Manual do DLH Controls
 
-**🇧🇷 Português (padrão)** · [🇺🇸 English](Manual.en.md)
-
 Este manual apresenta o uso da biblioteca **DLH Controls** pelo ponto de vista de quem desenvolve uma aplicação. A implementação disponível atualmente está no pacote `DLH.Controls.Wpf`, para Windows com .NET 10 e WPF.
 
 ## Sumário
@@ -23,14 +21,14 @@ Este manual apresenta o uso da biblioteca **DLH Controls** pelo ponto de vista d
 Instale o pacote no projeto WPF:
 
 ```powershell
-dotnet add package DLH.Controls.Wpf --version 0.4.0-preview.2
+dotnet add package DLH.Controls.Wpf --version 0.4.0-preview.3
 ```
 
 Ou adicione a referência diretamente ao arquivo do projeto:
 
 ```xml
 <ItemGroup>
-    <PackageReference Include="DLH.Controls.Wpf" Version="0.4.0-preview.2" />
+    <PackageReference Include="DLH.Controls.Wpf" Version="0.4.0-preview.3" />
 </ItemGroup>
 ```
 
@@ -436,7 +434,7 @@ As densidades disponíveis são `Compact`, `Default` e `Comfortable`. As barras 
 
 ## 5. ScrollBar e ContextMenu
 
-![ScrollBar em três combinações de cor, espessura e raio](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/scroll-bar.png)
+![ScrollBar horizontal e vertical controlando uma área de conteúdo nos dois eixos](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/scroll-bar.png)
 
 O `ScrollBar` pode ser usado diretamente em qualquer conteúdo rolável. `Thickness` controla sua espessura e `CornerRadius` é limitado visualmente à metade dessa medida. Cores, opacidade, sombra e botões direcionais são opcionais.
 
@@ -553,6 +551,14 @@ dotnet run --project samples/DLH.Controls.Wpf.Demo -c Release
 ```
 
 A demonstração permite experimentar os controles, alterar configurações e observar diferentes posições, temas, densidades, modos de seleção e comportamentos.
+
+As imagens da documentação são mantidas em outro aplicativo para que as composições de captura não alterem a demonstração interativa:
+
+```powershell
+dotnet run --project samples/DLH.Controls.Wpf.Screenshots -c Release
+```
+
+O seletor abre uma janela para cada componente. Também é possível informar `tabcontrol`, `datagridview`, `scrollbar` ou `contextmenu` após `--` para abrir uma composição diretamente.
 
 ## 11. Documentos de referência
 

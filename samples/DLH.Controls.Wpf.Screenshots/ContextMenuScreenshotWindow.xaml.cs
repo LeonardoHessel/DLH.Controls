@@ -2,7 +2,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 
-namespace DLH.Controls.Wpf.Demo.Screenshots;
+namespace DLH.Controls.Wpf.Screenshots;
 
 public partial class ContextMenuScreenshotWindow : Window
 {
@@ -20,3 +20,4 @@ public partial class ContextMenuScreenshotWindow : Window
         Dispatcher.BeginInvoke(() => ExportItem.IsSubmenuOpen = true, DispatcherPriority.Loaded);
     }
 }
+

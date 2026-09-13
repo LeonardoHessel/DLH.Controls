@@ -36,6 +36,7 @@
     <sys:Double x:Key="ContextMenu.ShadowOpacity">0.5</sys:Double>
     <sys:Double x:Key="ContextMenu.ShadowBlurRadius">10</sys:Double>
     <sys:Double x:Key="ContextMenu.ShadowDepth">0</sys:Double>
+    <Thickness x:Key="ContextMenu.ShadowMargin">6</Thickness>
     <Thickness x:Key="ContextMenu.ItemPadding">10,7,10,7</Thickness>
     <Thickness x:Key="ContextMenu.Padding">4</Thickness>
     <Thickness x:Key="ContextMenu.BorderThickness">1</Thickness>
@@ -129,11 +130,12 @@
                         <Popup x:Name="PART_Popup" AllowsTransparency="True" Focusable="False"
                                IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                               Placement="Right" HorizontalOffset="-3">
+                               Placement="Right" HorizontalOffset="-9">
                             <Border Background="{DynamicResource ContextMenu.Surface}" Grid.IsSharedSizeScope="True"
                                     BorderBrush="{DynamicResource ContextMenu.Edge}"
                                     BorderThickness="{DynamicResource ContextMenu.BorderThickness}"
-                                    CornerRadius="{DynamicResource ContextMenu.CornerRadius}" Padding="{DynamicResource ContextMenu.Padding}">
+                                    CornerRadius="{DynamicResource ContextMenu.CornerRadius}" Padding="{DynamicResource ContextMenu.Padding}"
+                                    Margin="{DynamicResource ContextMenu.ShadowMargin}">
                                 <Border.Effect>
                                     <DropShadowEffect Color="{DynamicResource ContextMenu.ShadowColor}"
                                                       Opacity="{DynamicResource ContextMenu.ShadowOpacity}"
@@ -166,7 +168,7 @@
                             <Setter TargetName="SubmenuArrow" Property="Text" Value="‹"/>
                             <Setter TargetName="DropDownHost" Property="DockPanel.Dock" Value="Left"/>
                             <Setter TargetName="PART_Popup" Property="Placement" Value="Left"/>
-                            <Setter TargetName="PART_Popup" Property="HorizontalOffset" Value="3"/>
+                            <Setter TargetName="PART_Popup" Property="HorizontalOffset" Value="9"/>
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
@@ -198,7 +200,7 @@
                 <ControlTemplate TargetType="{x:Type local:ContextMenu}">
                     <Border x:Name="MenuSurface" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}" Grid.IsSharedSizeScope="True"
                             BorderThickness="{TemplateBinding BorderThickness}" CornerRadius="{TemplateBinding CornerRadius}"
-                            Padding="{TemplateBinding Padding}" SnapsToDevicePixels="True">
+                            Padding="{TemplateBinding Padding}" Margin="6" SnapsToDevicePixels="True">
                         <Border.Effect>
                             <DropShadowEffect Color="{TemplateBinding ShadowColor}" Opacity="{TemplateBinding ShadowOpacity}"
                                               BlurRadius="{TemplateBinding ShadowBlurRadius}" ShadowDepth="{TemplateBinding ShadowDepth}"/>
@@ -206,7 +208,7 @@
                         <StackPanel IsItemsHost="True" KeyboardNavigation.DirectionalNavigation="Cycle"/>
                     </Border>
                     <ControlTemplate.Triggers>
-                        <Trigger Property="IsShadowEnabled" Value="False"><Setter TargetName="MenuSurface" Property="Effect" Value="{x:Null}"/></Trigger>
+                        <Trigger Property="IsShadowEnabled" Value="False"><Setter TargetName="MenuSurface" Property="Effect" Value="{x:Null}"/><Setter TargetName="MenuSurface" Property="Margin" Value="0"/></Trigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>

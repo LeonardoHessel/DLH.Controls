@@ -1,0 +1,34 @@
+<Window x:Class="DLH.Controls.Wpf.Screenshots.ScreenshotLauncherWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="DLH Controls · Capturas" Width="560" Height="390"
+        WindowStartupLocation="CenterScreen" Background="#1C1D20" Foreground="#ECEEF2"
+        FontFamily="Segoe UI" FontSize="14">
+    <Window.Resources>
+        <Style TargetType="Button">
+            <Setter Property="Margin" Value="0,0,0,10"/>
+            <Setter Property="Padding" Value="14,10"/>
+            <Setter Property="HorizontalContentAlignment" Value="Left"/>
+            <Setter Property="Foreground" Value="#ECEEF2"/>
+            <Setter Property="Background" Value="#34373D"/>
+            <Setter Property="BorderBrush" Value="#50545C"/>
+        </Style>
+    </Window.Resources>
+    <Grid Margin="32">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <TextBlock Text="Capturas da documentação" FontSize="25" FontWeight="SemiBold" Foreground="#42A5E8"/>
+        <TextBlock Grid.Row="1" Margin="0,6,0,22" Foreground="#AEB3BD"
+                   Text="Abra uma composição isolada para revisar ou atualizar sua imagem."/>
+        <StackPanel Grid.Row="2">
+            <Button Content="TabControl" Tag="tabcontrol" Click="OpenScreenshot_Click"/>
+            <Button Content="DataGridView" Tag="datagridview" Click="OpenScreenshot_Click"/>
+            <Button Content="ScrollBar" Tag="scrollbar" Click="OpenScreenshot_Click"/>
+            <Button Content="ContextMenu" Tag="contextmenu" Click="OpenScreenshot_Click"/>
+        </StackPanel>
+    </Grid>
+</Window>
+

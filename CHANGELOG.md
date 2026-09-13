@@ -2,6 +2,15 @@
 
 ## Não publicado
 
+## 0.4.0-preview.3 — 13 de setembro de 2026
+
+- Correção do recorte da sombra nos cantos do `ContextMenu` e de seus submenus, preservando o arredondamento da superfície.
+- Margem de sombra propagada aos submenus e removida automaticamente quando a sombra está desabilitada.
+- Novo aplicativo `DLH.Controls.Wpf.Screenshots`, separado da demonstração interativa, para manter as composições usadas pela documentação.
+- Novas capturas dos quatro controles principais: `TabControl`, `DataGridView`, `ScrollBar` e `ContextMenu`.
+- README, manual e referência da API consolidados em português-BR, com exemplos de instalação atualizados.
+- Validação do pacote atualizada para conferir todas as imagens exibidas no README do NuGet.
+
 ## 0.4.0-preview.2 — 12 de setembro de 2026
 
 - Correção da redução reentrante de `MaxPinnedRows` e `MaxPinnedColumns`, garantindo que alterações feitas durante os eventos de desfixação respeitem os limites finais.

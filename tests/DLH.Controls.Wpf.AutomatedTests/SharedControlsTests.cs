@@ -278,6 +278,8 @@ public sealed class SharedControlsTests
 
             var surface = (Border)menu.Template.FindName("MenuSurface", menu)!;
             Assert.IsNull(surface.Effect);
+            Assert.AreEqual(new Thickness(0), surface.Margin);
+            Assert.AreEqual(new Thickness(0), (Thickness)submenu.Resources["ContextMenu.ShadowMargin"]);
             Assert.AreEqual(typeof(MenuItem), item.Style.TargetType);
             Assert.AreSame(item.Style, child.Style);
             Assert.AreSame(customStyle, customItem.Style);
@@ -298,6 +300,8 @@ public sealed class SharedControlsTests
             menu.IsShadowEnabled = true;
             menu.UpdateLayout();
             Assert.IsInstanceOfType<DropShadowEffect>(surface.Effect);
+            Assert.AreEqual(new Thickness(6), surface.Margin);
+            Assert.AreEqual(new Thickness(6), (Thickness)submenu.Resources["ContextMenu.ShadowMargin"]);
         }
         finally { menu.IsOpen = false; window.Close(); }
     }

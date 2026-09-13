@@ -2,7 +2,7 @@ using System.Collections.ObjectModel;
 using System.Windows;
 using System.Windows.Threading;
 
-namespace DLH.Controls.Wpf.Demo.Screenshots;
+namespace DLH.Controls.Wpf.Screenshots;
 
 public sealed record ShipmentRow(string Shipment, string Origin, string Status, string Vehicle, int Quantity,
     string Destination, string Dock, string Inspector, DateTime UpdatedAt, string Notes);
@@ -44,8 +44,11 @@ public partial class DataGridViewScreenshotWindow : Window
             Grid.PinColumn(Grid.Columns[2]);
             Grid.PinRow(Rows[0]);
             var scrollViewer = (System.Windows.Controls.ScrollViewer)Grid.Template.FindName("DG_ScrollViewer", Grid)!;
-            scrollViewer.ScrollToHorizontalOffset(280);
+            // Alinha o início de uma coluna móvel à divisória da área fixada,
+            // evitando que a captura comece no meio de um cabeçalho.
+            scrollViewer.ScrollToHorizontalOffset(240);
             scrollViewer.ScrollToVerticalOffset(260);
         }, DispatcherPriority.Loaded);
     }
 }
+

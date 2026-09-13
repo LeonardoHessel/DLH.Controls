@@ -2,7 +2,13 @@
 
 ## Não publicado
 
-## 0.4.0-preview.1 — 12 de setembro de 2026
+## 0.4.0-preview.2 — 12 de setembro de 2026
+
+- Correção da redução reentrante de `MaxPinnedRows` e `MaxPinnedColumns`, garantindo que alterações feitas durante os eventos de desfixação respeitem os limites finais.
+
+## 0.4.0-preview.1 — 12 de setembro de 2026 (não publicada no NuGet)
+
+> A versão foi substituída por `0.4.0-preview.2` antes da publicação após a identificação de uma regressão de reentrada nos limites de fixação. A tag original permanece como registro histórico.
 
 > Inclui também o conteúdo abaixo já publicado em `0.3.0-preview.2` sem uma seção própria no histórico.
 

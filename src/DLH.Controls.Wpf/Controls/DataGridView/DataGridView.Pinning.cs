@@ -58,7 +58,8 @@ public partial class DataGridView
     private ReadOnlyObservableCollection<object>? readOnlyPinnedRows;
     private ReadOnlyObservableCollection<DataGridColumn>? readOnlyPinnedColumns;
     private INotifyCollectionChanged? observedItemsSource;
-    private bool trimmingExcessPins;
+    private bool trimmingExcessRows;
+    private bool trimmingExcessColumns;
     private bool applyingPinnedState;
 
     public static readonly DependencyProperty CanPinRowsProperty = DependencyProperty.Register(
@@ -108,23 +109,38 @@ public partial class DataGridView
     }
 
     private static void OnMaxPinnedRowsChanged(DependencyObject owner, DependencyPropertyChangedEventArgs args) =>
-        TrimExcessPins((DataGridView)owner, ((DataGridView)owner).pinnedRows, (int)args.NewValue, static (grid, item) => grid.UnpinRow(item));
+        ((DataGridView)owner).TrimExcessRows();
 
     private static void OnMaxPinnedColumnsChanged(DependencyObject owner, DependencyPropertyChangedEventArgs args) =>
-        TrimExcessPins((DataGridView)owner, ((DataGridView)owner).pinnedColumns, (int)args.NewValue, static (grid, column) => grid.UnpinColumn(column));
+        ((DataGridView)owner).TrimExcessColumns();
 
-    private static void TrimExcessPins<T>(DataGridView grid, ObservableCollection<T> pinned, int max, Action<DataGridView, T> unpin)
+    private void TrimExcessRows()
     {
-        if (grid.trimmingExcessPins) return;
-        grid.trimmingExcessPins = true;
+        if (trimmingExcessRows) return;
+        trimmingExcessRows = true;
         try
         {
-            while (pinned.Count > max)
-                unpin(grid, pinned[^1]);
+            while (pinnedRows.Count > MaxPinnedRows)
+                UnpinRow(pinnedRows[^1]);
         }
         finally
         {
-            grid.trimmingExcessPins = false;
+            trimmingExcessRows = false;
+        }
+    }
+
+    private void TrimExcessColumns()
+    {
+        if (trimmingExcessColumns) return;
+        trimmingExcessColumns = true;
+        try
+        {
+            while (pinnedColumns.Count > MaxPinnedColumns)
+                UnpinColumn(pinnedColumns[^1]);
+        }
+        finally
+        {
+            trimmingExcessColumns = false;
         }
     }
 

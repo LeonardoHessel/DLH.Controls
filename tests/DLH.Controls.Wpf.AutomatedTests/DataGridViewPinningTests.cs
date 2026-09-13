@@ -118,6 +118,40 @@ public sealed class DataGridViewPinningTests
     }
 
     [STATestMethod]
+    public void PinLimitChangesInsideUnpinEventsRespectTheFinalLimits()
+    {
+        var rows = new[] { new Row("Primeira"), new Row("Segunda"), new Row("Terceira") };
+        var grid = new DataGridView
+        {
+            ItemsSource = rows,
+            CanPinRows = true,
+            CanPinColumns = true,
+            MaxPinnedRows = 3,
+            MaxPinnedColumns = 3
+        };
+        var columns = Enumerable.Range(1, 3).Select(index => new DataGridTextColumn { Header = $"Coluna {index}" }).ToArray();
+        foreach (var column in columns) grid.Columns.Add(column);
+        foreach (var row in rows) Assert.IsTrue(grid.PinRow(row));
+        foreach (var column in columns) Assert.IsTrue(grid.PinColumn(column));
+
+        var adjustedDuringEvent = false;
+        grid.RowUnpinned += (_, _) =>
+        {
+            if (adjustedDuringEvent) return;
+            adjustedDuringEvent = true;
+            grid.MaxPinnedRows = 1;
+            grid.MaxPinnedColumns = 1;
+        };
+
+        grid.MaxPinnedRows = 2;
+
+        Assert.AreEqual(1, grid.MaxPinnedRows);
+        Assert.AreEqual(1, grid.MaxPinnedColumns);
+        CollectionAssert.AreEqual(new object[] { rows[0] }, grid.PinnedRows.ToArray());
+        CollectionAssert.AreEqual(new[] { columns[0] }, grid.PinnedColumns.ToArray());
+    }
+
+    [STATestMethod]
     public void PinnedRowAndColumnBecomeVisualOnlyAfterLeavingTheViewport()
     {
         var rows = new ObservableCollection<Row>(Enumerable.Range(1, 200).Select(index => new Row($"Linha {index}")));

@@ -13,7 +13,7 @@
 | Linha oficial | `main` @ `a88be09` |
 | Tag | [`v0.4.0-preview.1`](https://github.com/LeonardoHessel/DLH.Controls/releases/tag/v0.4.0-preview.1) |
 | Merge | Não aplicável — repositório usa branch única `main`, sem `develop`; a release é uma tag direta sobre o `main` atual. |
-| Publicação | Pendente: criar GitHub Release marcada **Pre-release** apontando para a tag, para disparar `publish.yml` (NuGet.org via Trusted Publishing) |
+| Publicação | Cancelada antes do NuGet; substituída por `v0.4.0-preview.2` após a identificação de uma regressão de reentrada |
 
 ## Commits incorporados
 
@@ -51,11 +51,11 @@ Histórico completo: `git log v0.3.0-preview.2..v0.4.0-preview.1 --oneline`.
 - `dotnet test tests/DLH.Controls.Wpf.AutomatedTests`: **71/71** aprovados
 - `dotnet run --project tests/DLH.Controls.Wpf.Tests`: **123/123** aprovados (suíte legada, inclui `DRAG-DROP: 123/123 passed; 0 failed.`)
 
-## Pendências pós-release
+## Encerramento
 
-- [ ] **Criar a GitHub Release** apontando para a tag `v0.4.0-preview.1`, marcada **Pre-release**, e publicá-la — é isso que dispara `publish.yml` e o envio real ao NuGet.org. `gh` CLI não estava disponível neste ambiente; feito pela interface web em https://github.com/LeonardoHessel/DLH.Controls/releases/new?tag=v0.4.0-preview.1.
-- [ ] Confirmar que o workflow `publish.yml` rodou com sucesso (aba Actions do repositório) e que o pacote apareceu em https://www.nuget.org/packages/DLH.Controls.Wpf/0.4.0-preview.1.
-- [ ] Confirmar que a política de Trusted Publishing no NuGet.org ainda está ativa (validade de 7 dias em repositório privado — não se aplica aqui pois o repositório é público, mas vale checar).
+- [x] A tag foi preservada como registro histórico.
+- [x] Nenhuma GitHub Release foi criada para essa tag e nenhum pacote `0.4.0-preview.1` foi enviado ao NuGet.
+- [x] A correção e a publicação foram transferidas para `v0.4.0-preview.2`.
 
 ## Observações
 

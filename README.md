@@ -43,20 +43,20 @@ O exemplo mostra ordenação com indicadores, status renderizado por template, m
 ### CLI do .NET
 
 ```powershell
-dotnet add package DLH.Controls.Wpf --version 0.4.0-preview.1
+dotnet add package DLH.Controls.Wpf --version 0.4.0-preview.2
 ```
 
 ### Package Manager do Visual Studio
 
 ```powershell
-Install-Package DLH.Controls.Wpf -Version 0.4.0-preview.1
+Install-Package DLH.Controls.Wpf -Version 0.4.0-preview.2
 ```
 
 ### PackageReference
 
 ```xml
 <ItemGroup>
-    <PackageReference Include="DLH.Controls.Wpf" Version="0.4.0-preview.1" />
+    <PackageReference Include="DLH.Controls.Wpf" Version="0.4.0-preview.2" />
 </ItemGroup>
 ```
 
@@ -65,14 +65,14 @@ Install-Package DLH.Controls.Wpf -Version 0.4.0-preview.1
 Informe o projeto que receberá a referência:
 
 ```powershell
-paket add DLH.Controls.Wpf --version 0.4.0-preview.1 --project caminho/SeuProjeto.csproj
+paket add DLH.Controls.Wpf --version 0.4.0-preview.2 --project caminho/SeuProjeto.csproj
 ```
 
 Ou declare o pacote no arquivo `paket.dependencies`:
 
 ```text
 source https://api.nuget.org/v3/index.json
-nuget DLH.Controls.Wpf 0.4.0-preview.1
+nuget DLH.Controls.Wpf 0.4.0-preview.2
 ```
 
 Adicione esta linha ao `paket.references` do projeto WPF:
@@ -885,7 +885,7 @@ O crédito pode aparecer em **Sobre**, **Créditos** ou **Licenças de terceiros
 # Pacote e autoria
 
 - Pacote: [DLH.Controls.Wpf no NuGet.org](https://www.nuget.org/packages/DLH.Controls.Wpf)
-- Versão publicada mais recente: `0.4.0-preview.1`
+- Versão publicada mais recente: `0.4.0-preview.2`
 - Autor: **Leonardo D. de L. Hessel**
 - Plataforma: Windows
 - Framework: .NET 10 / WPF

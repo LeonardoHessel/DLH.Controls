@@ -29,4 +29,3 @@ Relate uma ocorrência de forma privada pelo perfil do mantenedor no GitHub. Nã
 ## Escopo
 
 Este código se aplica ao repositório, às discussões relacionadas ao projeto e às situações em que alguém representa oficialmente o DLH Controls.
-

@@ -41,4 +41,3 @@ O teste da categoria `API` compara tipos e membros públicos com `tests/DLH.Cont
 Não publica no NuGet, não exige chave NuGet e não cria releases. Pode ser executado localmente no Windows com `./eng/Validate.ps1`.
 
 Publicação automática por release: consulte [publishing.md](publishing.md). O CI de push/PR continua sem publicar; o workflow publish.yml utiliza Trusted Publishing após o cadastro da política no NuGet.
-

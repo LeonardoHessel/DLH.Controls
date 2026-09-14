@@ -55,4 +55,3 @@ Os templates e estilos padrão são descobertos automaticamente pelo WPF.
 - [ContextMenu](controls/context-menu.md)
 - [Integração e MVVM](guides/integration.md)
 - [Manual consolidado](Manual.md)
-

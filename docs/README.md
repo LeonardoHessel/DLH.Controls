@@ -37,4 +37,3 @@ Os planos concluídos permanecem em [`archive/plans`](archive/plans/) como regis
 - [Melhorias do TabControl](archive/plans/tab-control-improvements.md)
 - [Controles compartilhados](archive/plans/shared-controls.md)
 - [Criação e renomeação de abas](archive/plans/tab-creation-and-renaming.md)
-

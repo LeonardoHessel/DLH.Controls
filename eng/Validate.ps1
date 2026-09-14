@@ -4,6 +4,14 @@ $repo = Split-Path $PSScriptRoot -Parent
 Push-Location $repo
 try {
     New-Item -ItemType Directory -Path artifacts/test-results,artifacts/packages -Force | Out-Null
+    $versionFile = Join-Path $repo 'eng/Version.props'
+    [xml]$versionDocument = Get-Content -LiteralPath $versionFile
+    $repositoryVersion = [string]$versionDocument.Project.PropertyGroup.DlhControlsVersion
+    if ([string]::IsNullOrWhiteSpace($repositoryVersion)) {
+        throw 'eng/Version.props must define DlhControlsVersion.'
+    }
+    $repositoryVersion = & "$PSScriptRoot/Get-ReleaseVersion.ps1" -Tag ("v" + $repositoryVersion)
+
     function Invoke-DotNet([string]$Log, [string[]]$Arguments) {
         & dotnet @Arguments 2>&1 | Tee-Object -FilePath "artifacts/test-results/$Log.log"
         if ($LASTEXITCODE -ne 0) { throw "dotnet failed: $Log (exit $LASTEXITCODE)" }
@@ -11,6 +19,9 @@ try {
     $versionArgs = @()
     if ($PackageVersion) {
         $checkedVersion = & "$PSScriptRoot/Get-ReleaseVersion.ps1" -Tag ("v" + $PackageVersion)
+        if ($checkedVersion -ne $repositoryVersion) {
+            throw "Release version '$checkedVersion' does not match eng/Version.props ('$repositoryVersion')."
+        }
         $versionArgs = @("-p:Version=$checkedVersion", "-p:PackageVersion=$checkedVersion")
     }
     Invoke-DotNet 'restore' @('restore','DLH.Controls.sln')

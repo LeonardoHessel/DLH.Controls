@@ -4,7 +4,7 @@ Descreva o problema concreto e o comportamento obtido após a alteração.
 
 ## Alterações
 
-- 
+- Liste as mudanças relevantes para a revisão.
 
 ## Validação
 
@@ -17,4 +17,3 @@ Descreva o problema concreto e o comportamento obtido após a alteração.
 ## Compatibilidade
 
 Indique alterações na API pública, valores padrão, persistência ou aparência. Escreva `Sem alterações incompatíveis` quando não houver.
-

@@ -7,6 +7,9 @@
 - Páginas de compatibilidade mantidas nos endereços antigos para preservar links publicados.
 - Formulários de problema e melhoria, modelo de pull request, código de conduta e responsáveis adicionados ao GitHub.
 - Dependabot configurado para revisar mensalmente dependências NuGet e GitHub Actions.
+- Versão do pacote centralizada em `eng/Version.props`, com validação de correspondência entre o repositório e a tag de publicação.
+- Branch `main` protegida por verificações obrigatórias, histórico linear e bloqueio de exclusão e envio forçado.
+- Guia operacional do GitHub com fluxo de contribuição, checks, Dependabot, releases e configurações externas.
 
 ## 0.4.0-preview.3 — 13 de setembro de 2026
 

@@ -127,4 +127,3 @@ Tabs.RestoreConfiguration(
 ```
 
 Ao reabrir, carregue os documentos antes de restaurar a ordem. Trate arquivos ausentes, dados inválidos e erros de leitura. Não armazene senhas como parte dessas configurações. Reaplicar um binding pode substituir um valor restaurado; mantenha as fontes do view model coerentes.
-

@@ -24,6 +24,7 @@ Esta página organiza a documentação para quem utiliza, avalia ou mantém o DL
 
 ## Desenvolvimento e publicação
 
+- [Operação do repositório no GitHub](development/github-workflow.md)
 - [Testes e empacotamento](development/packaging.md)
 - [Publicação pelo GitHub e NuGet](development/publishing.md)
 - [Preparação para uma versão estável](development/release-readiness.md)
@@ -37,4 +38,3 @@ Os planos concluídos permanecem em [`archive/plans`](archive/plans/) como regis
 - [Melhorias do TabControl](archive/plans/tab-control-improvements.md)
 - [Controles compartilhados](archive/plans/shared-controls.md)
 - [Criação e renomeação de abas](archive/plans/tab-creation-and-renaming.md)
-

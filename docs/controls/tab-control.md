@@ -201,4 +201,3 @@ A restauração preserva bindings com SetCurrentValue. Alterações futuras na f
 No visualizador, **Salvar configurações** grava `%LOCALAPPDATA%\TabControl.Demo\configuration.json`, com um registro por modelo e o tema da aplicação. A leitura é automática ao abrir ou pelo botão **Restaurar configurações**. O arquivo de organização anterior continua separado. No painel, **Restaurar padrões** respeita o modelo escolhido; para persistir o resultado, use Salvar configurações. Alternar tema reaplica suas cores aos três modelos. Alterações não salvas permanecem somente na sessão.
 
 Teste da API e integração de arquivo: `dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release -- --configuration-only`.
-

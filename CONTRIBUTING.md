@@ -29,7 +29,7 @@ dotnet restore DLH.Controls.sln
 
 O pull request deve manter a compatibilidade das APIs públicas já distribuídas, incluir documentação quando alterar comportamento público e acrescentar testes somente quando eles verificarem um risco real.
 
-Os guias de [testes e empacotamento](docs/development/packaging.md) e de [publicação](docs/development/publishing.md) descrevem as verificações automatizadas do repositório.
+Os guias de [operação no GitHub](docs/development/github-workflow.md), [testes e empacotamento](docs/development/packaging.md) e [publicação](docs/development/publishing.md) descrevem o fluxo do repositório e suas verificações automatizadas.
 
 ## Pull requests
 

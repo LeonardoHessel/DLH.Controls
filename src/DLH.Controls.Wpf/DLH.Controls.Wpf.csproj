@@ -1,8 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\eng\Version.props" />
+
   <PropertyGroup>
     <PackageId>DLH.Controls.Wpf</PackageId>
-    <Version>0.2.0-preview.4</Version>
     <Authors>Leonardo D. de L. Hessel</Authors>
     <Description>Controles reutilizáveis para WPF, incluindo TabControl, DataGridView, ScrollBar e ContextMenu personalizáveis.</Description>
     <PackageTags>WPF;Controls;TabControl;DataGrid;DataGridView;ScrollBar;ContextMenu;Windows;Paket</PackageTags>

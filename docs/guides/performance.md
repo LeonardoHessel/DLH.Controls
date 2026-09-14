@@ -1,7 +1,9 @@
 # Linha de base do contorno
 
-Data: 4 de setembro de 2026  
-Ambiente: Release, .NET SDK 10.0.400, Windows, Lenovo 83NS, Intel Core i5-13420H, 15,7 GB de RAM.  
+**Data:** 4 de setembro de 2026
+
+**Ambiente:** Release, .NET SDK 10.0.400, Windows, Lenovo 83NS, Intel Core i5-13420H, 15,7 GB de RAM.
+
 Escopo: janela WPF não exibida, escala lógica 100%. É uma linha de base relativa do laboratório, não um benchmark da experiência completa na tela.
 
 Cada cenário foi repetido três vezes, com 2, 10 e 50 abas. `idle` chama apenas a atualização do contorno; os demais números incluem o layout provocado pela ação. A coluna “geometrias” conta substituições do objeto desenhado, não chamadas ao evento.

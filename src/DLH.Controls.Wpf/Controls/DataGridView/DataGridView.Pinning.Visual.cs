@@ -274,8 +274,9 @@ public partial class DataGridView
         }
         foreach (var overlay in pinnedColumnOverlays)
         {
-            var heightsChanged = SyncOverlayRowHeights(overlay);
-            overlay.overlayNeedsAlignment = SyncOverlayScrollNow(overlay, 0, pinningScrollViewer.VerticalOffset) || heightsChanged;
+            var heightsChanged = pinningHasVariableRowHeights && SyncOverlayRowHeights(overlay);
+            var scrollChanged = SyncOverlayScrollNow(overlay, 0, pinningScrollViewer.VerticalOffset);
+            overlay.overlayNeedsAlignment = pinningHasVariableRowHeights && (scrollChanged || heightsChanged);
         }
         // Settle all moving overlays together, rather than forcing a layout for each
         // column group and again for every individual alignment correction.

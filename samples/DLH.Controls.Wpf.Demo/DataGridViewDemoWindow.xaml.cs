@@ -80,6 +80,9 @@ public partial class DataGridViewDemoWindow : Window
         if (ShipmentsGrid is not null) ShipmentsGrid.ScrollBarThickness = e.NewValue;
     }
 
+    private void OpenScrollSettings_Click(object sender, RoutedEventArgs e) =>
+        new DataGridViewScrollSettingsWindow(ShipmentsGrid) { Owner = this }.Show();
+
     private void PinnedBoundaryThicknessSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
     {
         if (ShipmentsGrid is not null) ShipmentsGrid.PinnedBoundarySeparatorThickness = e.NewValue;

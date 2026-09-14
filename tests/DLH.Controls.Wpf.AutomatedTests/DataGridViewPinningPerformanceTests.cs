@@ -40,6 +40,9 @@ public sealed class DataGridViewPinningPerformanceTests
             grid.PinColumn(grid.Columns[0]);
             grid.PinColumn(grid.Columns[2]);
             var viewer = (ScrollViewer)grid.Template.FindName("DG_ScrollViewer", grid)!;
+            TestContext.WriteLine($"Rolagem configurada: CanContentScroll={viewer.CanContentScroll}, " +
+                $"ScrollUnit={VirtualizingPanel.GetScrollUnit(grid)}, ExtentHeight={viewer.ExtentHeight:F2}, " +
+                $"ViewportHeight={viewer.ViewportHeight:F2}, ScrollableHeight={viewer.ScrollableHeight:F2}.");
             viewer.ScrollToVerticalOffset(200);
             viewer.ScrollToHorizontalOffset(200);
             Drain();
@@ -63,6 +66,12 @@ public sealed class DataGridViewPinningPerformanceTests
                 $"alocações {(GC.GetAllocatedBytesForCurrentThread() - scrollAllocated) / 1024 / 1024} MB.");
             CollectionAssert.AreEqual(overlays, layer.Children.OfType<DataGridView>().ToArray(),
                 "Rolar dentro da mesma área fixa não deve reconstruir as interseções.");
+            var alignmentFlag = typeof(DataGridView).GetField("overlayNeedsAlignment",
+                BindingFlags.Instance | BindingFlags.NonPublic)!;
+            foreach (var overlay in overlays.Where(item =>
+                         item.HeadersVisibility.HasFlag(DataGridHeadersVisibility.Column)))
+                Assert.IsFalse((bool)alignmentFlag.GetValue(overlay)!,
+                    "Linhas uniformes não devem forçar realinhamento síncrono da coluna fixa a cada quadro.");
             TestContext.WriteLine($"Notificações de layout com linhas e colunas fixadas: {stationaryRowLayouts}.");
 
             var capture = (Action)Delegate.CreateDelegate(typeof(Action), grid,

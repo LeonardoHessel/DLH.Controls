@@ -10,14 +10,28 @@ public partial class ContextMenuScreenshotWindow : Window
     {
         InitializeComponent();
         Loaded += OnLoaded;
+        Activated += (_, _) => Dispatcher.BeginInvoke(OpenMenu, DispatcherPriority.ContextIdle);
     }
 
-    private void OnLoaded(object? sender, RoutedEventArgs e)
+    private void OnLoaded(object? sender, RoutedEventArgs e) => OpenMenu();
+
+    private void OpenMenu()
     {
+        Menu.CollapseAll();
         Menu.PlacementTarget = TargetArea;
         Menu.Placement = System.Windows.Controls.Primitives.PlacementMode.Right;
         Menu.IsOpen = true;
-        Dispatcher.BeginInvoke(() => ExportItem.IsSubmenuOpen = true, DispatcherPriority.Loaded);
+        var submenuTimer = new DispatcherTimer(DispatcherPriority.Loaded)
+        {
+            Interval = TimeSpan.FromMilliseconds(350)
+        };
+        submenuTimer.Tick += (_, _) =>
+        {
+            submenuTimer.Stop();
+            Menu.CollapseAll();
+            ExportItem.IsSubmenuOpen = true;
+        };
+        submenuTimer.Start();
     }
 }
 

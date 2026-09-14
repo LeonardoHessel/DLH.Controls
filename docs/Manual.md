@@ -21,14 +21,14 @@ Este manual apresenta o uso da biblioteca **DLH Controls** pelo ponto de vista d
 Instale o pacote no projeto WPF:
 
 ```powershell
-dotnet add package DLH.Controls.Wpf --version 0.4.0-preview.3
+dotnet add package DLH.Controls.Wpf --version 0.4.0-preview.4
 ```
 
 Ou adicione a referência diretamente ao arquivo do projeto:
 
 ```xml
 <ItemGroup>
-    <PackageReference Include="DLH.Controls.Wpf" Version="0.4.0-preview.3" />
+    <PackageReference Include="DLH.Controls.Wpf" Version="0.4.0-preview.4" />
 </ItemGroup>
 ```
 

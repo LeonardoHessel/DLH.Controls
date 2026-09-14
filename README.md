@@ -40,19 +40,19 @@
 ### CLI do .NET
 
 ```powershell
-dotnet add package DLH.Controls.Wpf --version 0.4.0-preview.3
+dotnet add package DLH.Controls.Wpf --version 0.4.0-preview.4
 ```
 
 ### Package Manager do Visual Studio
 
 ```powershell
-Install-Package DLH.Controls.Wpf -Version 0.4.0-preview.3
+Install-Package DLH.Controls.Wpf -Version 0.4.0-preview.4
 ```
 
 ### PackageReference
 
 ```xml
-<PackageReference Include="DLH.Controls.Wpf" Version="0.4.0-preview.3" />
+<PackageReference Include="DLH.Controls.Wpf" Version="0.4.0-preview.4" />
 ```
 
 ### Paket CLI
@@ -60,14 +60,14 @@ Install-Package DLH.Controls.Wpf -Version 0.4.0-preview.3
 Adicione diretamente ao projeto:
 
 ```powershell
-paket add DLH.Controls.Wpf --version 0.4.0-preview.3 --project caminho/SeuProjeto.csproj
+paket add DLH.Controls.Wpf --version 0.4.0-preview.4 --project caminho/SeuProjeto.csproj
 ```
 
 Ou inclua no arquivo `paket.dependencies`:
 
 ```text
 source https://api.nuget.org/v3/index.json
-nuget DLH.Controls.Wpf 0.4.0-preview.3
+nuget DLH.Controls.Wpf 0.4.0-preview.4
 ```
 
 Adicione `DLH.Controls.Wpf` ao `paket.references` do projeto e restaure:
@@ -188,6 +188,6 @@ Uso comercial, modificação e redistribuição são permitidos conforme suas co
 ## Pacote
 
 - [DLH.Controls.Wpf no NuGet](https://www.nuget.org/packages/DLH.Controls.Wpf)
-- Versão atual: `0.4.0-preview.3`
+- Versão atual: `0.4.0-preview.4`
 - Plataforma: Windows
 - Framework: .NET 10 / WPF

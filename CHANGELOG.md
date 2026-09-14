@@ -2,6 +2,10 @@
 
 ## Não publicado
 
+Nenhuma alteração registrada.
+
+## 0.4.0-preview.4 — 14 de setembro de 2026
+
 - README reduzido e reorganizado como apresentação do pacote, com navegação para os guias detalhados.
 - Documentação separada entre controles, guias, processos de desenvolvimento, releases e planos históricos.
 - Páginas de compatibilidade mantidas nos endereços antigos para preservar links publicados.

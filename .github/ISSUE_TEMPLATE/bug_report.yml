@@ -14,7 +14,7 @@ body:
     attributes:
       label: Versão do pacote
       description: Informe a versão exata do DLH.Controls.Wpf.
-      placeholder: 0.4.0-preview.3
+      placeholder: 0.4.0-preview.4
     validations:
       required: true
 

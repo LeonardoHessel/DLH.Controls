@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <DlhControlsVersion>0.4.0-preview.3</DlhControlsVersion>
+    <DlhControlsVersion>0.4.0-preview.4</DlhControlsVersion>
     <Version Condition="'$(Version)' == ''">$(DlhControlsVersion)</Version>
     <PackageVersion Condition="'$(PackageVersion)' == ''">$(DlhControlsVersion)</PackageVersion>
   </PropertyGroup>

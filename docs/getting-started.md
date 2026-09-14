@@ -7,14 +7,14 @@ O pacote `DLH.Controls.Wpf` fornece controles para aplicações WPF em Windows c
 Instale a versão mais recente pelo .NET CLI:
 
 ```powershell
-dotnet add package DLH.Controls.Wpf --version 0.4.0-preview.3
+dotnet add package DLH.Controls.Wpf --version 0.4.0-preview.4
 ```
 
 Ou use uma referência no projeto:
 
 ```xml
 <ItemGroup>
-    <PackageReference Include="DLH.Controls.Wpf" Version="0.4.0-preview.3" />
+    <PackageReference Include="DLH.Controls.Wpf" Version="0.4.0-preview.4" />
 </ItemGroup>
 ```
 

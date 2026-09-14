@@ -23,6 +23,10 @@
                 Background="#292B2F" BorderBrush="#45484F" BorderThickness="1" CornerRadius="12">
             <Border.ContextMenu>
                 <controls:ContextMenu x:Name="Menu" CornerRadius="10" ItemPadding="12,8" IconColumnWidth="28"
+                                      TitleColumnWidth="110" ValueColumnWidth="78" InputGestureColumnWidth="34"
+                                      SubmenuHorizontalOffset="2"
+                                      ItemCornerRadius="5" ItemHoverBorderBrush="#69707C" ItemHoverBorderThickness="1"
+                                      ItemCheckedBorderBrush="#52745D" ItemCheckedBorderThickness="1"
                                       IsShadowEnabled="False" Placement="Bottom"
                                       PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=Border}}">
                     <MenuItem Header="Atualizar" InputGestureText="F5" Icon="{StaticResource RefreshIcon}"/>

@@ -150,7 +150,7 @@
 
                     <GroupBox Header="ContextMenu — geometria e estados">
                         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Grid.RowDefinitions>
-                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
                         </Grid.RowDefinitions>
                             <TextBlock Text="CornerRadius"/><TextBox x:Name="MenuCorner" Grid.Column="1" Text="8"/>
                             <TextBlock Grid.Row="1" Text="Padding"/><TextBox x:Name="MenuPadding" Grid.Row="1" Grid.Column="1" Text="4"/>
@@ -158,7 +158,35 @@
                             <TextBlock Grid.Row="3" Text="BorderThickness"/><TextBox x:Name="MenuBorderThickness" Grid.Row="3" Grid.Column="1" Text="1"/>
                             <TextBlock Grid.Row="4" Text="Tamanho do ícone"/><Slider x:Name="MenuIconSize" Grid.Row="4" Grid.Column="1" Minimum="0" Maximum="32" Value="16" ValueChanged="OptionsChanged"/>
                             <TextBlock Grid.Row="5" Text="Largura da coluna do ícone"/><Slider x:Name="MenuIconColumn" Grid.Row="5" Grid.Column="1" Minimum="0" Maximum="50" Value="26" ValueChanged="OptionsChanged"/>
-                            <TextBlock Grid.Row="6" Text="Opacidade desabilitado"/><Slider x:Name="MenuDisabledOpacity" Grid.Row="6" Grid.Column="1" Minimum="0" Maximum="1" Value="0.45" ValueChanged="OptionsChanged"/>
+                            <TextBlock Grid.Row="6" Text="Largura do título"/><TextBox x:Name="MenuTitleColumn" Grid.Row="6" Grid.Column="1" Text="*"/>
+                            <TextBlock Grid.Row="7" Text="Largura do valor"/><TextBox x:Name="MenuValueColumn" Grid.Row="7" Grid.Column="1" Text="84"/>
+                            <TextBlock Grid.Row="8" Text="Largura do atalho"/><TextBox x:Name="MenuInputGestureColumn" Grid.Row="8" Grid.Column="1" Text="Auto"/>
+                            <TextBlock Grid.Row="9" Text="Opacidade desabilitado"/><Slider x:Name="MenuDisabledOpacity" Grid.Row="9" Grid.Column="1" Minimum="0" Maximum="1" Value="0.45" ValueChanged="OptionsChanged"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Header="ContextMenu — colunas dos submenus">
+                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Grid.RowDefinitions>
+                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                        </Grid.RowDefinitions>
+                            <TextBlock Text="Largura do ícone"/><Slider x:Name="MenuSubmenuIconColumn" Grid.Column="1" Minimum="0" Maximum="50" Value="26" ValueChanged="OptionsChanged"/>
+                            <TextBlock Grid.Row="1" Text="Largura do título"/><TextBox x:Name="MenuSubmenuTitleColumn" Grid.Row="1" Grid.Column="1" Text="*"/>
+                            <TextBlock Grid.Row="2" Text="Largura do valor"/><TextBox x:Name="MenuSubmenuValueColumn" Grid.Row="2" Grid.Column="1" Text="Auto"/>
+                            <TextBlock Grid.Row="3" Text="Largura do atalho"/><TextBox x:Name="MenuSubmenuInputGestureColumn" Grid.Row="3" Grid.Column="1" Text="Auto"/>
+                            <TextBlock Grid.Row="4" Text="Largura da seta"/><Slider x:Name="MenuSubmenuArrowColumn" Grid.Row="4" Grid.Column="1" Minimum="0" Maximum="50" Value="24" ValueChanged="OptionsChanged"/>
+                            <TextBlock Grid.Row="5" Text="Deslocamento horizontal"/><Slider x:Name="MenuSubmenuHorizontalOffset" Grid.Row="5" Grid.Column="1" Minimum="-30" Maximum="30" Value="2" ValueChanged="OptionsChanged"/>
+                            <TextBlock Grid.Row="6" Text="Deslocamento vertical"/><Slider x:Name="MenuSubmenuVerticalOffset" Grid.Row="6" Grid.Column="1" Minimum="-30" Maximum="30" Value="0" ValueChanged="OptionsChanged"/>
+                        </Grid>
+                    </GroupBox>
+
+                    <GroupBox Header="ContextMenu — bordas dos itens">
+                        <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Grid.RowDefinitions>
+                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                        </Grid.RowDefinitions>
+                            <TextBlock Text="ItemCornerRadius"/><TextBox x:Name="MenuItemCorner" Grid.Column="1" Text="4"/>
+                            <TextBlock Grid.Row="1" Text="Borda normal"/><TextBox x:Name="MenuItemBorderThickness" Grid.Row="1" Grid.Column="1" Text="0"/>
+                            <TextBlock Grid.Row="2" Text="Borda em destaque"/><TextBox x:Name="MenuItemHoverBorderThickness" Grid.Row="2" Grid.Column="1" Text="0"/>
+                            <TextBlock Grid.Row="3" Text="Borda marcada"/><TextBox x:Name="MenuItemCheckedBorderThickness" Grid.Row="3" Grid.Column="1" Text="0"/>
                         </Grid>
                     </GroupBox>
 
@@ -177,7 +205,7 @@
 
                     <GroupBox Header="ContextMenu — cores e sombra">
                         <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions><Grid.RowDefinitions>
-                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
+                            <RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/><RowDefinition/>
                         </Grid.RowDefinitions>
                             <TextBlock Text="Background"/><DockPanel Grid.Column="1"><Button DockPanel.Dock="Right" Style="{StaticResource ColorPickerButton}" Tag="{Binding ElementName=MenuBackground}" Foreground="{Binding Text, ElementName=MenuBackground}" Click="PickColor_Click"/><TextBox x:Name="MenuBackground" Text="#35373C"/></DockPanel>
                             <TextBlock Grid.Row="1" Text="Foreground"/><DockPanel Grid.Row="1" Grid.Column="1"><Button DockPanel.Dock="Right" Style="{StaticResource ColorPickerButton}" Tag="{Binding ElementName=MenuForeground}" Foreground="{Binding Text, ElementName=MenuForeground}" Click="PickColor_Click"/><TextBox x:Name="MenuForeground" Text="#F2F3F5"/></DockPanel>
@@ -185,9 +213,12 @@
                             <TextBlock Grid.Row="3" Text="HoverBrush"/><DockPanel Grid.Row="3" Grid.Column="1"><Button DockPanel.Dock="Right" Style="{StaticResource ColorPickerButton}" Tag="{Binding ElementName=MenuHover}" Foreground="{Binding Text, ElementName=MenuHover}" Click="PickColor_Click"/><TextBox x:Name="MenuHover" Text="#454850"/></DockPanel>
                             <TextBlock Grid.Row="4" Text="CheckedBrush"/><DockPanel Grid.Row="4" Grid.Column="1"><Button DockPanel.Dock="Right" Style="{StaticResource ColorPickerButton}" Tag="{Binding ElementName=MenuChecked}" Foreground="{Binding Text, ElementName=MenuChecked}" Click="PickColor_Click"/><TextBox x:Name="MenuChecked" Text="#9CC9FF"/></DockPanel>
                             <TextBlock Grid.Row="5" Text="SeparatorBrush"/><DockPanel Grid.Row="5" Grid.Column="1"><Button DockPanel.Dock="Right" Style="{StaticResource ColorPickerButton}" Tag="{Binding ElementName=MenuSeparator}" Foreground="{Binding Text, ElementName=MenuSeparator}" Click="PickColor_Click"/><TextBox x:Name="MenuSeparator" Text="#4C5058"/></DockPanel>
-                            <TextBlock Grid.Row="6" Text="ShadowColor"/><DockPanel Grid.Row="6" Grid.Column="1"><Button DockPanel.Dock="Right" Style="{StaticResource ColorPickerButton}" Tag="{Binding ElementName=MenuShadowColor}" Foreground="{Binding Text, ElementName=MenuShadowColor}" Click="PickColor_Click"/><TextBox x:Name="MenuShadowColor" Text="#494949"/></DockPanel>
-                            <CheckBox x:Name="MenuShadow" Grid.Row="7" Grid.ColumnSpan="2" Content="Habilitar sombra" IsChecked="True" Checked="OptionsChanged" Unchecked="OptionsChanged"/>
-                            <TextBlock Grid.Row="8" Text="Opacidade / Blur / Depth"/><StackPanel Grid.Row="8" Grid.Column="1" Orientation="Horizontal"><Slider x:Name="MenuShadowOpacity" Width="72" Minimum="0" Maximum="1" Value="0.5" ValueChanged="OptionsChanged"/><Slider x:Name="MenuShadowBlur" Width="72" Minimum="0" Maximum="30" Value="10" ValueChanged="OptionsChanged"/><Slider x:Name="MenuShadowDepth" Width="72" Minimum="-15" Maximum="15" Value="0" ValueChanged="OptionsChanged"/></StackPanel>
+                            <TextBlock Grid.Row="6" Text="ItemBorderBrush"/><DockPanel Grid.Row="6" Grid.Column="1"><Button DockPanel.Dock="Right" Style="{StaticResource ColorPickerButton}" Tag="{Binding ElementName=MenuItemBorder}" Foreground="{Binding Text, ElementName=MenuItemBorder}" Click="PickColor_Click"/><TextBox x:Name="MenuItemBorder" Text="Transparent"/></DockPanel>
+                            <TextBlock Grid.Row="7" Text="ItemHoverBorderBrush"/><DockPanel Grid.Row="7" Grid.Column="1"><Button DockPanel.Dock="Right" Style="{StaticResource ColorPickerButton}" Tag="{Binding ElementName=MenuItemHoverBorder}" Foreground="{Binding Text, ElementName=MenuItemHoverBorder}" Click="PickColor_Click"/><TextBox x:Name="MenuItemHoverBorder" Text="Transparent"/></DockPanel>
+                            <TextBlock Grid.Row="8" Text="ItemCheckedBorderBrush"/><DockPanel Grid.Row="8" Grid.Column="1"><Button DockPanel.Dock="Right" Style="{StaticResource ColorPickerButton}" Tag="{Binding ElementName=MenuItemCheckedBorder}" Foreground="{Binding Text, ElementName=MenuItemCheckedBorder}" Click="PickColor_Click"/><TextBox x:Name="MenuItemCheckedBorder" Text="Transparent"/></DockPanel>
+                            <TextBlock Grid.Row="9" Text="ShadowColor"/><DockPanel Grid.Row="9" Grid.Column="1"><Button DockPanel.Dock="Right" Style="{StaticResource ColorPickerButton}" Tag="{Binding ElementName=MenuShadowColor}" Foreground="{Binding Text, ElementName=MenuShadowColor}" Click="PickColor_Click"/><TextBox x:Name="MenuShadowColor" Text="#494949"/></DockPanel>
+                            <CheckBox x:Name="MenuShadow" Grid.Row="10" Grid.ColumnSpan="2" Content="Habilitar sombra" IsChecked="True" Checked="OptionsChanged" Unchecked="OptionsChanged"/>
+                            <TextBlock Grid.Row="11" Text="Opacidade / Blur / Depth"/><StackPanel Grid.Row="11" Grid.Column="1" Orientation="Horizontal"><Slider x:Name="MenuShadowOpacity" Width="72" Minimum="0" Maximum="1" Value="0.5" ValueChanged="OptionsChanged"/><Slider x:Name="MenuShadowBlur" Width="72" Minimum="0" Maximum="30" Value="10" ValueChanged="OptionsChanged"/><Slider x:Name="MenuShadowDepth" Width="72" Minimum="-15" Maximum="15" Value="0" ValueChanged="OptionsChanged"/></StackPanel>
                         </Grid>
                     </GroupBox>
                 </StackPanel>

@@ -43,6 +43,24 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
         set => SetValue(SubmenuPlacementDirectionProperty, value);
     }
 
+    public static readonly DependencyProperty SubmenuHorizontalOffsetProperty = DependencyProperty.Register(
+        nameof(SubmenuHorizontalOffset), typeof(double), typeof(ContextMenu), new PropertyMetadata(0d), IsFinite);
+
+    public double SubmenuHorizontalOffset
+    {
+        get => (double)GetValue(SubmenuHorizontalOffsetProperty);
+        set => SetValue(SubmenuHorizontalOffsetProperty, value);
+    }
+
+    public static readonly DependencyProperty SubmenuVerticalOffsetProperty = DependencyProperty.Register(
+        nameof(SubmenuVerticalOffset), typeof(double), typeof(ContextMenu), new PropertyMetadata(0d), IsFinite);
+
+    public double SubmenuVerticalOffset
+    {
+        get => (double)GetValue(SubmenuVerticalOffsetProperty);
+        set => SetValue(SubmenuVerticalOffsetProperty, value);
+    }
+
     protected override void PrepareContainerForItemOverride(DependencyObject element, object item)
     {
         RememberConsumerStyle(element);
@@ -79,13 +97,30 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
             menuItem.Resources["ContextMenu.Edge"] = BorderBrush;
             menuItem.Resources["ContextMenu.Hover"] = HoverBrush;
             menuItem.Resources["ContextMenu.Checked"] = CheckedBrush;
+            menuItem.Resources["ContextMenu.ItemBorder"] = ItemBorderBrush;
+            menuItem.Resources["ContextMenu.ItemHoverBorder"] = ItemHoverBorderBrush;
+            menuItem.Resources["ContextMenu.ItemCheckedBorder"] = ItemCheckedBorderBrush;
+            menuItem.Resources["ContextMenu.ItemBorderThickness"] = ItemBorderThickness;
+            menuItem.Resources["ContextMenu.ItemHoverBorderThickness"] = ItemHoverBorderThickness;
+            menuItem.Resources["ContextMenu.ItemCheckedBorderThickness"] = ItemCheckedBorderThickness;
+            menuItem.Resources["ContextMenu.ItemCornerRadius"] = ItemCornerRadius;
             menuItem.Resources["ContextMenu.DisabledOpacity"] = DisabledOpacity;
             menuItem.Resources["ContextMenu.ItemPadding"] = ItemPadding;
             menuItem.Resources["ContextMenu.IconSize"] = IconSize;
             menuItem.Resources["ContextMenu.IconColumnWidth"] = new GridLength(IconColumnWidth);
+            menuItem.Resources["ContextMenu.TitleColumnWidth"] = TitleColumnWidth;
+            menuItem.Resources["ContextMenu.ValueColumnWidth"] = ValueColumnWidth;
+            menuItem.Resources["ContextMenu.InputGestureColumnWidth"] = InputGestureColumnWidth;
+            menuItem.Resources["ContextMenu.SubmenuTitleColumnWidth"] = SubmenuTitleColumnWidth;
+            menuItem.Resources["ContextMenu.SubmenuValueColumnWidth"] = SubmenuValueColumnWidth;
+            menuItem.Resources["ContextMenu.SubmenuInputGestureColumnWidth"] = SubmenuInputGestureColumnWidth;
             var arrowWidth = menuItem is ChoiceMenuItem choice ? choice.DropDownButtonWidth : ArrowColumnWidth;
             menuItem.Resources["ContextMenu.IconAreaWidth"] = new GridLength(IconColumnWidth + ItemPadding.Left);
             menuItem.Resources["ContextMenu.ArrowAreaWidth"] = arrowWidth + ItemPadding.Right;
+            menuItem.Resources["ContextMenu.SubmenuIconAreaWidth"] = new GridLength(SubmenuIconColumnWidth + ItemPadding.Left);
+            menuItem.Resources["ContextMenu.SubmenuArrowAreaWidth"] = SubmenuArrowColumnWidth + ItemPadding.Right;
+            menuItem.Resources["ContextMenu.SubmenuHorizontalOffset"] = SubmenuHorizontalOffset;
+            menuItem.Resources["ContextMenu.SubmenuVerticalOffset"] = SubmenuVerticalOffset;
             menuItem.Resources["ContextMenu.ItemVerticalMargin"] = new Thickness(0, ItemPadding.Top, 0, ItemPadding.Bottom);
             menuItem.Resources["ContextMenu.CornerRadius"] = CornerRadius;
             menuItem.Resources["ContextMenu.Padding"] = Padding;
@@ -136,11 +171,19 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
     private static bool IsItemAppearanceProperty(DependencyProperty property) =>
         property == BackgroundProperty || property == ForegroundProperty || property == BorderBrushProperty ||
         property == BorderThicknessProperty || property == PaddingProperty || property == CornerRadiusProperty ||
-        property == ItemPaddingProperty || property == IconSizeProperty || property == IconColumnWidthProperty || property == ArrowColumnWidthProperty ||
+        property == ItemPaddingProperty || property == IconSizeProperty || property == IconColumnWidthProperty ||
+        property == TitleColumnWidthProperty || property == ValueColumnWidthProperty || property == InputGestureColumnWidthProperty ||
+        property == ArrowColumnWidthProperty || property == SubmenuIconColumnWidthProperty ||
+        property == SubmenuTitleColumnWidthProperty || property == SubmenuValueColumnWidthProperty ||
+        property == SubmenuInputGestureColumnWidthProperty || property == SubmenuArrowColumnWidthProperty ||
         property == HoverBrushProperty || property == CheckedBrushProperty || property == SeparatorBrushProperty ||
+        property == ItemBorderBrushProperty || property == ItemHoverBorderBrushProperty || property == ItemCheckedBorderBrushProperty ||
+        property == ItemBorderThicknessProperty || property == ItemHoverBorderThicknessProperty ||
+        property == ItemCheckedBorderThicknessProperty || property == ItemCornerRadiusProperty ||
         property == DisabledOpacityProperty || property == IsShadowEnabledProperty || property == ShadowColorProperty ||
         property == ShadowOpacityProperty || property == ShadowBlurRadiusProperty || property == ShadowDepthProperty ||
-        property == SubmenuPlacementDirectionProperty;
+        property == SubmenuPlacementDirectionProperty || property == SubmenuHorizontalOffsetProperty ||
+        property == SubmenuVerticalOffsetProperty;
 
     public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
         nameof(CornerRadius), typeof(CornerRadius), typeof(ContextMenu),
@@ -162,6 +205,73 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
         set => SetValue(ItemPaddingProperty, value);
     }
 
+    public static readonly DependencyProperty ItemCornerRadiusProperty = DependencyProperty.Register(
+        nameof(ItemCornerRadius), typeof(CornerRadius), typeof(ContextMenu),
+        new PropertyMetadata(new CornerRadius(4)), IsValidCornerRadius);
+
+    public CornerRadius ItemCornerRadius
+    {
+        get => (CornerRadius)GetValue(ItemCornerRadiusProperty);
+        set => SetValue(ItemCornerRadiusProperty, value);
+    }
+
+    public static readonly DependencyProperty ItemBorderBrushProperty = DependencyProperty.Register(
+        nameof(ItemBorderBrush), typeof(Brush), typeof(ContextMenu), new PropertyMetadata(Brushes.Transparent));
+
+    public Brush ItemBorderBrush
+    {
+        get => (Brush)GetValue(ItemBorderBrushProperty);
+        set => SetValue(ItemBorderBrushProperty, value);
+    }
+
+    public static readonly DependencyProperty ItemHoverBorderBrushProperty = DependencyProperty.Register(
+        nameof(ItemHoverBorderBrush), typeof(Brush), typeof(ContextMenu), new PropertyMetadata(Brushes.Transparent));
+
+    public Brush ItemHoverBorderBrush
+    {
+        get => (Brush)GetValue(ItemHoverBorderBrushProperty);
+        set => SetValue(ItemHoverBorderBrushProperty, value);
+    }
+
+    public static readonly DependencyProperty ItemCheckedBorderBrushProperty = DependencyProperty.Register(
+        nameof(ItemCheckedBorderBrush), typeof(Brush), typeof(ContextMenu), new PropertyMetadata(Brushes.Transparent));
+
+    public Brush ItemCheckedBorderBrush
+    {
+        get => (Brush)GetValue(ItemCheckedBorderBrushProperty);
+        set => SetValue(ItemCheckedBorderBrushProperty, value);
+    }
+
+    public static readonly DependencyProperty ItemBorderThicknessProperty = DependencyProperty.Register(
+        nameof(ItemBorderThickness), typeof(Thickness), typeof(ContextMenu),
+        new PropertyMetadata(new Thickness(0)), IsValidThickness);
+
+    public Thickness ItemBorderThickness
+    {
+        get => (Thickness)GetValue(ItemBorderThicknessProperty);
+        set => SetValue(ItemBorderThicknessProperty, value);
+    }
+
+    public static readonly DependencyProperty ItemHoverBorderThicknessProperty = DependencyProperty.Register(
+        nameof(ItemHoverBorderThickness), typeof(Thickness), typeof(ContextMenu),
+        new PropertyMetadata(new Thickness(0)), IsValidThickness);
+
+    public Thickness ItemHoverBorderThickness
+    {
+        get => (Thickness)GetValue(ItemHoverBorderThicknessProperty);
+        set => SetValue(ItemHoverBorderThicknessProperty, value);
+    }
+
+    public static readonly DependencyProperty ItemCheckedBorderThicknessProperty = DependencyProperty.Register(
+        nameof(ItemCheckedBorderThickness), typeof(Thickness), typeof(ContextMenu),
+        new PropertyMetadata(new Thickness(0)), IsValidThickness);
+
+    public Thickness ItemCheckedBorderThickness
+    {
+        get => (Thickness)GetValue(ItemCheckedBorderThicknessProperty);
+        set => SetValue(ItemCheckedBorderThicknessProperty, value);
+    }
+
     public static readonly DependencyProperty IconSizeProperty = DependencyProperty.Register(
         nameof(IconSize), typeof(double), typeof(ContextMenu), new PropertyMetadata(16d), IsFiniteNonNegative);
 
@@ -178,6 +288,84 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
     {
         get => (double)GetValue(IconColumnWidthProperty);
         set => SetValue(IconColumnWidthProperty, value);
+    }
+
+    public static readonly DependencyProperty TitleColumnWidthProperty = DependencyProperty.Register(
+        nameof(TitleColumnWidth), typeof(GridLength), typeof(ContextMenu),
+        new PropertyMetadata(new GridLength(1, GridUnitType.Star)), IsValidGridLength);
+
+    public GridLength TitleColumnWidth
+    {
+        get => (GridLength)GetValue(TitleColumnWidthProperty);
+        set => SetValue(TitleColumnWidthProperty, value);
+    }
+
+    public static readonly DependencyProperty ValueColumnWidthProperty = DependencyProperty.Register(
+        nameof(ValueColumnWidth), typeof(GridLength), typeof(ContextMenu),
+        new PropertyMetadata(GridLength.Auto), IsValidGridLength);
+
+    public GridLength ValueColumnWidth
+    {
+        get => (GridLength)GetValue(ValueColumnWidthProperty);
+        set => SetValue(ValueColumnWidthProperty, value);
+    }
+
+    public static readonly DependencyProperty InputGestureColumnWidthProperty = DependencyProperty.Register(
+        nameof(InputGestureColumnWidth), typeof(GridLength), typeof(ContextMenu),
+        new PropertyMetadata(GridLength.Auto), IsValidGridLength);
+
+    public GridLength InputGestureColumnWidth
+    {
+        get => (GridLength)GetValue(InputGestureColumnWidthProperty);
+        set => SetValue(InputGestureColumnWidthProperty, value);
+    }
+
+    public static readonly DependencyProperty SubmenuIconColumnWidthProperty = DependencyProperty.Register(
+        nameof(SubmenuIconColumnWidth), typeof(double), typeof(ContextMenu), new PropertyMetadata(26d), IsFiniteNonNegative);
+
+    public double SubmenuIconColumnWidth
+    {
+        get => (double)GetValue(SubmenuIconColumnWidthProperty);
+        set => SetValue(SubmenuIconColumnWidthProperty, value);
+    }
+
+    public static readonly DependencyProperty SubmenuTitleColumnWidthProperty = DependencyProperty.Register(
+        nameof(SubmenuTitleColumnWidth), typeof(GridLength), typeof(ContextMenu),
+        new PropertyMetadata(new GridLength(1, GridUnitType.Star)), IsValidGridLength);
+
+    public GridLength SubmenuTitleColumnWidth
+    {
+        get => (GridLength)GetValue(SubmenuTitleColumnWidthProperty);
+        set => SetValue(SubmenuTitleColumnWidthProperty, value);
+    }
+
+    public static readonly DependencyProperty SubmenuValueColumnWidthProperty = DependencyProperty.Register(
+        nameof(SubmenuValueColumnWidth), typeof(GridLength), typeof(ContextMenu),
+        new PropertyMetadata(GridLength.Auto), IsValidGridLength);
+
+    public GridLength SubmenuValueColumnWidth
+    {
+        get => (GridLength)GetValue(SubmenuValueColumnWidthProperty);
+        set => SetValue(SubmenuValueColumnWidthProperty, value);
+    }
+
+    public static readonly DependencyProperty SubmenuInputGestureColumnWidthProperty = DependencyProperty.Register(
+        nameof(SubmenuInputGestureColumnWidth), typeof(GridLength), typeof(ContextMenu),
+        new PropertyMetadata(GridLength.Auto), IsValidGridLength);
+
+    public GridLength SubmenuInputGestureColumnWidth
+    {
+        get => (GridLength)GetValue(SubmenuInputGestureColumnWidthProperty);
+        set => SetValue(SubmenuInputGestureColumnWidthProperty, value);
+    }
+
+    public static readonly DependencyProperty SubmenuArrowColumnWidthProperty = DependencyProperty.Register(
+        nameof(SubmenuArrowColumnWidth), typeof(double), typeof(ContextMenu), new PropertyMetadata(24d), IsFiniteNonNegative);
+
+    public double SubmenuArrowColumnWidth
+    {
+        get => (double)GetValue(SubmenuArrowColumnWidthProperty);
+        set => SetValue(SubmenuArrowColumnWidthProperty, value);
     }
 
     public static readonly DependencyProperty ArrowColumnWidthProperty = DependencyProperty.Register(
@@ -282,6 +470,9 @@ public class ContextMenu : System.Windows.Controls.ContextMenu
     private static bool IsValidCornerRadius(object value) => value is CornerRadius radius &&
         IsFiniteNonNegative(radius.TopLeft) && IsFiniteNonNegative(radius.TopRight) &&
         IsFiniteNonNegative(radius.BottomRight) && IsFiniteNonNegative(radius.BottomLeft);
+
+    private static bool IsValidGridLength(object value) => value is GridLength length &&
+        (length.IsAuto || double.IsFinite(length.Value) && length.Value >= 0);
 
     private static bool IsFiniteNonNegative(double value) => double.IsFinite(value) && value >= 0;
 }

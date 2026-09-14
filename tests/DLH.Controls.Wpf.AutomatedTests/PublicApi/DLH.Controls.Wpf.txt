@@ -48,14 +48,31 @@ type DLH.Controls.Wpf.ContextMenu
   field System.Windows.DependencyProperty HoverBrushProperty
   field System.Windows.DependencyProperty IconColumnWidthProperty
   field System.Windows.DependencyProperty IconSizeProperty
+  field System.Windows.DependencyProperty InputGestureColumnWidthProperty
   field System.Windows.DependencyProperty IsShadowEnabledProperty
+  field System.Windows.DependencyProperty ItemBorderBrushProperty
+  field System.Windows.DependencyProperty ItemBorderThicknessProperty
+  field System.Windows.DependencyProperty ItemCheckedBorderBrushProperty
+  field System.Windows.DependencyProperty ItemCheckedBorderThicknessProperty
+  field System.Windows.DependencyProperty ItemCornerRadiusProperty
+  field System.Windows.DependencyProperty ItemHoverBorderBrushProperty
+  field System.Windows.DependencyProperty ItemHoverBorderThicknessProperty
   field System.Windows.DependencyProperty ItemPaddingProperty
   field System.Windows.DependencyProperty SeparatorBrushProperty
   field System.Windows.DependencyProperty ShadowBlurRadiusProperty
   field System.Windows.DependencyProperty ShadowColorProperty
   field System.Windows.DependencyProperty ShadowDepthProperty
   field System.Windows.DependencyProperty ShadowOpacityProperty
+  field System.Windows.DependencyProperty SubmenuArrowColumnWidthProperty
+  field System.Windows.DependencyProperty SubmenuHorizontalOffsetProperty
+  field System.Windows.DependencyProperty SubmenuIconColumnWidthProperty
+  field System.Windows.DependencyProperty SubmenuInputGestureColumnWidthProperty
   field System.Windows.DependencyProperty SubmenuPlacementDirectionProperty
+  field System.Windows.DependencyProperty SubmenuTitleColumnWidthProperty
+  field System.Windows.DependencyProperty SubmenuValueColumnWidthProperty
+  field System.Windows.DependencyProperty SubmenuVerticalOffsetProperty
+  field System.Windows.DependencyProperty TitleColumnWidthProperty
+  field System.Windows.DependencyProperty ValueColumnWidthProperty
   method System.Void ActivatePath(System.Windows.Controls.MenuItem)
   method System.Void CollapseAfter(System.Windows.Controls.MenuItem)
   method System.Void CollapseAll()
@@ -69,11 +86,28 @@ type DLH.Controls.Wpf.ContextMenu
   property System.Double ShadowBlurRadius { get; set;  }
   property System.Double ShadowDepth { get; set;  }
   property System.Double ShadowOpacity { get; set;  }
+  property System.Double SubmenuArrowColumnWidth { get; set;  }
+  property System.Double SubmenuHorizontalOffset { get; set;  }
+  property System.Double SubmenuIconColumnWidth { get; set;  }
+  property System.Double SubmenuVerticalOffset { get; set;  }
   property System.Windows.CornerRadius CornerRadius { get; set;  }
+  property System.Windows.CornerRadius ItemCornerRadius { get; set;  }
+  property System.Windows.GridLength InputGestureColumnWidth { get; set;  }
+  property System.Windows.GridLength SubmenuInputGestureColumnWidth { get; set;  }
+  property System.Windows.GridLength SubmenuTitleColumnWidth { get; set;  }
+  property System.Windows.GridLength SubmenuValueColumnWidth { get; set;  }
+  property System.Windows.GridLength TitleColumnWidth { get; set;  }
+  property System.Windows.GridLength ValueColumnWidth { get; set;  }
   property System.Windows.Media.Brush CheckedBrush { get; set;  }
   property System.Windows.Media.Brush HoverBrush { get; set;  }
+  property System.Windows.Media.Brush ItemBorderBrush { get; set;  }
+  property System.Windows.Media.Brush ItemCheckedBorderBrush { get; set;  }
+  property System.Windows.Media.Brush ItemHoverBorderBrush { get; set;  }
   property System.Windows.Media.Brush SeparatorBrush { get; set;  }
   property System.Windows.Media.Color ShadowColor { get; set;  }
+  property System.Windows.Thickness ItemBorderThickness { get; set;  }
+  property System.Windows.Thickness ItemCheckedBorderThickness { get; set;  }
+  property System.Windows.Thickness ItemHoverBorderThickness { get; set;  }
   property System.Windows.Thickness ItemPadding { get; set;  }
 type DLH.Controls.Wpf.DataGridView
   ctor()

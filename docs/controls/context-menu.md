@@ -7,7 +7,18 @@ O `ContextMenu` mantém os comandos, bindings, teclado, itens marcáveis e subme
     <Button.ContextMenu>
         <dlh:ContextMenu CornerRadius="8"
                          ItemPadding="12,8"
+                         ItemCornerRadius="5"
+                         ItemHoverBorderBrush="#69707C"
+                         ItemHoverBorderThickness="1"
+                         ItemCheckedBorderBrush="#52745D"
+                         ItemCheckedBorderThickness="1"
                          IconColumnWidth="28"
+                         TitleColumnWidth="120"
+                         ValueColumnWidth="84"
+                         InputGestureColumnWidth="48"
+                         ArrowColumnWidth="24"
+                         SubmenuHorizontalOffset="2"
+                         SubmenuVerticalOffset="0"
                          IsShadowEnabled="True">
             <MenuItem Header="Atualizar" InputGestureText="F5"
                       dlh:MenuItemAssist.Value="Disponível">
@@ -38,11 +49,17 @@ O `ContextMenu` mantém os comandos, bindings, teclado, itens marcáveis e subme
 </Button>
 ```
 
-Use `Background`, `Foreground`, `BorderBrush`, `BorderThickness` e `Padding` para a superfície. `HoverBrush`, `CheckedBrush`, `SeparatorBrush`, `DisabledOpacity`, `ItemPadding`, `IconSize` e `IconColumnWidth` controlam os itens. A sombra utiliza `IsShadowEnabled`, `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`.
+Use `Background`, `Foreground`, `BorderBrush`, `BorderThickness` e `Padding` para a superfície externa. `ItemBorderBrush` e `ItemBorderThickness` definem a borda normal de cada item; `ItemHoverBorderBrush` e `ItemHoverBorderThickness` definem a borda sob o mouse; `ItemCheckedBorderBrush` e `ItemCheckedBorderThickness` definem a borda de itens marcados. `ItemCornerRadius` controla o arredondamento dessas três bordas. Os valores padrão são transparentes e com espessura zero, preservando o visual sem contorno.
 
-Cada linha usa cinco colunas alinhadas: ícone, título, valor, atalho e seta. Use `MenuItemAssist.Value` e `MenuItemAssist.ValueTemplate` para preencher a coluna de valor em qualquer `MenuItem`; colunas sem conteúdo permanecem vazias. A mesma estrutura é aplicada recursivamente aos submenus.
+`HoverBrush`, `CheckedBrush`, `SeparatorBrush`, `DisabledOpacity`, `ItemPadding`, `IconSize` e `IconColumnWidth` controlam os demais detalhes dos itens. A sombra utiliza `IsShadowEnabled`, `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`. As configurações dos itens também são aplicadas aos submenus.
+
+Cada linha usa cinco colunas alinhadas: ícone, título, valor, atalho e seta. Suas larguras são controladas por `IconColumnWidth`, `TitleColumnWidth`, `ValueColumnWidth`, `InputGestureColumnWidth` e `ArrowColumnWidth`. As três propriedades centrais aceitam valores de `GridLength`, como `Auto`, `*`, `2*` ou uma largura fixa. Fixar `ValueColumnWidth`, por exemplo, impede que um `ChoiceMenuItem` altere a largura do menu quando o texto selecionado muda.
+
+Os submenus possuem configurações independentes: `SubmenuIconColumnWidth`, `SubmenuTitleColumnWidth`, `SubmenuValueColumnWidth`, `SubmenuInputGestureColumnWidth` e `SubmenuArrowColumnWidth`. Isso evita reservar nos submenus uma coluna de valor ou atalho necessária apenas no menu principal. Use `MenuItemAssist.Value` e `MenuItemAssist.ValueTemplate` para preencher a coluna de valor em qualquer `MenuItem`; colunas sem conteúdo permanecem vazias.
 
 Defina `SubmenuPlacementDirection="Left"` para usar o menu junto à borda direita de uma janela. Somente a coluna da seta passa para o lado esquerdo, o indicador aponta para a esquerda e o submenu abre desse lado. Ícone, título, valor e atalho preservam sua ordem e orientação. O padrão é `Right`.
+
+`SubmenuHorizontalOffset` e `SubmenuVerticalOffset` ajustam a posição final em pixels. No lado direito, um valor horizontal positivo afasta o submenu; no lado esquerdo, use um valor negativo para afastá-lo. Valores no sentido oposto criam sobreposição. O exemplo usa `SubmenuHorizontalOffset="2"` para manter uma pequena separação visual.
 
 O menu mantém somente um caminho ativo da árvore. Ao interagir com outro ramo, os submenus incompatíveis são fechados automaticamente. Outros componentes também podem controlar esse estado:
 

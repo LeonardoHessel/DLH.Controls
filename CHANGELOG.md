@@ -13,6 +13,9 @@
 - Validação do pacote ampliada para uma matriz de aplicações WPF isoladas, incluindo consumo programático e uma janela real construída em XAML.
 - Correção do alinhamento entre a borda inferior do cabeçalho, a barra vertical e a camada de linhas fixadas do `DataGridView`; a divisória da área fixa passa a usar 1 px por padrão.
 - Rolagem com colunas fixadas otimizada para evitar realinhamentos síncronos desnecessários em linhas de altura uniforme; a demonstração permite ajustar suavização, passo e duração em tempo real.
+- Bordas dos itens do `ContextMenu` configuráveis separadamente nos estados normal, destacado e marcado, com espessuras e arredondamento próprios e propagação aos submenus.
+- Larguras configuráveis e independentes para as cinco colunas do menu principal e dos submenus do `ContextMenu`, permitindo manter cada nível estável quando valores de tamanho diferente são alternados.
+- Posicionamento dos submenus configurável por direção e deslocamentos horizontal e vertical; a demonstração deixa de sobrepor o submenu ao menu principal.
 
 ## 0.4.0-preview.3 — 13 de setembro de 2026
 

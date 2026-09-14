@@ -452,7 +452,16 @@ O `ContextMenu` aceita os mesmos `MenuItem`, comandos, bindings, atalhos, itens 
 ```xml
 <Button Content="Opções">
     <Button.ContextMenu>
-        <dlh:ContextMenu CornerRadius="8" ItemPadding="12,8">
+        <dlh:ContextMenu CornerRadius="8"
+                         ItemPadding="12,8"
+                         ItemCornerRadius="5"
+                         ItemHoverBorderBrush="#69707C"
+                         ItemHoverBorderThickness="1"
+                         ItemCheckedBorderBrush="#52745D"
+                         ItemCheckedBorderThickness="1"
+                         TitleColumnWidth="120"
+                         ValueColumnWidth="84"
+                         InputGestureColumnWidth="48">
             <MenuItem Header="Atualizar" InputGestureText="F5" />
             <dlh:ToggleMenuItem Header="Exibir detalhes"
                                 IsChecked="{Binding ShowDetails}"
@@ -472,9 +481,13 @@ O `ContextMenu` aceita os mesmos `MenuItem`, comandos, bindings, atalhos, itens 
 
 O `DataGridView` usa os dois componentes internamente. Eles também estão disponíveis para controles próprios e aplicações consumidoras.
 
-Os itens são organizados em cinco colunas: ícone, título, valor, atalho e seta. `MenuItemAssist.Value` permite preencher a coluna de valor de qualquer item, enquanto `MenuItemAssist.ValueTemplate` permite personalizar sua apresentação. Submenus usam a mesma estrutura.
+A borda externa usa `BorderBrush`, `BorderThickness` e `CornerRadius`. Para os itens, use `ItemBorderBrush` e `ItemBorderThickness` no estado normal, `ItemHoverBorderBrush` e `ItemHoverBorderThickness` sob o mouse, e `ItemCheckedBorderBrush` e `ItemCheckedBorderThickness` quando o item estiver marcado. `ItemCornerRadius` controla o arredondamento desses contornos. Por padrão, as bordas dos itens são transparentes e têm espessura zero.
+
+Os itens são organizados em cinco colunas: ícone, título, valor, atalho e seta. Configure-as com `IconColumnWidth`, `TitleColumnWidth`, `ValueColumnWidth`, `InputGestureColumnWidth` e `ArrowColumnWidth`. Título, valor e atalho aceitam `Auto`, proporções com `*` ou pixels fixos; uma largura fixa na coluna de valor mantém o tamanho do menu estável ao alternar um `ChoiceMenuItem`. Os submenus usam a mesma estrutura com larguras independentes em `SubmenuIconColumnWidth`, `SubmenuTitleColumnWidth`, `SubmenuValueColumnWidth`, `SubmenuInputGestureColumnWidth` e `SubmenuArrowColumnWidth`. `MenuItemAssist.Value` permite preencher a coluna de valor de qualquer item, enquanto `MenuItemAssist.ValueTemplate` permite personalizar sua apresentação.
 
 `SubmenuPlacementDirection="Left"` move somente a coluna da seta para o início e faz o submenu abrir para a esquerda. As colunas de ícone, título, valor e atalho não mudam de ordem. O valor padrão é `Right`.
+
+Use `SubmenuHorizontalOffset` e `SubmenuVerticalOffset` para ajustar a posição final do submenu. Ambos usam zero por padrão. À direita, um deslocamento horizontal positivo cria distância; à esquerda, use um valor negativo para obter a mesma distância.
 
 Cada menu possui um caminho ativo. Clicar em outro ramo fecha os submenus que não pertencem ao novo caminho. Um componente externo pode chamar `ContextMenu.ActivatePath(item)`, `CollapseAfter(item)` ou `CollapseAll()`. Em menus fixos, marque a raiz com `MenuInteraction.IsScopeRoot="True"` e chame os métodos equivalentes de `MenuInteraction`, informando a raiz. Isso permite que um clique externo feche toda a árvore sem interferir em outros menus da janela.
 

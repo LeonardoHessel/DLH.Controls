@@ -20,13 +20,30 @@ public sealed class SharedControlsTests
         var menu = new ControlsContextMenu();
         Assert.AreEqual(new CornerRadius(8), menu.CornerRadius);
         Assert.AreEqual(new Thickness(10, 7, 10, 7), menu.ItemPadding);
+        Assert.AreEqual(new CornerRadius(4), menu.ItemCornerRadius);
+        Assert.AreEqual(new Thickness(0), menu.ItemBorderThickness);
+        Assert.AreEqual(new Thickness(0), menu.ItemHoverBorderThickness);
+        Assert.AreEqual(new Thickness(0), menu.ItemCheckedBorderThickness);
         Assert.AreEqual(16d, menu.IconSize);
         Assert.AreEqual(26d, menu.IconColumnWidth);
+        Assert.AreEqual(new GridLength(1, GridUnitType.Star), menu.TitleColumnWidth);
+        Assert.AreEqual(GridLength.Auto, menu.ValueColumnWidth);
+        Assert.AreEqual(GridLength.Auto, menu.InputGestureColumnWidth);
         Assert.AreEqual(24d, menu.ArrowColumnWidth);
+        Assert.AreEqual(26d, menu.SubmenuIconColumnWidth);
+        Assert.AreEqual(new GridLength(1, GridUnitType.Star), menu.SubmenuTitleColumnWidth);
+        Assert.AreEqual(GridLength.Auto, menu.SubmenuValueColumnWidth);
+        Assert.AreEqual(GridLength.Auto, menu.SubmenuInputGestureColumnWidth);
+        Assert.AreEqual(24d, menu.SubmenuArrowColumnWidth);
+        Assert.AreEqual(0d, menu.SubmenuHorizontalOffset);
+        Assert.AreEqual(0d, menu.SubmenuVerticalOffset);
         Assert.IsTrue(menu.IsShadowEnabled);
         Assert.AreEqual(.5d, menu.ShadowOpacity);
         Assert.ThrowsExactly<ArgumentException>(() => menu.IconSize = -1);
         Assert.ThrowsExactly<ArgumentException>(() => menu.ItemPadding = new Thickness(-1));
+        Assert.ThrowsExactly<ArgumentException>(() => menu.ItemCornerRadius = new CornerRadius(-1));
+        Assert.ThrowsExactly<ArgumentException>(() => menu.ItemHoverBorderThickness = new Thickness(-1));
+        Assert.ThrowsExactly<ArgumentException>(() => menu.ValueColumnWidth = new GridLength(-1));
         Assert.ThrowsExactly<ArgumentException>(() => menu.ShadowOpacity = 2);
     }
 
@@ -145,7 +162,8 @@ public sealed class SharedControlsTests
             generated.ApplyTemplate();
 
             Assert.AreSame(choice.Template, generated.Template);
-            Assert.HasCount(4, ((Grid)generated.Template.FindName("ContentLayout", generated)!).ColumnDefinitions);
+            var submenuColumns = ((Grid)generated.Template.FindName("ContentLayout", generated)!).ColumnDefinitions;
+            Assert.HasCount(4, submenuColumns);
             Assert.AreEqual(System.Windows.Controls.Primitives.PlacementMode.Left,
                 popup.Placement);
             Assert.AreSame(choice, popup.PlacementTarget,
@@ -253,7 +271,24 @@ public sealed class SharedControlsTests
     [STATestMethod]
     public void ContextMenuTemplateSupportsItemsSeparatorsAndOptionalShadow()
     {
-        var menu = new ControlsContextMenu { IsShadowEnabled = false };
+        var checkedBorder = new SolidColorBrush(Color.FromRgb(30, 120, 80));
+        var menu = new ControlsContextMenu
+        {
+            IsShadowEnabled = false,
+            TitleColumnWidth = new GridLength(120),
+            ValueColumnWidth = new GridLength(80),
+            InputGestureColumnWidth = new GridLength(60),
+            SubmenuIconColumnWidth = 20,
+            SubmenuTitleColumnWidth = new GridLength(100),
+            SubmenuValueColumnWidth = new GridLength(30),
+            SubmenuInputGestureColumnWidth = new GridLength(24),
+            SubmenuArrowColumnWidth = 18,
+            SubmenuHorizontalOffset = 7,
+            SubmenuVerticalOffset = -3,
+            ItemCornerRadius = new CornerRadius(6),
+            ItemCheckedBorderBrush = checkedBorder,
+            ItemCheckedBorderThickness = new Thickness(2)
+        };
         var item = new MenuItem { Header = "Opção", IsCheckable = true, IsChecked = true, InputGestureText = "Ctrl+O" };
         MenuItemAssist.SetValue(item, "Ativo");
         var submenu = new MenuItem { Header = "Submenu" };
@@ -275,6 +310,9 @@ public sealed class SharedControlsTests
             menu.ApplyTemplate();
             item.ApplyTemplate();
             submenu.ApplyTemplate();
+            submenu.IsSubmenuOpen = true;
+            menu.Dispatcher.Invoke(() => { }, System.Windows.Threading.DispatcherPriority.Loaded);
+            child.ApplyTemplate();
 
             var surface = (Border)menu.Template.FindName("MenuSurface", menu)!;
             Assert.IsNull(surface.Effect);
@@ -283,7 +321,10 @@ public sealed class SharedControlsTests
             Assert.AreEqual(typeof(MenuItem), item.Style.TargetType);
             Assert.AreSame(item.Style, child.Style);
             Assert.AreSame(customStyle, customItem.Style);
-            Assert.IsNotNull(item.Template.FindName("ItemSurface", item));
+            var itemSurface = (Border)item.Template.FindName("ItemSurface", item)!;
+            Assert.AreEqual(new CornerRadius(6), itemSurface.CornerRadius);
+            Assert.AreSame(checkedBorder, itemSurface.BorderBrush);
+            Assert.AreEqual(new Thickness(2), itemSurface.BorderThickness);
             Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)item.Template.FindName("IconHost", item)!).HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)item.Template.FindName("IconPresenter", item)!).HorizontalAlignment);
             Assert.AreEqual(HorizontalAlignment.Center, ((FrameworkElement)item.Template.FindName("CheckMark", item)!).HorizontalAlignment);
@@ -291,6 +332,17 @@ public sealed class SharedControlsTests
             var itemLayout = (Grid)item.Template.FindName("ContentLayout", item)!;
             var iconHost = (FrameworkElement)item.Template.FindName("IconHost", item)!;
             Assert.HasCount(4, itemLayout.ColumnDefinitions);
+            Assert.AreEqual(new GridLength(120), itemLayout.ColumnDefinitions[1].Width);
+            Assert.AreEqual(new GridLength(80), itemLayout.ColumnDefinitions[2].Width);
+            Assert.AreEqual(new GridLength(60), itemLayout.ColumnDefinitions[3].Width);
+            var childLayout = (Grid)child.Template.FindName("ContentLayout", child)!;
+            Assert.AreEqual(new GridLength(100), childLayout.ColumnDefinitions[1].Width);
+            Assert.AreEqual(new GridLength(30), childLayout.ColumnDefinitions[2].Width);
+            Assert.AreEqual(new GridLength(24), childLayout.ColumnDefinitions[3].Width);
+            Assert.AreEqual(28d, ((FrameworkElement)child.Template.FindName("DropDownHost", child)!).Width);
+            var childPopup = (System.Windows.Controls.Primitives.Popup)submenu.Template.FindName("PART_Popup", submenu)!;
+            Assert.AreEqual(7d, childPopup.HorizontalOffset);
+            Assert.AreEqual(-3d, childPopup.VerticalOffset);
             var iconCenter = iconHost.TranslatePoint(new Point(iconHost.ActualWidth / 2, 0), itemLayout).X;
             Assert.AreEqual(itemLayout.ColumnDefinitions[0].ActualWidth / 2, iconCenter, .5,
                 "O centro do ícone deve coincidir com o centro da primeira coluna completa.");
@@ -341,12 +393,22 @@ public sealed class SharedControlsTests
         var hoverColor = Color.FromRgb(100, 110, 120);
         var checkedColor = Color.FromRgb(130, 140, 150);
         var separatorColor = Color.FromRgb(0x18, 0xA4, 0x00);
+        var itemBorderColor = Color.FromRgb(15, 25, 35);
+        var itemHoverBorderColor = Color.FromRgb(45, 55, 65);
+        var itemCheckedBorderColor = Color.FromRgb(75, 85, 95);
         menu.Background = new SolidColorBrush(surfaceColor);
         menu.Foreground = new SolidColorBrush(textColor);
         menu.BorderBrush = new SolidColorBrush(edgeColor);
         menu.HoverBrush = new SolidColorBrush(hoverColor);
         menu.CheckedBrush = new SolidColorBrush(checkedColor);
         menu.SeparatorBrush = new SolidColorBrush(separatorColor);
+        menu.ItemBorderBrush = new SolidColorBrush(itemBorderColor);
+        menu.ItemHoverBorderBrush = new SolidColorBrush(itemHoverBorderColor);
+        menu.ItemCheckedBorderBrush = new SolidColorBrush(itemCheckedBorderColor);
+        menu.ItemBorderThickness = new Thickness(1);
+        menu.ItemHoverBorderThickness = new Thickness(2);
+        menu.ItemCheckedBorderThickness = new Thickness(3);
+        menu.ItemCornerRadius = new CornerRadius(7);
 
         AssertBrush(item.Resources["ContextMenu.Surface"], surfaceColor);
         AssertBrush(item.Resources["ContextMenu.Text"], textColor);
@@ -354,6 +416,13 @@ public sealed class SharedControlsTests
         AssertBrush(item.Resources["ContextMenu.Hover"], hoverColor);
         AssertBrush(item.Resources["ContextMenu.Checked"], checkedColor);
         AssertBrush(child.Resources["ContextMenu.Hover"], hoverColor);
+        AssertBrush(item.Resources["ContextMenu.ItemBorder"], itemBorderColor);
+        AssertBrush(item.Resources["ContextMenu.ItemHoverBorder"], itemHoverBorderColor);
+        AssertBrush(item.Resources["ContextMenu.ItemCheckedBorder"], itemCheckedBorderColor);
+        Assert.AreEqual(new Thickness(1), item.Resources["ContextMenu.ItemBorderThickness"]);
+        Assert.AreEqual(new Thickness(2), item.Resources["ContextMenu.ItemHoverBorderThickness"]);
+        Assert.AreEqual(new Thickness(3), item.Resources["ContextMenu.ItemCheckedBorderThickness"]);
+        Assert.AreEqual(new CornerRadius(7), item.Resources["ContextMenu.ItemCornerRadius"]);
         AssertBrush(separator.Resources["ContextMenu.Separator"], separatorColor);
         Assert.AreEqual(typeof(Separator), separator.Style.TargetType);
         Assert.AreSame(menu.Background, ((Border)menu.Template.FindName("MenuSurface", menu)!).Background);

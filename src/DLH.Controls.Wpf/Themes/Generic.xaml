@@ -25,12 +25,25 @@
     <SolidColorBrush x:Key="ContextMenu.Hover" Color="#454850" />
     <SolidColorBrush x:Key="ContextMenu.Checked" Color="#9CC9FF" />
     <SolidColorBrush x:Key="ContextMenu.Separator" Color="#4C5058" />
+    <SolidColorBrush x:Key="ContextMenu.ItemBorder" Color="Transparent" />
+    <SolidColorBrush x:Key="ContextMenu.ItemHoverBorder" Color="Transparent" />
+    <SolidColorBrush x:Key="ContextMenu.ItemCheckedBorder" Color="Transparent" />
     <sys:Double x:Key="ContextMenu.DisabledOpacity">0.45</sys:Double>
     <sys:Double x:Key="ContextMenu.IconSize">16</sys:Double>
     <GridLength x:Key="ContextMenu.IconColumnWidth">26</GridLength>
+    <GridLength x:Key="ContextMenu.TitleColumnWidth">*</GridLength>
+    <GridLength x:Key="ContextMenu.ValueColumnWidth">Auto</GridLength>
+    <GridLength x:Key="ContextMenu.InputGestureColumnWidth">Auto</GridLength>
+    <GridLength x:Key="ContextMenu.SubmenuTitleColumnWidth">*</GridLength>
+    <GridLength x:Key="ContextMenu.SubmenuValueColumnWidth">Auto</GridLength>
+    <GridLength x:Key="ContextMenu.SubmenuInputGestureColumnWidth">Auto</GridLength>
     <GridLength x:Key="ContextMenu.ArrowColumnWidth">24</GridLength>
     <GridLength x:Key="ContextMenu.IconAreaWidth">36</GridLength>
     <sys:Double x:Key="ContextMenu.ArrowAreaWidth">34</sys:Double>
+    <GridLength x:Key="ContextMenu.SubmenuIconAreaWidth">36</GridLength>
+    <sys:Double x:Key="ContextMenu.SubmenuArrowAreaWidth">34</sys:Double>
+    <sys:Double x:Key="ContextMenu.SubmenuHorizontalOffset">0</sys:Double>
+    <sys:Double x:Key="ContextMenu.SubmenuVerticalOffset">0</sys:Double>
     <Thickness x:Key="ContextMenu.ItemVerticalMargin">0,7</Thickness>
     <Color x:Key="ContextMenu.ShadowColor">#494949</Color>
     <sys:Double x:Key="ContextMenu.ShadowOpacity">0.5</sys:Double>
@@ -38,10 +51,15 @@
     <sys:Double x:Key="ContextMenu.ShadowDepth">0</sys:Double>
     <Thickness x:Key="ContextMenu.ShadowMargin">6</Thickness>
     <Thickness x:Key="ContextMenu.ItemPadding">10,7,10,7</Thickness>
+    <Thickness x:Key="ContextMenu.ItemBorderThickness">0</Thickness>
+    <Thickness x:Key="ContextMenu.ItemHoverBorderThickness">0</Thickness>
+    <Thickness x:Key="ContextMenu.ItemCheckedBorderThickness">0</Thickness>
     <Thickness x:Key="ContextMenu.Padding">4</Thickness>
     <Thickness x:Key="ContextMenu.BorderThickness">1</Thickness>
     <CornerRadius x:Key="ContextMenu.CornerRadius">8</CornerRadius>
+    <CornerRadius x:Key="ContextMenu.ItemCornerRadius">4</CornerRadius>
     <local:TabCloseAutomationNameConverter x:Key="Tabs.CloseAutomationNameConverter" />
+    <local:MenuItemIsSubmenuConverter x:Key="ContextMenu.IsSubmenuItemConverter" />
     <local:DataGridViewColumnSelectionConverter x:Key="DataGridView.ColumnSelectionConverter" />
     <local:HalfValueToCornerRadiusConverter x:Key="DataGridView.HalfCornerRadiusConverter" />
     <local:ScrollBarCornerRadiusConverter x:Key="ScrollBar.CornerRadiusConverter" />
@@ -76,7 +94,10 @@
             <Setter.Value>
                 <ControlTemplate TargetType="{x:Type MenuItem}">
                     <Grid>
-                        <Border x:Name="ItemSurface" Background="{TemplateBinding Background}" CornerRadius="4"/>
+                        <Border x:Name="ItemSurface" Background="{TemplateBinding Background}"
+                                BorderBrush="{DynamicResource ContextMenu.ItemBorder}"
+                                BorderThickness="{DynamicResource ContextMenu.ItemBorderThickness}"
+                                CornerRadius="{DynamicResource ContextMenu.ItemCornerRadius}"/>
                         <DockPanel x:Name="ItemLayout" LastChildFill="True" Margin="{DynamicResource ContextMenu.ItemVerticalMargin}">
                             <Grid x:Name="DropDownHost" DockPanel.Dock="Right" Width="{DynamicResource ContextMenu.ArrowAreaWidth}" Background="Transparent">
                                 <TextBlock x:Name="SubmenuArrow" Text="›" FontSize="16"
@@ -86,10 +107,10 @@
                             </Grid>
                             <Grid x:Name="ContentLayout">
                             <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="{DynamicResource ContextMenu.IconAreaWidth}"/>
-                                <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="ContextMenuValue"/>
-                                <ColumnDefinition Width="Auto" SharedSizeGroup="ContextMenuGesture"/>
+                                <ColumnDefinition x:Name="IconColumn" Width="{DynamicResource ContextMenu.IconAreaWidth}"/>
+                                <ColumnDefinition x:Name="TitleColumn" Width="{DynamicResource ContextMenu.TitleColumnWidth}"/>
+                                <ColumnDefinition x:Name="ValueColumn" Width="{DynamicResource ContextMenu.ValueColumnWidth}" SharedSizeGroup="ContextMenuValue"/>
+                                <ColumnDefinition x:Name="InputGestureColumn" Width="{DynamicResource ContextMenu.InputGestureColumnWidth}" SharedSizeGroup="ContextMenuGesture"/>
                             </Grid.ColumnDefinitions>
                             <Grid x:Name="IconHost" Grid.Column="0" FlowDirection="LeftToRight"
                                   UseLayoutRounding="True" SnapsToDevicePixels="True"
@@ -130,7 +151,9 @@
                         <Popup x:Name="PART_Popup" AllowsTransparency="True" Focusable="False"
                                IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}"
                                PlacementTarget="{Binding RelativeSource={RelativeSource TemplatedParent}}"
-                               Placement="Right" HorizontalOffset="-9">
+                               Placement="Right"
+                               HorizontalOffset="{DynamicResource ContextMenu.SubmenuHorizontalOffset}"
+                               VerticalOffset="{DynamicResource ContextMenu.SubmenuVerticalOffset}">
                             <Border Background="{DynamicResource ContextMenu.Surface}" Grid.IsSharedSizeScope="True"
                                     BorderBrush="{DynamicResource ContextMenu.Edge}"
                                     BorderThickness="{DynamicResource ContextMenu.BorderThickness}"
@@ -147,8 +170,21 @@
                         </Popup>
                     </Grid>
                     <ControlTemplate.Triggers>
+                        <DataTrigger Binding="{Binding RelativeSource={RelativeSource Self}, Converter={StaticResource ContextMenu.IsSubmenuItemConverter}}" Value="True">
+                            <Setter TargetName="IconColumn" Property="Width" Value="{DynamicResource ContextMenu.SubmenuIconAreaWidth}"/>
+                            <Setter TargetName="TitleColumn" Property="Width" Value="{DynamicResource ContextMenu.SubmenuTitleColumnWidth}"/>
+                            <Setter TargetName="ValueColumn" Property="Width" Value="{DynamicResource ContextMenu.SubmenuValueColumnWidth}"/>
+                            <Setter TargetName="InputGestureColumn" Property="Width" Value="{DynamicResource ContextMenu.SubmenuInputGestureColumnWidth}"/>
+                            <Setter TargetName="DropDownHost" Property="Width" Value="{DynamicResource ContextMenu.SubmenuArrowAreaWidth}"/>
+                        </DataTrigger>
+                        <Trigger Property="IsChecked" Value="True">
+                            <Setter TargetName="ItemSurface" Property="BorderBrush" Value="{DynamicResource ContextMenu.ItemCheckedBorder}"/>
+                            <Setter TargetName="ItemSurface" Property="BorderThickness" Value="{DynamicResource ContextMenu.ItemCheckedBorderThickness}"/>
+                        </Trigger>
                         <Trigger Property="IsHighlighted" Value="True">
                             <Setter TargetName="ItemSurface" Property="Background" Value="{DynamicResource ContextMenu.Hover}"/>
+                            <Setter TargetName="ItemSurface" Property="BorderBrush" Value="{DynamicResource ContextMenu.ItemHoverBorder}"/>
+                            <Setter TargetName="ItemSurface" Property="BorderThickness" Value="{DynamicResource ContextMenu.ItemHoverBorderThickness}"/>
                         </Trigger>
                         <Trigger Property="IsEnabled" Value="False">
                             <Setter Property="Opacity" Value="{DynamicResource ContextMenu.DisabledOpacity}"/>
@@ -168,7 +204,6 @@
                             <Setter TargetName="SubmenuArrow" Property="Text" Value="‹"/>
                             <Setter TargetName="DropDownHost" Property="DockPanel.Dock" Value="Left"/>
                             <Setter TargetName="PART_Popup" Property="Placement" Value="Left"/>
-                            <Setter TargetName="PART_Popup" Property="HorizontalOffset" Value="9"/>
                         </DataTrigger>
                     </ControlTemplate.Triggers>
                 </ControlTemplate>

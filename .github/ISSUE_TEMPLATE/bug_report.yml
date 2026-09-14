@@ -1,0 +1,83 @@
+name: Relatar um problema
+description: Informe um comportamento incorreto ou uma regressão reproduzível.
+title: "[Bug]: "
+labels:
+  - bug
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Obrigado por ajudar a melhorar o DLH Controls. Não inclua credenciais, dados pessoais ou informações confidenciais.
+
+  - type: input
+    id: package-version
+    attributes:
+      label: Versão do pacote
+      description: Informe a versão exata do DLH.Controls.Wpf.
+      placeholder: 0.4.0-preview.3
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Ambiente
+      description: Informe Windows, .NET, arquitetura e escala de exibição relevantes.
+      placeholder: Windows 11, .NET 10, x64, escala 125%
+    validations:
+      required: true
+
+  - type: dropdown
+    id: control
+    attributes:
+      label: Componente
+      options:
+        - TabControl
+        - DataGridView
+        - ScrollBar
+        - ContextMenu
+        - Empacotamento ou documentação
+        - Outro
+    validations:
+      required: true
+
+  - type: textarea
+    id: current-behavior
+    attributes:
+      label: Comportamento observado
+      description: Descreva o que ocorreu e inclua mensagens de erro relevantes.
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Comportamento esperado
+      description: Explique o resultado que deveria ocorrer.
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Reprodução mínima
+      description: Forneça os passos e, quando possível, um XAML ou projeto mínimo.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Informações adicionais
+      description: Adicione imagens, logs sem dados confidenciais ou outras observações úteis.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Verificações
+      options:
+        - label: Pesquisei as issues existentes e não encontrei um relato equivalente.
+          required: true
+        - label: Confirmei o problema na versão mais recente disponível.
+          required: true

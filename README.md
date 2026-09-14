@@ -1,52 +1,37 @@
 # DLH Controls
 
+[![CI](https://github.com/LeonardoHessel/DLH.Controls/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/LeonardoHessel/DLH.Controls/actions/workflows/ci.yml)
 [![NuGet](https://img.shields.io/nuget/vpre/DLH.Controls.Wpf?label=NuGet)](https://www.nuget.org/packages/DLH.Controls.Wpf)
 [![Downloads](https://img.shields.io/nuget/dt/DLH.Controls.Wpf?label=Downloads)](https://www.nuget.org/packages/DLH.Controls.Wpf)
 ![.NET](https://img.shields.io/badge/.NET-10.0-512BD4)
 ![Plataforma](https://img.shields.io/badge/plataforma-Windows-0078D4)
 
-**DLH Controls** é uma biblioteca de controles de interface reutilizáveis e personalizáveis para aplicações .NET. O projeto concentra componentes, comportamentos, temas, acessibilidade, documentação e exemplos em uma base preparada para crescer com novos controles e plataformas.
+**DLH Controls** é uma biblioteca de controles reutilizáveis e personalizáveis para aplicações .NET. O pacote atual, **DLH.Controls.Wpf**, oferece componentes visuais para WPF com suporte a MVVM, teclado, acessibilidade e às propriedades convencionais da plataforma.
 
-O primeiro pacote disponível é o **DLH.Controls.Wpf**, destinado a aplicações WPF. Ele oferece aparência moderna, suporte a MVVM, teclado, acessibilidade e propriedades WPF convencionais, sem exigir um framework visual adicional.
+> Requer Windows e .NET 10 com WPF. A versão atual é um pré-lançamento.
 
-O pacote contém atualmente:
+## Componentes
 
-| Componente | Finalidade | Principais recursos |
+| Componente | Finalidade | Recursos principais |
 |---|---|---|
-| `TabControl` | Organizar páginas e documentos em abas | superfície contínua, quatro posições, drag and drop animado, criação, renomeação, fechamento, persistência, sombra e temas |
-| `DataGridView` | Exibir coleções em uma tabela rica | seleção configurável, ordenação visual, colunas reordenáveis/ocultáveis, estados de dados, densidades, badges/templates e barras de rolagem customizadas |
-| `ScrollBar` | Padronizar a rolagem em qualquer conteúdo | orientação, espessura, cores, raio seguro, sombra e botões direcionais opcionais |
-| `ContextMenu` | Apresentar ações contextuais consistentes | ícones, itens marcáveis, atalhos, submenus, separadores, estados e sombra configurável |
-
-> Requer **Windows** e **.NET 10** com WPF. O pacote atual é uma versão de pré-lançamento.
-
-## Visão dos componentes
+| [`TabControl`](docs/controls/tab-control.md) | Organizar páginas e documentos em abas | quatro posições, reordenação, criação, renomeação, fechamento e persistência |
+| [`DataGridView`](docs/controls/data-grid-view.md) | Exibir coleções em uma tabela rica | ordenação, filtros, seleção, edição, exportação, agrupamento e fixação aderente |
+| [`ScrollBar`](docs/controls/scroll-bar.md) | Padronizar a rolagem de qualquer conteúdo | dois eixos, espessura, cores, raio, sombra e botões opcionais |
+| [`ContextMenu`](docs/controls/context-menu.md) | Apresentar ações contextuais consistentes | ícones, valores, atalhos, itens marcáveis, escolhas e submenus |
 
 ### TabControl
 
-O `TabControl` desenha a aba selecionada e o corpo como uma única superfície. O mesmo raio é usado nas bordas externas e nas ligações entre a aba e o conteúdo.
-
 ![TabControl com abas superiores, inferiores e laterais](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/tab-control.png)
-
-Ele pode ser usado com abas declaradas diretamente no XAML ou com uma coleção em `ItemsSource`. A criação, renomeação, remoção e reordenação são opcionais e vêm desativadas ou protegidas por configurações próprias.
 
 ### DataGridView
 
-O `DataGridView` especializa o `DataGrid` nativo do WPF. Ele preserva virtualização, bindings, templates, ordenação, teclado e tipos nativos de coluna, acrescentando aparência e comportamentos consistentes com a biblioteca.
-
-![DataGridView com ordenação, status, múltiplas colunas e barras customizadas](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/data-grid-view.png)
-
-O exemplo mostra ordenação com indicadores, status renderizado por template, menu de colunas, densidade compacta e rolagem nos dois eixos.
+![DataGridView com ordenação, status, múltiplas colunas e barras personalizadas](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/data-grid-view.png)
 
 ### ScrollBar
-
-Barra de rolagem independente, usada internamente pelo `DataGridView` e disponível para qualquer conteúdo rolável, com orientação, espessura, cores, raio e sombra configuráveis.
 
 ![ScrollBar horizontal e vertical controlando uma área de conteúdo nos dois eixos](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/scroll-bar.png)
 
 ### ContextMenu
-
-Menu de contexto com ícones, itens marcáveis, atalhos, submenus e sombra, organizados em cinco colunas alinhadas.
 
 ![ContextMenu aberto com submenu de exportação](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/context-menu.png)
 
@@ -67,43 +52,33 @@ Install-Package DLH.Controls.Wpf -Version 0.4.0-preview.3
 ### PackageReference
 
 ```xml
-<ItemGroup>
-    <PackageReference Include="DLH.Controls.Wpf" Version="0.4.0-preview.3" />
-</ItemGroup>
+<PackageReference Include="DLH.Controls.Wpf" Version="0.4.0-preview.3" />
 ```
 
 ### Paket CLI
 
-Informe o projeto que receberá a referência:
+Adicione diretamente ao projeto:
 
 ```powershell
 paket add DLH.Controls.Wpf --version 0.4.0-preview.3 --project caminho/SeuProjeto.csproj
 ```
 
-Ou declare o pacote no arquivo `paket.dependencies`:
+Ou inclua no arquivo `paket.dependencies`:
 
 ```text
 source https://api.nuget.org/v3/index.json
 nuget DLH.Controls.Wpf 0.4.0-preview.3
 ```
 
-Adicione esta linha ao `paket.references` do projeto WPF:
-
-```text
-DLH.Controls.Wpf
-```
-
-Depois, restaure normalmente:
+Adicione `DLH.Controls.Wpf` ao `paket.references` do projeto e restaure:
 
 ```powershell
 paket install
 ```
 
-NuGet, `PackageReference` e Paket consomem o mesmo arquivo `.nupkg`.
+## Início rápido
 
-## Preparação do XAML
-
-Adicione o namespace da biblioteca à janela ou ao controle que utilizará os componentes:
+Declare o namespace da biblioteca:
 
 ```xml
 <Window
@@ -113,795 +88,105 @@ Adicione o namespace da biblioteca à janela ou ao controle que utilizará os co
 </Window>
 ```
 
-Os estilos padrão estão em `Themes/Generic.xaml` e são carregados pelo sistema de temas do WPF. Não é necessário copiar templates para a aplicação consumidora.
-
-# TabControl
-
-## Exemplo mínimo
+Use os controles diretamente no XAML:
 
 ```xml
 <dlh:TabControl CornerRadius="12"
-                      HeaderIndent="0"
-                      TabSpacing="0">
+                CanReorderTabs="True">
     <dlh:TabControlItem Header="Visão geral">
-        <TextBlock Margin="24" Text="Conteúdo da visão geral" />
+        <TextBlock Margin="24" Text="Conteúdo da página" />
     </dlh:TabControlItem>
-
     <dlh:TabControlItem Header="Editor">
         <TextBox Margin="24" AcceptsReturn="True" />
     </dlh:TabControlItem>
 </dlh:TabControl>
 ```
 
-`HeaderIndent="0"` alinha a primeira aba à borda do corpo. `TabSpacing="0"` remove espaços entre abas. `CornerRadius` controla todas as curvas do contorno.
+Os estilos padrão são carregados pelo sistema de temas do WPF. Não é necessário copiar os templates para a aplicação consumidora.
 
-## Cabeçalho com texto e ícone
+Consulte o [guia de início](docs/getting-started.md) e o [manual consolidado](docs/Manual.md) para instalação, MVVM, temas e exemplos completos.
 
-O `Header` aceita qualquer conteúdo WPF:
+## Documentação
 
-```xml
-<dlh:TabControlItem>
-    <dlh:TabControlItem.Header>
-        <StackPanel Orientation="Horizontal">
-            <Image Width="18"
-                   Height="18"
-                   Margin="0,0,8,0"
-                   Source="/MinhaAplicacao;component/Assets/Edit.png" />
-            <TextBlock VerticalAlignment="Center" Text="Editor" />
-        </StackPanel>
-    </dlh:TabControlItem.Header>
-
-    <TextBlock Margin="24" Text="Página do editor" />
-</dlh:TabControlItem>
-```
-
-Para ícones vetoriais, substitua `Image` por `Path`, `Viewbox` ou outro elemento visual.
-
-## Uso com ItemsSource e MVVM
-
-```xml
-<dlh:TabControl ItemsSource="{Binding Documents}"
-                      SelectedItem="{Binding SelectedDocument}"
-                      ItemKeyPath="Id"
-                      TabHeaderPath="Title">
-    <dlh:TabControl.ItemTemplate>
-        <DataTemplate>
-            <StackPanel Orientation="Horizontal">
-                <TextBlock Margin="0,0,8,0" Text="◆" />
-                <TextBlock Text="{Binding Title}" />
-            </StackPanel>
-        </DataTemplate>
-    </dlh:TabControl.ItemTemplate>
-
-    <dlh:TabControl.ContentTemplate>
-        <DataTemplate>
-            <TextBox Margin="24"
-                     Text="{Binding Text, UpdateSourceTrigger=PropertyChanged}"
-                     AcceptsReturn="True" />
-        </DataTemplate>
-    </dlh:TabControl.ContentTemplate>
-</dlh:TabControl>
-```
-
-Um modelo simples pode ser definido assim:
-
-```csharp
-public sealed class DocumentViewModel
-{
-    public required string Id { get; init; }
-    public required string Title { get; set; }
-    public string Text { get; set; } = string.Empty;
-}
-
-public ObservableCollection<DocumentViewModel> Documents { get; } = [];
-public DocumentViewModel? SelectedDocument { get; set; }
-```
-
-Os dados e o estado editável permanecem no ViewModel. Trocar de aba não recria nem perde o estado do modelo.
-
-## Abas superiores, inferiores e laterais
-
-Use a propriedade WPF `TabStripPlacement`:
-
-```xml
-<dlh:TabControl TabStripPlacement="Top" />
-<dlh:TabControl TabStripPlacement="Bottom" />
-<dlh:TabControl TabStripPlacement="Left" />
-<dlh:TabControl TabStripPlacement="Right" />
-```
-
-O contorno, a direção da rolagem e o eixo do drag and drop acompanham automaticamente a posição.
-
-## Drag and drop para reorganizar
-
-```xml
-<dlh:TabControl CanReorderTabs="True"
-                      MinimumDragDistance="5"
-                      IsDragPreviewEnabled="True"
-                      IsAnimationEnabled="True"
-                      DragAnimationDuration="0:0:0.180"
-                      DragPreviewOpacity="0.94"
-                      TabDragCursor="ScrollWE" />
-```
-
-O cursor muda somente depois que o usuário ultrapassa o limiar de arraste. Em abas superiores ou inferiores, o movimento é horizontal; nas laterais, é vertical. Nas extremidades, a faixa rola automaticamente.
-
-A reorganização também está disponível por teclado:
-
-- `Ctrl+Shift+Esquerda/Direita` em abas horizontais.
-- `Ctrl+Shift+Cima/Baixo` em abas laterais.
-- `Esc` cancela um arraste em andamento.
-
-Por código:
-
-```csharp
-bool moved = tabs.MoveTab(oldIndex: 3, newIndex: 1);
-```
-
-## Adicionar uma aba
-
-A ação `+` é opcional e não participa da seleção, persistência ou reordenação:
-
-```xml
-<dlh:TabControl ItemsSource="{Binding Documents}"
-                      CanAddTabs="True"
-                      AddTabCommand="{Binding AddDocumentCommand}"
-                      AddTabCommandParameter="{Binding SelectedWorkspace}" />
-```
-
-Sem comando, a aplicação pode tratar o evento:
-
-```csharp
-tabs.AddTabRequested += (_, e) =>
-{
-    Documents.Add(CreateDocument());
-};
-```
-
-## Renomear diretamente no cabeçalho
-
-```xml
-<dlh:TabControl ItemsSource="{Binding Documents}"
-                      CanRenameTabs="True"
-                      TabHeaderPath="Title"
-                      RenameActivation="F2AndDoubleClick" />
-```
-
-- `F2` ou duplo clique inicia a edição.
-- `Enter` confirma.
-- `Esc` cancela.
-- `TabRenameRequested` pode validar ou rejeitar o novo título.
-- `RenameTabCommand` permite que o ViewModel assuma a atualização.
-
-## Fechar abas
-
-```xml
-<dlh:TabControl ItemsSource="{Binding Documents}"
-                      CanCloseTabs="True"
-                      ShowCloseButtons="True"
-                      CloseTabCommand="{Binding CloseDocumentCommand}" />
-```
-
-Uma aba individual pode ser protegida:
-
-```xml
-<dlh:TabControlItem Header="Início"
-                   dlh:TabControl.CanCloseTab="False" />
-```
-
-A aplicação pode cancelar o fechamento antes da remoção:
-
-```csharp
-tabs.TabClosing += (_, e) =>
-{
-    if (HasUnsavedChanges(e.Item))
-        e.Cancel = true;
-};
-```
-
-A biblioteca não abre diálogos automaticamente; a confirmação pertence à aplicação.
-
-## Sombra e aparência
-
-```xml
-<dlh:TabControl Background="#35373C"
-                      Foreground="#F2F3F5"
-                      BorderBrush="#4C5058"
-                      BorderThickness="1"
-                      CornerRadius="12"
-                      IsShadowEnabled="True"
-                      ShadowColor="#494949"
-                      ShadowOpacity="0.5"
-                      ShadowBlurRadius="10"
-                      ShadowDepth="0"
-                      ShadowDirection="315" />
-```
-
-O fundo, a borda e a sombra utilizam o mesmo contorno unificado. `ShadowOpacity` varia de `0` a `1`; desativar `IsShadowEnabled` preserva os demais valores.
-
-## Salvar ordem e seleção
-
-Cada item precisa de uma chave única e estável. Por padrão, o controle procura a propriedade indicada em `ItemKeyPath="Id"`.
-
-```csharp
-using (var output = File.Create("tabs.json"))
-    tabs.SaveState(output);
-
-using (var input = File.OpenRead("tabs.json"))
-    tabs.LoadState(input);
-```
-
-Também é possível trabalhar sem arquivos:
-
-```csharp
-TabControlState state = tabs.CaptureState();
-tabs.RestoreState(state);
-```
-
-O estado contém chaves, ordem e seleção. O conteúdo das páginas permanece sob responsabilidade da aplicação.
-
-# ScrollBar
-
-Use `controls:ScrollBar` diretamente ou dentro do template de qualquer `ScrollViewer`, lista ou controle próprio. Os comandos, teclado, automação e propriedades nativas continuam disponíveis.
-
-```xml
-<controls:ScrollBar Orientation="Vertical"
-                    Minimum="0"
-                    Maximum="100"
-                    Value="35"
-                    Thickness="10"
-                    CornerRadius="5"
-                    TrackBrush="#3D4046"
-                    ThumbBrush="#686D77"
-                    ThumbHoverBrush="#8B919D"
-                    ShowButtons="False" />
-```
-
-`CornerRadius` aceita um valor uniforme; na renderização ele é limitado automaticamente à metade da espessura. A sombra é opcional por `IsShadowEnabled`, e seus parâmetros podem ser alterados com `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`.
-
-O `DataGridView` já utiliza esse componente internamente. Suas propriedades `ScrollBarThickness`, `ScrollBarTrackBrush`, `ScrollBarThumbBrush` e `ScrollBarThumbHoverBrush` foram preservadas.
-
-# ContextMenu
-
-O `ContextMenu` mantém os comandos, bindings, teclado, itens marcáveis e submenus do controle nativo do WPF, com o visual da biblioteca.
-
-```xml
-<Button Content="Opções">
-    <Button.ContextMenu>
-        <dlh:ContextMenu CornerRadius="8"
-                         ItemPadding="12,8"
-                         IconColumnWidth="28"
-                         IsShadowEnabled="True">
-            <MenuItem Header="Atualizar" InputGestureText="F5"
-                      dlh:MenuItemAssist.Value="Disponível">
-                <MenuItem.Icon>
-                    <TextBlock Text="↻" />
-                </MenuItem.Icon>
-            </MenuItem>
-            <dlh:ToggleMenuItem Header="Exibir detalhes"
-                                IsChecked="{Binding ShowDetails, Mode=TwoWay}"
-                                CheckedIcon="●"
-                                UncheckedIcon="○" />
-            <dlh:ChoiceMenuItem Header="Tema"
-                                SelectedValue="{Binding Theme, Mode=TwoWay}"
-                                SelectedIndex="0"
-                                CycleDirection="Forward"
-                                IsCycleWrappingEnabled="True">
-                <dlh:ChoiceMenuOption Content="Escuro" Value="Dark" Icon="☾" />
-                <dlh:ChoiceMenuOption Content="Claro" Value="Light" Icon="☀" />
-                <dlh:ChoiceMenuOption Content="Sistema" Value="System" Icon="◐" />
-            </dlh:ChoiceMenuItem>
-            <Separator />
-            <MenuItem Header="Exportar">
-                <MenuItem Header="Arquivo CSV" />
-                <MenuItem Header="Planilha" IsEnabled="False" />
-            </MenuItem>
-        </dlh:ContextMenu>
-    </Button.ContextMenu>
-</Button>
-```
-
-Use `Background`, `Foreground`, `BorderBrush`, `BorderThickness` e `Padding` para a superfície. `HoverBrush`, `CheckedBrush`, `SeparatorBrush`, `DisabledOpacity`, `ItemPadding`, `IconSize` e `IconColumnWidth` controlam os itens. A sombra utiliza `IsShadowEnabled`, `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`.
-
-Cada linha usa cinco colunas alinhadas: ícone, título, valor, atalho e seta. Use `MenuItemAssist.Value` e `MenuItemAssist.ValueTemplate` para preencher a coluna de valor em qualquer `MenuItem`; colunas sem conteúdo permanecem vazias. A mesma estrutura é aplicada recursivamente aos submenus.
-
-Defina `SubmenuPlacementDirection="Left"` para usar o menu junto à borda direita de uma janela. Somente a coluna da seta passa para o lado esquerdo, o indicador aponta para a esquerda e o submenu abre desse lado. Ícone, título, valor e atalho preservam sua ordem e orientação. O padrão é `Right`.
-
-O menu mantém somente um caminho ativo da árvore. Ao interagir com outro ramo, os submenus incompatíveis são fechados automaticamente. Outros componentes também podem controlar esse estado:
-
-```csharp
-menu.ActivatePath(item);  // mantém o item, seus pais e fecha os outros ramos
-menu.CollapseAfter(item); // mantém os pais e fecha o item e os níveis posteriores
-menu.CollapseAll();       // fecha toda a árvore
-```
-
-Para uma composição fixa que não use `ContextMenu`, marque o contêiner com `dlh:MenuInteraction.IsScopeRoot="True"` e use `MenuInteraction.ActivatePath`, `CollapseAfter` ou `CollapseAll`, passando esse contêiner como escopo. Escopos diferentes não interferem entre si.
-
-`ToggleMenuItem` fornece um estado booleano bidirecional e aceita `CheckedIcon` e `UncheckedIcon`. `ChoiceMenuItem` preenche automaticamente a coluna de valor com `SelectedContent`, percorre as opções pelo clique principal e abre a lista completa pela seta. A seleção pode ser ligada por `SelectedIndex`, `SelectedItem` ou `SelectedValue`; as três propriedades usam binding bidirecional por padrão. Para coleções de modelos, use `DisplayMemberPath`, `SelectedValuePath` e `IconMemberPath`. `CycleDirection`, `IsCycleWrappingEnabled` e `DropDownButtonWidth` personalizam a interação.
-
-O menu aberto com o botão direito nos cabeçalhos do `DataGridView` já é uma instância desse componente.
-
-No `DataGridView`, o menu do cabeçalho agrupa primeiro as ações da coluna, depois os submenus `Ordenação` e `Colunas visíveis`, e por último as ações gerais. O menu das linhas mostra a fixação da linha e da coluna clicada, identificada pelo nome. Ações de limpeza aparecem quando aplicáveis, e `Desafixar todas...` aparece a partir de duas fixações. Ao atingir um limite de fixação, a ação permanece desabilitada com uma explicação no tooltip. Os mesmos menus são usados nas áreas fixas e móveis.
-
-# DataGridView
-
-## Exemplo mínimo
-
-```xml
-<dlh:DataGridView ItemsSource="{Binding Shipments}"
-                  SelectionBehavior="Row"
-                  CornerRadius="10">
-    <DataGridTextColumn Header="Nº Embarque"
-                        Binding="{Binding Number}"
-                        SortMemberPath="Number"
-                        MinWidth="160" />
-
-    <DataGridTextColumn Header="Origem"
-                        Binding="{Binding Origin}"
-                        SortMemberPath="Origin"
-                        Width="*" />
-
-    <DataGridTextColumn Header="Quantidade"
-                        Binding="{Binding Quantity}"
-                        SortMemberPath="Quantity"
-                        Width="Auto" />
-</dlh:DataGridView>
-```
-
-As colunas são os tipos nativos do WPF: `DataGridTextColumn`, `DataGridCheckBoxColumn`, `DataGridComboBoxColumn`, `DataGridHyperlinkColumn` e `DataGridTemplateColumn`. `AutoGenerateColumns` é desativado por padrão.
-
-## Modelo e coleção
-
-```csharp
-public sealed record Shipment(
-    string Number,
-    string Origin,
-    string Vehicle,
-    int Quantity,
-    string Status);
-
-public ObservableCollection<Shipment> Shipments { get; } =
-[
-    new("EXP-2026-001", "SP", "Caminhão 12", 120, "Concluído"),
-    new("EXP-2026-002", "MG", "Caminhão 07", 85, "Em inspeção"),
-    new("EXP-2026-003", "PR", "Van 03", 34, "Pendente")
-];
-```
-
-Alterações em `ObservableCollection<T>` são refletidas automaticamente.
-
-## Seleção
-
-```xml
-<dlh:DataGridView SelectionBehavior="None" />
-<dlh:DataGridView SelectionBehavior="Row" />
-<dlh:DataGridView SelectionBehavior="Column" />
-<dlh:DataGridView SelectionBehavior="Cell" />
-```
-
-Para receber a seleção no ViewModel:
-
-```xml
-<dlh:DataGridView SelectionBehavior="Cell"
-                  SelectionChangedCommand="{Binding SelectionChangedCommand}" />
-```
-
-O comando recebe `DataGridViewSelection`, contendo `Item` e `Column` de acordo com o modo selecionado.
-
-Para permitir seleção múltipla, defina `AllowMultipleSelection="True"`. `GetBatchSelection()` retorna uma fotografia dos itens e células selecionados; `BatchSelectionChangedCommand` acompanha as mudanças e `BatchActionCommand` pode ser acionado por `ExecuteBatchAction()`.
-
-```csharp
-private void OnSelectionChanged(DataGridViewSelection selection)
-{
-    object? row = selection.Item;
-    DataGridColumn? column = selection.Column;
-}
-```
-
-## Ordenação e indicadores
-
-A ordenação global pode ser ligada ou desligada:
-
-```xml
-<dlh:DataGridView CanUserSortColumns="True"
-                  ShowSortIndicators="True" />
-```
-
-Cada coluna também pode controlar sua própria ordenação:
-
-```xml
-<DataGridTextColumn Header="Observação"
-                    Binding="{Binding Notes}"
-                    CanUserSort="False" />
-```
-
-Os indicadores comunicam três estados:
-
-| Estado | Representação |
+| Documento | Conteúdo |
 |---|---|
-| Coluna ordenável inativa | setas discretas para cima e para baixo |
-| Ordem crescente | seta ascendente destacada |
-| Ordem decrescente | seta descendente destacada |
+| [Central da documentação](docs/README.md) | índice de guias, controles e processos de desenvolvimento |
+| [Guia de início](docs/getting-started.md) | instalação, namespace e primeiro controle |
+| [Manual consolidado](docs/Manual.md) | uso completo da biblioteca |
+| [Referência da API](docs/ApiReference.md) | propriedades, eventos, métodos e tipos públicos |
+| [Integração e MVVM](docs/guides/integration.md) | coleções, comandos, persistência e temas |
+| [Acessibilidade](docs/guides/accessibility.md) | teclado, automação e verificações assistivas |
+| [Desempenho](docs/guides/performance.md) | medições e cuidados com virtualização |
+| [Histórico de versões](CHANGELOG.md) | alterações publicadas e trabalho em andamento |
 
-Tamanho, cores e geometrias são configuráveis:
+## Estrutura do repositório
 
-```xml
-<dlh:DataGridView SortIconSize="14"
-                  SortIconBrush="#9DA3AE"
-                  ActiveSortIconBrush="#42A5E8" />
+```text
+src/        biblioteca e componentes
+samples/    demonstração interativa e composições de captura
+tests/      testes automatizados e cenários WPF
+docs/       documentação para usuários e mantenedores
+eng/        validação, empacotamento e testes de consumo
 ```
 
-## Ordenação padrão e limpeza
+## Desenvolvimento
 
-```xml
-<dlh:DataGridView DefaultSortMemberPath="Number"
-                  DefaultSortDirection="Ascending"
-                  ShowClearSortMenuItem="True"
-                  ShowRestoreDefaultSortMenuItem="True" />
-```
-
-Ao clicar com o botão direito em um cabeçalho:
-
-- **Limpar ordenação** recupera a ordem original da coleção.
-- **Restaurar ordenação padrão** reaplica a propriedade e direção configuradas.
-
-As mesmas ações estão disponíveis por código:
-
-```csharp
-grid.ClearSorting();
-bool applied = grid.ApplyDefaultSort();
-```
-
-## Ordenação por múltiplas colunas
-
-```xml
-<dlh:DataGridView IsMultiColumnSortEnabled="True" />
-```
-
-- Um clique inicia ou alterna a ordenação de uma coluna.
-- `Shift+clique` acrescenta a coluna como novo critério.
-- `Ctrl+clique` remove a coluna da ordenação.
-- O número ao lado da seta informa a prioridade de cada critério.
-
-Por código, use `ApplySort(column, direction, append)` e `RemoveSort(column)`. A ordem completa também é preservada por `CaptureState()`.
-
-## Filtros por coluna
-
-Use `SetFilter` para combinar filtros em diferentes colunas. O caminho padrão vem de `SortMemberPath` e pode ser substituído por `DataGridView.FilterMemberPath`.
-
-```csharp
-grid.SetFilter(grid.Columns[0], "EXP-2026", DataGridViewFilterOperator.StartsWith);
-grid.SetFilter(grid.Columns[3], "50", DataGridViewFilterOperator.GreaterThan);
-grid.ClearFilter(grid.Columns[3]);
-grid.ClearFilters();
-```
-
-## Reordenar, redimensionar e ocultar colunas
-
-```xml
-<dlh:DataGridView CanUserReorderColumns="True"
-                  CanUserResizeColumns="True"
-                  CanUserToggleColumnVisibility="True" />
-```
-
-- Arraste o cabeçalho para mudar sua posição.
-- Arraste a divisória para mudar a largura.
-- Clique com o botão direito para exibir ou ocultar colunas.
-- O controle impede que a última coluna visível seja ocultada.
-
-É possível desativar recursos em uma coluna específica:
-
-```xml
-<DataGridTextColumn Header="Código"
-                    Binding="{Binding Code}"
-                    CanUserReorder="False"
-                    CanUserResize="False"
-                    CanUserSort="False" />
-```
-
-## Edição e validação
-
-As células permanecem somente leitura por padrão. Ative `IsCellEditingEnabled="True"` e use as regras de validação normais dos bindings WPF. `ShowValidationErrors` controla o destaque, `ValidationErrorBrush` define sua cor e `CellEditEndingCommand` recebe um `DataGridViewCellEditContext` que pode cancelar a confirmação.
-
-## Exportação CSV
-
-`ExportCsv` grava as linhas da visualização atual e somente as colunas visíveis, na ordem apresentada. Assim, filtros e ordenações ativos são respeitados. `DataGridViewCsvOptions` configura cabeçalhos, delimitador, cultura e um seletor para colunas com templates.
-
-```csharp
-using var file = File.Create("dados.csv");
-grid.ExportCsv(file, new DataGridViewCsvOptions { Delimiter = ";" });
-```
-
-## Agrupamento e detalhes de linha
-
-Defina `GroupMemberPath` e ative `IsGroupingEnabled` para criar grupos sem substituir agrupamentos externos. O modo embutido continua disponível: `ShowRowDetailsOnSelection` apresenta o `RowDetailsTemplate` dentro do grid ao selecionar uma linha, e `SetRowDetailsVisibility(item, visible)` controla uma linha materializada por código.
-
-```xml
-<dlh:DataGridView IsGroupingEnabled="True"
-                  GroupMemberPath="Status"
-                  ShowRowDetailsOnSelection="True">
-    <dlh:DataGridView.RowDetailsTemplate>
-        <DataTemplate>
-            <TextBlock Text="{Binding Notes}" />
-        </DataTemplate>
-    </dlh:DataGridView.RowDetailsTemplate>
-</dlh:DataGridView>
-```
-
-Para apresentar os detalhes sem alterar a altura das linhas, ative o painel flutuante. Um clique abre os detalhes da linha, um segundo clique na mesma linha fecha o painel e um clique em outra linha troca o conteúdo. Clicar fora do painel também o fecha.
-
-```xml
-<dlh:DataGridView ItemsSource="{Binding Shipments}"
-                  ShowRowDetailsPopupOnClick="True"
-                  RowDetailsPopupPlacement="Bottom"
-                  RowDetailsPopupVerticalOffset="4">
-    <dlh:DataGridView.RowDetailsPopupTemplate>
-        <DataTemplate>
-            <Border MaxWidth="520"
-                    Padding="16,12"
-                    Background="#292B2F"
-                    BorderBrush="#50545C"
-                    BorderThickness="1"
-                    CornerRadius="8">
-                <StackPanel>
-                    <TextBlock Text="{Binding ShipmentNumber}"
-                               FontWeight="SemiBold" />
-                    <TextBlock Margin="0,6,0,0"
-                               Text="{Binding Notes}"
-                               TextWrapping="Wrap" />
-                </StackPanel>
-            </Border>
-        </DataTemplate>
-    </dlh:DataGridView.RowDetailsPopupTemplate>
-</dlh:DataGridView>
-```
-
-`RowDetailsPopupContentStyle` personaliza o contêiner, e as propriedades `RowDetailsPopupPlacement`, `RowDetailsPopupHorizontalOffset` e `RowDetailsPopupVerticalOffset` controlam a posição. Consulte `IsRowDetailsPopupOpen` e `RowDetailsPopupItem` para conhecer o estado atual ou chame `CloseRowDetailsPopup()` para fechar o painel por código. Quando `RowDetailsPopupTemplate` não é informado, o controle reutiliza `RowDetailsTemplate`.
-
-## Fixação aderente de linhas e colunas
-
-A fixação é opcional e permanece desativada por padrão. Ative `CanPinRows` e `CanPinColumns` para disponibilizar a ação de fixar nos menus de contexto das linhas e dos cabeçalhos. O ícone de fixação aparece no menu de opções, sem ocupar espaço permanente nas células ou nos cabeçalhos.
-
-```xml
-<dlh:DataGridView ItemsSource="{Binding Shipments}"
-                  CanPinRows="True"
-                  CanPinColumns="True"
-                  MaxPinnedRows="5"
-                  MaxPinnedColumns="4"
-                  ShowPinnedBoundarySeparator="True"
-                  PinnedBoundarySeparatorBrush="#42A5E8"
-                  PinnedBoundarySeparatorThickness="2" />
-```
-
-Uma linha ou coluna fixada permanece em sua posição natural enquanto estiver visível. Durante a rolagem, ela adere à borda somente quando sair da área visível. Vários itens fixados se acumulam sem sobreposição: linhas aderem ao topo ou à parte inferior e colunas aderem à esquerda ou à direita, conforme o sentido da rolagem. As interseções entre linhas e colunas fixadas preservam o conteúdo, a altura e o alinhamento originais.
-
-Ao clicar em uma célula aderente para selecioná-la ou editá-la, o grid rola até a célula original, preservando os comportamentos de seleção, edição e validação. O menu de contexto da célula aderente atua sobre a coluna original. Ocultar uma coluna fixada a desfixa automaticamente e libera seu lugar em `MaxPinnedColumns`; para fixá-la de novo depois de reexibida, chame `PinColumn` explicitamente. Substituir `ItemsSource` também atualiza o conteúdo das colunas aderentes.
-
-Reduzir `MaxPinnedRows` ou `MaxPinnedColumns` em tempo de execução desfixa automaticamente os itens fixados mais recentes até respeitar o novo limite, disparando `RowUnpinned`/`ColumnUnpinned` para cada um.
-
-`ShowPinnedBoundarySeparator` exibe a divisão entre a área fixa e a área rolável. `PinnedBoundarySeparatorBrush` define a cor e `PinnedBoundarySeparatorThickness` aceita valores finitos maiores que zero. A divisão acompanha qualquer uma das quatro bordas em que exista conteúdo aderente.
-
-Por código, use `PinRow`, `UnpinRow`, `ToggleRowPin`, `PinColumn`, `UnpinColumn` e `ToggleColumnPin`. `UnpinAllRows()` e `UnpinAllColumns()` limpam cada grupo. As coleções somente leitura `PinnedRows` e `PinnedColumns` representam o estado atual, e os eventos `RowPinned`, `RowUnpinned`, `ColumnPinned` e `ColumnUnpinned` notificam as alterações.
-
-O estado das colunas fixadas é salvo com as demais configurações do grid. Para também persistir linhas fixadas, defina `RowKeyMemberPath` com uma propriedade textual, única e estável de cada registro. Caminhos aninhados são aceitos com segmentos separados por ponto, como `Identity.Key`.
-
-## Persistir o layout das colunas
-
-Defina uma chave estável com `SortMemberPath` ou com a propriedade anexada `ColumnKey`. O estado inclui ordem, largura, visibilidade e ordenação:
-
-```xml
-<DataGridTextColumn Header="Descrição"
-                    dlh:DataGridView.ColumnKey="description"
-                    Binding="{Binding Description}"
-                    SortMemberPath="Description" />
-```
-
-```csharp
-using (var output = File.Create("grid-layout.json"))
-    grid.SaveState(output);
-
-using (var input = File.OpenRead("grid-layout.json"))
-    grid.LoadState(input);
-
-grid.ResetState(); // retorna ao layout capturado quando o controle foi carregado
-```
-
-Colunas removidas são ignoradas e colunas novas são colocadas depois das conhecidas. Um estado inválido é rejeitado antes de modificar o controle.
-
-## Células personalizadas
-
-Use `DataGridTemplateColumn` para status, ícones, botões ou qualquer conteúdo WPF:
-
-```xml
-<DataGridTemplateColumn Header="Status" SortMemberPath="Status">
-    <DataGridTemplateColumn.CellTemplate>
-        <DataTemplate>
-            <Border Padding="8,3"
-                    CornerRadius="8"
-                    Background="#294A4034"
-                    BorderBrush="#4B725A"
-                    BorderThickness="1">
-                <TextBlock Text="{Binding Status}"
-                           Foreground="#8DD5A1"
-                           FontWeight="SemiBold" />
-            </Border>
-        </DataTemplate>
-    </DataGridTemplateColumn.CellTemplate>
-</DataGridTemplateColumn>
-```
-
-## Estados vazio, carregando e erro
-
-```xml
-<dlh:DataGridView EmptyMessage="Nenhum embarque encontrado."
-                  LoadingMessage="Carregando embarques..."
-                  IsLoading="{Binding IsLoading}"
-                  ErrorMessage="{Binding ErrorMessage}" />
-```
-
-Prioridade visual:
-
-1. `ErrorMessage` preenchida apresenta a falha.
-2. `IsLoading="True"` apresenta o carregamento.
-3. Coleção vazia apresenta `EmptyMessage`.
-4. Caso contrário, as linhas são exibidas.
-
-## Densidade e separadores
-
-```xml
-<dlh:DataGridView Density="Compact"
-                  ShowRowSeparators="True"
-                  CellPadding="12,6" />
-```
-
-Densidades disponíveis:
-
-- `Compact`
-- `Default`
-- `Comfortable`
-
-Para linhas alternadas, utilize a propriedade nativa:
-
-```xml
-<dlh:DataGridView AlternatingRowBackground="#24373A40"
-                  AlternationCount="2" />
-```
-
-## Barras de rolagem
-
-```xml
-<dlh:DataGridView ScrollBarThickness="10"
-                  ScrollBarTrackBrush="#3D4046"
-                  ScrollBarThumbBrush="#686D77"
-                  ScrollBarThumbHoverBrush="#8B919D" />
-```
-
-A barra vertical possui espaço reservado, impedindo que o texto da última coluna fique sob ela. A barra horizontal ocupa toda a largura inferior e reserva sua própria faixa, impedindo que o último registro seja encoberto. O raio das extremidades nunca ultrapassa metade da espessura real.
-
-## Desempenho
-
-O controle mantém habilitadas:
-
-```xml
-<dlh:DataGridView EnableRowVirtualization="True"
-                  EnableColumnVirtualization="True"
-                  ScrollViewer.CanContentScroll="True" />
-```
-
-Para coleções grandes, evite colocar o grid dentro de outro `ScrollViewer`, pois isso pode impedir a virtualização das linhas.
-
-# Temas e recursos
-
-As propriedades convencionais `Background`, `Foreground`, `BorderBrush`, `BorderThickness`, `Padding`, `FontFamily` e `FontSize` continuam disponíveis.
-
-Recursos principais do `TabControl`:
-
-```xml
-<SolidColorBrush x:Key="Tabs.Surface" Color="#35373C" />
-<SolidColorBrush x:Key="Tabs.Hover" Color="#454850" />
-<SolidColorBrush x:Key="Tabs.Text" Color="#F2F3F5" />
-<SolidColorBrush x:Key="Tabs.Muted" Color="#BCC0CA" />
-<SolidColorBrush x:Key="Tabs.Edge" Color="#4C5058" />
-<SolidColorBrush x:Key="Tabs.Focus" Color="#9CC9FF" />
-```
-
-Recursos principais do `DataGridView`:
-
-```xml
-<SolidColorBrush x:Key="DataGridView.Surface" Color="#35373C" />
-<SolidColorBrush x:Key="DataGridView.Header" Color="#2F3136" />
-<SolidColorBrush x:Key="DataGridView.Hover" Color="#454850" />
-<SolidColorBrush x:Key="DataGridView.Selection" Color="#334F8AC9" />
-<SolidColorBrush x:Key="DataGridView.Text" Color="#F2F3F5" />
-<SolidColorBrush x:Key="DataGridView.Edge" Color="#4C5058" />
-<SolidColorBrush x:Key="DataGridView.Focus" Color="#9CC9FF" />
-```
-
-Como são `DynamicResource`, esses valores podem ser substituídos durante a execução para alternar temas.
-
-# Estrutura da solução
-
-- `src/DLH.Controls.Wpf`: biblioteca reutilizável e projeto empacotável.
-- `src/DLH.Controls.Wpf/Controls`: implementação dos componentes.
-- `src/DLH.Controls.Wpf/Themes`: templates e recursos visuais.
-- `samples/DLH.Controls.Wpf.Demo`: visualizador interativo.
-- `samples/DLH.Controls.Wpf.Screenshots`: composições isoladas para as imagens da documentação.
-- `tests/DLH.Controls.Wpf.Tests`: testes de integração WPF.
-- `docs`: documentação detalhada e planos técnicos.
-- `eng`: validação e preparação do pacote.
-
-# Desenvolvimento
+Restaure, compile e valide a solução:
 
 ```powershell
 dotnet restore DLH.Controls.sln
 dotnet build DLH.Controls.sln -c Release
-dotnet run --project samples/DLH.Controls.Wpf.Demo -c Release
-dotnet run --project samples/DLH.Controls.Wpf.Screenshots -c Release
-dotnet run --project tests/DLH.Controls.Wpf.Tests -c Release
-dotnet pack src/DLH.Controls.Wpf -c Release -o artifacts/packages
-```
-
-Validação completa antes de publicar:
-
-```powershell
 ./eng/Validate.ps1
 ```
 
-A rotina compila a solução, executa as suítes por `dotnet test`, salva um relatório TRX, gera o pacote e verifica DLL, README, licença e instruções do Paket. Em seguida, instala o `.nupkg` em uma aplicação WPF temporária, compila e executa os dois controles. Somente a biblioteca é empacotada; demonstração e testes não entram no `.nupkg`.
+Abra as aplicações de demonstração:
 
-Para executar somente uma família, use `--filter TestCategory=DataGridView` ou `--filter TestCategory=TabControl` no projeto `tests/DLH.Controls.Wpf.AutomatedTests`.
+```powershell
+dotnet run --project samples/DLH.Controls.Wpf.Demo -c Release
+dotnet run --project samples/DLH.Controls.Wpf.Screenshots -c Release
+```
 
-A demonstração preserva preferências em `%LOCALAPPDATA%\TabControl.Demo`.
+A validação executa os testes, gera o pacote e o instala em uma aplicação WPF isolada. Consulte o [guia de testes e empacotamento](docs/development/packaging.md).
 
-# Documentação adicional
+## Contribuição e segurança
 
-- [Manual de uso do DLH Controls](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/Manual.md)
-- [TabControl detalhado](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/TabControl.md)
-- [Referência da API](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/ApiReference.md)
-- [Integração com dados, MVVM e temas](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/Integration.md)
-- [Preparação e conteúdo do pacote](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/Packaging.md)
-- [Publicação automática](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/Publishing.md)
-- [Preparação para a versão 1.0.0](https://github.com/LeonardoHessel/DLH.Controls/blob/main/docs/ReleaseReadiness.md)
-- [Histórico de versões](https://github.com/LeonardoHessel/DLH.Controls/blob/main/CHANGELOG.md)
-- [Como contribuir](https://github.com/LeonardoHessel/DLH.Controls/blob/main/CONTRIBUTING.md)
-- [Política de segurança](https://github.com/LeonardoHessel/DLH.Controls/blob/main/SECURITY.md)
+Relatos de defeitos e propostas são bem-vindos. Antes de contribuir, consulte:
 
-# Apoie o projeto
+- [Como contribuir](CONTRIBUTING.md)
+- [Código de conduta](CODE_OF_CONDUCT.md)
+- [Política de segurança](SECURITY.md)
 
-Se o **DLH Controls** estiver ajudando sua aplicação, você pode apoiar a manutenção da biblioteca, a correção de problemas e o desenvolvimento de novos componentes.
+Não publique credenciais, dados pessoais, código proprietário ou detalhes exploráveis de vulnerabilidades em uma issue.
 
-## Apoie diretamente pelo Pix
+## Apoie o projeto
 
-O **Pix é a forma principal de apoiar o DLH Controls no Brasil**. Escaneie o QR Code com o aplicativo do seu banco e escolha o valor da contribuição.
+Se o DLH Controls estiver ajudando sua aplicação, você pode apoiar sua manutenção e o desenvolvimento de novos componentes.
+
+### Pix
+
+O Pix é a forma principal de apoio no Brasil. Escaneie o QR Code e escolha o valor da contribuição.
 
 ![QR Code para apoiar o DLH Controls por Pix](https://raw.githubusercontent.com/LeonardoHessel/DLH.Controls/main/docs/images/pix-qrcode.png)
 
 **Chave Pix aleatória:** `65e95283-e2bd-46c3-b045-8773e8157df8`
 
-### Apoio internacional — GitHub Sponsors
+### GitHub Sponsors
 
-Para pessoas de outros países, contribuições únicas ou mensais podem ser feitas pelo GitHub Sponsors:
+Para contribuições internacionais, use o [perfil de patrocínio de LeonardoHessel](https://github.com/sponsors/LeonardoHessel).
 
 [![Apoie pelo GitHub Sponsors](https://img.shields.io/badge/Apoie-GitHub%20Sponsors-EA4AAA?logo=githubsponsors&logoColor=white)](https://github.com/sponsors/LeonardoHessel)
 
-[Abrir o perfil de patrocínio de LeonardoHessel](https://github.com/sponsors/LeonardoHessel)
+## Licença
 
-# Licença e atribuição
+Distribuído sob a **DLH Controls — Licença de Uso com Atribuição Visível, versão 1.0**. Consulte [LICENSE.txt](LICENSE.txt).
 
-Distribuído sob a **DLH Controls — Licença de Uso com Atribuição Visível, versão 1.0**. Consulte a [licença completa](https://github.com/LeonardoHessel/DLH.Controls/blob/main/LICENSE.txt).
-
-Uso comercial, modificação e redistribuição são permitidos conforme as condições da licença, incluindo crédito acessível aos usuários:
+Uso comercial, modificação e redistribuição são permitidos conforme suas condições. Produtos que utilizem a biblioteca devem disponibilizar o crédito:
 
 > Este produto utiliza DLH Controls, desenvolvido por Leonardo D. de L. Hessel.
 
-O crédito pode aparecer em **Sobre**, **Créditos** ou **Licenças de terceiros**. Produtos sem interface gráfica devem disponibilizá-lo na documentação ou ajuda.
+## Pacote
 
-# Pacote e autoria
-
-- Pacote: [DLH.Controls.Wpf no NuGet.org](https://www.nuget.org/packages/DLH.Controls.Wpf)
-- Versão publicada mais recente: `0.4.0-preview.3`
-- Autor: **Leonardo D. de L. Hessel**
+- [DLH.Controls.Wpf no NuGet](https://www.nuget.org/packages/DLH.Controls.Wpf)
+- Versão atual: `0.4.0-preview.3`
 - Plataforma: Windows
 - Framework: .NET 10 / WPF
-
-Mudanças posteriores à versão indicada permanecem em desenvolvimento até uma nova release.

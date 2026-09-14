@@ -61,4 +61,4 @@ Histórico completo: `git log v0.3.0-preview.2..v0.4.0-preview.1 --oneline`.
 
 - O `CHANGELOG.md` continha uma lacuna: a release anterior (`v0.3.0-preview.2`) nunca ganhou uma seção própria — seu conteúdo ficava em "Não publicado" junto com trabalho ainda não lançado. A seção `0.4.0-preview.1` criada nesta release consolida os dois (marcado explicitamente no changelog).
 - `b3cde1d` é uma alteração incompatível (`feat!`): consumidores do pacote precisam trocar `CustomTabControl`/`CustomTabControlItem` por `TabControl`/`TabControlItem` ao atualizar.
-- A versão do `.csproj` (`<Version>0.2.0-preview.4</Version>`) foi deliberadamente **não** alterada, conforme `docs/Publishing.md`: a versão publicada vem da tag e substitui a versão base durante o pack, sem tocar no arquivo do projeto.
+- A versão do `.csproj` (`<Version>0.2.0-preview.4</Version>`) foi deliberadamente **não** alterada, conforme `docs/development/publishing.md`: a versão publicada vem da tag e substitui a versão base durante o pack, sem tocar no arquivo do projeto.

@@ -1,0 +1,62 @@
+name: Sugerir uma melhoria
+description: Proponha um comportamento, uma API ou um novo componente.
+title: "[Melhoria]: "
+labels:
+  - enhancement
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Descreva primeiro o cenário de uso. Uma proposta de API pode ser incluída, mas não é obrigatória.
+
+  - type: dropdown
+    id: scope
+    attributes:
+      label: Área da proposta
+      options:
+        - TabControl
+        - DataGridView
+        - ScrollBar
+        - ContextMenu
+        - Novo componente
+        - Temas e acessibilidade
+        - Documentação ou ferramentas
+    validations:
+      required: true
+
+  - type: textarea
+    id: problem
+    attributes:
+      label: Cenário ou necessidade
+      description: Explique o problema que a melhoria resolveria.
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Comportamento sugerido
+      description: Descreva como a funcionalidade deveria se comportar para quem utiliza o controle.
+    validations:
+      required: true
+
+  - type: textarea
+    id: api
+    attributes:
+      label: Exemplo de uso ou API
+      description: Inclua XAML ou C# quando isso ajudar a explicar a proposta.
+      render: xml
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: Alternativas consideradas
+      description: Informe soluções existentes ou abordagens que não atenderam ao cenário.
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Verificação
+      options:
+        - label: Pesquisei as issues existentes e não encontrei uma proposta equivalente.
+          required: true

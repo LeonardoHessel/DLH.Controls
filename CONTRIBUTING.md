@@ -2,9 +2,12 @@
 
 Obrigado pelo interesse em melhorar o DLH Controls.
 
+Ao participar, siga o [código de conduta](CODE_OF_CONDUCT.md).
+
 ## Relatos e propostas
 
 - Pesquise as issues existentes antes de abrir uma nova.
+- Use o formulário correspondente para relatar um problema ou sugerir uma melhoria.
 - Para defeitos, descreva o comportamento observado, o comportamento esperado e um exemplo mínimo reproduzível.
 - Para novos recursos, explique o cenário de uso e a API pública sugerida.
 - Não inclua credenciais, dados pessoais, código proprietário ou informações confidenciais.
@@ -25,6 +28,8 @@ dotnet restore DLH.Controls.sln
 ```
 
 O pull request deve manter a compatibilidade das APIs públicas já distribuídas, incluir documentação quando alterar comportamento público e acrescentar testes somente quando eles verificarem um risco real.
+
+Os guias de [testes e empacotamento](docs/development/packaging.md) e de [publicação](docs/development/publishing.md) descrevem as verificações automatizadas do repositório.
 
 ## Pull requests
 

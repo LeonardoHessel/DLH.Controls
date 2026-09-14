@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentação do DLH Controls
+    url: https://github.com/LeonardoHessel/DLH.Controls/tree/main/docs
+    about: Consulte os guias, exemplos e a referência da API antes de abrir uma issue.
+  - name: Relatar uma vulnerabilidade
+    url: https://github.com/LeonardoHessel/DLH.Controls/security/policy
+    about: Leia a política de segurança e não publique detalhes exploráveis em uma issue.

@@ -136,7 +136,7 @@ Atualizar o visualizador com controles separados para ativar criação e renomea
 - mostrar um exemplo de `AddTabContentTemplate` com ícone vetorial;
 - manter exemplos com ambas as funcionalidades desativadas para provar compatibilidade.
 
-Documentar em `README.md`, `docs/TabControl.md`, `docs/Integration.md` e `docs/ApiReference.md` os exemplos com `ItemsSource`, títulos e ícones, comandos, eventos e comportamento de teclado.
+Documentar em `README.md`, `docs/controls/tab-control.md`, `docs/guides/integration.md` e `docs/ApiReference.md` os exemplos com `ItemsSource`, títulos e ícones, comandos, eventos e comportamento de teclado.
 
 ## 6. Etapa E — testes
 

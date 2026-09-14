@@ -2,6 +2,12 @@
 
 ## Não publicado
 
+- README reduzido e reorganizado como apresentação do pacote, com navegação para os guias detalhados.
+- Documentação separada entre controles, guias, processos de desenvolvimento, releases e planos históricos.
+- Páginas de compatibilidade mantidas nos endereços antigos para preservar links publicados.
+- Formulários de problema e melhoria, modelo de pull request, código de conduta e responsáveis adicionados ao GitHub.
+- Dependabot configurado para revisar mensalmente dependências NuGet e GitHub Actions.
+
 ## 0.4.0-preview.3 — 13 de setembro de 2026
 
 - Correção do recorte da sombra nos cantos do `ContextMenu` e de seus submenus, preservando o arredondamento da superfície.

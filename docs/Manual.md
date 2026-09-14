@@ -505,7 +505,7 @@ Os recursos são dinâmicos e podem ser trocados durante a execução. Consulte 
 - No `TabControl`, `Ctrl+Shift` com as setas reorganiza abas quando permitido.
 - No `DataGridView`, os comportamentos de teclado do `DataGrid` continuam disponíveis.
 
-Consulte a [lista de verificação de acessibilidade](AccessibilityChecklist.md) antes de publicar uma aplicação.
+Consulte a [lista de verificação de acessibilidade](guides/accessibility.md) antes de publicar uma aplicação.
 
 ## 8. Desempenho
 
@@ -563,9 +563,9 @@ O seletor abre uma janela para cada componente. Também é possível informar `t
 ## 11. Documentos de referência
 
 - [Referência da API](ApiReference.md)
-- [Guia detalhado do TabControl](TabControl.md)
-- [Integração com dados, MVVM e temas](Integration.md)
-- [Lista de verificação de acessibilidade](AccessibilityChecklist.md)
+- [Guia detalhado do TabControl](controls/tab-control.md)
+- [Integração com dados, MVVM e temas](guides/integration.md)
+- [Lista de verificação de acessibilidade](guides/accessibility.md)
 - [Histórico de versões](../CHANGELOG.md)
 - [Como contribuir](../CONTRIBUTING.md)
 - [Política de segurança](../SECURITY.md)

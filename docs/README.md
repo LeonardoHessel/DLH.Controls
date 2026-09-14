@@ -24,6 +24,7 @@ Esta página organiza a documentação para quem utiliza, avalia ou mantém o DL
 
 ## Desenvolvimento e publicação
 
+- [Operação do repositório no GitHub](development/github-workflow.md)
 - [Testes e empacotamento](development/packaging.md)
 - [Publicação pelo GitHub e NuGet](development/publishing.md)
 - [Preparação para uma versão estável](development/release-readiness.md)

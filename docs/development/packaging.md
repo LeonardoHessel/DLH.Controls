@@ -36,6 +36,10 @@ No GitHub Actions, a solução é compilada separadamente em Debug e Release. A 
 
 A execução completa também usa o coletor de cobertura do Visual Studio. O arquivo `.coverage` acompanha o TRX no artefato `test-results`; inicialmente ele serve para acompanhar a migração dos cenários para métodos independentes, sem bloquear releases por uma porcentagem arbitrária.
 
+Após gerar o pacote, `eng/Test-PackageConsumer.ps1` cria duas aplicações WPF fora da solução e restaura dependências usando somente a pasta do `.nupkg` gerado. `CodeConsumer` exercita as APIs públicas dos quatro controles por código. `XamlConsumer` compila os quatro controles em XAML, abre uma janela real fora da área visível, aplica os templates, renderiza o conteúdo e abre o `ContextMenu`. O relatório `artifacts/test-results/package-consumers.json` registra pacote, versão, Windows, SDK, duração e resultado de cada consumidor.
+
+Essa matriz detecta dependências acidentais de projetos ou arquivos do repositório, erros na API pública, falhas de compilação XAML, ausência de estilos e problemas básicos de carregamento e renderização. Avaliação visual subjetiva, leitor de tela e interação humana em escalas físicas diferentes continuam na revisão manual de acessibilidade.
+
 O teste da categoria `API` compara tipos e membros públicos com `tests/DLH.Controls.Wpf.AutomatedTests/PublicApi/DLH.Controls.Wpf.txt`. Quando uma mudança pública for intencional, revise sua compatibilidade e execute o teste localmente com `UPDATE_PUBLIC_API=1`; copie o contrato gerado para a pasta versionada e revise o diff antes do commit.
 
 Não publica no NuGet, não exige chave NuGet e não cria releases. Pode ser executado localmente no Windows com `./eng/Validate.ps1`.

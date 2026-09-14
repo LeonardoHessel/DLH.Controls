@@ -117,6 +117,7 @@ Consulte o [guia de início](docs/getting-started.md) e o [manual consolidado](d
 | [Integração e MVVM](docs/guides/integration.md) | coleções, comandos, persistência e temas |
 | [Acessibilidade](docs/guides/accessibility.md) | teclado, automação e verificações assistivas |
 | [Desempenho](docs/guides/performance.md) | medições e cuidados com virtualização |
+| [Operação no GitHub](docs/development/github-workflow.md) | branches, pull requests, checks, Dependabot e releases |
 | [Histórico de versões](CHANGELOG.md) | alterações publicadas e trabalho em andamento |
 
 ## Estrutura do repositório

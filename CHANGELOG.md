@@ -11,6 +11,7 @@
 - Branch `main` protegida por verificações obrigatórias, histórico linear e bloqueio de exclusão e envio forçado.
 - Guia operacional do GitHub com fluxo de contribuição, checks, Dependabot, releases e configurações externas.
 - Validação do pacote ampliada para uma matriz de aplicações WPF isoladas, incluindo consumo programático e uma janela real construída em XAML.
+- Correção do alinhamento entre a borda inferior do cabeçalho, a barra vertical e a camada de linhas fixadas do `DataGridView`; a divisória da área fixa passa a usar 1 px por padrão.
 
 ## 0.4.0-preview.3 — 13 de setembro de 2026
 

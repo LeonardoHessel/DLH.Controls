@@ -395,7 +395,7 @@ Ative `CanPinRows` e `CanPinColumns` para permitir que o usuário fixe registros
                   MaxPinnedColumns="4"
                   ShowPinnedBoundarySeparator="True"
                   PinnedBoundarySeparatorBrush="#42A5E8"
-                  PinnedBoundarySeparatorThickness="2"
+                  PinnedBoundarySeparatorThickness="1"
                   RowKeyMemberPath="Id" />
 ```
 

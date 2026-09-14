@@ -300,6 +300,8 @@ public sealed class DataGridViewPinningTests
             ItemsSource = rows,
             CanPinColumns = true
         };
+        Assert.AreEqual(1d, grid.PinnedBoundarySeparatorThickness,
+            "A divisória da área fixada deve ter a mesma espessura padrão das demais linhas do grid.");
         var columns = Enumerable.Range(1, 6).Select(index => new DataGridTextColumn
         {
             Header = $"Coluna {index}",

@@ -80,6 +80,22 @@ public sealed class DataGridViewPinningHeaderTests
             TestContext.WriteLine(path);
             var pixels = new byte[bitmap.PixelWidth * bitmap.PixelHeight * 4];
             bitmap.CopyPixels(pixels, bitmap.PixelWidth * 4, 0);
+            var verticalBar = (FrameworkElement)viewer.Template.FindName("PART_VerticalScrollBar", viewer)!;
+            Assert.AreEqual(Visibility.Visible, verticalBar.Visibility,
+                "O cenário precisa exercitar o encaixe com a barra vertical.");
+            var barOrigin = verticalBar.TranslatePoint(new Point(), grid);
+            var contentX = (int)Math.Floor(barOrigin.X) - 2;
+            var gutterX = (int)Math.Floor(barOrigin.X + (verticalBar.ActualWidth / 2));
+            var expectedEdge = Color.FromRgb(0x4C, 0x50, 0x58);
+            var boundaryY = Enumerable.Range((int)Math.Floor(headerBottom) - 2, 4)
+                .OrderBy(y => Difference(ReadPixel(pixels, bitmap.PixelWidth, contentX, y), expectedEdge))
+                .First();
+            var contentBoundary = ReadPixel(pixels, bitmap.PixelWidth, contentX, boundaryY);
+            var gutterBoundary = ReadPixel(pixels, bitmap.PixelWidth, gutterX, boundaryY);
+            Assert.IsLessThanOrEqualTo(2, Difference(contentBoundary, expectedEdge),
+                "A amostra precisa encontrar a borda inferior do cabeçalho.");
+            Assert.IsLessThanOrEqualTo(2, Difference(contentBoundary, gutterBoundary),
+                $"A borda do cabeçalho que encosta na barra vertical mudou de altura em Y={boundaryY}.");
             if (pinRows)
             {
                 foreach (var offset in new[] { viewer.ScrollableHeight - 63.5, viewer.ScrollableHeight - 121.25 })
@@ -117,4 +133,14 @@ public sealed class DataGridViewPinningHeaderTests
         }
         finally { window.Close(); }
     }
+
+    private static Color ReadPixel(byte[] pixels, int width, int x, int y)
+    {
+        var index = ((y * width) + x) * 4;
+        return Color.FromArgb(pixels[index + 3], pixels[index + 2], pixels[index + 1], pixels[index]);
+    }
+
+    private static int Difference(Color first, Color second) => Math.Max(
+        Math.Abs(first.R - second.R),
+        Math.Max(Math.Abs(first.G - second.G), Math.Abs(first.B - second.B)));
 }

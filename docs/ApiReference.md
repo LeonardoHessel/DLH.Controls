@@ -128,7 +128,7 @@ O painel usa `StaysOpen=false`, portanto um clique fora dele fecha a apresentaç
 | `MaxPinnedColumns` | `4` | Limite positivo de colunas fixadas; reduzi-lo em tempo de execução desfixa os itens mais recentes em excesso |
 | `ShowPinnedBoundarySeparator` | `true` | Exibe o limite entre conteúdo aderente e rolável |
 | `PinnedBoundarySeparatorBrush` | `#42A5E8` | Pincel do separador nas quatro bordas possíveis |
-| `PinnedBoundarySeparatorThickness` | `2` | Espessura finita e maior que zero |
+| `PinnedBoundarySeparatorThickness` | `1` | Espessura finita e maior que zero |
 | `PinnedRows` | somente leitura | Coleção observável dos itens fixados |
 | `PinnedColumns` | somente leitura | Coleção observável das colunas fixadas |
 | `RowKeyMemberPath` | `null` | Caminho simples ou aninhado da chave textual; segmentos aninhados são separados por ponto, como `Identity.Key` |

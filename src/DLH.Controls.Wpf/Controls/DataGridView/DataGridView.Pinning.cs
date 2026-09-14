@@ -100,7 +100,7 @@ public partial class DataGridView
 
     public static readonly DependencyProperty PinnedBoundarySeparatorThicknessProperty = DependencyProperty.Register(
         nameof(PinnedBoundarySeparatorThickness), typeof(double), typeof(DataGridView),
-        new FrameworkPropertyMetadata(2d, OnPinnedBoundaryAppearanceChanged),
+        new FrameworkPropertyMetadata(1d, OnPinnedBoundaryAppearanceChanged),
         value => value is double thickness && double.IsFinite(thickness) && thickness > 0);
     public double PinnedBoundarySeparatorThickness
     {

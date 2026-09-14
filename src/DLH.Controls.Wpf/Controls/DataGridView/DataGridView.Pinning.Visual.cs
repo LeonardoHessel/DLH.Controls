@@ -295,7 +295,7 @@ public partial class DataGridView
         if (startHeight > 0)
         {
             var pixel = 1d / VisualTreeHelper.GetDpi(this).DpiScaleY;
-            var boundaryTop = Math.Floor(origin.Y / pixel) * pixel - pixel;
+            var boundaryTop = Math.Floor(origin.Y / pixel) * pixel;
             AddPinnedRowBackdrop(origin.X, boundaryTop, pinningViewport.ActualWidth,
                 origin.Y + startHeight - boundaryTop + pixel, "Start");
             var boundary = new Border

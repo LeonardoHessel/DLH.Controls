@@ -245,7 +245,7 @@ A fixação é opcional e permanece desativada por padrão. Ative `CanPinRows` e
                   MaxPinnedColumns="4"
                   ShowPinnedBoundarySeparator="True"
                   PinnedBoundarySeparatorBrush="#42A5E8"
-                  PinnedBoundarySeparatorThickness="2" />
+                  PinnedBoundarySeparatorThickness="1" />
 ```
 
 Uma linha ou coluna fixada permanece em sua posição natural enquanto estiver visível. Durante a rolagem, ela adere à borda somente quando sair da área visível. Vários itens fixados se acumulam sem sobreposição: linhas aderem ao topo ou à parte inferior e colunas aderem à esquerda ou à direita, conforme o sentido da rolagem. As interseções entre linhas e colunas fixadas preservam o conteúdo, a altura e o alinhamento originais.

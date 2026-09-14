@@ -506,8 +506,7 @@
                                             </Grid.RowDefinitions>
                                             <Border Grid.Row="0" Grid.ColumnSpan="2" Panel.ZIndex="1"
                                                     Background="{DynamicResource DataGridView.Header}"
-                                                    BorderBrush="{DynamicResource DataGridView.Edge}"
-                                                    BorderThickness="0,0,0,1">
+                                                    BorderThickness="0">
                                                 <Border.Style>
                                                     <Style TargetType="Border">
                                                         <Style.Triggers>
@@ -520,9 +519,12 @@
                                                         </Style.Triggers>
                                                     </Style>
                                                 </Border.Style>
+                                                <Border Height="1" VerticalAlignment="Bottom"
+                                                        Background="{DynamicResource DataGridView.Edge}"
+                                                        IsHitTestVisible="False" SnapsToDevicePixels="True" />
                                             </Border>
                                             <DataGridColumnHeadersPresenter x:Name="PART_ColumnHeadersPresenter"
-                                                Grid.Row="0" Grid.ColumnSpan="2" Panel.ZIndex="1" />
+                                                Grid.Row="0" Grid.Column="0" Panel.ZIndex="1" />
                                             <ScrollContentPresenter x:Name="PART_ScrollContentPresenter"
                                                 Grid.Row="1" Grid.Column="0"
                                                 ClipToBounds="True"

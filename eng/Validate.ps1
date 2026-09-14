@@ -56,6 +56,6 @@ try {
             }
         } finally { $zip.Dispose() }
     }
-    & pwsh -NoProfile -File "$PSScriptRoot/Test-PackageConsumer.ps1" -PackagePath $packages[0].FullName 2>&1 | Tee-Object -FilePath 'artifacts/test-results/package-consumer.log'
-    if ($LASTEXITCODE -ne 0) { throw 'Package consumer validation failed.' }
+    & pwsh -NoProfile -File "$PSScriptRoot/Test-PackageConsumer.ps1" -PackagePath $packages[0].FullName 2>&1 | Tee-Object -FilePath 'artifacts/test-results/package-consumers.log'
+    if ($LASTEXITCODE -ne 0) { throw 'Package consumer matrix validation failed.' }
 } finally { Pop-Location }

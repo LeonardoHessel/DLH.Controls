@@ -10,6 +10,7 @@
 - Versão do pacote centralizada em `eng/Version.props`, com validação de correspondência entre o repositório e a tag de publicação.
 - Branch `main` protegida por verificações obrigatórias, histórico linear e bloqueio de exclusão e envio forçado.
 - Guia operacional do GitHub com fluxo de contribuição, checks, Dependabot, releases e configurações externas.
+- Validação do pacote ampliada para uma matriz de aplicações WPF isoladas, incluindo consumo programático e uma janela real construída em XAML.
 
 ## 0.4.0-preview.3 — 13 de setembro de 2026
 

@@ -4,6 +4,12 @@ Os testes automatizados confirmam o papel de TabControl/TabItem, o estado seleci
 
 Antes de declarar suporte de acessibilidade, registrar data, versão do Windows, escala, tema e leitor de tela e executar:
 
+```powershell
+./eng/Invoke-ReleaseReadiness.ps1 -Interactive
+```
+
+O comando abre a demonstração, apresenta cada grupo desta lista e grava resultados e observações em `artifacts/release-readiness`. Use também `-CheckPublicPackage` para repetir a matriz automática com o pacote baixado diretamente do NuGet.
+
 1. Percorrer a janela com Tab e Shift+Tab e confirmar que o foco entra e sai da faixa.
 2. Selecionar abas com as setas e Ctrl+Tab nas quatro orientações.
 3. Reordenar com Ctrl+Shift+setas e conferir anúncio, foco e ordem.

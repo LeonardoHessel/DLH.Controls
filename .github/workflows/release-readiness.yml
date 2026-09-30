@@ -1,0 +1,60 @@
+name: Release readiness
+
+on:
+  workflow_dispatch:
+    inputs:
+      packageVersion:
+        description: Versão que deve corresponder a eng/Version.props
+        required: false
+        type: string
+      checkPublicPackage:
+        description: Baixar e testar também o pacote publicado no NuGet
+        required: true
+        default: false
+        type: boolean
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-readiness-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: windows-latest
+    timeout-minutes: 30
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+      - uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: '10.0.x'
+      - name: Validate package and collect readiness evidence
+        env:
+          PACKAGE_VERSION: ${{ inputs.packageVersion }}
+          CHECK_PUBLIC_PACKAGE: ${{ inputs.checkPublicPackage }}
+        run: |
+          $parameters = @{}
+          if (![string]::IsNullOrWhiteSpace($env:PACKAGE_VERSION)) {
+            $parameters.PackageVersion = $env:PACKAGE_VERSION
+          }
+          if ($env:CHECK_PUBLIC_PACKAGE -eq 'true') {
+            $parameters.CheckPublicPackage = $true
+          }
+          ./eng/Invoke-ReleaseReadiness.ps1 @parameters
+      - name: Upload readiness evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: release-readiness-${{ github.run_number }}
+          path: |
+            artifacts/release-readiness/
+            artifacts/test-results/
+            artifacts/packages/*.nupkg
+          if-no-files-found: warn
+          retention-days: 30

@@ -39,6 +39,8 @@ Branches de trabalho podem usar nomes como `feature/nome-curto`, `fix/nome-curto
 
 O workflow está em `.github/workflows/ci.yml` e também pode ser executado manualmente em **Actions > Build, test and package > Run workflow**.
 
+Antes de promover uma versão, o workflow `.github/workflows/release-readiness.yml` pode ser iniciado em **Actions > Release readiness > Run workflow**. Ele executa a validação completa, pode baixar a versão pública informada e publica os relatórios técnicos como artefatos por 30 dias. As verificações físicas permanecem no modo assistido local de `eng/Invoke-ReleaseReadiness.ps1`.
+
 Quando um check falhar:
 
 1. abra o trabalho que falhou e identifique a primeira etapa com erro;

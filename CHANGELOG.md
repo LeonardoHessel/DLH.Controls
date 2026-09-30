@@ -2,7 +2,8 @@
 
 ## Não publicado
 
-Nenhuma alteração registrada.
+- Novo fluxo de homologação automatizada e assistida, com validação do pacote local e público, inventário de monitores/DPI, evidências em JSON e Markdown e roteiro registrado para mouse, teclado, leitor de tela e alto contraste.
+- Workflow manual `Release readiness` para gerar e preservar evidências técnicas antes da promoção de uma versão.
 
 ## 0.4.0-preview.4 — 14 de setembro de 2026
 

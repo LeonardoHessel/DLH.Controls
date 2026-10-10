@@ -1,6 +1,6 @@
 # Validação manual de acessibilidade
 
-Os testes automatizados confirmam o papel de TabControl/TabItem, o estado selecionado, nomes fornecidos pelo consumidor, nome contextual da ação de fechar e sua indisponibilidade quando bloqueada. Eles não substituem o uso real das tecnologias assistivas.
+Os testes automatizados confirmam o papel de TabControl/TabItem, o estado selecionado, nomes fornecidos pelo consumidor, nome contextual da ação de fechar e sua indisponibilidade quando bloqueada. Também verificam a árvore de automação do `ScrollBar`, do `DataGridView` e dos itens do `ContextMenu` (ver [Cobertura automatizada](#cobertura-automatizada)). Eles não substituem o uso real das tecnologias assistivas.
 
 Antes de declarar suporte de acessibilidade, registrar data, versão do Windows, escala, tema e leitor de tela e executar:
 
@@ -17,6 +17,24 @@ O comando abre a demonstração, apresenta cada grupo desta lista e grava result
 5. Fechar uma aba selecionada e outra não selecionada; conferir o próximo foco.
 6. Desabilitar fechamento e confirmar que a ação não é anunciada como disponível.
 7. Repetir nos três temas, em alto contraste e com 100%, 150% e 200% de escala.
+
+## Cobertura automatizada
+
+Os testes de `AutomationPeerTests` (categoria `Accessibility`, projeto `DLH.Controls.Wpf.AutomatedTests`) consultam a árvore de automação sem tecnologia assistiva real:
+
+| Controle | Verificado |
+|---|---|
+| `ScrollBar` | Tipo `ScrollBar`, orientação, padrão `RangeValue` (mínimo, máximo e valor), nome fornecido por `AutomationProperties.Name` e estado desabilitado |
+| `DataGridView` | Tipo `DataGrid`, padrão `Table` com número de linhas e colunas, nomes dos cabeçalhos de coluna e linhas como `DataItem` com estado de seleção |
+| `ToggleMenuItem` | Tipo `MenuItem`, padrão `Toggle` acompanhando `IsChecked`, nome do consumidor e estado desabilitado |
+| `ChoiceMenuItem` | Tipo `MenuItem`, nome pelo cabeçalho independente da opção selecionada e ação de expandir disponível |
+| `ContextMenu` | Tipo `Menu`; itens com nome e ação de expandir apenas quando possuem submenu |
+
+Observações:
+
+- Os controles reutilizam os peers nativos do WPF; nenhum peer próprio é registrado. O comportamento acima é, portanto, o contrato herdado do WPF.
+- A coleção de filhos de um `ContextMenu` só existe depois que seus itens são gerados, isto é, com o menu aberto. Os testes inspecionam os itens diretamente.
+- Foco visível, contraste, anúncios de leitor de tela e alto contraste não são verificados por esses testes e continuam dependendo da lista acima.
 
 ## Execução de 5 de setembro de 2026
 

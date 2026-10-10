@@ -1,8 +1,12 @@
-# Referência da API — TabControl
+# Referência da API
+
+Referência dos membros públicos de `DLH.Controls.Wpf`, organizada por controle: [TabControl](#tabcontrol), [ScrollBar](#scrollbar), [ContextMenu](#contextmenu) e [DataGridView](#datagridview). Os padrões e limites descritos refletem a implementação atual.
+
+## TabControl
 
 Revisão para estabilização, baseada na implementação atual. Namespace: `DLH.Controls.Wpf`. Usar no thread de interface WPF. Os membros herdados de TabControl mantêm seus contratos WPF.
 
-## Propriedades próprias
+### Propriedades próprias
 
 | Propriedade | Padrão | Contrato |
 |---|---|---|
@@ -40,7 +44,7 @@ Propriedades anexadas: `CanCloseTab` (true) protege um contêiner individual; `T
 
 A propriedade herdada `TabStripPlacement` aceita Top, Bottom, Left e Right. `BorderThickness` usa o maior lado como traço uniforme. `Padding`, cores e fontes são propriedades herdadas. Valores padrão acima são os da biblioteca, não os ajustes do visualizador.
 
-## Operações e eventos
+### Operações e eventos
 
 | Operação | Resultado e limites |
 |---|---|
@@ -64,23 +68,40 @@ Quando `AddTabCommand` existe, ele tem precedência sobre `AddTabRequested`; nun
 
 Quando CloseTabCommand está definido, ele é responsável pela remoção síncrona. A biblioteca não aguarda Tasks nem oferece confirmação assíncrona. Alterar diretamente a coleção é responsabilidade da aplicação e não passa pelas permissões/eventos do controle.
 
-## Persistência e erros
+### Persistência e erros
 
 Os dois formatos têm Version=1, independentemente da versão NuGet. Estado não salva conteúdo das páginas. Configuração inclui CanAddTabs, CanRenameTabs, TabHeaderPath e RenameActivation, mas não salva comandos, parâmetros, conteúdo/templates, itens, seleção ou o tema da aplicação. Propriedades ausentes mantêm o valor atual; nomes desconhecidos e versões incompatíveis são rejeitados. Cores são valores, não chaves DynamicResource. Cursores/brushes personalizados precisam ser convertíveis pelos conversores WPF; CaptureConfiguration pode rejeitá-los.
 
 Chaves inválidas ou fontes incompatíveis geram InvalidOperationException; valores/versões inválidos geram ArgumentException; JSON inválido gera JsonException e conteúdo JSON nulo em LoadState gera InvalidDataException. Falhas de streams pertencem ao chamador. A validação prévia não fornece rollback de efeitos de comandos, eventos ou coleções personalizados que lancem exceções.
 
-## Tipos auxiliares e compatibilidade
+### Tipos auxiliares e compatibilidade
 
 `TabControlItem` é opcional: o `System.Windows.Controls.TabItem` nativo também é aceito. `TabControlState`, `TabControlConfiguration` e os argumentos de eventos são públicos. `TabCursors.ClosedHand` e `TabSpacingConverter` também são públicos.
 
 Os nomes foram padronizados durante a fase de pré-lançamento: `TabControl` substitui `CustomTabControl` e `TabControlItem` substitui `CustomTabItem`.
 
-# Referência da API — ScrollBar
+## ScrollBar
 
 `ScrollBar` deriva de `System.Windows.Controls.Primitives.ScrollBar`. `Thickness` controla o eixo transversal conforme `Orientation`; `CornerRadius` deve ser uniforme e é limitado visualmente à metade da espessura. `TrackBrush`, `ThumbBrush`, `ThumbHoverBrush`, `ThumbPressedBrush`, `TrackPadding` e `ThumbOpacity` controlam o visual. `ShowButtons` exibe comandos direcionais. A sombra é opt-in por `IsShadowEnabled` e usa `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`.
 
-# Referência da API — ContextMenu
+| Propriedade | Padrão | Contrato |
+|---|---:|---|
+| `Thickness` | `10` | Finita e maior que zero |
+| `CornerRadius` | `5` | Uniforme e não negativo; limitado à metade da espessura ao renderizar |
+| `TrackBrush` | `#3D4046` | Pincel da trilha |
+| `ThumbBrush` | `#686D77` | Pincel do polegar |
+| `ThumbHoverBrush` | `#8B919D` | Polegar sob o mouse |
+| `ThumbPressedBrush` | `#A6ACB8` | Polegar pressionado |
+| `TrackPadding` | `2` | Valores finitos e não negativos |
+| `ThumbOpacity` | `0,72` | Finito entre 0 e 1 |
+| `ShowButtons` | `false` | Exibe os botões direcionais |
+| `IsShadowEnabled` | `false` | Liga a sombra |
+| `ShadowColor` | `#494949` | Cor da sombra |
+| `ShadowOpacity` | `0,5` | Finito entre 0 e 1 |
+| `ShadowBlurRadius` | `10` | Finito e não negativo |
+| `ShadowDepth` | `0` | Finito |
+
+## ContextMenu
 
 `ContextMenu` deriva de `System.Windows.Controls.ContextMenu` e preserva `Items`, `ItemContainerStyle`, comandos, bindings, atalhos, teclado, itens marcáveis e submenus nativos. `CornerRadius`, `Padding`, `ItemPadding` e `IconSize` definem a geometria básica. Cada nível organiza os itens em cinco colunas alinhadas: ícone, título, valor, atalho e seta. `IconColumnWidth` e `ArrowColumnWidth` usam valores numéricos; `TitleColumnWidth`, `ValueColumnWidth` e `InputGestureColumnWidth` usam `GridLength` e aceitam `Auto`, proporções com `*` ou pixels fixos. Os padrões são `26`, `*`, `Auto`, `Auto` e `24`, respectivamente. Os submenus podem usar dimensões independentes por `SubmenuIconColumnWidth`, `SubmenuTitleColumnWidth`, `SubmenuValueColumnWidth`, `SubmenuInputGestureColumnWidth` e `SubmenuArrowColumnWidth`, com os mesmos padrões. `MenuItemAssist.Value` e `MenuItemAssist.ValueTemplate` preenchem a coluna de valor de qualquer item. `Background`, `Foreground`, `BorderBrush`, `HoverBrush`, `CheckedBrush` e `SeparatorBrush` definem as cores principais. `ItemBorderBrush`, `ItemHoverBorderBrush` e `ItemCheckedBorderBrush`, combinadas com as respectivas propriedades `ItemBorderThickness`, `ItemHoverBorderThickness` e `ItemCheckedBorderThickness`, personalizam os contornos normal, destacado e marcado. `ItemCornerRadius` define o arredondamento comum desses contornos. `DisabledOpacity` controla itens indisponíveis. A sombra usa `IsShadowEnabled`, `ShadowColor`, `ShadowOpacity`, `ShadowBlurRadius` e `ShadowDepth`.
 
@@ -90,11 +111,38 @@ Os nomes foram padronizados durante a fase de pré-lançamento: `TabControl` sub
 
 `ContextMenu.ActivatePath(MenuItem)` mantém o item e seus ancestrais e fecha os demais ramos. `CollapseAfter(MenuItem)` mantém apenas os ancestrais, enquanto `CollapseAll()` fecha toda a árvore. `MenuInteraction` oferece as mesmas operações para composições fixas e identifica cada raiz pela propriedade anexada `IsScopeRoot`. A coordenação é limitada ao escopo informado.
 
-`ToggleMenuItem` especializa o item marcável com `IsChecked` bidirecional por padrão, `CheckedIcon` e `UncheckedIcon`. `ChoiceMenuItem` representa uma escolha entre vários valores e expõe o texto apresentado em `SelectedContent`. `SelectedIndex`, `SelectedItem` e `SelectedValue` são bidirecionais por padrão; `DisplayMemberPath`, `SelectedValuePath` e `IconMemberPath` adaptam modelos externos. `CycleDirection`, `IsCycleWrappingEnabled` e `DropDownButtonWidth` controlam o clique cíclico e a área que abre o submenu. `ChoiceMenuOption` é o modelo declarativo simples com `Content`, `Value`, `Icon` e `IsEnabled`.
+`ToggleMenuItem` especializa o item marcável com `IsChecked` bidirecional por padrão, `CheckedIcon` e `UncheckedIcon`. `ChoiceMenuItem` representa uma escolha entre vários valores e expõe o texto apresentado em `SelectedContent`. `CycleSelection()` avança a seleção por código com a regra do clique principal: respeita `CycleDirection` (padrão `Forward`) e `IsCycleWrappingEnabled` (padrão `true`), pula itens não selecionáveis e não faz nada sem itens. `DropDownButtonWidth` tem padrão `24` e aceita valores finitos e não negativos. `SelectedIndex`, `SelectedItem` e `SelectedValue` são bidirecionais por padrão; `DisplayMemberPath`, `SelectedValuePath` e `IconMemberPath` adaptam modelos externos. `CycleDirection`, `IsCycleWrappingEnabled` e `DropDownButtonWidth` controlam o clique cíclico e a área que abre o submenu. `ChoiceMenuOption` é o modelo declarativo simples com `Content`, `Value`, `Icon` e `IsEnabled`.
+
+| Propriedade | Padrão | Contrato |
+|---|---:|---|
+| `CornerRadius` | `8` | Raio uniforme e não negativo |
+| `ItemCornerRadius` | `4` | Raio uniforme e não negativo dos itens |
+| `ItemPadding` | `10,7,10,7` | Valores finitos e não negativos |
+| `IconSize` | `16` | Finito e não negativo |
+| `IconColumnWidth` / `SubmenuIconColumnWidth` | `26` | Finito e não negativo |
+| `TitleColumnWidth` / `SubmenuTitleColumnWidth` | `*` | `GridLength` |
+| `ValueColumnWidth` / `SubmenuValueColumnWidth` | `Auto` | `GridLength` |
+| `InputGestureColumnWidth` / `SubmenuInputGestureColumnWidth` | `Auto` | `GridLength` |
+| `ArrowColumnWidth` / `SubmenuArrowColumnWidth` | `24` | Finito e não negativo |
+| `HoverBrush` | `#454850` | Item destacado |
+| `CheckedBrush` | `#9CC9FF` | Item marcado |
+| `SeparatorBrush` | `#4C5058` | Separadores |
+| `ItemBorderBrush`, `ItemHoverBorderBrush`, `ItemCheckedBorderBrush` | `Transparent` | Contornos dos estados normal, destacado e marcado |
+| `ItemBorderThickness`, `ItemHoverBorderThickness`, `ItemCheckedBorderThickness` | `0` | Valores finitos e não negativos |
+| `DisabledOpacity` | `0,45` | Finito entre 0 e 1 |
+| `IsShadowEnabled` | `true` | Liga a sombra e reserva sua margem |
+| `ShadowColor` | `#494949` | Cor da sombra |
+| `ShadowOpacity` | `0,5` | Finito entre 0 e 1 |
+| `ShadowBlurRadius` | `10` | Finito e não negativo |
+| `ShadowDepth` | `0` | Finito |
+| `SubmenuPlacementDirection` | `Right` | Propriedade anexada herdada pelos submenus |
+| `SubmenuHorizontalOffset` / `SubmenuVerticalOffset` | `0` | Finito |
+
+`Background`, `Foreground` e `BorderBrush` têm seus valores iniciais definidos pelo tema padrão.
 
 Em C#, quando `System.Windows.Controls` e `DLH.Controls.Wpf` estiverem importados simultaneamente, use um alias ou o nome qualificado para distinguir os dois tipos: `using ControlsContextMenu = DLH.Controls.Wpf.ContextMenu;`. Em XAML, o prefixo `dlh:` já elimina a ambiguidade.
 
-# Referência da API — DataGridView
+## DataGridView
 
 `AllowMultipleSelection` alterna entre seleção simples e estendida. `GetBatchSelection()` retorna `DataGridViewBatchSelection`; `BatchSelectionChangedCommand` recebe mudanças e `BatchActionCommand` é executado por `ExecuteBatchAction()`.
 
@@ -104,7 +152,7 @@ Em C#, quando `System.Windows.Controls` e `DLH.Controls.Wpf` estiverem importado
 
 `IsGroupingEnabled` aplica um `PropertyGroupDescription` para `GroupMemberPath`. `ShowRowDetailsOnSelection` controla os detalhes embutidos na seleção e `SetRowDetailsVisibility(item, visible)` atua em uma linha materializada.
 
-## Detalhes flutuantes
+### Detalhes flutuantes
 
 | Membro | Padrão | Contrato |
 |---|---:|---|
@@ -120,7 +168,7 @@ Em C#, quando `System.Windows.Controls` e `DLH.Controls.Wpf` estiverem importado
 
 O painel usa `StaysOpen=false`, portanto um clique fora dele fecha a apresentação. Mudanças na configuração também fecham o painel aberto para que a próxima abertura use o novo template, estilo ou posicionamento.
 
-## Fixação aderente de linhas e colunas
+### Fixação aderente de linhas e colunas
 
 | Membro | Padrão | Contrato |
 |---|---:|---|
@@ -139,7 +187,7 @@ O painel usa `StaysOpen=false`, portanto um clique fora dele fecha a apresentaç
 
 Uma fixação preserva a posição natural até o item alcançar o limite visível. Depois disso, linhas aderem ao topo ou à parte inferior e colunas à esquerda ou à direita. Itens múltiplos se acumulam junto à borda. A camada de interseção mantém linhas e colunas fixadas sincronizadas, e o separador de limite acompanha a região aderente ativa.
 
-## Persistência do layout
+### Persistência do layout
 
 `DataGridView.ColumnKey` define uma chave estável por coluna. Na ausência dela, `SortMemberPath` é utilizado. Todas as colunas precisam de chaves não vazias e únicas para usar a persistência.
 
@@ -156,10 +204,33 @@ Uma fixação preserva a posição natural até o item alcançar o limite visív
 
 O formato atual usa `Version=1`. Estados com versão desconhecida, chaves duplicadas, índices repetidos, larguras inválidas, enumerações inválidas ou nenhuma coluna visível são rejeitados antes da aplicação. Colunas fixadas usam `ColumnKey` ou `SortMemberPath`; linhas fixadas são salvas somente quando `RowKeyMemberPath` está configurado.
 
-## Ordenação múltipla
+### Seleção
 
-## Filtros por coluna
+`SelectionBehavior` aceita `None` (padrão), `Row`, `Column` e `Cell`. `SelectedColumn` expõe a coluna selecionada, usa binding bidirecional por padrão e, com `SelectionBehavior="Column"`, notifica `SelectionChangedCommand`. Uma coluna que não pertence a `Columns` é rejeitada: a propriedade volta para `null`.
+
+### Ordenação e indicadores
+
+`CanUserSortColumns` e `ShowSortIndicators` controlam a ordenação global. `UnsortedIcon`, `AscendingSortIcon` e `DescendingSortIcon` são `Geometry` e substituem os desenhos dos três estados; `SortIconSize` (padrão `14`, finito e maior que zero), `SortIconBrush` e `ActiveSortIconBrush` ajustam tamanho e cores.
+
+### Ordenação múltipla
+
+`IsMultiColumnSortEnabled` é `false` por padrão. Quando habilitada, clique simples substitui a ordenação, `Shift+clique` acrescenta um critério e `Ctrl+clique` remove o critério da coluna. `ApplySort(column, direction, append)` e `RemoveSort(column)` oferecem o mesmo controle por código. A propriedade anexada somente leitura `SortPriority` informa a posição, iniciando em 1 quando existem múltiplos critérios.
+
+### Filtros por coluna
 
 `Filters` expõe os filtros ativos. Use `SetFilter(column, value, operador)`, `ClearFilter(column)` e `ClearFilters()`. Os operadores disponíveis são `Contains`, `Equals`, `StartsWith`, `EndsWith`, `GreaterThan` e `LessThan`. `DataGridView.FilterMemberPath` escolhe a propriedade consultada e `DataGridView.CanUserFilter` desativa filtros em uma coluna. O filtro existente na `ICollectionView` é preservado e combinado com os filtros do controle.
 
-`IsMultiColumnSortEnabled` é `false` por padrão. Quando habilitada, clique simples substitui a ordenação, `Shift+clique` acrescenta um critério e `Ctrl+clique` remove o critério da coluna. `ApplySort(column, direction, append)` e `RemoveSort(column)` oferecem o mesmo controle por código. A propriedade anexada somente leitura `SortPriority` informa a posição, iniciando em 1 quando existem múltiplos critérios.
+`ShowFilterMenuItems` (padrão `true`) exibe, no menu de contexto, as ações de limpar o filtro da coluna e todos os filtros; ocultá-las não afeta a API por código. `RefreshFilters()` reavalia os filtros ativos sem alterá-los.
+
+### Rolagem suave e arraste com o botão do meio
+
+| Membro | Padrão | Contrato |
+|---|---:|---|
+| `IsSmoothVerticalScrollingEnabled` | `true` | Anima a rolagem vertical pela roda do mouse |
+| `IsSmoothHorizontalScrollingEnabled` | `true` | Anima a rolagem horizontal (`Shift` + roda) |
+| `VerticalScrollAnimationDuration` | `260 ms` | `TimeSpan` não negativo; zero rola imediatamente |
+| `HorizontalScrollAnimationDuration` | `260 ms` | `TimeSpan` não negativo; zero rola imediatamente |
+| `VerticalMouseWheelScrollAmount` | `72` | Distância por passo da roda; finita e maior que zero |
+| `HorizontalMouseWheelScrollAmount` | `48` | Distância por passo da roda; finita e maior que zero |
+| `IsMiddleButtonPanningEnabled` | `true` | Arraste com o botão do meio, quando há conteúdo rolável |
+| `MousePanningSpeed` | `1` | Multiplicador do arraste; finito e maior que zero |

@@ -63,6 +63,13 @@ Para receber a seleção no ViewModel:
 
 O comando recebe `DataGridViewSelection`, contendo `Item` e `Column` de acordo com o modo selecionado.
 
+`SelectedColumn` expõe a coluna selecionada e usa binding bidirecional por padrão. Com `SelectionBehavior="Column"`, alterá-la altera a seleção e notifica `SelectionChangedCommand`. Atribuir uma coluna que não pertence a `Columns` é ignorado: a propriedade volta para `null`.
+
+```xml
+<dlh:DataGridView SelectionBehavior="Column"
+                  SelectedColumn="{Binding ColunaSelecionada, Mode=TwoWay}" />
+```
+
 Para permitir seleção múltipla, defina `AllowMultipleSelection="True"`. `GetBatchSelection()` retorna uma fotografia dos itens e células selecionados; `BatchSelectionChangedCommand` acompanha as mudanças e `BatchActionCommand` pode ser acionado por `ExecuteBatchAction()`.
 
 ```csharp
@@ -104,6 +111,13 @@ Tamanho, cores e geometrias são configuráveis:
 <dlh:DataGridView SortIconSize="14"
                   SortIconBrush="#9DA3AE"
                   ActiveSortIconBrush="#42A5E8" />
+```
+
+As geometrias dos três estados são substituíveis por `UnsortedIcon`, `AscendingSortIcon` e `DescendingSortIcon`, todas do tipo `Geometry`. Os padrões foram desenhados em uma área de 14 × 14 unidades e são dimensionados por `SortIconSize`.
+
+```xml
+<dlh:DataGridView AscendingSortIcon="M 2,10 L 7,4 L 12,10 Z"
+                  DescendingSortIcon="M 2,4 L 7,10 L 12,4 Z" />
 ```
 
 ## Ordenação padrão e limpeza
@@ -150,6 +164,10 @@ grid.SetFilter(grid.Columns[3], "50", DataGridViewFilterOperator.GreaterThan);
 grid.ClearFilter(grid.Columns[3]);
 grid.ClearFilters();
 ```
+
+O menu de contexto do cabeçalho oferece **Limpar filtro desta coluna** e **Limpar todos os filtros** quando há filtros ativos. `ShowFilterMenuItems="False"` oculta essas duas ações, sem impedir o uso de `SetFilter`, `ClearFilter` e `ClearFilters` por código.
+
+Para reavaliar os filtros ativos sem alterá-los, por exemplo depois de modificar propriedades dos itens sem notificação de mudança, chame `RefreshFilters()`.
 
 ## Reordenar, redimensionar e ocultar colunas
 
@@ -352,6 +370,32 @@ Para linhas alternadas, utilize a propriedade nativa:
 ```
 
 A barra vertical possui espaço reservado, impedindo que o texto da última coluna fique sob ela. A barra horizontal ocupa toda a largura inferior e reserva sua própria faixa, impedindo que o último registro seja encoberto. O raio das extremidades nunca ultrapassa metade da espessura real.
+
+## Rolagem suave e arraste com o botão do meio
+
+A roda do mouse rola o grid verticalmente; com `Shift`, rola horizontalmente. Cada passo da roda desloca uma distância fixa, e o deslocamento pode ser animado em direção ao destino.
+
+| Propriedade | Padrão | Contrato |
+|---|---|---|
+| `IsSmoothVerticalScrollingEnabled` | `true` | Anima a rolagem vertical pela roda |
+| `IsSmoothHorizontalScrollingEnabled` | `true` | Anima a rolagem horizontal (`Shift` + roda) |
+| `VerticalScrollAnimationDuration` | 260 ms | Duração da animação; zero rola imediatamente |
+| `HorizontalScrollAnimationDuration` | 260 ms | Idem, no eixo horizontal |
+| `VerticalMouseWheelScrollAmount` | 72 | Distância por passo da roda; finita e maior que zero |
+| `HorizontalMouseWheelScrollAmount` | 48 | Idem, no eixo horizontal |
+| `IsMiddleButtonPanningEnabled` | `true` | Habilita o arraste com o botão do meio |
+| `MousePanningSpeed` | 1 | Multiplicador do arraste; finito e maior que zero |
+
+```xml
+<dlh:DataGridView IsSmoothVerticalScrollingEnabled="True"
+                  VerticalScrollAnimationDuration="0:0:0.200"
+                  VerticalMouseWheelScrollAmount="96"
+                  HorizontalMouseWheelScrollAmount="64"
+                  IsMiddleButtonPanningEnabled="True"
+                  MousePanningSpeed="1.5" />
+```
+
+O arraste só começa quando há conteúdo rolável. Com o botão do meio pressionado, mover o mouse desloca a área visível nos eixos que possuem rolagem.
 
 ## Desempenho
 

@@ -4,6 +4,9 @@
 
 - Novo fluxo de homologação automatizada e assistida, com validação do pacote local e público, inventário de monitores/DPI, evidências em JSON e Markdown e roteiro registrado para mouse, teclado, leitor de tela e alto contraste.
 - Workflow manual `Release readiness` para gerar e preservar evidências técnicas antes da promoção de uma versão.
+- Testes automatizados da árvore de automação para `ScrollBar`, `DataGridView`, `ToggleMenuItem`, `ChoiceMenuItem` e `ContextMenu`, ampliando a cobertura que antes se limitava ao `TabControl`.
+- Referência da API reorganizada em um único documento por controle, com tabelas de padrões e limites para `ScrollBar` e `ContextMenu` e novas seções do `DataGridView`.
+- Documentados `SelectedColumn`, as geometrias dos indicadores de ordenação, `ShowFilterMenuItems`, `RefreshFilters()`, a rolagem suave com arraste pelo botão do meio e `ChoiceMenuItem.CycleSelection()`.
 
 ## 0.4.0-preview.4 — 14 de setembro de 2026
 
